@@ -134,3 +134,33 @@ Chưa bật HSTS (tự bật ở web server khi đã chắc chắn dùng HTTPS l
 - `config.php`, `index.php`, `admin/`, `api/`, `ip/`, `.htaccess` hiện có; có/không trang đăng nhập; phiên bản PHP của hosting.
 - Điều khoản sử dụng, thông tin phiên bản và liên kết chính thức: hiện là bản mẫu/để trống.
 - Hình nền là SVG tự vẽ cho module này; nếu bạn có artwork KPAH riêng, thay `assets/img/scene.svg` / `emblem.svg` (giữ tên file).
+
+## Mã giới thiệu bắt buộc + trang quản trị
+
+### 1. Tạo bảng SQL
+Import file `database/referral_codes.sql` vào **đúng database đang được cấu hình** trong `config.register.local.php`. File tạo 3 bảng:
+- `kpah_referral_codes`: danh sách mã; `count` là tổng lượt được phép, `used_count` là số lượt đã dùng, số lượt còn lại = `count - used_count`; `date` là hạn sử dụng (NULL = không hết hạn).
+- `kpah_referral_code_uses`: lịch sử mỗi lần đăng ký thành công dùng mã nào, tạo tài khoản nào, thời điểm nào.
+- `kpah_web_admins`: tài khoản đăng nhập trang quản trị, có cột `role`; chỉ `role='admin'` và tài khoản đang bật mới được vào.
+
+### 2. Tạo tài khoản admin đầu tiên
+Chạy trên máy chủ có PHP CLI, thay mật khẩu mẫu bằng mật khẩu mạnh:
+```bash
+php -r "echo password_hash('THAY_BANG_MAT_KHAU_MANH', PASSWORD_DEFAULT), PHP_EOL;"
+```
+Copy chuỗi hash được in ra, rồi chạy SQL (thay `PASTE_HASH_HERE`):
+```sql
+INSERT INTO kpah_web_admins (username, password_hash, role)
+VALUES ('admin', 'PASTE_HASH_HERE', 'admin');
+```
+Không đưa mật khẩu thật hoặc hash vào Git. Nếu dùng Windows/XAMPP, có thể chạy lệnh bằng `php.exe` trong thư mục PHP của XAMPP.
+
+### 3. Sử dụng
+- Mở `/admin/login.php`, đăng nhập bằng tài khoản admin vừa tạo.
+- Trong `/admin/referrals.php`, tạo mã thủ công hoặc để trống để tự sinh mã; chọn tổng lượt và hạn sử dụng.
+- Trang quản trị hiển thị đã dùng, tổng lượt, còn lại, trạng thái và 100 lượt sử dụng gần nhất.
+- Người đăng ký bắt buộc nhập mã hợp lệ. Mã hết hạn, bị khóa hoặc hết lượt sẽ bị từ chối phía máy chủ.
+- Các trang quản trị kiểm tra session đăng nhập và kiểm tra lại role/trạng thái admin từ database mỗi lần truy cập. Phiên quản trị hết hạn sau 30 phút không hoạt động.
+
+Lưu ý: module này vốn không có hệ thống đăng nhập quản trị sẵn, vì vậy chức năng trên dùng bảng `kpah_web_admins` riêng; không tự suy đoán quyền admin từ bảng tài khoản game `team_user`.
+
