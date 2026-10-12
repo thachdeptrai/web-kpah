@@ -1,0 +1,46 @@
+/* Login page — dùng chung ngôn ngữ thiết kế với register.css */
+.login-stage{grid-template-columns:minmax(0,1.1fr) minmax(340px,480px)}
+.login-panel{padding-top:clamp(25px,4vw,36px)}
+.login-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+.login-eyebrow,.login-version{font:500 .68rem 'Be Vietnam Pro',sans-serif;letter-spacing:.12em}
+.login-eyebrow{display:flex;align-items:center;gap:9px;color:var(--gold-hi)}
+.login-eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--jade);box-shadow:0 0 12px rgba(79,214,160,.8)}
+.login-version{font-size:.6rem;color:var(--muted);text-align:right}
+.login-panel h2{margin-bottom:7px}
+.login-intro{font-size:.92rem;color:var(--muted);margin:0 0 24px}
+.login-panel .fields{gap:18px}
+.login-panel .field label:not(.check-label){margin-bottom:7px}
+.login-panel .control input{font-size:.95rem}
+.login-label-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+.login-label-row label{margin:0!important}
+.login-forgot{font-size:.83rem;color:var(--gold-hi);text-underline-offset:3px;white-space:nowrap}
+.login-forgot:hover,.brand-register-link:hover{color:#fff}
+.login-submit{gap:10px;min-height:54px;margin-top:26px}
+.login-submit>.icon{width:19px;height:19px}
+.login-submit>span:nth-of-type(1){flex:1;text-align:center}
+.login-arrow{font-size:1.3rem;line-height:1}
+.login-panel .alt-link{margin-top:19px}
+.login-panel .alt-link a{font-weight:600}
+.login-secure-note{display:flex;align-items:flex-start;gap:10px;border-top:1px solid var(--line);margin-top:25px;padding-top:17px;color:var(--muted);font-size:.78rem;line-height:1.65}
+.login-secure-note .icon{width:17px;height:17px;color:var(--gold);margin-top:1px}
+.brand-register-link{color:var(--gold-hi);text-underline-offset:3px;font-weight:600;white-space:nowrap}
+.brand-register-link span{display:inline-block;margin-left:3px}
+.login-panel .alert{margin:0 0 20px}
+.login-panel .alert p{overflow-wrap:anywhere}
+.login-panel .fields .field{min-width:0}
+.login-panel .eye{z-index:1}
+@media(max-width:920px){
+ .login-stage{max-width:560px;grid-template-columns:minmax(0,1fr);gap:26px}
+ .login-stage .brand{text-align:center}
+ .login-stage .brand .lead{margin-inline:auto}
+ .login-stage .rules{display:grid;text-align:left;margin:20px auto 0;max-width:390px;gap:8px}
+ .login-stage .rules li{font-size:.85rem}
+ .login-stage .emblem{left:50%;top:-40px;margin-left:-160px;width:320px;opacity:.3}
+ .login-stage .wordmark{font-size:clamp(3.6rem,18vw,5.6rem);margin-left:0}
+}
+@media(max-width:480px){
+ .login-panel-heading{margin-bottom:19px}
+ .login-panel{padding:23px 20px}
+ .login-intro{font-size:.86rem}
+ .login-stage .rules li{padding-left:10px}
+}
