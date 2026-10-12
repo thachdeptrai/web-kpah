@@ -46,10 +46,20 @@ $valid = isset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $
     && hash_equals((string)$_SESSION['kp_recovery_hash'], hash('sha256', $code));
 if (!$valid) kp_recovery_reply(['ok'=>false,'message'=>'Mã không đúng hoặc đã hết hạn. Hãy yêu cầu mã mới.'],422);
 try {
-    $st = kp_db()->prepare('UPDATE team_user SET password = ? WHERE id = ?');
-    $st->execute([kp_game_password_hash($password), (int)$_SESSION['kp_recovery_user']]);
+    // Giữ định dạng hash của tài khoản để không phá đăng nhập game:
+    // tài khoản bcrypt vẫn dùng bcrypt; tài khoản legacy vẫn dùng hash game.
+    $st = kp_db()->prepare('SELECT password FROM team_user WHERE id = ? LIMIT 1');
+    $st->execute([(int) $_SESSION['kp_recovery_user']]);
+    $currentHash = (string) $st->fetchColumn();
+    if (preg_match('/^\$2[aby]\$\d{2}\$/', $currentHash) === 1 || strpos($currentHash, '$argon2') === 0) {
+        $newHash = password_hash($password, PASSWORD_DEFAULT);
+    } else {
+        $newHash = kp_game_password_hash($password);
+    }
+    $update = kp_db()->prepare('UPDATE team_user SET password = ? WHERE id = ?');
+    $update->execute([$newHash, (int) $_SESSION['kp_recovery_user']]);
     unset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user']);
-    kp_recovery_reply(['ok'=>true,'message'=>'Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.','redirect'=>'login.php']);
+    kp_recovery_reply(['ok'=>true,'message'=>'Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.','redirect'=>'/dang-nhap']);
 } catch (Throwable $e) {
     kp_log('đặt lại mật khẩu thất bại', $e);
     kp_recovery_reply(['ok'=>false,'message'=>'Chưa thể đổi mật khẩu lúc này. Hãy thử lại sau.'],503);
