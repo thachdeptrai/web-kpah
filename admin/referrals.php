@@ -113,6 +113,4 @@ $uses = kp_db()->query('SELECT code, username, used_at FROM kpah_referral_code_u
 <section class="card"><div class="card-head"><div><div class="section-kicker">AUDIT / ACTIVITY</div><h2>Lịch sử sử dụng gần đây</h2></div><span class="mini">Nhật ký sử dụng mã</span></div><div class="table-wrap"><table><thead><tr><th>Mã</th><th>Tài khoản đăng ký</th><th>Thời điểm sử dụng</th></tr></thead><tbody>
 <?php foreach ($uses as $u): ?><tr><td><code><?= kp_e($u['code']) ?></code></td><td><?= kp_e($u['username']) ?></td><td><?= kp_e($u['used_at']) ?></td></tr><?php endforeach; if (!$uses): ?><tr><td colspan="3" class="muted">Chưa có lượt sử dụng.</td></tr><?php endif; ?>
 </tbody></table></div></section><footer><span>KPAH CONTROL CENTER · ADMIN ACCESS ONLY</span><span>Session timeout: 30 phút · Dữ liệu cập nhật khi tải lại</span></footer></main>
-<script>
-(function(){var q=document.getElementById('code-search');if(!q)return;q.addEventListener('input',function(){var term=q.value.toLowerCase();document.querySelectorAll('section.card tbody tr').forEach(function(row){if(row.closest('section').querySelector('#code-search')||row.parentElement.parentElement.parentElement.querySelector('#code-search')){row.style.display=row.textContent.toLowerCase().includes(term)?'':'none';}});});})();
-</script></body></html>
+<script src="../assets/js/admin.js?v=1" defer></script></body></html>
