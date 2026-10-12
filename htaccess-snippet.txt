@@ -12,12 +12,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     # Chặn dotfiles và các thư mục nội bộ/repository
-    RewriteRule (^|/)\\. - [F,L]
-    RewriteRule ^(includes|storage|database|\\.git)(/|$) - [F,L,NC]
+    RewriteRule (^|/)\. - [F,L]
+    RewriteRule ^(includes|storage|database|\.git)(/|$) - [F,L,NC]
 </IfModule>
 
 # Chặn tải cấu hình, thông tin debug, backup, log, SQL và tài liệu nội bộ
-<FilesMatch "(?i)^(\\.env.*|\\.gitignore|\\.htaccess|\\.htpasswd|.*\\.(sql|log|ini|ya?ml|dist|bak|backup|old|orig|swp|tmp|dump|zip|tar|gz|7z|md))$">
+<FilesMatch "(?i)^(\.env.*|\.gitignore|\.htaccess|\.htpasswd|.*\.(sql|log|ini|ya?ml|dist|bak|backup|old|orig|swp|tmp|dump|zip|tar|gz|7z|md))$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -27,7 +27,7 @@
     </IfModule>
 </FilesMatch>
 
-<FilesMatch "(?i)^(config\\.php|config\\.register(\\.local|\\.local\\.sample|\\.sample)?\\.php|check\\.php|captcha\\.php)$">
+<FilesMatch "(?i)^(config\.php|config\.register(\.local|\.local\.sample|\.sample)?\.php|check\.php|captcha\.php)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -38,5 +38,5 @@
 </FilesMatch>
 
 # Nginx tương đương (đặt trong server {}, không đặt vào .htaccess):
-# location ~ ^/(includes|storage|database|\\.git)/ { deny all; }
-# location ~* (config\\.register.*\\.php|(^|/)check\\.php$|\\.(sql|log|ini|bak|backup|dump|zip|tar|gz|md)$) { deny all; }
+# location ~ ^/(includes|storage|database|\.git)/ { deny all; }
+# location ~* (config\.register.*\.php|(^|/)check\.php$|\.(sql|log|ini|bak|backup|dump|zip|tar|gz|md)$) { deny all; }
