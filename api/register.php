@@ -3,7 +3,7 @@
  * API đăng ký tài khoản KPAH.  POST /api/register.php  -> JSON
  *
  * Thứ tự kiểm tra: phương thức -> kích thước -> CSRF -> honeypot -> thời gian điền form
- *   -> giới hạn tần suất -> validate + CAPTCHA -> giới hạn tài khoản/IP -> ghi database.
+ *   -> giới hạn tần suất -> validate + email OTP + mã giới thiệu -> ghi database.
  */
 require __DIR__ . '/../includes/bootstrap.php';
 
@@ -93,7 +93,6 @@ if ($errors) {
 
 // Email OTP bắt buộc; chỉ chấp nhận email đã xác minh trong session hiện tại.
 $email = strtolower((string) $clean['email']);
-$verifiedEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
 $otpEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
 if (!empty(kp_config('registration.email_verification', true)) && ($email === '' || !hash_equals($otpEmail, $email))) {
     kp_reply(['ok' => false, 'code' => 'email_unverified', 'message' => 'Vui lòng xác minh email bằng mã được gửi tới hộp thư trước khi tạo tài khoản.', 'errors' => ['email_code' => 'Bạn chưa xác minh email này.']], 422);
