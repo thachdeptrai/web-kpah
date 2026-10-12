@@ -4,7 +4,7 @@ kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 
 if (!empty($_SESSION['kp_admin_id']) && ($_SESSION['kp_admin_role'] ?? '') === 'admin') {
-    header('Location: referrals.php');
+    header('Location: index.php');
     exit;
 }
 $error = '';
@@ -27,7 +27,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $_SESSION['kp_admin_username'] = (string) $admin['username'];
                 $_SESSION['kp_admin_role'] = (string) $admin['role'];
                 $_SESSION['kp_admin_last_seen'] = time();
-                header('Location: referrals.php');
+                header('Location: index.php');
                 exit;
             }
             $error = 'Tên đăng nhập hoặc mật khẩu không đúng, hoặc tài khoản không có quyền admin.';
