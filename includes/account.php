@@ -27,7 +27,7 @@ function kp_game_password_hash($password)
  * @return string 'ok' | 'exists' | 'error'
  * @throws PDOException khi kết nối/truy vấn lỗi (nơi gọi phải bắt và ghi log)
  */
-function kp_create_account($username, $password, $phone)
+function kp_create_account($username, $password, $phone, $email)
 {
     $pdo  = kp_db();
     $hash = kp_game_password_hash($password);
@@ -49,13 +49,13 @@ function kp_create_account($username, $password, $phone)
 
         $ins = $pdo->prepare(
             'INSERT INTO `team_user` (`userid`, `provider`, `agent`, `username`, `password`, `phone`, `regdate`, `ban`, `fromgame`, `email`)
-             VALUES (?, 0, -1, ?, ?, ?, ?, 0, 0, NULL)'
+             VALUES (?, 0, -1, ?, ?, ?, ?, 0, 0, ?)'
         );
 
         for ($attempt = 0; $attempt < 3; $attempt++) {
             $userid = (int) $pdo->query('SELECT COALESCE(MAX(`userid`), 0) + 1 FROM `team_user`')->fetchColumn();
             try {
-                $ins->execute([$userid, $username, $hash, (string) $phone, date('Y-m-d H:i:s')]);
+                $ins->execute([$userid, $username, $hash, (string) $phone, date('Y-m-d H:i:s'), (string) $email]);
                 return 'ok';
             } catch (PDOException $e) {
                 if (!kp_is_duplicate_key($e)) {
