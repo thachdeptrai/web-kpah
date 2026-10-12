@@ -79,11 +79,23 @@ if (!$okAllowed) {
     ], 429);
 }
 
+
+// Validate toàn bộ dữ liệu phía server trước khi dùng biến $clean.
+list($errors, $clean) = kp_validate_registration($_POST);
+if ($errors) {
+    kp_reply([
+        'ok' => false,
+        'code' => 'validation',
+        'message' => 'Vui lòng kiểm tra lại thông tin đã nhập.',
+        'errors' => $errors,
+    ], 422);
+}
+
 // Email OTP bắt buộc; chỉ chấp nhận email đã xác minh trong session hiện tại.
-$email = isset($clean['email']) ? strtolower($clean['email']) : '';
+$email = strtolower((string) $clean['email']);
 $verifiedEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
-if (!empty(kp_config('registration.email_verification', true)) && ($email === '' || !hash_equals($verifiedEmail, $email))) {
-    kp_referral_release($referral['lock'] ?? '');
+$otpEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
+if (!empty(kp_config('registration.email_verification', true)) && ($email === '' || !hash_equals($otpEmail, $email))) {
     kp_reply(['ok' => false, 'code' => 'email_unverified', 'message' => 'Vui lòng xác minh email bằng mã được gửi tới hộp thư trước khi tạo tài khoản.', 'errors' => ['email_code' => 'Bạn chưa xác minh email này.']], 422);
 }
 
@@ -123,6 +135,15 @@ if ($result === 'exists') {
         'code'    => 'validation',
         'message' => 'Tên tài khoản này đã có người sử dụng.',
         'errors'  => ['username' => 'Tên tài khoản đã tồn tại. Hãy chọn tên khác.'],
+    ], 409);
+}
+if ($result === 'email_exists') {
+    kp_referral_release($referral['lock'] ?? '');
+    kp_reply([
+        'ok' => false,
+        'code' => 'email_exists',
+        'message' => 'Email này đã được liên kết với một tài khoản khác.',
+        'errors' => ['email' => 'Mỗi email chỉ được dùng cho một tài khoản.'],
     ], 409);
 }
 if ($result !== 'ok') {
