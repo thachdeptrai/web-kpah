@@ -17,7 +17,9 @@ $pwMax      = (int) kp_config('security.password_max', 32);
 $userHint   = (string) kp_config('security.username_hint', '');
 list($patBody, $patFlags) = kp_pattern_for_js(kp_config('security.username_pattern', '/^[a-z0-9_]{4,20}$/'));
 
-$linkLogin    = '/dang-nhap';
+$scriptPath = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/register.php'));
+$appBasePath = rtrim(dirname($scriptPath), '/.');
+$linkLogin    = ($appBasePath !== '' ? $appBasePath : '') . '/dang-nhap';
 $linkDownload = kp_safe_url(kp_config('links.download', ''));
 $linkHome     = kp_safe_url(kp_config('links.home', ''));
 $linkSupport  = kp_safe_url(kp_config('links.support', ''));
@@ -241,7 +243,7 @@ $canSubmit = $isOpen;
                     </button>
 
                     <?php if ($linkLogin !== ''): ?>
-                        <p class="alt-link">Đã có tài khoản? <a href="<?= kp_e($linkLogin) ?>">Đăng nhập</a></p>
+                        <p class="alt-link">Đã có tài khoản? <a class="btn btn-ghost" href="<?= kp_e($linkLogin) ?>">Đăng nhập</a></p>
                     <?php endif; ?>
                 </form>
             </div>
