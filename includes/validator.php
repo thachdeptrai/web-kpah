@@ -103,7 +103,7 @@ function kp_validate_registration(array $in)
     }
 
     /* --- Số điện thoại (tuỳ cấu hình) --- */
-    $mode = (string) kp_config('registration.phone', 'optional');
+    $mode = 'required'; // Bắt buộc số điện thoại, không cho config local vô tình bỏ qua.
     if ($mode !== 'off') {
         $rawPhone = isset($in['phone']) && is_string($in['phone']) ? trim($in['phone']) : '';
         if ($rawPhone === '') {
