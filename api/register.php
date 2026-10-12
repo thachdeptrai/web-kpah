@@ -90,6 +90,13 @@ if ($errors) {
     ], 422);
 }
 
+// 5b) Chỉ cho đăng ký bằng email đã xác minh trong phiên hiện tại.
+$email = isset($clean['email']) ? strtolower($clean['email']) : '';
+$verifiedEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
+if (!empty(kp_config('registration.email_verification', true)) && ($email === '' || !hash_equals($verifiedEmail, $email))) {
+    kp_reply(['ok' => false, 'code' => 'email_unverified', 'message' => 'Vui lòng xác minh email bằng mã được gửi tới hộp thư trước khi tạo tài khoản.', 'errors' => ['email_code' => 'Bạn chưa xác minh email này.']], 422);
+}
+
 // 6) Giới hạn số tài khoản được tạo từ một IP
 list($maxOk, $okWindow) = array_pad((array) kp_config('security.rate_success', [5, 86400]), 2, 86400);
 list($okAllowed, $okRetry) = kp_rate_limit('reg_success', $ip, (int) $maxOk, (int) $okWindow, false);
@@ -104,7 +111,7 @@ if (!$okAllowed) {
 
 // 7) Ghi database
 try {
-    $result = kp_create_account($clean['username'], $clean['password'], $clean['phone']);
+    $result = kp_create_account($clean['username'], $clean['password'], $clean['phone'], $clean['email']);
 } catch (\Throwable $e) {
     kp_log('tạo tài khoản thất bại', $e);
     kp_reply(['ok' => false, 'message' => 'Hệ thống đang bận hoặc bảo trì. Vui lòng thử lại sau ít phút.'], 500);
@@ -125,6 +132,7 @@ if ($result !== 'ok') {
 
 kp_rate_limit('reg_success', $ip, (int) $maxOk, (int) $okWindow, true);
 session_regenerate_id(true);
+unset($_SESSION['kp_verified_email'], $_SESSION['kp_email_code_hash'], $_SESSION['kp_email_code_expiry']);
 
 kp_reply([
     'ok'       => true,
