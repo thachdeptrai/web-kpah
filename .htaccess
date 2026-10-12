@@ -1,23 +1,19 @@
-# KPAH web: URL sạch, không liệt kê thư mục và chặn file nội bộ/nhạy cảm.
+# KPAH web: URL sạch, không liệt kê thư mục và bảo vệ mã backend.
 Options -Indexes -MultiViews
 DirectoryIndex index.php
 RewriteEngine On
 
-# Chặn truy cập HTTP trực tiếp vào thư mục nội bộ; PHP vẫn include được từ server.
-RewriteRule ^(?:includes|storage|vendor|tests?)(?:/|$) - [F,L,NC]
+# Chỉ chặn các thư mục chứa mã/backend hoặc dữ liệu nội bộ.
+# Không chặn thư mục screen/screens, giao diện, assets hoặc các file JS/CSS công khai.
+RewriteRule ^(?:includes|storage|vendor|config|core|database|models|controllers|services|repositories|helpers|bootstrap|private)(?:/|$) - [F,END,NC]
 
-# Không cho tải cấu hình, log, bản sao lưu, dump SQL, file môi trường hay metadata Git.
-<FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|composer\.(?:json|lock)|config\.register(?:\.local)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|dist|pem|key))$">
+# Chặn file cấu hình, môi trường, log, bản sao lưu, dump SQL và khóa bí mật.
+<FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|composer\.(?:json|lock)|config(?:\.[a-z0-9_-]+)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|dist|pem|key|p12|pfx))$">
     Require all denied
 </FilesMatch>
-<IfModule mod_authz_core.c>
-    <FilesMatch "(?i)^(?:\.gitignore|\.gitattributes|\.gitmodules|README(?:\..*)?|LICENSE(?:\..*)?)$">
-        Require all denied
-    </FilesMatch>
-</IfModule>
 
-# Chặn truy cập các file PHP phụ trợ ở thư mục gốc, nhưng giữ trang và API cần dùng.
-<FilesMatch "^(?:config\.register\.php|config\.register\.local\.php)$">
+# Chặn metadata quản lý mã nguồn và tài liệu nội bộ.
+<FilesMatch "(?i)^(?:\.gitignore|\.gitattributes|\.gitmodules|README(?:\..*)?|LICENSE(?:\..*)?)$">
     Require all denied
 </FilesMatch>
 
@@ -38,7 +34,7 @@ RewriteRule ^tai-khoan/?$ home.php [END,QSA]
 RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
 RewriteRule ^$ index.php [END]
 
-# Cho phép file/thư mục công khai (assets, API, ảnh...) hoạt động bình thường.
+# File/thư mục công khai (screen/screens, assets, API, ảnh...) vẫn chạy bình thường.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [END]
