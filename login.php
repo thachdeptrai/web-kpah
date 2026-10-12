@@ -48,6 +48,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 $csrf = kp_csrf_token();
 $appName = (string)kp_config('app.name', 'KPAH');
+$version = trim((string)kp_config('app.version', ''));
 ?><!DOCTYPE html>
 <html lang="vi">
 <head>
