@@ -87,6 +87,7 @@ Mỗi lần đăng ký thử thành công sẽ tạo dòng thật trong `team_us
 ### Cấu hình chính (`config.register.php`)
 - Đăng ký yêu cầu **email đã xác minh bằng mã OTP, số điện thoại và mã giới thiệu hợp lệ**. Đã bỏ CAPTCHA dạng ảnh; email OTP vẫn là bước xác minh.
 - Mã giới thiệu được kiểm tra ở máy chủ; mã bị khóa, hết hạn hoặc hết lượt sẽ không thể dùng.
+- Email được chuẩn hóa chữ thường; trước khi gửi OTP và trước khi tạo tài khoản, server kiểm tra email đã tồn tại trong `team_user` chưa. Mỗi email chỉ được dùng cho một tài khoản thông qua luồng đăng ký web.
 - Sao chép `config.register.local.sample.php` thành `config.register.local.php`, điền SMTP và thông tin DB thật. Nếu file local cũ đang đặt `registration.phone` thành `optional`, đổi thành `required`; file local sẽ ưu tiên cấu hình mặc định.
 - `security.username_pattern` (mặc định `/^[a-z0-9_]{4,20}$/`), `username_hint`, `password_min` = 6, `password_max` = 32.
 - `security.rate_attempts` = 10 lượt gửi / 10 phút / IP; `rate_success` = 5 tài khoản / 24 giờ / IP (IP dùng chung như quán net có thể cần tăng).
@@ -95,6 +96,9 @@ Mỗi lần đăng ký thử thành công sẽ tạo dòng thật trong `team_us
 - `security.use_bad_word_table` (mặc định tắt): chặn tên chứa từ trong bảng `bad_word`; khớp chuỗi con nên có thể chặn nhầm.
 
 ## 4. Bảo mật đã áp dụng
+Admin có giao diện responsive riêng, kiểm tra role/active từ database mỗi lần mở dashboard, tự hết phiên sau 30 phút và giới hạn 8 lần đăng nhập/15 phút theo IP + tên tài khoản. CSS/JS admin được tải từ file riêng để tương thích CSP.
+
+Để chặn file cấu hình, SQL, log, backup và thư mục nội bộ, hãy **gộp** `htaccess-snippet.txt` vào `.htaccess` gốc hiện có (không ghi đè `.htaccess` của website). Các file JavaScript/CSS và API mà trình duyệt cần dùng vẫn có thể nhìn thấy URL; không thể bảo mật bằng cách giấu URL, nên phải bảo vệ dữ liệu và quyền truy cập ở server.
 Prepared statements (không dùng emulate); CSRF token trong session (xoay sau mỗi lần gửi); CAPTCHA kiểm tra phía server, dùng một lần, hết hạn 5 phút;
 honeypot + chặn gửi quá nhanh; giới hạn tần suất theo IP; escape toàn bộ output (`htmlspecialchars`); CSP không cho script/style nội tuyến;
 `X-Frame-Options`, `nosniff`, `Referrer-Policy`; cookie session `HttpOnly` + `SameSite=Lax` (+ `Secure` khi HTTPS), tên riêng `KPAHREG`; `session_regenerate_id` sau khi thành công;
