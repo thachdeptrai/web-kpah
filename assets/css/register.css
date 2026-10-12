@@ -377,3 +377,8 @@ dialog::backdrop { background: rgba(5, 4, 14, .72); -webkit-backdrop-filter: blu
     .panel-inner, .control input, .btn { border: 1px solid CanvasText; }
     .wordmark { -webkit-text-fill-color: CanvasText; color: CanvasText; background: none; }
 }
+
+/* Email verification actions */
+.code-action { width:100%; min-height:42px; margin-top:10px; font-size:.92rem; }
+.code-action.is-loading { opacity:.7; pointer-events:none; }
+.code-action.is-done { border-color:rgba(79,214,160,.5); color:var(--jade); }
