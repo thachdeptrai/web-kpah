@@ -12,8 +12,6 @@ $version    = trim((string) kp_config('app.version', ''));
 $isOpen     = (bool) kp_config('registration.open', true);
 $phoneMode  = 'required'; // Số điện thoại luôn bắt buộc theo yêu cầu đăng ký.
 $needTerms  = (bool) kp_config('registration.terms_required', true);
-$captchaOn  = kp_captcha_enabled();
-$captchaOk  = !$captchaOn || kp_captcha_available();
 $pwMin      = (int) kp_config('security.password_min', 6);
 $pwMax      = (int) kp_config('security.password_max', 32);
 $userHint   = (string) kp_config('security.username_hint', '');
@@ -26,7 +24,7 @@ $linkSupport  = kp_safe_url(kp_config('links.support', ''));
 
 $_SESSION['kp_form_ts'] = time();
 $csrf = kp_csrf_token();
-$canSubmit = $isOpen && $captchaOk;
+$canSubmit = $isOpen;
 ?><!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -126,7 +124,8 @@ $canSubmit = $isOpen && $captchaOk;
                       data-pw-min="<?= $pwMin ?>"
                       data-pw-max="<?= $pwMax ?>"
                       data-phone-mode="<?= kp_e($phoneMode) ?>"
-                      data-referral-required="1">
+                      data-email-code-endpoint="api/send-email-code.php"
+                      data-email-verify-endpoint="api/verify-email-code.php">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 
                     <div class="hp" aria-hidden="true">
@@ -168,11 +167,25 @@ $canSubmit = $isOpen && $captchaOk;
                                 <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required
                                        autocapitalize="none" spellcheck="false" aria-describedby="h-email e-email" placeholder="ban@example.com">
                             </div>
-                            <p class="hint" id="h-email">Email dùng để liên hệ và hỗ trợ tài khoản.</p>
+                            <p class="hint" id="h-email">Email dùng để xác minh và hỗ trợ khôi phục tài khoản.</p>
                             <p class="field-error" id="e-email" aria-live="polite"></p>
+                            <button type="button" class="btn btn-ghost code-action" id="send-email-code">Gửi mã xác minh</button>
                         </div>
 
-                        <div class="field" data-field="referral_code">
+                        <div class="field" data-field="email_code">
+                            <label for="f-email-code">Mã xác minh email</label>
+                            <div class="control">
+                                <svg class="icon lead-icon" aria-hidden="true"><use href="#i-shield"/></svg>
+                                <input id="f-email-code" name="email_code" type="text" inputmode="numeric" autocomplete="one-time-code"
+                                       pattern="[0-9]{6}" maxlength="6" required aria-describedby="h-email-code e-email_code" placeholder="Nhập mã 6 chữ số">
+                            </div>
+                            <p class="hint" id="h-email-code">Mã có hiệu lực trong 10 phút. Hãy xác minh trước khi tạo tài khoản.</p>
+                            <p class="field-error" id="e-email_code" aria-live="polite"></p>
+                            <button type="button" class="btn btn-ghost code-action" id="verify-email-code">Xác minh mã</button>
+                            <p class="field-ok" id="email-verified" hidden><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Email đã xác minh</p>
+                        </div>
+
+<div class="field" data-field="referral_code">
                             <label for="f-referral-code">Mã giới thiệu <span class="opt">(bắt buộc)</span></label>
                             <div class="control">
                                 <svg class="icon lead-icon" aria-hidden="true"><use href="#i-shield"/></svg>
@@ -215,27 +228,6 @@ $canSubmit = $isOpen && $captchaOk;
                             <p class="field-ok" id="ok-password2" hidden><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Mật khẩu khớp</p>
                         </div>
 
-                        <?php if ($captchaOn): ?>
-                        <div class="field" data-field="captcha">
-                            <label for="f-captcha">Mã xác nhận</label>
-                            <div class="captcha-row">
-                                <div class="control">
-                                    <svg class="icon lead-icon" aria-hidden="true"><use href="#i-shield"/></svg>
-                                    <input id="f-captcha" name="captcha" type="text" inputmode="text" autocomplete="off"
-                                           autocapitalize="characters" spellcheck="false" maxlength="8" required
-                                           aria-describedby="h-captcha e-captcha" placeholder="Nhập mã">
-                                </div>
-                                <div class="captcha-box">
-                                    <img id="captcha-img" src="captcha.php" width="168" height="58" alt="Ảnh mã xác nhận">
-                                    <button type="button" id="captcha-refresh" class="icon-btn" aria-label="Đổi mã xác nhận khác" title="Đổi mã khác">
-                                        <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="hint" id="h-captcha">Không phân biệt chữ hoa, chữ thường.</p>
-                            <p class="field-error" id="e-captcha" aria-live="polite"></p>
-                        </div>
-                        <?php endif; ?>
 
                         <?php if ($needTerms): ?>
                         <div class="field check" data-field="agree">
@@ -308,6 +300,6 @@ $canSubmit = $isOpen && $captchaOk;
 <?php endif; ?>
 
 <script src="assets/js/scene.js?v=1" defer></script>
-<script src="assets/js/register.js?v=3" defer></script>
+<script src="assets/js/register.js?v=1" defer></script>
 </body>
 </html>
