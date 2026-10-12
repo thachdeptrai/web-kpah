@@ -1,0 +1,25 @@
+# ==========================================================================
+# KPAH register – đoạn cấu hình GỢI Ý để GỘP vào .htaccess hiện có ở thư mục gốc.
+# KHÔNG ghi đè .htaccess cũ của bạn. Hãy kiểm tra các route đang chạy sau khi gộp.
+# (Các thư mục includes/, storage/, database/ đã có .htaccess "Require all denied" riêng.)
+# ==========================================================================
+
+# Tắt liệt kê thư mục
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+# Chặn tải trực tiếp các file cấu hình / dữ liệu / tài liệu nội bộ
+<FilesMatch "^(config\.register(\.local)?(\.sample)?\.php|\.gitignore|htaccess-snippet\.txt|README\.md|.*\.sql)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Nginx (nếu dùng): thêm vào server {}
+#   location ~ ^/(includes|storage|database)/ { deny all; }
+#   location ~* (config\.register.*\.php|\.sql|README\.md)$ { deny all; }
