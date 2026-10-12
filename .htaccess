@@ -1,18 +1,16 @@
-# KPAH web: URL sạch, không liệt kê thư mục và bảo vệ mã backend.
+# KPAH web: URL sạch, không liệt kê thư mục.
 Options -Indexes -MultiViews
 DirectoryIndex index.php
 RewriteEngine On
 
-# Chỉ chặn các thư mục chứa mã/backend hoặc dữ liệu nội bộ.
-# Không chặn thư mục screen/screens, giao diện, assets hoặc các file JS/CSS công khai.
-RewriteRule ^(?:includes|storage|vendor|config|core|database|models|controllers|services|repositories|helpers|bootstrap|private)(?:/|$) - [F,END,NC]
+# Chỉ chặn file JavaScript nằm ngoài thư mục assets/js.
+# JavaScript công khai mà giao diện cần tải vẫn được phép chạy.
+RewriteRule ^(?!assets/js/).+\.js$ - [F,END,NC]
 
-# Chặn file cấu hình, môi trường, log, bản sao lưu, dump SQL và khóa bí mật.
-<FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|composer\.(?:json|lock)|config(?:\.[a-z0-9_-]+)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|dist|pem|key|p12|pfx))$">
+# Bảo vệ file chứa thông tin cấu hình/secret và file nội bộ.
+<FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|config\.register(?:\.local)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|pem|key|p12|pfx))$">
     Require all denied
 </FilesMatch>
-
-# Chặn metadata quản lý mã nguồn và tài liệu nội bộ.
 <FilesMatch "(?i)^(?:\.gitignore|\.gitattributes|\.gitmodules|README(?:\..*)?|LICENSE(?:\..*)?)$">
     Require all denied
 </FilesMatch>
@@ -34,7 +32,7 @@ RewriteRule ^tai-khoan/?$ home.php [END,QSA]
 RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
 RewriteRule ^$ index.php [END]
 
-# File/thư mục công khai (screen/screens, assets, API, ảnh...) vẫn chạy bình thường.
+# Cho phép các file/thư mục khác chạy bình thường.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [END]
