@@ -163,4 +163,48 @@ Không đưa mật khẩu thật hoặc hash vào Git. Nếu dùng Windows/XAMPP
 - Các trang quản trị kiểm tra session đăng nhập và kiểm tra lại role/trạng thái admin từ database mỗi lần truy cập. Phiên quản trị hết hạn sau 30 phút không hoạt động.
 
 Lưu ý: module này vốn không có hệ thống đăng nhập quản trị sẵn, vì vậy chức năng trên dùng bảng `kpah_web_admins` riêng; không tự suy đoán quyền admin từ bảng tài khoản game `team_user`.
+### 4. SQL tạm
+- -- 1. Bảng mã giới thiệu
+CREATE TABLE IF NOT EXISTS `kpah_referral_codes` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(64) NOT NULL,
+  `count` INT UNSIGNED NOT NULL DEFAULT 1,
+  `used_count` INT UNSIGNED NOT NULL DEFAULT 0,
+  `date` DATETIME NULL DEFAULT NULL,
+  `created_by` BIGINT UNSIGNED NULL DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_kpah_referral_code` (`code`),
+  KEY `idx_kpah_referral_expiry` (`date`),
+  KEY `idx_kpah_referral_active` (`is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
 
+-- 2. Bảng lịch sử sử dụng mã
+CREATE TABLE IF NOT EXISTS `kpah_referral_code_uses` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `referral_id` BIGINT UNSIGNED NOT NULL,
+  `code` VARCHAR(64) NOT NULL,
+  `username` VARCHAR(20) NOT NULL,
+  `used_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ip_hash` CHAR(64) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_kpah_referral_username` (`username`),
+  KEY `idx_kpah_referral_uses_code` (`referral_id`),
+  KEY `idx_kpah_referral_uses_date` (`used_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+-- 3. Bảng tài khoản quản trị web
+CREATE TABLE IF NOT EXISTS `kpah_web_admins` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(64) NOT NULL,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'admin',
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_kpah_web_admin_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
