@@ -126,6 +126,7 @@ if (($referral['status'] ?? '') !== 'ok') {
 try {
     $result = kp_create_account($clean['username'], $clean['password'], $clean['phone'], $clean['email']);
 } catch (\Throwable $e) {
+    kp_referral_release($referral['lock'] ?? '');
     kp_log('tạo tài khoản thất bại', $e);
     kp_reply(['ok' => false, 'message' => 'Hệ thống đang bận hoặc bảo trì. Vui lòng thử lại sau ít phút.'], 500);
 }
