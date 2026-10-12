@@ -45,7 +45,7 @@ function kp_normalize_phone($raw)
 function kp_validate_registration(array $in)
 {
     $errors = [];
-    $clean  = ['username' => '', 'password' => '', 'phone' => ''];
+    $clean  = ['username' => '', 'password' => '', 'phone' => '', 'email' => ''];
 
     $pattern = (string) kp_config('security.username_pattern', '/^[a-z0-9_]{4,20}$/');
     $hint    = (string) kp_config('security.username_hint', 'Tên tài khoản không hợp lệ.');
@@ -91,6 +91,16 @@ function kp_validate_registration(array $in)
         $errors['password2'] = 'Mật khẩu nhập lại chưa khớp.';
     }
     $clean['password'] = $password;
+
+    /* --- Email bắt buộc --- */
+    $email = isset($in['email']) && is_string($in['email']) ? strtolower(trim($in['email'])) : '';
+    if ($email === '') {
+        $errors['email'] = 'Vui lòng nhập email.';
+    } elseif (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Địa chỉ email chưa đúng định dạng.';
+    } else {
+        $clean['email'] = $email;
+    }
 
     /* --- Số điện thoại (tuỳ cấu hình) --- */
     $mode = (string) kp_config('registration.phone', 'optional');
