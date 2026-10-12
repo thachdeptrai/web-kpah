@@ -1,11 +1,11 @@
 <?php
 /**
- * Trang chủ: hiển thị trang đăng ký KPAH.
- * Mở http://localhost/kpah-register/ sẽ vào thẳng form đăng ký.
- * (Các đường dẫn assets/, api/, captcha.php đều tương đối nên hoạt động cả ở thư mục gốc lẫn thư mục con.)
+ * Trang mặc định: chuyển người chơi sang trang đăng nhập.
  */
+require __DIR__ . '/includes/bootstrap.php';
 if (!empty($_SESSION['kp_user_id'])) {
-    header('Location: home.php');
+    header('Location: tai-khoan');
     exit;
 }
-require __DIR__ . '/register.php';
+header('Location: dang-nhap');
+exit;
