@@ -17,10 +17,40 @@ if (!defined('KP_ROOT')) {
     exit;
 }
 
-/** Băm mật khẩu theo định dạng MySQL PASSWORD() mà tài khoản hiện có đang dùng. */
+/**
+ * Băm theo định dạng legacy mà game server hiện dùng.
+ * Không đổi sang bcrypt khi tạo tài khoản mới nếu game server vẫn cần hash này.
+ */
 function kp_game_password_hash($password)
 {
     return '*' . strtoupper(sha1(sha1((string) $password, true)));
+}
+
+/**
+ * Xác minh các định dạng đang có trong bảng team_user:
+ * - bcrypt ($2y$ / $2a$ / $2b$): password_verify()
+ * - hash legacy của game: so sánh hằng thời gian với kp_game_password_hash().
+ * Không chấp nhận mật khẩu lưu dạng plaintext.
+ */
+function kp_verify_account_password($password, $storedHash)
+{
+    $password = (string) $password;
+    $storedHash = (string) $storedHash;
+
+    if (preg_match('/^\$2[aby]\$\d{2}\$/', $storedHash) === 1) {
+        return password_verify($password, $storedHash);
+    }
+
+    if (preg_match('/^\*[A-F0-9]{40}$/', $storedHash) === 1) {
+        return hash_equals($storedHash, kp_game_password_hash($password));
+    }
+
+    // Hỗ trợ thêm hash PHP hiện đại nếu có tài khoản nào đã dùng password_hash() với Argon2.
+    if (strpos($storedHash, '$argon2') === 0) {
+        return password_verify($password, $storedHash);
+    }
+
+    return false;
 }
 
 /**
