@@ -85,8 +85,8 @@ Nếu muốn dùng CAPTCHA ảnh PNG: mở `C:\xampp\php\php.ini`, bỏ dấu `;
 Mỗi lần đăng ký thử thành công sẽ tạo dòng thật trong `team_user`; giới hạn mặc định 5 tài khoản/24 giờ/IP – khi thử nhiều, tăng `security.rate_success` hoặc xoá file trong `storage/ratelimit/`.
 
 ### Cấu hình chính (`config.register.php`)
-- Đăng ký yêu cầu **email + mã xác minh 6 số + số điện thoại**. Mã email có hiệu lực mặc định 10 phút; giới hạn gửi mã 5 lần/10 phút/IP. API chỉ cho tạo tài khoản sau khi email được xác minh trong cùng session.
-- SMTP đặt trong `config.register.local.php` (không commit file này): `mail.from_email`, `mail.from_name`, `mail.smtp_host`, `mail.smtp_port`, `mail.smtp_user`, `mail.smtp_pass`, `mail.smtp_secure`. Gmail thường dùng `smtp.gmail.com`, cổng `587`, `tls` và **Mật khẩu ứng dụng Google** (không dùng mật khẩu đăng nhập Gmail thường). Bật xác minh 2 bước trên Google rồi tạo App Password.
+- Đăng ký yêu cầu **email, số điện thoại và mã giới thiệu hợp lệ**. Không còn bước xác minh email bằng OTP.
+- Mã giới thiệu được kiểm tra ở máy chủ; mã bị khóa, hết hạn hoặc hết lượt sẽ không thể dùng.
 - Sao chép `config.register.local.sample.php` thành `config.register.local.php`, điền SMTP và thông tin DB thật. Nếu file local cũ đang đặt `registration.phone` thành `optional`, đổi thành `required`; file local sẽ ưu tiên cấu hình mặc định.
 - `security.username_pattern` (mặc định `/^[a-z0-9_]{4,20}$/`), `username_hint`, `password_min` = 6, `password_max` = 32.
 - `security.rate_attempts` = 10 lượt gửi / 10 phút / IP; `rate_success` = 5 tài khoản / 24 giờ / IP (IP dùng chung như quán net có thể cần tăng).
