@@ -311,6 +311,6 @@ $canSubmit = $isOpen && $captchaOk;
 <?php endif; ?>
 
 <script src="assets/js/scene.js?v=1" defer></script>
-<script src="assets/js/register.js?v=1" defer></script>
+<script src="assets/js/register.js?v=2" defer></script>
 </body>
 </html>
