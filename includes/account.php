@@ -47,6 +47,13 @@ function kp_create_account($username, $password, $phone, $email)
             return 'exists';
         }
 
+        // Chặn email đã dùng; đăng ký web được tuần tự hóa bằng cùng named lock.
+        $emailCheck = $pdo->prepare('SELECT 1 FROM `team_user` WHERE LOWER(TRIM(`email`)) = LOWER(TRIM(?)) LIMIT 1');
+        $emailCheck->execute([$email]);
+        if ($emailCheck->fetchColumn()) {
+            return 'email_exists';
+        }
+
         $ins = $pdo->prepare(
             'INSERT INTO `team_user` (`userid`, `provider`, `agent`, `username`, `password`, `phone`, `regdate`, `ban`, `fromgame`, `email`)
              VALUES (?, 0, -1, ?, ?, ?, ?, 0, 0, ?)'
