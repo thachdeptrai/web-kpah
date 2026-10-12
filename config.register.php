@@ -70,19 +70,6 @@ return [
         'open'           => true,
         'phone'          => 'required',         // Bắt buộc số điện thoại khi đăng ký
         'terms_required' => true,
-        'email_verification' => true,
-        'email_code_ttl' => 600,
-    ],
-
-    // SMTP: cấu hình qua config.register.local.php hoặc biến môi trường; không commit mật khẩu.
-    'mail' => [
-        'from_email' => '',
-        'from_name' => 'KPAH',
-        'smtp_host' => '',
-        'smtp_port' => 587,
-        'smtp_user' => '',
-        'smtp_pass' => '',
-        'smtp_secure' => 'tls',
     ],
 
     // Chỉ hiển thị khi điền. Có thể là đường dẫn tương đối (vd 'login.php') hoặc URL http(s).
