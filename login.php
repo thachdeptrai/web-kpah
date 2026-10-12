@@ -25,10 +25,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $st->execute([$username]);
                 $user = $st->fetch();
                 $stored = $user ? (string)$user['password'] : '';
-                $valid = $user && (
-                    hash_equals(kp_game_password_hash($password), $stored)
-                    || (!isset($stored[0]) || $stored[0] !== '*') && hash_equals($stored, $password)
-                );
+                $valid = $user && kp_verify_account_password($password, $stored);
                 if ($valid) {
                     session_regenerate_id(true);
                     $_SESSION['kp_user_id'] = (int)$user['id'];
@@ -88,7 +85,7 @@ $version = trim((string)kp_config('app.version', ''));
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tài khoản:</strong> nhập đúng tên tài khoản đã đăng ký.</span></li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span><strong>Bảo mật:</strong> không chia sẻ mật khẩu hoặc mã xác minh.</span></li>
-            <li><svg class="icon" aria-hidden="true"><use href="#i-user-add"/></svg><span>Chưa có tài khoản? <a class="brand-register-link" href="register.php">Đăng ký miễn phí ngay <span>↗</span></a></span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-user-add"/></svg><span>Chưa có tài khoản? <a class="brand-register-link" href="/dang-ky">Đăng ký miễn phí ngay <span>↗</span></a></span></li>
         </ul>
     </section>
     <section class="panel" aria-labelledby="panel-title">
@@ -105,7 +102,7 @@ $version = trim((string)kp_config('app.version', ''));
                     <div><strong>Không thể đăng nhập</strong><p><?= kp_e($error) ?></p></div>
                 </div>
             <?php endif; ?>
-            <form id="login-form" method="post" action="login.php" autocomplete="on">
+            <form id="login-form" method="post" action="/dang-nhap" autocomplete="on">
                 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                 <div class="fields">
                     <div class="field">
@@ -116,7 +113,7 @@ $version = trim((string)kp_config('app.version', ''));
                         </div>
                     </div>
                     <div class="field">
-                        <div class="login-label-row"><label for="password">Mật khẩu</label><a class="login-forgot" href="forgot-password.php">Quên mật khẩu?</a></div>
+                        <div class="login-label-row"><label for="password">Mật khẩu</label><a class="login-forgot" href="/quen-mat-khau">Quên mật khẩu?</a></div>
                         <div class="control">
                             <svg class="icon lead-icon" aria-hidden="true"><use href="#i-lock"/></svg>
                             <input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" placeholder="Nhập mật khẩu" required>
