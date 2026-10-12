@@ -103,6 +103,10 @@ body.home-page:before{position:fixed;inset:0;z-index:0;pointer-events:none;conte
 .password-change h4{margin:7px 0 0;font-size:16px;letter-spacing:-.02em}
 .password-key{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(230,189,105,.22);border-radius:10px;color:var(--home-gold);background:rgba(230,189,105,.06);font-size:19px}
 .password-help{margin:10px 0 16px;color:var(--home-muted);font-size:9px;line-height:1.7}
+.security-card label{display:block;margin:0 0 7px;color:#d9dfeb;font-size:10px;font-weight:600}
+.security-card input{width:100%;min-width:0;height:43px;padding:0 12px;border:1px solid rgba(205,216,239,.15);border-radius:9px;outline:none;background:#0c111a;color:var(--home-text);font:11px "Be Vietnam Pro",sans-serif;transition:border-color .18s,box-shadow .18s}
+.security-card input::placeholder{color:#657086}
+.security-card input:focus{border-color:var(--home-gold);box-shadow:0 0 0 3px rgba(230,189,105,.08)}
 #change-password-form{display:flex;flex-direction:column;gap:12px}
 .password-submit{width:100%;margin-top:2px}
 .security-link{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:19px;padding-top:16px;border-top:1px solid var(--home-line);color:#dfe5f0;font-size:10px;font-weight:600;text-decoration:none}
