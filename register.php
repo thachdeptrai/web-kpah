@@ -101,11 +101,6 @@ $canSubmit = $isOpen;
                         <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
                         <div><strong>Đăng ký đang tạm đóng</strong><p>Vui lòng quay lại sau.</p></div>
                     </div>
-                <?php elseif (!$captchaOk): ?>
-                    <div class="alert is-visible" data-type="warn" role="status">
-                        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
-                        <div><strong>Chưa thể đăng ký lúc này</strong><p>Hệ thống xác nhận mã đang được bảo trì. Vui lòng quay lại sau.</p></div>
-                    </div>
                 <?php endif; ?>
 
                 <noscript>
