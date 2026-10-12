@@ -34,6 +34,8 @@ if ($action === 'send_code') {
 }
 if ($action !== 'reset') kp_recovery_reply(['ok'=>false,'message'=>'Yêu cầu không hợp lệ.'],400);
 $code = trim((string)($_POST['code'] ?? ''));
+list($resetAllowed, $resetRetry) = kp_rate_limit('password_reset_verify', kp_client_ip(), 10, 600, true);
+if (!$resetAllowed) kp_recovery_reply(['ok'=>false,'message'=>'Bạn xác minh quá nhiều lần. Hãy thử lại sau ít phút.'],429);
 $password = (string)($_POST['new_password'] ?? '');
 $confirm = (string)($_POST['confirm_password'] ?? '');
 if (strlen($password) < 6 || strlen($password) > 32 || preg_match('/\s/', $password)) kp_recovery_reply(['ok'=>false,'message'=>'Mật khẩu mới phải từ 6–32 ký tự và không chứa khoảng trắng.'],422);
