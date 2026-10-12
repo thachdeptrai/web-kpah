@@ -1,0 +1,48 @@
+/* KPAH account recovery — đồng bộ giao diện đăng nhập/đăng ký */
+.recovery-stage{grid-template-columns:minmax(0,1.1fr) minmax(360px,500px);gap:clamp(26px,5vw,68px)}
+.recovery-brand{overflow:hidden}
+.recovery-brand h1{font-family:var(--font-head);font-size:clamp(2.5rem,5vw,4.5rem);line-height:1.02;letter-spacing:-.035em;color:var(--text)}
+.recovery-brand h1 span{color:var(--gold-hi);font-style:italic}
+.recovery-kicker{margin:20px 0 12px;color:var(--gold-hi);font:500 .68rem 'Be Vietnam Pro',sans-serif;letter-spacing:.16em}
+.recovery-brand .lead{max-width:38ch}
+.recovery-orbit{position:absolute;right:-8px;bottom:12px;width:clamp(150px,20vw,245px);aspect-ratio:1;border:1px solid rgba(226,180,90,.22);border-radius:50%;display:grid;place-items:center;opacity:.8;pointer-events:none}
+.recovery-orbit:before,.recovery-orbit:after{content:"";position:absolute;inset:14%;border:1px solid rgba(207,214,255,.17);border-radius:50%;transform:rotate(35deg) scaleX(.55)}
+.recovery-orbit:after{transform:rotate(-35deg) scaleX(.55)}
+.recovery-orbit span{width:40%;height:40%;border-radius:50%;border:1px solid rgba(246,220,155,.4);background:radial-gradient(circle,rgba(226,180,90,.23),rgba(127,140,255,.04) 70%);box-shadow:0 0 50px rgba(226,180,90,.12)}
+.recovery-orbit i{position:absolute;color:var(--gold-hi);font-size:1.5rem;font-style:normal;top:16%;right:17%;text-shadow:0 0 18px rgba(246,220,155,.8)}
+.recovery-panel{padding-top:clamp(23px,3.6vw,34px)}
+.recovery-panel .login-intro{margin-bottom:21px;line-height:1.75}
+.recovery-panel .fields{gap:13px}
+.recovery-panel .field label{font-size:.88rem}
+.recovery-panel .control input{height:47px;font-size:.9rem}
+.recovery-send{width:100%;margin-top:2px;min-height:47px;gap:10px;color:var(--gold-hi);border-color:rgba(226,180,90,.3);background:rgba(226,180,90,.07)}
+.recovery-send .icon{width:18px;height:18px}
+.recovery-send span{flex:1;text-align:left}
+.recovery-send b,.recovery-submit b{font-size:1.2rem;line-height:1}
+.recovery-send:disabled{opacity:.65;cursor:wait}
+.recovery-separator{display:flex;align-items:center;gap:12px;margin:7px 0 1px;color:var(--muted);font:500 .58rem 'Be Vietnam Pro',sans-serif;letter-spacing:.14em}
+.recovery-separator:before,.recovery-separator:after{content:"";height:1px;flex:1;background:var(--line)}
+.recovery-feedback{font-size:.82rem;line-height:1.65;overflow-wrap:anywhere}
+.recovery-feedback:not(:empty){margin-top:14px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(127,140,255,.07)}
+.recovery-feedback.is-good{color:var(--jade);border-color:rgba(79,214,160,.28);background:rgba(79,214,160,.07)}
+.recovery-feedback.is-bad{color:var(--ember);border-color:rgba(255,138,122,.3);background:rgba(255,138,122,.07)}
+.recovery-submit{margin-top:14px;gap:10px}
+.recovery-submit>span{flex:1;text-align:center}
+.recovery-back{margin-top:17px}
+.recovery-back a{color:var(--gold-hi);font-weight:600;text-underline-offset:3px}
+@media(max-width:920px){
+ .recovery-stage{max-width:600px;grid-template-columns:minmax(0,1fr);gap:22px}
+ .recovery-brand{text-align:center}
+ .recovery-brand .lead{margin-inline:auto}
+ .recovery-brand .rules{max-width:430px;margin-inline:auto;text-align:left}
+ .recovery-orbit{right:0;bottom:-20px;width:150px;opacity:.35}
+ .recovery-brand h1{font-size:clamp(2.5rem,10vw,3.8rem)}
+}
+@media(max-width:480px){
+ .recovery-stage{padding:20px 14px 28px;gap:15px}
+ .recovery-panel{padding:22px 18px}
+ .recovery-brand .wordmark{font-size:clamp(3.4rem,17vw,5rem)}
+ .recovery-brand .rules{gap:9px;margin-top:18px}
+ .recovery-brand .rules li{font-size:.82rem}
+ .recovery-panel .login-intro{font-size:.86rem}
+}
