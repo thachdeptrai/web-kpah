@@ -1,0 +1,44 @@
+# KPAH web: URL sạch, không liệt kê thư mục và chặn file nội bộ/nhạy cảm.
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+RewriteEngine On
+
+# Chặn truy cập HTTP trực tiếp vào thư mục nội bộ; PHP vẫn include được từ server.
+RewriteRule ^(?:includes|storage|vendor|tests?)(?:/|$) - [F,L,NC]
+
+# Không cho tải cấu hình, log, bản sao lưu, dump SQL, file môi trường hay metadata Git.
+<FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|composer\.(?:json|lock)|config\.register(?:\.local)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|dist|pem|key))$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_authz_core.c>
+    <FilesMatch "(?i)^(?:\.gitignore|\.gitattributes|\.gitmodules|README(?:\..*)?|LICENSE(?:\..*)?)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+# Chặn truy cập các file PHP phụ trợ ở thư mục gốc, nhưng giữ trang và API cần dùng.
+<FilesMatch "^(?:config\.register\.php|config\.register\.local\.php)$">
+    Require all denied
+</FilesMatch>
+
+# Đưa URL cũ có đuôi PHP về URL sạch.
+RewriteCond %{THE_REQUEST} \s/+(.*/)?login\.php[?\s] [NC]
+RewriteRule ^login\.php$ dang-nhap [R=302,L,NE]
+RewriteCond %{THE_REQUEST} \s/+(.*/)?register\.php[?\s] [NC]
+RewriteRule ^register\.php$ dang-ky [R=302,L,NE]
+RewriteCond %{THE_REQUEST} \s/+(.*/)?home\.php[?\s] [NC]
+RewriteRule ^home\.php$ tai-khoan [R=302,L,NE]
+RewriteCond %{THE_REQUEST} \s/+(.*/)?forgot-password\.php[?\s] [NC]
+RewriteRule ^forgot-password\.php$ quen-mat-khau [R=302,L,NE]
+
+RewriteRule ^(dang-nhap|dang-ky|tai-khoan|quen-mat-khau)/$ $1 [R=302,L]
+RewriteRule ^dang-nhap/?$ login.php [END,QSA]
+RewriteRule ^dang-ky/?$ register.php [END,QSA]
+RewriteRule ^tai-khoan/?$ home.php [END,QSA]
+RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
+RewriteRule ^$ index.php [END]
+
+# Cho phép file/thư mục công khai (assets, API, ảnh...) hoạt động bình thường.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [END]
