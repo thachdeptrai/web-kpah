@@ -92,7 +92,7 @@ $codes = kp_db()->query(
 $uses = kp_db()->query('SELECT code, username, used_at FROM kpah_referral_code_uses ORDER BY id DESC LIMIT 100')->fetchAll();
 ?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quản lý mã giới thiệu KPAH</title>
-<link rel="stylesheet" href="../assets/css/admin.css?v=1"></head><body><header><div class="brand"><div class="brand-mark">✦</div><div class="brand-copy"><span class="eyebrow">KPAH • CONTROL CENTER</span><h1>Quản trị hệ thống</h1></div></div><div class="head-right"><span><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="logout.php">Đăng xuất ↗</a></div></header>
+<link rel="stylesheet" href="../assets/css/admin.css?v=1"></head><body><header><div class="brand"><div class="brand-mark">✦</div><div class="brand-copy"><span class="eyebrow">KPAH • CONTROL CENTER</span><h1>Quản trị hệ thống</h1></div></div><div class="head-right"><a class="logout" href="index.php">⌂ Trang chủ</a><span><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="logout.php">Đăng xuất ↗</a></div></header>
 <main class="wrap">
 <div class="hero"><div><div class="eyebrow">REFERRAL MANAGEMENT / 01</div><h2>Trung tâm mã giới thiệu</h2><p>Quản lý lượt đăng ký, hạn sử dụng và lịch sử kích hoạt trong một bảng điều khiển duy nhất.</p></div><div class="live">Phiên quản trị được bảo vệ</div></div>
 <section class="stats">
