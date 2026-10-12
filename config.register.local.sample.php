@@ -16,6 +16,20 @@ return [
         'user' => 'TEN_USER_DB',
         'pass' => 'MAT_KHAU_DB',
     ],
+    'mail' => [
+        'from_email' => 'your-email@example.com',
+        'from_name' => 'KPAH',
+        'smtp_host' => 'smtp.gmail.com',
+        'smtp_port' => 587,
+        'smtp_user' => 'your-email@gmail.com',
+        'smtp_pass' => 'GMAIL_APP_PASSWORD',
+        'smtp_secure' => 'tls',
+    ],
+    'registration' => [
+        'phone' => 'required',
+        'email_verification' => true,
+        'email_code_ttl' => 600,
+    ],
     'app' => [
         'version' => '1.0.0',
     ],
