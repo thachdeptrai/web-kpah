@@ -1,0 +1,54 @@
+<?php
+require __DIR__ . '/../includes/bootstrap.php';
+kp_send_security_headers(false);
+header('Content-Type: application/json; charset=utf-8');
+function kp_recovery_reply(array $payload, $status = 200) { http_response_code($status); echo json_encode($payload, JSON_UNESCAPED_UNICODE); exit; }
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Allow: POST'); kp_recovery_reply(['ok'=>false,'message'=>'Phương thức không hợp lệ.'],405); }
+if (!kp_csrf_check($_POST['csrf'] ?? '')) kp_recovery_reply(['ok'=>false,'message'=>'Phiên bảo mật hết hạn. Hãy tải lại trang.'],403);
+$action = (string)($_POST['action'] ?? '');
+if ($action === 'send_code') {
+    $identity = trim((string)($_POST['identity'] ?? ''));
+    if ($identity === '' || strlen($identity) > 254) kp_recovery_reply(['ok'=>false,'message'=>'Nhập tên tài khoản hoặc email hợp lệ.'],422);
+    list($allowed, $retry) = kp_rate_limit('password_recovery', kp_client_ip().'|'.strtolower($identity), 5, 900, true);
+    if (!$allowed) kp_recovery_reply(['ok'=>false,'message'=>'Bạn yêu cầu quá nhiều lần. Hãy thử lại sau ít phút.'],429);
+    try {
+        $st = kp_db()->prepare('SELECT id, email FROM team_user WHERE username = ? OR LOWER(TRIM(email)) = LOWER(TRIM(?)) LIMIT 1');
+        $st->execute([$identity, $identity]);
+        $user = $st->fetch();
+        if ($user && filter_var((string)$user['email'], FILTER_VALIDATE_EMAIL)) {
+            $code = (string)random_int(100000, 999999);
+            $ttl = max(60, (int)kp_config('registration.email_code_ttl', 600));
+            kp_send_mail_smtp((string)$user['email'], 'Mã khôi phục mật khẩu KPAH', "Mã khôi phục mật khẩu của bạn là: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nNếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua thư này.");
+            $_SESSION['kp_recovery_hash'] = hash('sha256', $code);
+            $_SESSION['kp_recovery_expiry'] = time() + $ttl;
+            $_SESSION['kp_recovery_user'] = (int)$user['id'];
+        } else {
+            unset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user']);
+        }
+        // Thông báo chung để không tiết lộ tài khoản/email có tồn tại hay không.
+        kp_recovery_reply(['ok'=>true,'message'=>'Nếu thông tin khớp tài khoản có email hợp lệ, mã sẽ được gửi tới email đã liên kết. Hãy kiểm tra cả Spam/Thư rác.']);
+    } catch (Throwable $e) {
+        kp_log('gửi mã khôi phục mật khẩu thất bại', $e);
+        kp_recovery_reply(['ok'=>false,'message'=>'Chưa gửi được mã. Hãy kiểm tra cấu hình SMTP của máy chủ.'],503);
+    }
+}
+if ($action !== 'reset') kp_recovery_reply(['ok'=>false,'message'=>'Yêu cầu không hợp lệ.'],400);
+$code = trim((string)($_POST['code'] ?? ''));
+$password = (string)($_POST['new_password'] ?? '');
+$confirm = (string)($_POST['confirm_password'] ?? '');
+if (strlen($password) < 6 || strlen($password) > 32 || preg_match('/\s/', $password)) kp_recovery_reply(['ok'=>false,'message'=>'Mật khẩu mới phải từ 6–32 ký tự và không chứa khoảng trắng.'],422);
+if (!hash_equals($password, $confirm)) kp_recovery_reply(['ok'=>false,'message'=>'Hai mật khẩu không trùng nhau.'],422);
+$valid = isset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user'])
+    && time() <= (int)$_SESSION['kp_recovery_expiry']
+    && preg_match('/^\d{6}$/', $code)
+    && hash_equals((string)$_SESSION['kp_recovery_hash'], hash('sha256', $code));
+if (!$valid) kp_recovery_reply(['ok'=>false,'message'=>'Mã không đúng hoặc đã hết hạn. Hãy yêu cầu mã mới.'],422);
+try {
+    $st = kp_db()->prepare('UPDATE team_user SET password = ? WHERE id = ?');
+    $st->execute([kp_game_password_hash($password), (int)$_SESSION['kp_recovery_user']]);
+    unset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user']);
+    kp_recovery_reply(['ok'=>true,'message'=>'Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.','redirect'=>'login.php']);
+} catch (Throwable $e) {
+    kp_log('đặt lại mật khẩu thất bại', $e);
+    kp_recovery_reply(['ok'=>false,'message'=>'Chưa thể đổi mật khẩu lúc này. Hãy thử lại sau.'],503);
+}
