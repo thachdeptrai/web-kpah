@@ -17,7 +17,7 @@ $pwMax      = (int) kp_config('security.password_max', 32);
 $userHint   = (string) kp_config('security.username_hint', '');
 list($patBody, $patFlags) = kp_pattern_for_js(kp_config('security.username_pattern', '/^[a-z0-9_]{4,20}$/'));
 
-$linkLogin    = '/dang-nhap';
+$linkLogin    = '/login.php';
 $linkDownload = kp_safe_url(kp_config('links.download', ''));
 $linkHome     = kp_safe_url(kp_config('links.home', ''));
 $linkSupport  = kp_safe_url(kp_config('links.support', ''));

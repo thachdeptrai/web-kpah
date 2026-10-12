@@ -1,4 +1,3 @@
 config.register.local.php
 storage/ratelimit/*
 !storage/ratelimit/.gitkeep
-.htaccess
