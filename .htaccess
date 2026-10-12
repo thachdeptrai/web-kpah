@@ -1,13 +1,12 @@
-# KPAH web: URL sạch, không liệt kê thư mục.
+# KPAH web: không liệt kê thư mục.
 Options -Indexes -MultiViews
 DirectoryIndex index.php
 RewriteEngine On
 
-# Chỉ chặn file JavaScript nằm ngoài thư mục assets/js.
-# JavaScript công khai mà giao diện cần tải vẫn được phép chạy.
+# Chỉ chặn file JavaScript nằm ngoài assets/js.
 RewriteRule ^(?!assets/js/).+\.js$ - [F,END,NC]
 
-# Bảo vệ file chứa thông tin cấu hình/secret và file nội bộ.
+# Bảo vệ file cấu hình/secret và dữ liệu nội bộ.
 <FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|config\.register(?:\.local)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|pem|key|p12|pfx))$">
     Require all denied
 </FilesMatch>
@@ -15,24 +14,16 @@ RewriteRule ^(?!assets/js/).+\.js$ - [F,END,NC]
     Require all denied
 </FilesMatch>
 
-# Đưa URL cũ có đuôi PHP về URL sạch.
-RewriteCond %{THE_REQUEST} \s/+(.*/)?login\.php[?\s] [NC]
-RewriteRule ^login\.php$ dang-nhap [R=302,L,NE]
-RewriteCond %{THE_REQUEST} \s/+(.*/)?register\.php[?\s] [NC]
-RewriteRule ^register\.php$ dang-ky [R=302,L,NE]
-RewriteCond %{THE_REQUEST} \s/+(.*/)?home\.php[?\s] [NC]
-RewriteRule ^home\.php$ tai-khoan [R=302,L,NE]
-RewriteCond %{THE_REQUEST} \s/+(.*/)?forgot-password\.php[?\s] [NC]
-RewriteRule ^forgot-password\.php$ quen-mat-khau [R=302,L,NE]
+# Chuyển URL ngắn sang URL file PHP tương ứng.
+RewriteRule ^dang-nhap/?$ login.php [R=302,L,NE]
+RewriteRule ^dang-ky/?$ register.php [R=302,L,NE]
+RewriteRule ^tai-khoan/?$ home.php [R=302,L,NE]
+RewriteRule ^quen-mat-khau/?$ forgot-password.php [R=302,L,NE]
 
-RewriteRule ^(dang-nhap|dang-ky|tai-khoan|quen-mat-khau)/$ $1 [R=302,L]
-RewriteRule ^dang-nhap/?$ login.php [END,QSA]
-RewriteRule ^dang-ky/?$ register.php [END,QSA]
-RewriteRule ^tai-khoan/?$ home.php [END,QSA]
-RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
+# Trang chủ.
 RewriteRule ^$ index.php [END]
 
-# Cho phép các file/thư mục khác chạy bình thường.
+# Cho phép file/thư mục khác chạy bình thường.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [END]
