@@ -18,6 +18,6 @@ SELECT PASSWORD('123456') AS ma_bam_mysql;
 
 -- 5) Quyền tối thiểu cho user DB của web đăng ký (chạy bằng tài khoản quản trị, đổi tên user/host):
 -- CREATE USER 'kpah_web'@'localhost' IDENTIFIED BY 'DOI_MAT_KHAU_MANH';
--- GRANT SELECT, INSERT ON `kpah`.`team_user` TO 'kpah_web'@'localhost';
+-- GRANT SELECT, INSERT, UPDATE ON `kpah`.`team_user` TO 'kpah_web'@'localhost'; -- UPDATE dùng cho đổi email/SĐT và đặt lại mật khẩu
 -- GRANT SELECT ON `kpah`.`bad_word` TO 'kpah_web'@'localhost';   -- chỉ cần nếu bật use_bad_word_table
 -- FLUSH PRIVILEGES;
