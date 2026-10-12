@@ -69,9 +69,7 @@ function kp_referral_consume(array $row, $username)
         $st = $pdo->prepare(
             'UPDATE `kpah_referral_codes`
              SET `used_count` = `used_count` + 1
-             WHERE `id` = ? AND `is_active` = 1
-               AND `used_count` < `count`
-               AND (`date` IS NULL OR `date` >= NOW())'
+             WHERE `id` = ? AND `used_count` < `count`'
         );
         $st->execute([(int) $row['id']]);
         if ($st->rowCount() !== 1) {
