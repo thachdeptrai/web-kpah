@@ -12,6 +12,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Allow: POST'); kp_e
 if (!kp_csrf_check(isset($_POST['csrf']) ? $_POST['csrf'] : '')) { kp_email_code_reply(['ok'=>false,'code'=>'csrf','message'=>'Phiên đã hết hạn, hãy tải lại trang.'],403); }
 $email = isset($_POST['email']) && is_string($_POST['email']) ? strtolower(trim($_POST['email'])) : '';
 if (!$email || strlen($email)>254 || !filter_var($email,FILTER_VALIDATE_EMAIL)) { kp_email_code_reply(['ok'=>false,'message'=>'Vui lòng nhập email hợp lệ.','errors'=>['email'=>'Địa chỉ email chưa đúng định dạng.']],422); }
+// Mỗi email chỉ được đăng ký một tài khoản; không gửi OTP cho email đã có trong game.
+try {
+    $st = kp_db()->prepare('SELECT 1 FROM `team_user` WHERE LOWER(TRIM(`email`)) = LOWER(TRIM(?)) LIMIT 1');
+    $st->execute([$email]);
+    if ($st->fetchColumn()) {
+        kp_email_code_reply(['ok'=>false,'code'=>'email_exists','message'=>'Email này đã được liên kết với một tài khoản khác.','errors'=>['email'=>'Mỗi email chỉ được dùng cho một tài khoản.']],409);
+    }
+} catch (Throwable $e) {
+    kp_log('kiểm tra email trước khi gửi OTP thất bại', $e);
+    kp_email_code_reply(['ok'=>false,'message'=>'Chưa thể kiểm tra email lúc này. Vui lòng thử lại sau.'],503);
+}
 $ip = kp_client_ip();
 list($allowed,$retry) = kp_rate_limit('reg_email_code',$ip,5,600,true);
 if (!$allowed) { header('Retry-After: '.$retry); kp_email_code_reply(['ok'=>false,'message'=>'Bạn yêu cầu mã quá nhiều lần. Hãy thử lại sau.'],429); }
