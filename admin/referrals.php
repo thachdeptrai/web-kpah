@@ -96,10 +96,10 @@ $uses = kp_db()->query('SELECT code, username, used_at FROM kpah_referral_code_u
 <main class="wrap">
 <div class="hero"><div><div class="eyebrow">REFERRAL MANAGEMENT / 01</div><h2>Trung tâm mã giới thiệu</h2><p>Quản lý lượt đăng ký, hạn sử dụng và lịch sử kích hoạt trong một bảng điều khiển duy nhất.</p></div><div class="live">Phiên quản trị được bảo vệ</div></div>
 <section class="stats">
-<div class="stat" style="--glow:#9b8cff"><div class="stat-label">Tổng mã đã tạo</div><div class="stat-value"><?= number_format(count($codes)) ?></div><div class="stat-note">Tối đa 500 mã gần nhất</div></div>
-<div class="stat" style="--glow:#66e3b0"><div class="stat-label">Mã đang hoạt động</div><div class="stat-value"><?= number_format(count(array_filter($codes, function($x){ return (int)$x['is_active'] === 1 && (int)$x['remaining'] > 0 && (empty($x['date']) || strtotime($x['date']) >= time()); }))) ?></div><div class="stat-note">Còn lượt và chưa hết hạn</div></div>
-<div class="stat" style="--glow:#61e4e8"><div class="stat-label">Lượt sử dụng đã ghi nhận</div><div class="stat-value"><?= number_format(array_sum(array_map(function($x){ return (int)$x['used_count']; }, $codes))) ?></div><div class="stat-note">Tổng trên danh sách đang tải</div></div>
-<div class="stat" style="--glow:#ff829e"><div class="stat-label">Lịch sử gần đây</div><div class="stat-value"><?= number_format(count($uses)) ?></div><div class="stat-note">100 lượt mới nhất</div></div>
+<div class="stat"><div class="stat-label">Tổng mã đã tạo</div><div class="stat-value"><?= number_format(count($codes)) ?></div><div class="stat-note">Tối đa 500 mã gần nhất</div></div>
+<div class="stat"><div class="stat-label">Mã đang hoạt động</div><div class="stat-value"><?= number_format(count(array_filter($codes, function($x){ return (int)$x['is_active'] === 1 && (int)$x['remaining'] > 0 && (empty($x['date']) || strtotime($x['date']) >= time()); }))) ?></div><div class="stat-note">Còn lượt và chưa hết hạn</div></div>
+<div class="stat"><div class="stat-label">Lượt sử dụng đã ghi nhận</div><div class="stat-value"><?= number_format(array_sum(array_map(function($x){ return (int)$x['used_count']; }, $codes))) ?></div><div class="stat-note">Tổng trên danh sách đang tải</div></div>
+<div class="stat"><div class="stat-label">Lịch sử gần đây</div><div class="stat-value"><?= number_format(count($uses)) ?></div><div class="stat-note">100 lượt mới nhất</div></div>
 </section>
 <?php if ($notice): ?><div class="notice"><?= kp_e($notice) ?></div><?php endif; ?><?php if ($error): ?><div class="error"><?= kp_e($error) ?></div><?php endif; ?>
 <section class="card"><div class="card-head"><div><div class="section-kicker">CREATE / REFERRAL</div><h2>Tạo mã giới thiệu mới</h2></div><span class="mini">Cấp mã có giới hạn</span></div><p class="muted">Để trống mã để tự sinh mã ngẫu nhiên. Số lượt là tổng lượt đăng ký tối đa; ngày hết hạn để trống nghĩa là không hết hạn.</p>
