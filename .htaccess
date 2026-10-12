@@ -16,6 +16,9 @@ RewriteRule ^(forgot-password|quen-mat-khau)\.php$ quen-mat-khau [R=301,L,NE]
 # Trang chính
 RewriteRule ^$ index.php [L]
 
+# Chuẩn hóa URL: bỏ dấu / cuối để đường dẫn assets/API tương đối không bị lệch.
+RewriteRule ^(dang-nhap|dang-ky|tai-khoan|quen-mat-khau)/$ $1 [R=301,L]
+
 # URL tiếng Việt không dấu, không có đuôi .php
 RewriteRule ^dang-nhap/?$ login.php [L,QSA]
 RewriteRule ^dang-ky/?$ register.php [L,QSA]
