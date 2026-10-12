@@ -128,8 +128,8 @@
     var validators = {
         username: function () { return checkUsername(el.username.value.trim().toLowerCase(), cfg.userRe, cfg.hint); },
         phone: function () { return el.phone ? checkPhone(el.phone.value, cfg.phoneMode) : ''; },
-        email: function () { return !el.email.value.trim() ? 'Vui lòng nhập email.' : (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(el.email.value.trim()) ? '' : 'Địa chỉ email chưa đúng định dạng.'); },
-        email_code: function () { return !el.emailCode.value.trim() ? 'Vui lòng nhập mã xác minh email.' : (/^\\d{6}$/.test(el.emailCode.value.trim()) ? '' : 'Mã xác minh gồm 6 chữ số.'); },
+        email: function () { return !el.email.value.trim() ? 'Vui lòng nhập email.' : (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.email.value.trim()) ? '' : 'Địa chỉ email chưa đúng định dạng.'); },
+        email_code: function () { return !el.emailCode.value.trim() ? 'Vui lòng nhập mã xác minh email.' : (/^\d{6}$/.test(el.emailCode.value.trim()) ? '' : 'Mã xác minh gồm 6 chữ số.'); },
         password: function () { return checkPassword(el.password.value, cfg.pwMin, cfg.pwMax); },
         password2: function () {
             if (!el.password2.value) { return 'Vui lòng nhập lại mật khẩu.'; }
