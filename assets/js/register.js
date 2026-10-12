@@ -64,6 +64,8 @@
 
     var cfg = {
         endpoint: form.getAttribute('data-endpoint'),
+        emailCodeEndpoint: form.getAttribute('data-email-code-endpoint'),
+        emailVerifyEndpoint: form.getAttribute('data-email-verify-endpoint'),
         captchaSrc: form.getAttribute('data-captcha-src'),
         hint: form.getAttribute('data-user-hint') || 'Tên tài khoản không hợp lệ.',
         pwMin: parseInt(form.getAttribute('data-pw-min'), 10) || 6,
@@ -80,14 +82,14 @@
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var el = {
-        username: $('f-username'), phone: $('f-phone'), password: $('f-password'), password2: $('f-password2'),
+        username: $('f-username'), phone: $('f-phone'), email: $('f-email'), emailCode: $('f-email-code'), password: $('f-password'), password2: $('f-password2'),
         captcha: $('f-captcha'), agree: $('f-agree'), csrf: form.elements.csrf,
         submit: $('submit'), label: form.querySelector('.btn-label'),
         alert: $('alert'), alertIcon: $('alert-icon'), alertTitle: $('alert-title'), alertText: $('alert-text'),
         meter: $('meter'), meterLabel: $('meter-label'), ok2: $('ok-password2'),
         img: $('captcha-img'), refresh: $('captcha-refresh'),
         formView: $('form-view'), successView: $('success-view'), successUser: $('success-user'), successTitle: $('success-title'),
-        again: $('again'), terms: $('terms'), openTerms: $('open-terms'), closeTerms: $('terms-close'), acceptTerms: $('terms-accept')
+        again: $('again'), sendEmailCode: $('send-email-code'), verifyEmailCode: $('verify-email-code'), emailVerified: $('email-verified'), terms: $('terms'), openTerms: $('open-terms'), closeTerms: $('terms-close'), acceptTerms: $('terms-accept')
     };
 
     var meterDefault = el.meterLabel ? el.meterLabel.textContent : '';
@@ -107,7 +109,7 @@
     }
 
     function clearErrors() {
-        ['username', 'phone', 'password', 'password2', 'captcha', 'agree'].forEach(function (n) { setError(n, ''); });
+        ['username', 'phone', 'email', 'email_code', 'password', 'password2', 'captcha', 'agree'].forEach(function (n) { setError(n, ''); });
     }
 
     /* ---------- Thông báo tổng ---------- */
@@ -126,6 +128,8 @@
     var validators = {
         username: function () { return checkUsername(el.username.value.trim().toLowerCase(), cfg.userRe, cfg.hint); },
         phone: function () { return el.phone ? checkPhone(el.phone.value, cfg.phoneMode) : ''; },
+        email: function () { return !el.email.value.trim() ? 'Vui lòng nhập email.' : (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.email.value.trim()) ? '' : 'Địa chỉ email chưa đúng định dạng.'); },
+        email_code: function () { return !el.emailCode.value.trim() ? 'Vui lòng nhập mã xác minh email.' : (/^\d{6}$/.test(el.emailCode.value.trim()) ? '' : 'Mã xác minh gồm 6 chữ số.'); },
         password: function () { return checkPassword(el.password.value, cfg.pwMin, cfg.pwMax); },
         password2: function () {
             if (!el.password2.value) { return 'Vui lòng nhập lại mật khẩu.'; }
@@ -146,7 +150,7 @@
     }
 
     function validateAll() {
-        var order = ['username', 'phone', 'password', 'password2', 'captcha', 'agree'];
+        var order = ['username', 'phone', 'email', 'email_code', 'password', 'password2', 'captcha', 'agree'];
         var firstBad = null;
         order.forEach(function (n) {
             if (!wrap(n)) { return; }
@@ -275,6 +279,25 @@
         updateMatch();
     }
 
+    function postCodeRequest(endpoint, fields, button, successText) {
+        if (busy) { return; }
+        var emailError = validators.email(); setError('email', emailError);
+        if (emailError) { showAlert('error', 'Email chưa hợp lệ', emailError); focusField('email'); return; }
+        button.classList.add('is-loading'); button.disabled = true;
+        var data = new FormData(); data.append('csrf', el.csrf.value); data.append('email', el.email.value.trim().toLowerCase());
+        Object.keys(fields || {}).forEach(function(k) { data.append(k, fields[k]); });
+        fetch(endpoint, {method:'POST', body:data, credentials:'same-origin', headers:{'Accept':'application/json','X-Requested-With':'fetch'}})
+        .then(function(res){ return res.json().then(function(json){ return {status:res.status,json:json}; }); })
+        .then(function(result){ var json=result.json || {}; if(json.csrf) el.csrf.value=json.csrf;
+            if(!json.ok){ showAlert('error','Chưa xác minh được email',json.message || 'Vui lòng thử lại.'); if(json.errors){Object.keys(json.errors).forEach(function(k){setError(k,json.errors[k]);});} return; }
+            hideAlert(); button.classList.add('is-done'); showAlert('info','Thông báo',successText || json.message || 'Thành công.');
+            if(endpoint === cfg.emailVerifyEndpoint){ el.emailVerified.hidden=false; el.email.readOnly=true; el.emailCode.readOnly=true; el.sendEmailCode.disabled=true; el.verifyEmailCode.disabled=true; }
+        }).catch(function(){showAlert('error','Không thể kết nối','Kiểm tra mạng rồi thử lại.');})
+        .then(function(){button.classList.remove('is-loading'); if(!el.emailVerified || el.emailVerified.hidden){button.disabled=false;}});
+    }
+    if (el.sendEmailCode) { el.sendEmailCode.addEventListener('click', function(){ postCodeRequest(cfg.emailCodeEndpoint, {}, el.sendEmailCode, 'Đã gửi mã. Kiểm tra hộp thư đến và Spam.'); }); }
+    if (el.verifyEmailCode) { el.verifyEmailCode.addEventListener('click', function(){ postCodeRequest(cfg.emailVerifyEndpoint, {email_code:el.emailCode.value.trim()}, el.verifyEmailCode, 'Email đã xác minh.'); }); }
+
     form.addEventListener('submit', function (ev) {
         ev.preventDefault();
         if (busy) { return; }
@@ -327,7 +350,7 @@
         clearErrors();
         var first = null;
         var errs = json.errors || {};
-        ['username', 'phone', 'password', 'password2', 'captcha', 'agree'].forEach(function (n) {
+        ['username', 'phone', 'email', 'email_code', 'password', 'password2', 'captcha', 'agree'].forEach(function (n) {
             if (errs[n]) {
                 setError(n, errs[n]);
                 if (!first) { first = n; }
@@ -361,6 +384,11 @@
         el.again.addEventListener('click', function () {
             var token = el.csrf ? el.csrf.value : '';
             form.reset();               // reset() sẽ đưa token ẩn về giá trị cũ -> khôi phục token mới nhất
+            if (el.email) { el.email.readOnly = false; }
+            if (el.emailCode) { el.emailCode.readOnly = false; }
+            if (el.emailVerified) { el.emailVerified.hidden = true; }
+            if (el.sendEmailCode) { el.sendEmailCode.disabled = false; el.sendEmailCode.classList.remove('is-done'); }
+            if (el.verifyEmailCode) { el.verifyEmailCode.disabled = false; el.verifyEmailCode.classList.remove('is-done'); }
             if (el.csrf) { el.csrf.value = token; }
             clearErrors();
             hideAlert();

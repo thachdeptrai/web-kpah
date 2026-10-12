@@ -10,7 +10,7 @@ header('Content-Type: text/html; charset=utf-8');
 $appName    = (string) kp_config('app.name', 'KPAH');
 $version    = trim((string) kp_config('app.version', ''));
 $isOpen     = (bool) kp_config('registration.open', true);
-$phoneMode  = (string) kp_config('registration.phone', 'optional');
+$phoneMode  = 'required'; // Số điện thoại luôn bắt buộc theo yêu cầu đăng ký.
 $needTerms  = (bool) kp_config('registration.terms_required', true);
 $captchaOn  = kp_captcha_enabled();
 $captchaOk  = !$captchaOn || kp_captcha_available();
@@ -54,6 +54,7 @@ $canSubmit = $isOpen && $captchaOk;
     <defs>
         <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></symbol>
         <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
         <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
         <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
         <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></symbol>
@@ -124,7 +125,9 @@ $canSubmit = $isOpen && $captchaOk;
                       data-user-hint="<?= kp_e($userHint) ?>"
                       data-pw-min="<?= $pwMin ?>"
                       data-pw-max="<?= $pwMax ?>"
-                      data-phone-mode="<?= kp_e($phoneMode) ?>">
+                      data-phone-mode="<?= kp_e($phoneMode) ?>"
+                      data-email-code-endpoint="api/send-email-code.php"
+                      data-email-verify-endpoint="api/verify-email-code.php">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 
                     <div class="hp" aria-hidden="true">
@@ -148,16 +151,41 @@ $canSubmit = $isOpen && $captchaOk;
 
                         <?php if ($phoneMode !== 'off'): ?>
                         <div class="field" data-field="phone">
-                            <label for="f-phone">Số điện thoại<?= $phoneMode === 'required' ? '' : ' <span class="opt">(không bắt buộc)</span>' ?></label>
+                            <label for="f-phone">Số điện thoại <span class="opt">(bắt buộc)</span></label>
                             <div class="control">
                                 <svg class="icon lead-icon" aria-hidden="true"><use href="#i-phone"/></svg>
                                 <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16"
-                                       <?= $phoneMode === 'required' ? 'required' : '' ?>
+                                       required
                                        aria-describedby="e-phone" placeholder="vd: 0912345678">
                             </div>
                             <p class="field-error" id="e-phone" aria-live="polite"></p>
                         </div>
                         <?php endif; ?>
+
+                        <div class="field" data-field="email">
+                            <label for="f-email">Email <span class="opt">(bắt buộc)</span></label>
+                            <div class="control">
+                                <svg class="icon lead-icon" aria-hidden="true"><use href="#i-mail"/></svg>
+                                <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required
+                                       autocapitalize="none" spellcheck="false" aria-describedby="h-email e-email" placeholder="ban@example.com">
+                            </div>
+                            <p class="hint" id="h-email">Email dùng để xác minh và hỗ trợ khôi phục tài khoản.</p>
+                            <p class="field-error" id="e-email" aria-live="polite"></p>
+                            <button type="button" class="btn btn-ghost code-action" id="send-email-code">Gửi mã xác minh</button>
+                        </div>
+
+                        <div class="field" data-field="email_code">
+                            <label for="f-email-code">Mã xác minh email</label>
+                            <div class="control">
+                                <svg class="icon lead-icon" aria-hidden="true"><use href="#i-shield"/></svg>
+                                <input id="f-email-code" name="email_code" type="text" inputmode="numeric" autocomplete="one-time-code"
+                                       pattern="[0-9]{6}" maxlength="6" required aria-describedby="h-email-code e-email_code" placeholder="Nhập mã 6 chữ số">
+                            </div>
+                            <p class="hint" id="h-email-code">Mã có hiệu lực trong 10 phút. Hãy xác minh trước khi tạo tài khoản.</p>
+                            <p class="field-error" id="e-email_code" aria-live="polite"></p>
+                            <button type="button" class="btn btn-ghost code-action" id="verify-email-code">Xác minh mã</button>
+                            <p class="field-ok" id="email-verified" hidden><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Email đã xác minh</p>
+                        </div>
 
                         <div class="field" data-field="password">
                             <label for="f-password">Mật khẩu</label>

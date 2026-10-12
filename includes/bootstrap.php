@@ -29,6 +29,7 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/captcha.php';
 require_once __DIR__ . '/validator.php';
 require_once __DIR__ . '/account.php';
+require_once __DIR__ . '/mailer.php';
 
 date_default_timezone_set((string) kp_config('app.timezone', 'Asia/Ho_Chi_Minh'));
 kp_session_start();
