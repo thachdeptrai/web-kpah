@@ -1,25 +1,4 @@
-/* Shared visual tokens for the KPAH player dashboard */
-:root {
-  --home-bg: #0b0a16;
-  --home-panel: rgba(20, 17, 43, .78);
-  --home-line: rgba(207, 214, 255, .15);
-  --home-text: #ece8fb;
-  --home-muted: #aaa6cd;
-  --home-acid: #e2b45a;
-}
-body.home-page {
-  background:
-    radial-gradient(ellipse at 78% 7%, rgba(127, 140, 255, .12), transparent 34%),
-    radial-gradient(ellipse at 12% 43%, rgba(226, 180, 90, .07), transparent 39%),
-    #0b0a16;
-  color: var(--home-text);
-}
-.home-scene {
-  z-index: 0;
-  opacity: .34;
-  background:
-    radial-gradient(ellipse at 80% 10%, rgba(127, 140, 255, .16), transparent 45%),
-    url("../img/scene.svg") center bottom / cover no-repeat,
-    #0b0a16;
-}
-.home-noise { opacity: .055; }
+/* Neutral theme for KPAH account pages; no moon/planet illustration. */
+:root { --home-bg:#0b0d14; --home-panel:#121722; --home-line:rgba(205,216,239,.12); --home-text:#f3f5fa; --home-muted:#929caf; --home-acid:#e6bd69; }
+body.home-page { background:linear-gradient(180deg,#0b0d14 0%,#0d111b 58%,#0b0d14 100%); color:var(--home-text); }
+.home-scene, .welcome-graphic, .security-art { display:none !important; }

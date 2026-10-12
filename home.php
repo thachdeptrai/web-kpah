@@ -62,17 +62,15 @@ if ($registeredAt === '') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="assets/css/register.css?v=1">
-    <link rel="stylesheet" href="assets/css/user-home.css?v=3">
-    <link rel="stylesheet" href="assets/css/home-theme.css?v=2">
+    <link rel="stylesheet" href="assets/css/user-home.css?v=4">
+    <link rel="stylesheet" href="assets/css/home-theme.css?v=3">
 </head>
 <body class="home-page">
-<div class="scene home-scene" aria-hidden="true"></div>
-<div class="home-noise" aria-hidden="true"></div>
 
 <a class="home-skip-link" href="#overview">Đi đến nội dung chính</a>
 
 <aside class="side-rail" aria-label="Điều hướng tài khoản">
-    <a class="rail-logo" href="home.php" aria-label="<?= kp_e($appName) ?>">K<span>.</span></a>
+    <a class="rail-logo" href="/tai-khoan" aria-label="<?= kp_e($appName) ?>">K<span>.</span></a>
     <div class="rail-line" aria-hidden="true"></div>
     <a class="rail-icon active" href="#overview" aria-label="Tổng quan" title="Tổng quan"><span aria-hidden="true">⌂</span></a>
     <a class="rail-icon" href="#profile" aria-label="Hồ sơ tài khoản" title="Hồ sơ"><span aria-hidden="true">◎</span></a>
@@ -104,17 +102,6 @@ if ($registeredAt === '') {
             </div>
         </div>
 
-        <div class="welcome-graphic" aria-hidden="true">
-            <div class="graphic-halo halo-one"></div>
-            <div class="graphic-halo halo-two"></div>
-            <div class="graphic-ring ring-one"></div>
-            <div class="graphic-ring ring-two"></div>
-            <div class="graphic-sun"></div>
-            <div class="graphic-core">K</div>
-            <div class="graphic-cross cross-one">✳</div>
-            <div class="graphic-cross cross-two">✦</div>
-            <div class="graphic-code"><?= kp_e($appName) ?> / PLAYER<br>PERSONAL SPACE</div>
-        </div>
         <div class="welcome-index"><strong>01</strong><span> / 03</span></div>
     </section>
 
@@ -224,7 +211,32 @@ if ($registeredAt === '') {
                     <span><i class="<?= $email !== '' ? 'verified' : 'pending' ?>"></i> Email liên hệ</span>
                     <b><?= $email !== '' ? 'Đã liên kết' : 'Cần bổ sung' ?></b>
                 </div>
-                <a class="security-link" href="forgot-password.php"><span>Quên hoặc cần đặt lại mật khẩu?</span><span aria-hidden="true">→</span></a>
+
+                <div class="password-change">
+                    <div class="password-change-heading">
+                        <div><span class="card-index">B—02 / SECURITY</span><h4>Đổi mật khẩu</h4></div>
+                        <span class="password-key" aria-hidden="true">⌁</span>
+                    </div>
+                    <p class="password-help">Dùng mật khẩu hiện tại để xác nhận trước khi thay đổi.</p>
+                    <form id="change-password-form" data-endpoint="api/change-password.php" autocomplete="off">
+                        <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
+                        <div class="profile-field">
+                            <label for="current_password">Mật khẩu hiện tại</label>
+                            <input id="current_password" name="current_password" type="password" minlength="6" maxlength="128" autocomplete="current-password" placeholder="Nhập mật khẩu hiện tại" required>
+                        </div>
+                        <div class="profile-field">
+                            <label for="new_password">Mật khẩu mới</label>
+                            <input id="new_password" name="new_password" type="password" minlength="6" maxlength="32" autocomplete="new-password" placeholder="Từ 6 đến 32 ký tự" required>
+                        </div>
+                        <div class="profile-field">
+                            <label for="confirm_password">Xác nhận mật khẩu mới</label>
+                            <input id="confirm_password" name="confirm_password" type="password" minlength="6" maxlength="32" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" required>
+                        </div>
+                        <div class="form-feedback" id="password-feedback" role="status" aria-live="polite"></div>
+                        <button type="submit" id="change-password-submit" class="save-button password-submit"><span>Cập nhật mật khẩu</span><span aria-hidden="true">↗</span></button>
+                    </form>
+                </div>
+                <a class="security-link" href="/quen-mat-khau"><span>Quên hoặc cần đặt lại mật khẩu?</span><span aria-hidden="true">→</span></a>
                 <p class="security-footnote"><span aria-hidden="true">✦</span> Không chia sẻ mật khẩu hoặc mã xác minh với bất kỳ ai.</p>
             </aside>
         </div>
@@ -237,6 +249,6 @@ if ($registeredAt === '') {
     </footer>
 </main>
 
-<script src="assets/js/user-home.js?v=1" defer></script>
+<script src="assets/js/user-home.js?v=2" defer></script>
 </body>
 </html>

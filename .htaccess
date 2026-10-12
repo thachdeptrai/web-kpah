@@ -1,0 +1,19 @@
+# KPAH website: pretty URLs, no directory listing, protect private files.
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+RewriteEngine On
+
+# Friendly routes
+RewriteRule ^dang-nhap/?$ login.php [END,QSA]
+RewriteRule ^dang-ky/?$ register.php [END,QSA]
+RewriteRule ^tai-khoan/?$ home.php [END,QSA]
+RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
+RewriteRule ^$ index.php [END]
+
+# Do not expose environment files, credentials, backups, or database dumps.
+<FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|config(?:\..*)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|pem|key|p12|pfx))$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "(?i)^(?:\.gitignore|\.gitattributes|\.gitmodules|README(?:\..*)?|LICENSE(?:\..*)?)$">
+    Require all denied
+</FilesMatch>

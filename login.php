@@ -4,7 +4,7 @@ kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 
 if (!empty($_SESSION['kp_user_id'])) {
-    header('Location: /home.php', true, 302);
+    header('Location: /tai-khoan', true, 302);
     exit;
 }
 $error = '';
