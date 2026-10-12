@@ -14,7 +14,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     } else {
         $username = trim((string) ($_POST['username'] ?? ''));
         $password = (string) ($_POST['password'] ?? '');
-        try {
+        list($loginAllowed, $loginRetry) = kp_rate_limit('admin_login', kp_client_ip() . '|' . strtolower($username), 8, 900, true);
+        if (!$loginAllowed) {
+            $error = 'Bạn đã thử đăng nhập quá nhiều lần. Hãy thử lại sau ' . max(1, (int) ceil($loginRetry / 60)) . ' phút.';
+        } else try {
             $st = kp_db()->prepare('SELECT id, username, password_hash, role, is_active FROM kpah_web_admins WHERE username = ? LIMIT 1');
             $st->execute([$username]);
             $admin = $st->fetch();
