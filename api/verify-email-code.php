@@ -12,6 +12,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Allow: POST'); kp_e
 if (!kp_csrf_check(isset($_POST['csrf']) ? $_POST['csrf'] : '')) { kp_email_verify_reply(['ok'=>false,'code'=>'csrf','message'=>'Phiên đã hết hạn, hãy tải lại trang.'],403); }
 $email = isset($_POST['email']) && is_string($_POST['email']) ? strtolower(trim($_POST['email'])) : '';
 $code = isset($_POST['email_code']) && is_string($_POST['email_code']) ? trim($_POST['email_code']) : '';
+$ip = kp_client_ip();
+list($attemptAllowed, $attemptRetry) = kp_rate_limit('verify_email_code', $ip, 10, 600, true);
+if (!$attemptAllowed) {
+    header('Retry-After: ' . $attemptRetry);
+    kp_email_verify_reply(['ok'=>false,'code'=>'rate_limit','message'=>'Bạn nhập mã xác minh quá nhiều lần. Vui lòng thử lại sau.'],429);
+}
 $valid = isset($_SESSION['kp_email_code_hash'],$_SESSION['kp_email_code_expiry'],$_SESSION['kp_email_code_email'])
     && time() <= (int)$_SESSION['kp_email_code_expiry']
     && hash_equals((string)$_SESSION['kp_email_code_email'],$email)
