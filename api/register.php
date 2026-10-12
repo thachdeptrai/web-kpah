@@ -90,13 +90,6 @@ if ($errors) {
     ], 422);
 }
 
-// 5b) Chỉ cho đăng ký bằng email đã xác minh trong phiên hiện tại.
-$email = isset($clean['email']) ? strtolower($clean['email']) : '';
-$verifiedEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
-if (!empty(kp_config('registration.email_verification', true)) && ($email === '' || !hash_equals($verifiedEmail, $email))) {
-    kp_reply(['ok' => false, 'code' => 'email_unverified', 'message' => 'Vui lòng xác minh email bằng mã được gửi tới hộp thư trước khi tạo tài khoản.', 'errors' => ['email_code' => 'Bạn chưa xác minh email này.']], 422);
-}
-
 // 6) Giới hạn số tài khoản được tạo từ một IP
 list($maxOk, $okWindow) = array_pad((array) kp_config('security.rate_success', [5, 86400]), 2, 86400);
 list($okAllowed, $okRetry) = kp_rate_limit('reg_success', $ip, (int) $maxOk, (int) $okWindow, false);
@@ -109,6 +102,26 @@ if (!$okAllowed) {
     ], 429);
 }
 
+// Mã giới thiệu bắt buộc và phải còn lượt, chưa hết hạn, đang được bật.
+$referralCode = isset($_POST['referral_code']) && is_string($_POST['referral_code'])
+    ? strtoupper(trim($_POST['referral_code'])) : '';
+if ($referralCode === '') {
+    kp_reply(['ok' => false, 'code' => 'validation', 'message' => 'Vui lòng nhập mã giới thiệu.', 'errors' => ['referral_code' => 'Mã giới thiệu là bắt buộc.']], 422);
+}
+try {
+    $referral = kp_referral_acquire($referralCode);
+} catch (Throwable $e) {
+    kp_log('kiểm tra mã giới thiệu thất bại', $e);
+    kp_reply(['ok' => false, 'message' => 'Không thể kiểm tra mã giới thiệu lúc này. Vui lòng thử lại sau.'], 500);
+}
+if (($referral['status'] ?? '') !== 'ok') {
+    if (!empty($referral['lock'])) { kp_referral_release($referral['lock']); }
+    $msg = ($referral['status'] ?? '') === 'busy'
+        ? 'Mã đang được xử lý. Vui lòng thử lại sau vài giây.'
+        : 'Mã giới thiệu không hợp lệ, đã hết lượt, đã hết hạn hoặc đã bị khóa.';
+    kp_reply(['ok' => false, 'code' => 'invalid_referral', 'message' => $msg, 'errors' => ['referral_code' => $msg]], 422);
+}
+
 // 7) Ghi database
 try {
     $result = kp_create_account($clean['username'], $clean['password'], $clean['phone'], $clean['email']);
@@ -118,6 +131,7 @@ try {
 }
 
 if ($result === 'exists') {
+    kp_referral_release($referral['lock'] ?? '');
     kp_reply([
         'ok'      => false,
         'code'    => 'validation',
@@ -126,13 +140,25 @@ if ($result === 'exists') {
     ], 409);
 }
 if ($result !== 'ok') {
+    kp_referral_release($referral['lock'] ?? '');
     kp_log('kp_create_account trả về: ' . $result);
     kp_reply(['ok' => false, 'message' => 'Chưa thể tạo tài khoản lúc này. Vui lòng thử lại sau.'], 503);
 }
 
+try {
+    if (!kp_referral_consume($referral['row'], $clean['username'])) {
+        kp_log('mã giới thiệu hết lượt trong lúc hoàn tất đăng ký');
+        kp_referral_release($referral['lock'] ?? '');
+        kp_reply(['ok' => false, 'message' => 'Mã giới thiệu vừa hết lượt. Liên hệ quản trị viên để được hỗ trợ.'], 409);
+    }
+} catch (Throwable $e) {
+    kp_referral_release($referral['lock'] ?? '');
+    kp_log('ghi nhận lượt dùng mã giới thiệu thất bại', $e);
+    kp_reply(['ok' => false, 'message' => 'Tài khoản đã được tạo nhưng hệ thống chưa ghi nhận được mã giới thiệu. Vui lòng liên hệ quản trị viên ngay.'], 500);
+}
+kp_referral_release($referral['lock'] ?? '');
 kp_rate_limit('reg_success', $ip, (int) $maxOk, (int) $okWindow, true);
 session_regenerate_id(true);
-unset($_SESSION['kp_verified_email'], $_SESSION['kp_email_code_hash'], $_SESSION['kp_email_code_expiry']);
 
 kp_reply([
     'ok'       => true,
