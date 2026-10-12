@@ -54,6 +54,8 @@ try {
     if (!$current) kp_profile_reply(['ok'=>false,'message'=>'Không tìm thấy tài khoản.'],404);
     $oldEmail = strtolower(trim((string)$current['email']));
     if ($email !== $oldEmail) {
+        list($verifyAllowed, $verifyRetry) = kp_rate_limit('profile_email_verify', $userId.'|'.kp_client_ip(), 10, 600, true);
+        if (!$verifyAllowed) kp_profile_reply(['ok'=>false,'message'=>'Bạn nhập mã xác minh quá nhiều lần. Hãy thử lại sau ít phút.'],429);
         $validCode = isset($_SESSION['kp_profile_email_hash'], $_SESSION['kp_profile_email_expiry'], $_SESSION['kp_profile_email_target'], $_SESSION['kp_profile_email_user'])
             && (int)$_SESSION['kp_profile_email_user'] === $userId
             && time() <= (int)$_SESSION['kp_profile_email_expiry']
