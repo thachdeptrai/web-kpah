@@ -10,7 +10,7 @@ header('Content-Type: text/html; charset=utf-8');
 $appName    = (string) kp_config('app.name', 'KPAH');
 $version    = trim((string) kp_config('app.version', ''));
 $isOpen     = (bool) kp_config('registration.open', true);
-$phoneMode  = (string) kp_config('registration.phone', 'optional');
+$phoneMode  = 'required'; // Số điện thoại luôn bắt buộc theo yêu cầu đăng ký.
 $needTerms  = (bool) kp_config('registration.terms_required', true);
 $captchaOn  = kp_captcha_enabled();
 $captchaOk  = !$captchaOn || kp_captcha_available();
@@ -151,11 +151,11 @@ $canSubmit = $isOpen && $captchaOk;
 
                         <?php if ($phoneMode !== 'off'): ?>
                         <div class="field" data-field="phone">
-                            <label for="f-phone">Số điện thoại<?= $phoneMode === 'required' ? '' : ' <span class="opt">(không bắt buộc)</span>' ?></label>
+                            <label for="f-phone">Số điện thoại <span class="opt">(bắt buộc)</span></label>
                             <div class="control">
                                 <svg class="icon lead-icon" aria-hidden="true"><use href="#i-phone"/></svg>
                                 <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16"
-                                       <?= $phoneMode === 'required' ? 'required' : '' ?>
+                                       required
                                        aria-describedby="e-phone" placeholder="vd: 0912345678">
                             </div>
                             <p class="field-error" id="e-phone" aria-live="polite"></p>
