@@ -67,29 +67,6 @@ if (!$allowed) {
     ], 429);
 }
 
-// 5) Validate + CAPTCHA (gộp lỗi để người dùng sửa một lần)
-list($errors, $clean) = kp_validate_registration($_POST);
-
-if (kp_captcha_enabled()) {
-    if (!kp_captcha_available()) {
-        kp_log('CAPTCHA bật nhưng PHP thiếu GD');
-        kp_reply(['ok' => false, 'message' => 'CAPTCHA tạm thời chưa khả dụng, vui lòng thử lại sau.'], 503);
-    }
-    $captchaInput = isset($_POST['captcha']) ? $_POST['captcha'] : '';
-    if (!kp_captcha_verify($captchaInput)) {
-        $errors['captcha'] = 'Mã xác nhận chưa đúng hoặc đã hết hạn. Hãy nhập mã ở ảnh mới.';
-    }
-}
-
-if ($errors) {
-    kp_reply([
-        'ok'      => false,
-        'code'    => 'validation',
-        'message' => 'Vui lòng kiểm tra lại các thông tin được đánh dấu.',
-        'errors'  => $errors,
-    ], 422);
-}
-
 // 6) Giới hạn số tài khoản được tạo từ một IP
 list($maxOk, $okWindow) = array_pad((array) kp_config('security.rate_success', [5, 86400]), 2, 86400);
 list($okAllowed, $okRetry) = kp_rate_limit('reg_success', $ip, (int) $maxOk, (int) $okWindow, false);
@@ -100,6 +77,14 @@ if (!$okAllowed) {
         'code'    => 'rate_limit',
         'message' => 'Địa chỉ mạng của bạn đã tạo quá số tài khoản cho phép trong ngày. Vui lòng quay lại sau.',
     ], 429);
+}
+
+// Email OTP bắt buộc; chỉ chấp nhận email đã xác minh trong session hiện tại.
+$email = isset($clean['email']) ? strtolower($clean['email']) : '';
+$verifiedEmail = isset($_SESSION['kp_verified_email']) ? strtolower((string) $_SESSION['kp_verified_email']) : '';
+if (!empty(kp_config('registration.email_verification', true)) && ($email === '' || !hash_equals($verifiedEmail, $email))) {
+    kp_referral_release($referral['lock'] ?? '');
+    kp_reply(['ok' => false, 'code' => 'email_unverified', 'message' => 'Vui lòng xác minh email bằng mã được gửi tới hộp thư trước khi tạo tài khoản.', 'errors' => ['email_code' => 'Bạn chưa xác minh email này.']], 422);
 }
 
 // Mã giới thiệu bắt buộc và phải còn lượt, chưa hết hạn, đang được bật.
