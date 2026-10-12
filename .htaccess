@@ -1,0 +1,30 @@
+# KPAH Web — URL thân thiện, ẩn đuôi .php
+Options -MultiViews
+RewriteEngine On
+
+# Chuyển URL .php của các trang người chơi sang URL đẹp khi mở bằng GET.
+# Không redirect POST để tránh làm mất dữ liệu biểu mẫu.
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteRule ^(login|dang-nhap)\.php$ dang-nhap [R=301,L,NE]
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteRule ^(register|dang-ky)\.php$ dang-ky [R=301,L,NE]
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteRule ^(home|tai-khoan)\.php$ tai-khoan [R=301,L,NE]
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteRule ^(forgot-password|quen-mat-khau)\.php$ quen-mat-khau [R=301,L,NE]
+
+# Trang chính
+RewriteRule ^$ index.php [L]
+
+# URL tiếng Việt không dấu, không có đuôi .php
+RewriteRule ^dang-nhap/?$ login.php [L,QSA]
+RewriteRule ^dang-ky/?$ register.php [L,QSA]
+RewriteRule ^tai-khoan/?$ home.php [L,QSA]
+RewriteRule ^quen-mat-khau/?$ forgot-password.php [L,QSA]
+
+# Cho phép truy cập trực tiếp các file/thư mục có thật (assets, api, includes...)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Các file PHP còn lại (API, captcha...) vẫn chạy bình thường.
