@@ -126,8 +126,7 @@ $canSubmit = $isOpen && $captchaOk;
                       data-pw-min="<?= $pwMin ?>"
                       data-pw-max="<?= $pwMax ?>"
                       data-phone-mode="<?= kp_e($phoneMode) ?>"
-                      data-email-code-endpoint="api/send-email-code.php"
-                      data-email-verify-endpoint="api/verify-email-code.php">
+                      data-referral-required="1">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 
                     <div class="hp" aria-hidden="true">
@@ -169,22 +168,20 @@ $canSubmit = $isOpen && $captchaOk;
                                 <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required
                                        autocapitalize="none" spellcheck="false" aria-describedby="h-email e-email" placeholder="ban@example.com">
                             </div>
-                            <p class="hint" id="h-email">Email dùng để xác minh và hỗ trợ khôi phục tài khoản.</p>
+                            <p class="hint" id="h-email">Email dùng để liên hệ và hỗ trợ tài khoản.</p>
                             <p class="field-error" id="e-email" aria-live="polite"></p>
-                            <button type="button" class="btn btn-ghost code-action" id="send-email-code">Gửi mã xác minh</button>
                         </div>
 
-                        <div class="field" data-field="email_code">
-                            <label for="f-email-code">Mã xác minh email</label>
+                        <div class="field" data-field="referral_code">
+                            <label for="f-referral-code">Mã giới thiệu <span class="opt">(bắt buộc)</span></label>
                             <div class="control">
                                 <svg class="icon lead-icon" aria-hidden="true"><use href="#i-shield"/></svg>
-                                <input id="f-email-code" name="email_code" type="text" inputmode="numeric" autocomplete="one-time-code"
-                                       pattern="[0-9]{6}" maxlength="6" required aria-describedby="h-email-code e-email_code" placeholder="Nhập mã 6 chữ số">
+                                <input id="f-referral-code" name="referral_code" type="text" inputmode="text" autocomplete="off"
+                                       maxlength="64" required autocapitalize="characters" spellcheck="false"
+                                       aria-describedby="h-referral-code e-referral_code" placeholder="Nhập mã giới thiệu">
                             </div>
-                            <p class="hint" id="h-email-code">Mã có hiệu lực trong 10 phút. Hãy xác minh trước khi tạo tài khoản.</p>
-                            <p class="field-error" id="e-email_code" aria-live="polite"></p>
-                            <button type="button" class="btn btn-ghost code-action" id="verify-email-code">Xác minh mã</button>
-                            <p class="field-ok" id="email-verified" hidden><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Email đã xác minh</p>
+                            <p class="hint" id="h-referral-code">Mỗi mã có giới hạn lượt dùng và hạn sử dụng riêng.</p>
+                            <p class="field-error" id="e-referral_code" aria-live="polite"></p>
                         </div>
 
                         <div class="field" data-field="password">
