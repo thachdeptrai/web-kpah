@@ -112,7 +112,6 @@ $canSubmit = $isOpen;
 
                 <form id="reg-form" method="post" action="api/register.php" novalidate autocomplete="on"
                       data-endpoint="api/register.php"
-                      data-captcha-src="captcha.php"
                       data-user-pattern="<?= kp_e($patBody) ?>"
                       data-user-flags="<?= kp_e($patFlags) ?>"
                       data-user-hint="<?= kp_e($userHint) ?>"
