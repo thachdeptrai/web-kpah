@@ -85,7 +85,7 @@ Nếu muốn dùng CAPTCHA ảnh PNG: mở `C:\xampp\php\php.ini`, bỏ dấu `;
 Mỗi lần đăng ký thử thành công sẽ tạo dòng thật trong `team_user`; giới hạn mặc định 5 tài khoản/24 giờ/IP – khi thử nhiều, tăng `security.rate_success` hoặc xoá file trong `storage/ratelimit/`.
 
 ### Cấu hình chính (`config.register.php`)
-- Đăng ký yêu cầu **email, số điện thoại và mã giới thiệu hợp lệ**. Không còn bước xác minh email bằng OTP.
+- Đăng ký yêu cầu **email đã xác minh bằng mã OTP, số điện thoại và mã giới thiệu hợp lệ**. Đã bỏ CAPTCHA dạng ảnh; email OTP vẫn là bước xác minh.
 - Mã giới thiệu được kiểm tra ở máy chủ; mã bị khóa, hết hạn hoặc hết lượt sẽ không thể dùng.
 - Sao chép `config.register.local.sample.php` thành `config.register.local.php`, điền SMTP và thông tin DB thật. Nếu file local cũ đang đặt `registration.phone` thành `optional`, đổi thành `required`; file local sẽ ưu tiên cấu hình mặc định.
 - `security.username_pattern` (mặc định `/^[a-z0-9_]{4,20}$/`), `username_hint`, `password_min` = 6, `password_max` = 32.
