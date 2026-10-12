@@ -101,12 +101,12 @@ $version = trim((string) kp_config('app.version', ''));
                 <div class="form-feedback recovery-feedback" id="recovery-feedback" role="status" aria-live="polite"></div>
                 <button type="submit" class="btn btn-primary login-submit recovery-submit"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span>Xác minh và đổi mật khẩu</span><b>↗</b></button>
             </form>
-            <p class="alt-link recovery-back">Nhớ mật khẩu rồi? <a href="/dang-nhap">Quay lại đăng nhập</a></p>
+            <p class="alt-link recovery-back">Nhớ mật khẩu rồi? <a href="/login.php">Quay lại đăng nhập</a></p>
             <div class="login-secure-note"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span>Mã có thời hạn. Nếu không yêu cầu khôi phục, hãy bỏ qua email.</span></div>
         </div>
     </section>
 </main>
-<footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><a href="/dang-nhap">Đăng nhập</a></footer>
+<footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><a href="/login.php">Đăng nhập</a></footer>
 <script src="assets/js/scene.js?v=1" defer></script>
 <script src="assets/js/forgot-password.js?v=2" defer></script>
 </body>
