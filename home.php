@@ -31,21 +31,28 @@ try {
     exit('Chưa thể tải trang tài khoản. Vui lòng thử lại sau.');
 }
 
-// Tài khoản đăng nhập sử dụng team_user.id. Nhân vật thuộc team_user.userid.
-// Chỉ lấy dữ liệu nhân vật của chính tài khoản hiện tại.
+// Liên kết nhân vật đối chiếu từ bản dump: tob_web_info_char.userid khớp team_user.id.
+// Không dùng team_user.userid để truy vấn nhân vật; đó là một mã khác.
+// Chỉ lấy nhân vật của phiên đăng nhập, các thông tin chi tiết là riêng tư.
 $characters = [];
 $charactersUnavailable = false;
 try {
     $charStmt = kp_db()->prepare(
-        'SELECT c.charname, c.lastLv, c.xp, c.gold, c.luong, c.lastLog, c.idClan,
-                clan.clanName
-         FROM tob_char AS c
-         LEFT JOIN tob_clan AS clan ON clan.id_clan = c.idClan AND clan.isdel = 0
-         WHERE c.userId = ?
-         ORDER BY c.xp DESC, c.id ASC
+        'SELECT w.charname,
+                COALESCE(c.lastLv, l.lv, w.lv) AS lastLv,
+                COALESCE(c.xp, l.exp, 0) AS xp,
+                COALESCE(c.gold, l.gold, 0) AS gold,
+                COALESCE(c.luong, l.luong, 0) AS luong,
+                c.lastLog, clan.clanName
+         FROM tob_web_info_char AS w
+         LEFT JOIN tob_char AS c ON c.charname = w.charname AND c.userId = w.userid
+         LEFT JOIN tob_char_luong AS l ON l.charname = w.charname
+         LEFT JOIN tob_clan AS clan ON clan.id_clan = COALESCE(c.idClan, l.idclan) AND clan.isdel = 0
+         WHERE w.userid = ? AND w.acountname = ?
+         ORDER BY COALESCE(c.lastLv, l.lv, w.lv) DESC, COALESCE(c.xp, l.exp, 0) DESC
          LIMIT 8'
     );
-    $charStmt->execute([(int) $user['userid']]);
+    $charStmt->execute([(int) $user['id'], (string) $user['username']]);
     $characters = $charStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) {
     $charactersUnavailable = true;
@@ -74,7 +81,7 @@ $email = trim((string) ($user['email'] ?? ''));
 $phone = trim((string) ($user['phone'] ?? ''));
 $initial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($username, 0, 1, 'UTF-8'), 'UTF-8') : strtoupper(substr($username, 0, 1));
 $appName = (string) kp_config('app.name', 'KPAH');
-$playerId = (string) (($user['userid'] ?? '') !== '' ? $user['userid'] : $user['id']);
+$playerId = (string) $user['id'];
 $registeredAt = '';
 if (!empty($user['regdate'])) {
     $registeredTimestamp = is_numeric($user['regdate']) ? (int) $user['regdate'] : strtotime((string) $user['regdate']);
@@ -148,9 +155,9 @@ $numberFormat = function ($number) {
     <section class="metric-strip" aria-label="Tóm tắt tài khoản">
         <article class="metric-card">
             <span class="metric-icon" aria-hidden="true">⌘</span>
-            <span class="metric-label">MÃ NGƯỜI DÙNG</span>
+            <span class="metric-label">MÃ TÀI KHOẢN</span>
             <strong>#<?= kp_e($playerId) ?></strong>
-            <small>Mã liên kết nhân vật trong game</small>
+            <small>Mã tài khoản KPAH</small>
         </article>
         <article class="metric-card">
             <span class="metric-icon" aria-hidden="true">✉</span>
