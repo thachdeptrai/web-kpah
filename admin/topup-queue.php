@@ -1,18 +1,4 @@
 <?php
-require __DIR__.'/../includes/bootstrap.php';require_once __DIR__.'/../includes/topup_settings.php';
-kp_send_security_headers(true);header('Content-Type: text/html; charset=utf-8');
-try{kp_topup_require_admin();}catch(Throwable $e){kp_log('topup queue auth failed',$e);http_response_code(503);exit('Không thể xác minh quyền admin.');}
-$name=trim((string)($_GET['username']??''));$error='';$board=[];$created=[];
-if($name!=='' && (strlen($name)>45 || !preg_match('/^[a-zA-Z0-9_.-]{1,45}$/D',$name)))$error='Tên tài khoản không hợp lệ.';
-else{
-try{
- $db=kp_db();
- foreach(['board_naptien'=>'board','board_created'=>'created'] as $table=>$set){
-  $sql='SELECT * FROM '.$table;
-  if($name!=='')$sql.=' WHERE username = ?';
-  $sql.=' ORDER BY id DESC LIMIT 30';
-  $st=$db->prepare($sql);$st->execute($name!==''?[$name]:[]);$$set=$st->fetchAll(PDO::FETCH_ASSOC);
- }
-}catch(Throwable $e){kp_log('topup legacy queue read failed',$e);$error='Không đọc được bảng nạp. Kiểm tra cấu trúc SQL và kết nối.';}
-}
-?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dữ liệu nạp · KPAH Admin</title><link rel="stylesheet" href="../assets/css/topup.css?v=1"></head><body><header><div class="inner"><a class="logo" href="topup.php">✦ KPAH <small>DỮ LIỆU NẠP</small></a><nav><a href="index.php">Admin</a><a href="topup.php">Quản lý nạp</a><a href="topup-rates.php">Tỷ lệ</a><a class="active" href="topup-queue.php">Dữ liệu nạp</a></nav></div></header><main class="wrap"><section class="hero"><span class="eyebrow">ADMIN / KIỂM TRA GAME DB</span><h1>Dữ liệu nạp sẵn có</h1><p>Chỉ đọc 2 bảng nạp từ game, không ghi thêm giao dịch, không động vào cấu trúc SQL.</p></section><section class="panel"><h2>Tìm theo tài khoản</h2><form method="get" class="row"><input class="input" name="username" maxlength="45" value="<?=kp_e($name)?>" placeholder="Username game (để trống = xem mới nhất)" aria-label="Tên tài khoản"><button class="btn" type="submit">Tìm dữ liệu</button></form></section><?php if($error!==''):?><div class="alert"><?=kp_e($error)?></div><?php endif;?><section class="panel"><div class="row"><h2>board_naptien</h2><span class="chip"><?=count($board)?> dòng hiển thị</span></div><div class="scroll"><table class="data-table"><thead><tr><th>ID</th><th>Username</th><th>Xu</th><th>Lượng</th><th>Lượng khóa</th><th>Vé</th><th>Server</th></tr></thead><tbody><?php foreach($board as $r):?><tr><td><?= (int)$r['id'] ?></td><td><?=kp_e($r['username'])?></td><td><?=kp_topup_display($r['xu'])?></td><td><?=kp_topup_display($r['luong'])?></td><td><?=kp_topup_display($r['luongKhoa'])?></td><td><?=kp_topup_display($r['ve'])?></td><td><?= (int)$r['svID'] ?></td></tr><?php endforeach;?><?php if(!$board):?><tr><td colspan="7">Không có dữ liệu trong kết quả tìm kiếm.</td></tr><?php endif;?></tbody></table></div></section><section class="panel"><div class="row"><h2>board_created</h2><span class="chip"><?=count($created)?> dòng hiển thị</span></div><div class="scroll"><table class="data-table"><thead><tr><th>ID</th><th>Username</th><th>Xu</th><th>Lượng</th><th>Lượng khóa</th><th>Vé</th><th>Server</th></tr></thead><tbody><?php foreach($created as $r):?><tr><td><?= (int)$r['id'] ?></td><td><?=kp_e($r['username'])?></td><td><?=kp_topup_display($r['xu'])?></td><td><?=kp_topup_display($r['luong'])?></td><td><?=kp_topup_display($r['luongK'])?></td><td><?=kp_topup_display($r['ve'])?></td><td><?= (int)$r['svID'] ?></td></tr><?php endforeach;?><?php if(!$created):?><tr><td colspan="7">Không có dữ liệu trong kết quả tìm kiếm.</td></tr><?php endif;?></tbody></table></div></section><div class="alert">Tên bảng, ý nghĩa trạng thái và thời điểm game phát tài nguyên cần xác minh từ code server. Không dùng trang này để thử cộng tiền thật.</div></main></body></html>
+// Compatible entry point. The module uses one canonical rate store and UI.
+header('Location: ../topup/admin/legacy.php', true, 302);
+exit;
