@@ -15,7 +15,7 @@ if (!empty($_SESSION['kp_admin_id']) && ($_SESSION['kp_admin_role'] ?? '') === '
 }
 $error = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    if (!kp_csrf_check($_POST['csrf'] ?? '')) {
+    if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
         $error = 'Phiên làm việc hết hạn. Tải lại trang rồi thử lại.';
     } else {
         $username = trim((string)($_POST['username'] ?? ''));
