@@ -135,5 +135,6 @@ kp_topup_page_start('Cộng tài nguyên','grant',(string)$admin['username'],tru
 </div>
 <div class="tp-alert warning">Lưu ý: <code>tob_char</code> dùng MyISAM (không có rollback). Nếu thao tác báo chưa rõ kết quả, dừng cộng tiếp cho nhân vật và kiểm tra trang <a class="tp-support" href="orders.php">Đối soát</a>. Không gửi cùng một yêu cầu lần hai.</div>
 </section>
-<script>/* No inline scripts: CSP deliberately blocks them. Confirm details server-side above. */</script>
+
+<script src="../../assets/js/topup-forms.js?v=1" defer></script>
 <?php kp_topup_page_end(); ?>
