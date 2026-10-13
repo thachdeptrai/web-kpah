@@ -10,6 +10,7 @@
   var newCodeInput=document.getElementById('email_code');
   var phoneInput=document.getElementById('phone');
   var originalEmail=emailInput.value.trim().toLowerCase();
+  var firstLink=!originalEmail;
   function show(message,good){feedback.textContent=message;feedback.className='form-feedback '+(good?'is-good':'is-bad');}
   function send(data){return fetch(form.dataset.endpoint,{method:'POST',credentials:'same-origin',body:data,headers:{'X-Requested-With':'XMLHttpRequest'}}).then(function(r){return r.json().then(function(j){if(!r.ok&&!j.message)j.message='Không xử lý được yêu cầu.';return j;});});}
   function busy(button,loading,label,on){button.disabled=on;button.textContent=on?loading:label;}
@@ -26,15 +27,15 @@
     if(email===originalEmail){show('Gmail mới phải khác Gmail đang liên kết.',false);return;}
     if(!/^\d{6}$/.test(oldCodeInput.value.trim())){show('Nhập mã 6 chữ số đã gửi đến Gmail hiện tại trước.',false);oldCodeInput.focus();return;}
     var data=new FormData(form);data.set('action','send_email_code');
-    busy(sendNewButton,'Đang xác minh…','Xác minh mã cũ & gửi mã mới',true);
+    busy(sendNewButton,'Đang xác minh…',firstLink?'Gửi mã email':'Xác minh mã cũ & gửi mã mới',true);
     send(data).then(function(r){show(r.message||'Đã xử lý yêu cầu.',!!r.ok);})
       .catch(function(){show('Không kết nối được máy chủ. Hãy thử lại.',false);})
-      .finally(function(){busy(sendNewButton,'Đang xác minh…','Xác minh mã cũ & gửi mã mới',false);});
+      .finally(function(){busy(sendNewButton,'Đang xác minh…',firstLink?'Gửi mã email':'Xác minh mã cũ & gửi mã mới',false);});
   });
   form.addEventListener('submit',function(event){
     event.preventDefault();
     var email=emailInput.value.trim().toLowerCase();
-    if(email!==originalEmail&&!/^\d{6}$/.test(newCodeInput.value.trim())){show('Để đổi Gmail, cần xác minh Gmail cũ và nhập mã xác minh Gmail mới.',false);newCodeInput.focus();return;}
+    if(email!==originalEmail&&!/^\d{6}$/.test(newCodeInput.value.trim())){show(firstLink?'Nhập mã xác minh đã gửi về email để liên kết.':'Để đổi Gmail, cần xác minh Gmail cũ và nhập mã xác minh Gmail mới.',false);newCodeInput.focus();return;}
     var data=new FormData(form);data.set('action','update');
     send(data).then(function(r){show(r.message||'Đã xử lý yêu cầu.',!!r.ok);if(r.ok){originalEmail=(r.email||'').toLowerCase();emailInput.value=r.email||emailInput.value;if(phoneInput)phoneInput.value=r.phone||'';oldCodeInput.value='';newCodeInput.value='';window.setTimeout(function(){window.location.reload();},900);}})
       .catch(function(){show('Không kết nối được máy chủ. Hãy thử lại.',false);});
