@@ -23,6 +23,8 @@ try {
     // RFC 6238 SHA1: 94287082 at 59 sec, last six digits 287082.
     $secret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
     verify(kp_admin_totp_step($secret, '287082', 59), 1, 'RFC 6238 six-digit TOTP');
+    // RFC 6238 SHA1 second vector: 07081804 -> six digits 081804.
+    verify(kp_admin_totp_step($secret, '081804', 1111111109), 37037036, 'RFC 6238 second vector');
     verify(kp_admin_totp_step($secret, '287082', 30), 1, 'adjacent time step');
     verify(kp_admin_totp_step($secret, '287082', 120), false, 'expired OTP rejected');
     verify(kp_admin_totp_step($secret, 'abc123', 59), false, 'malformed OTP rejected');
