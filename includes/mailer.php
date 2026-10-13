@@ -50,9 +50,14 @@ function kp_send_mail_smtp($to, $subject, $body)
             'From: =?UTF-8?B?'.base64_encode($name).'?= <'.$from.'>',
             'To: <'.$to.'>',
             'Subject: =?UTF-8?B?'.base64_encode($subject).'?=',
+            'Date: '.date(DATE_RFC2822),
+            'Message-ID: <'.bin2hex(random_bytes(16)).'@'.(strpos($from, '@') !== false ? substr(strrchr($from, '@'), 1) : 'localhost').'>',
+            'Reply-To: <'.$from.'>',
             'MIME-Version: 1.0',
             'Content-Type: text/plain; charset=UTF-8',
             'Content-Transfer-Encoding: 8bit',
+            'Auto-Submitted: auto-generated',
+            'X-Auto-Response-Suppress: All',
         ];
         $message = implode("\r\n", $headers)."\r\n\r\n".$body;
         $message = preg_replace('/\r?\n\./', "\r\n..", str_replace(["\r\n","\r"],"\n",$message));
