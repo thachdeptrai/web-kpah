@@ -121,3 +121,11 @@ body.home-page:before{position:fixed;inset:0;z-index:0;pointer-events:none;conte
 @media(max-width:420px){.home-main{padding-inline:11px}.home-breadcrumb{font-size:7px}.top-user-name{max-width:60px}.welcome-copy h1{font-size:30px}.welcome-copy .kicker{gap:6px;font-size:7px}.welcome-secure{font-size:7px}.profile-card,.security-card{padding:14px}.input-with-action{flex-direction:column}.input-with-action button{min-height:39px}.identity-tag{font-size:7px}.home-footer .footer-id{display:none}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 @media(forced-colors:active){.profile-card,.security-card,.rail-icon,.profile-card input,.save-button{border:1px solid CanvasText}}
+
+/* Email 2-step verification controls */
+#profile-form .input-with-action{display:flex;gap:9px;align-items:stretch}
+#profile-form .input-with-action input{flex:1;min-width:0}
+#profile-form .input-with-action button{flex:0 0 auto;padding:0 14px;border:1px solid rgba(230,189,105,.3);border-radius:9px;background:rgba(230,189,105,.08);color:#f1d69e;font:600 10px "Be Vietnam Pro",sans-serif;cursor:pointer;transition:background .18s,border-color .18s}
+#profile-form .input-with-action button:hover{background:rgba(230,189,105,.15);border-color:rgba(230,189,105,.6)}
+#profile-form .input-with-action button:disabled{opacity:.55;cursor:wait}
+@media(max-width:520px){#profile-form .input-with-action{flex-direction:column}#profile-form .input-with-action button{min-height:40px}}
