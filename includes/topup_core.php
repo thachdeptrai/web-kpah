@@ -134,18 +134,8 @@ function kp_topup_user() {
     return $user;
 }
 function kp_topup_admin() {
-    $id = (int)($_SESSION['kp_admin_id'] ?? 0);
-    if ($id <= 0 || ($_SESSION['kp_admin_role'] ?? '') !== 'admin'
-        || empty($_SESSION['kp_admin_last_seen'])
-        || time() - (int)$_SESSION['kp_admin_last_seen'] > 1800) {
-        header('Location: ../../admin/login.php'); exit;
-    }
-    $s = kp_db()->prepare("SELECT id,username FROM kpah_web_admins WHERE id=? AND role='admin' AND is_active=1 LIMIT 1");
-    $s->execute([$id]);
-    $admin = $s->fetch();
-    if (!$admin) { http_response_code(403); exit('Không có quyền quản trị.'); }
-    $_SESSION['kp_admin_last_seen'] = time();
-    return $admin;
+    require_once __DIR__ . '/admin_security.php';
+    return kp_admin_require('/admin/login.php');
 }
 function kp_topup_recent($kind, $userId = null, $limit = 50) {
     $dir = kp_topup_root() . '/' . $kind;
