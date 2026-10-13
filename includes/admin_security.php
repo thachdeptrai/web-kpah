@@ -27,6 +27,27 @@ function kp_admin_allowed_ip()
     return false;
 }
 
+/**
+ * Validate the session CSRF token and, when present, browser Origin.
+ * The origin check is additional defense; it never substitutes the token.
+ */
+function kp_admin_csrf_valid($token)
+{
+    if (!kp_csrf_check($token)) return false;
+    if (isset($_SERVER['HTTP_ORIGIN']) && (string)$_SERVER['HTTP_ORIGIN'] !== '') {
+        $origin = parse_url((string)$_SERVER['HTTP_ORIGIN']);
+        $request = parse_url('http://'.(string)($_SERVER['HTTP_HOST'] ?? ''));
+        $sourceHost = is_array($origin) ? ($origin['host'] ?? '') : '';
+        $targetHost = is_array($request) ? ($request['host'] ?? '') : '';
+        if (!is_string($sourceHost) || !is_string($targetHost)
+            || $sourceHost === '' || $targetHost === ''
+            || !hash_equals(strtolower($targetHost), strtolower($sourceHost))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function kp_admin_log_event($event, $adminId = 0)
 {
     // Do not log credentials, session IDs, OTP, full POST bodies, or raw IPs.
