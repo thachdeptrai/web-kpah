@@ -187,7 +187,7 @@ $requestKey=bin2hex(random_bytes(16));
 <label for="currency">Loại tài nguyên</label><select id="currency" name="currency" required><option value="gold">Xu</option><option value="luong">Lượng không khóa (Lượng thường)</option><option value="luonglock">Lượng khóa</option></select>
 <label for="mode">Cách nhập</label><select id="mode" name="mode"><option value="direct">Nhập số tài nguyên cộng trực tiếp</option><option value="vnd">Nhập số tiền VNĐ để quy đổi</option></select>
 <label for="quantity">Số lượng (hoặc số tiền VNĐ)</label><input id="quantity" type="number" name="quantity" min="1" max="1000000000" step="1" required placeholder="VD: 100">
-<p class="hint">Không giới hạn mốc nạp: nhập số VNĐ bất kỳ. Ví dụ 5.000đ = 50 Lượng thường hoặc 100 Lượng khóa theo tỷ lệ mặc định. Phần lẻ dưới 1 đơn vị được làm tròn xuống.</p>
+<p class="hint">Không có mốc nạp cố định. Ví dụ với tỷ lệ mặc định: 5.000đ = 50 Lượng thường. Xu và Lượng khóa chưa có tỷ lệ mặc định. Kết quả lẻ được làm tròn xuống.</p>
 <label for="note">Lý do / mã tham chiếu</label><textarea id="note" name="note" minlength="5" maxlength="255" rows="2" required placeholder="VD: Admin cộng theo đơn hỗ trợ #..."></textarea>
 <label class="check"><input type="checkbox" name="offline_confirm" value="1" required><span>Tôi đã kiểm tra nhân vật đã <strong>thoát game</strong>, đúng tài khoản, đúng số lượng. Tôi hiểu dữ liệu game có thể bị ghi đè nếu nhân vật còn online.</span></label>
 <button type="submit" class="primary" id="grant-button" <?= $dbError ? 'disabled':'' ?>>Xác nhận cộng tài nguyên</button>
