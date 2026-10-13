@@ -196,7 +196,8 @@ function kp_admin_create_session(array $admin, $totpOk)
     $_SESSION['kp_admin_id'] = (int)$admin['id'];
     $_SESSION['kp_admin_username'] = (string)$admin['username'];
     $_SESSION['kp_admin_role'] = 'admin';
-    $_SESSION['kp_admin_totp_ok'] = (bool)$totpOk;
+    // A password-only session must NOT remain valid when MFA is enabled later.
+    $_SESSION['kp_admin_totp_ok'] = kp_admin_totp_enabled() && (bool)$totpOk;
     $_SESSION['kp_admin_last_seen'] = time();
     $_SESSION['kp_admin_session_started'] = time();
     $_SESSION['kp_admin_session_rotation'] = time();
