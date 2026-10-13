@@ -1,4 +1,4 @@
 <?php
-// Compatible entry point. The module uses one canonical rate store and UI.
-header('Location: ../topup/admin/index.php', true, 302);
+// Tương thích với liên kết cũ, không xử lý giao dịch tại đây.
+header('Location: /quan-tri/nap',true,302);
 exit;

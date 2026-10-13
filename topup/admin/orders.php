@@ -19,7 +19,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
 $orders=kp_topup_recent('orders',null,150);
 $grants=kp_topup_recent('grants',null,150);
 kp_topup_page_start('Lịch sử & đối soát','orders',(string)$admin['username'],true);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> ADMIN / ĐỐI SOÁT</span><h1>Kiểm tra từng <em>giao dịch.</em></h1><p class="tp-lead">Lịch sử thẻ cào và cộng tài nguyên thủ công ở hai mục riêng. Chỉ hiển thị thông tin để đối soát, không lưu hoặc hiện mã PIN/serial đầy đủ.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> ADMIN / ĐỐI SOÁT</span><h1>Kiểm tra từng <em>giao dịch.</em></h1><p class="tp-lead">Kiểm tra đơn thẻ và lịch sử cộng thủ công tại đây.</p></section>
 <?php if($error): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
 <div class="tp-alert warning"><strong>Trạng thái cần chú ý:</strong> <code>needs_review</code> và <code>crediting</code> có thể là giao dịch đã ghi DB nhưng chưa hoàn tất lịch sử. Đối chiếu dữ liệu trước khi tiếp tục, không tự ý gửi lại. Việc kiểm tra trạng thái thẻ chỉ gọi API đối tác, không tạo thêm mã thẻ.</div>

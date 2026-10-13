@@ -109,7 +109,7 @@ try {
 $requestId=kp_topup_new_id();
 kp_topup_page_start('Cộng tài nguyên','grant',(string)$admin['username'],true);
 ?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> QUẢN TRỊ / CẤP TÀI NGUYÊN</span><h1>Cộng cho <em>đúng nhân vật.</em></h1><p class="tp-lead">Xu, Lượng thường và Lượng khóa được tách riêng. Đây là thao tác cộng trực tiếp vào nhân vật đã thoát game; có ghi lịch sử đối soát, không tạo bảng SQL.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> QUẢN TRỊ / CẤP TÀI NGUYÊN</span><h1>Cộng cho <em>đúng nhân vật.</em></h1><p class="tp-lead">Chọn đúng nhân vật đang offline, số tài nguyên muốn cộng và ghi rõ lý do.</p></section>
 <?php if($error): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
 <section class="tp-section">
@@ -133,8 +133,8 @@ kp_topup_page_start('Cộng tài nguyên','grant',(string)$admin['username'],tru
 <button type="submit" class="tp-button">Xác nhận cộng tài nguyên ↗</button></form><?php endif; ?>
 </div>
 </div>
-<div class="tp-alert warning">Lưu ý: <code>tob_char</code> dùng MyISAM (không có rollback). Nếu thao tác báo chưa rõ kết quả, dừng cộng tiếp cho nhân vật và kiểm tra trang <a class="tp-support" href="orders.php">Đối soát</a>. Không gửi cùng một yêu cầu lần hai.</div>
+<div class="tp-alert warning">Lưu ý: <code>tob_char</code> dùng MyISAM (không có rollback). Nếu thao tác báo chưa rõ kết quả, dừng cộng tiếp cho nhân vật và kiểm tra trang <a class="tp-support" href="/quan-tri/nap/doi-soat">Đối soát</a>. Không gửi cùng một yêu cầu lần hai.</div>
 </section>
 
-<script src="../../assets/js/topup-forms.js?v=1" defer></script>
+<script src="/assets/js/topup-forms.js?v=1" defer></script>
 <?php kp_topup_page_end(); ?>

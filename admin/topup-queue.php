@@ -1,4 +1,4 @@
 <?php
-// Compatible entry point. The module uses one canonical rate store and UI.
-header('Location: ../topup/admin/legacy.php', true, 302);
+// Tương thích với liên kết cũ, không xử lý giao dịch tại đây.
+header('Location: /quan-tri/nap/du-lieu-game',true,302);
 exit;
