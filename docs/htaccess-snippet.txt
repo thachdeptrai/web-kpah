@@ -1,0 +1,2 @@
+Cấu hình rewrite đầy đủ nằm tại /.htaccess của repo.
+Không chép snippet cũ lên cấu hình mới. Xem docs/ROUTING.md.

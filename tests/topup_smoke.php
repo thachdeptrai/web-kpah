@@ -1,7 +1,7 @@
 <?php
 // Standalone test: php tests/topup_smoke.php (no database or card provider needed).
 define('KP_ROOT', dirname(__DIR__));
-require KP_ROOT . '/includes/topup_core.php';
+require KP_ROOT . '/app/includes/topup_core.php';
 function check($actual, $expected, $name) {
     if ($actual !== $expected) {
         fwrite(STDERR, "FAIL {$name}: expected " . var_export($expected,true) . " got " . var_export($actual,true) . "\n");

@@ -5,9 +5,9 @@
  * Pure PHP; no database, website, or secret credentials are required.
  */
 define('KP_ROOT', dirname(__DIR__));
-require_once KP_ROOT.'/includes/config_loader.php';
-require_once KP_ROOT.'/includes/security.php';
-require_once KP_ROOT.'/includes/admin_security.php';
+require_once KP_ROOT.'/app/includes/config_loader.php';
+require_once KP_ROOT.'/app/includes/security.php';
+require_once KP_ROOT.'/app/includes/admin_security.php';
 
 function assert_csrf($condition, $title)
 {

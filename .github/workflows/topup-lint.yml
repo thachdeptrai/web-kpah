@@ -2,11 +2,11 @@ name: Topup PHP quality checks
 on:
   push:
     paths:
-      - 'topup/**'
-      - 'includes/topup_core.php'
+      - 'app/topup/**'
+      - 'app/includes/topup_core.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
-      - 'includes/admin_security.php'
+      - 'app/includes/admin_security.php'
       - '.htaccess'
       - '.gitignore'
       - 'assets/css/topup.css'
@@ -14,11 +14,11 @@ on:
       - '.github/workflows/topup-lint.yml'
   pull_request:
     paths:
-      - 'topup/**'
-      - 'includes/topup_core.php'
+      - 'app/topup/**'
+      - 'app/includes/topup_core.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
-      - 'includes/admin_security.php'
+      - 'app/includes/admin_security.php'
       - '.htaccess'
       - '.gitignore'
       - 'assets/css/topup.css'
@@ -42,11 +42,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          php -l includes/topup_core.php
-          find topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          php -l app/includes/topup_core.php
+          find app/topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l tests/topup_smoke.php
           php -l tests/security_smoke.php
-          php -l includes/admin_security.php
+          php -l app/includes/admin_security.php
       - name: Test topup conversions and idempotency status labels
         run: php tests/topup_smoke.php
       - name: Verify admin guard, TOTP and dump protection
@@ -55,7 +55,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if find topup -type f \( -name '*.sql' -o -name '*.sqlite' \) | grep -q .; then
+          if find app/topup -type f \( -name '*.sql' -o -name '*.sqlite' \) | grep -q .; then
             echo 'Payment module must not add SQL files.'
             exit 1
           fi

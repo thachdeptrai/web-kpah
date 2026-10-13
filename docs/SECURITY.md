@@ -7,7 +7,7 @@ Tài liệu vận hành cho website PHP/MariaDB hiện tại. Việc thêm quy t
 - **Admin:** xác thực mật khẩu hash, truy vấn PDO có tham số, kiểm tra quyền `role=admin` và `is_active=1` từ DB, session timeout/rotation, kiểm tra user-agent, giới hạn đăng nhập theo IP + tài khoản, hỗ trợ TOTP 2FA, chống dùng lại mã TOTP, tùy chọn IP allowlist. Các trang nạp admin gọi cùng `kp_admin_require()`.
 - **Phiên & biểu mẫu:** cookie HttpOnly/SameSite, Secure nếu PHP nhận biết HTTPS; CSRF với hành động qua form, CSP chống script inline, chống iframe, không in lỗi SQL ra trình duyệt, validate và escape dữ liệu.
 - **Database:** dùng PDO prepared statements cho đầu vào biến thiên; những chỗ dùng tên cột động (chẳng hạn Xu/Lượng/Lượng khóa) chỉ lựa chọn từ danh sách cố định ở PHP.
-- **Chống lộ file:** Apache `.htaccess` chặn `storage/`, `includes/`, `database/`, `tests/`, `docs/`, dotfiles, file SQL/log/dump và những bản backup có tên nhận diện được. File nén tùy ý vẫn phải đưa ra ngoài web root. `.gitignore` loại trừ secrets và dữ liệu vận hành.
+- **Chống lộ file:** Apache `.htaccess` chặn `storage/`, `app/includes/`, `database/`, `tests/`, `docs/`, dotfiles, file SQL/log/dump và những bản backup có tên nhận diện được. File nén tùy ý vẫn phải đưa ra ngoài web root. `.gitignore` loại trừ secrets và dữ liệu vận hành.
 - **Nạp thẻ:** vẫn khóa gửi thẻ thật tới khi xác minh đối tác và tích hợp game server. Không mở bán chỉ vì giao diện đã có.
 
 ## Bắt buộc kiểm tra ở VPS
@@ -36,7 +36,7 @@ Tài khoản admin dùng mật khẩu dài/riêng biệt; nếu nghi bị lộ, 
 - Chạy HTTPS trên site và origin; với Cloudflare dùng TLS **Full (strict)** và chứng chỉ origin hợp lệ.
 - Kiểm tra `mod_rewrite`, `AllowOverride` và đường dẫn DocumentRoot: nếu Apache bỏ qua `.htaccess`, các quy tắc chặn file **không còn hiệu lực**.
 - Nếu chuyển sang Nginx/IIS, tự cấu hình deny tương đương: Nginx/IIS không chạy `.htaccess`.
-- Có thể bật WAF/rate limit tại Cloudflare cho `/admin/*`, `/topup/admin/*`, `/api/*`, `/topup/card-callback.php` (callback cần cho phép IP/dấu ký đối tác thực tế); ưu tiên Managed Challenge cho admin thay vì chặn nhầm callback.
+- Có thể bật WAF/rate limit tại Cloudflare cho `/admin/*`, `/topup/admin/*`, `/api/*`, `/api/card-callback` (callback cần cho phép IP/dấu ký đối tác thực tế); ưu tiên Managed Challenge cho admin thay vì chặn nhầm callback.
 - Không để FTP, Remote Desktop, MySQL 3306 hoặc giao diện quản trị DB mở công khai nếu không có VPN/IP allowlist.
 - Lưu backup ra vị trí nằm ngoài web root, đặt quyền truy cập hệ thống file và mã hóa backup cần thiết.
 
@@ -54,7 +54,7 @@ https://nghienkpah.io.vn/backup.zip
 https://nghienkpah.io.vn/check.php
 ```
 
-Các địa chỉ nhạy cảm nếu không tồn tại phải là 404/403; tuyệt đối không cố tạo file nhạy cảm để thử trên server public. Kiểm tra chế độ không đăng nhập tại `/admin/index.php`, `/admin/referrals.php`, `/topup/admin/grant.php` phải bị chuyển về đăng nhập hoặc chặn.
+Các địa chỉ nhạy cảm nếu không tồn tại phải là 404/403; tuyệt đối không cố tạo file nhạy cảm để thử trên server public. Kiểm tra chế độ không đăng nhập tại `/quan-tri`, `/quan-tri/ma-gioi-thieu`, `/quan-tri/cong-tai-nguyen` phải bị chuyển về đăng nhập hoặc chặn.
 
 ### 5. Kiểm thử mã nguồn
 

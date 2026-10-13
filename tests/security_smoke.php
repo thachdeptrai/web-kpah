@@ -4,7 +4,7 @@
  * Run: php tests/security_smoke.php
  */
 define('KP_ROOT', dirname(__DIR__));
-require KP_ROOT . '/includes/admin_security.php';
+require KP_ROOT . '/app/includes/admin_security.php';
 function sec_assert($condition, $message) {
     if (!$condition) { fwrite(STDERR, "FAIL: ".$message.PHP_EOL); exit(1); }
     echo "OK: ".$message.PHP_EOL;
@@ -24,6 +24,6 @@ foreach (['sql','sqlite','zip','rar','7z','tar','gz','db','bak'] as $ext) {
 $gitignore = (string)file_get_contents(KP_ROOT.'/.gitignore');
 sec_assert(strpos($gitignore,'/storage/*') !== false, 'runtime payment and MFA state excluded from git');
 sec_assert(strpos($gitignore,'*.sql') !== false, 'SQL dumps excluded from git');
-$topup=(string)file_get_contents(KP_ROOT.'/includes/topup_core.php');
-sec_assert(strpos($topup, "return kp_admin_require('/admin/login.php')") !== false, 'topup shares central admin MFA/session guard');
+$topup=(string)file_get_contents(KP_ROOT.'/app/includes/topup_core.php');
+sec_assert(strpos($topup, "return kp_admin_require('/quan-tri/dang-nhap')") !== false, 'topup shares central admin MFA/session guard');
 echo "PASS: offline security invariants".PHP_EOL;

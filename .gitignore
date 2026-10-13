@@ -9,7 +9,7 @@ config.register.local.php
 *.pfx
 
 # Runtime files must never be published to the public repository.
-storage/*
+/storage/*
 !storage/.htaccess
 !storage/ratelimit/
 storage/ratelimit/*
@@ -28,3 +28,7 @@ storage/ratelimit/*
 *.swp
 *.log
 *~
+
+# Structured local configuration
+config/register.local.php
+!tests/fixtures/schema.sql

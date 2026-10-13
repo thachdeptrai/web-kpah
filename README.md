@@ -31,29 +31,29 @@ Website dành cho cộng đồng người chơi KPAH: đăng ký, đăng nhập,
 | `/dang-nhap` | Đăng nhập |
 | `/quen-mat-khau` | Lấy lại mật khẩu |
 | `/tai-khoan` | Tổng quan và các nút chuyển trang |
-| `/profile.php` | Hồ sơ, cập nhật liên hệ và đổi mật khẩu |
-| `/characters.php` | Nhân vật của tài khoản đang đăng nhập |
-| `/rankings.php` | Chín bảng xếp hạng, Top 1–3 và 4–10 |
+| `/ho-so` | Hồ sơ, cập nhật liên hệ và đổi mật khẩu |
+| `/nhan-vat` | Nhân vật của tài khoản đang đăng nhập |
+| `/bang-xep-hang` | Chín bảng xếp hạng, Top 1–3 và 4–10 |
 | `/nap` | Chọn phương thức nạp |
 | `/nap-the` | Nạp thẻ cào |
 | `/nap-ngan-hang` | Nạp ngân hàng (chưa mở) |
-| `/topup/history.php` | Lịch sử nạp của tài khoản |
-| `/topup/top.php` | Top nạp Lượng |
+| `/lich-su-nap` | Lịch sử nạp của tài khoản |
+| `/top-nap` | Top nạp Lượng |
 
-Các đường dẫn ngắn sử dụng `.htaccess`. Trang nạp chính được tổ chức trong `topup/`; các đường dẫn nạp cũ chuyển hướng về đó.
+URL được phân giải từ `config/routes.php` qua `.htaccess` và `index.php`. GET/HEAD của trang `.php` cũ chuyển 301 sang URL mới, giữ query string. POST cũ được xử lý trực tiếp; API và callback cũ không bị chuyển hướng.
 
 **Quản trị**
 
 | Đường dẫn | Nội dung |
 | --- | --- |
-| `/admin/login.php` | Đăng nhập quản trị |
-| `/admin/index.php` | Trang quản trị chính |
-| `/admin/referrals.php` | Quản lý mã giới thiệu |
-| `/topup/admin/index.php` | Tổng quan quản lý nạp |
-| `/topup/admin/rates.php` | Chỉnh tỷ lệ quy đổi |
-| `/topup/admin/grant.php` | Cộng tài nguyên cho nhân vật |
-| `/topup/admin/orders.php` | Xem giao dịch, đối soát |
-| `/topup/admin/legacy.php` | Xem bảng nạp game hiện có (chỉ đọc) |
+| `/quan-tri/dang-nhap` | Đăng nhập quản trị |
+| `/quan-tri` | Trang quản trị chính |
+| `/quan-tri/ma-gioi-thieu` | Quản lý mã giới thiệu |
+| `/quan-tri/nap` | Tổng quan quản lý nạp |
+| `/quan-tri/ty-le` | Chỉnh tỷ lệ quy đổi |
+| `/quan-tri/cong-tai-nguyen` | Cộng tài nguyên cho nhân vật |
+| `/quan-tri/doi-soat` | Xem giao dịch, đối soát |
+| `/quan-tri/nap-game` | Xem bảng nạp game hiện có (chỉ đọc) |
 
 Các trang trong khu tài khoản và quản trị đều yêu cầu đăng nhập với quyền tương ứng.
 
@@ -62,7 +62,7 @@ Các trang trong khu tài khoản và quản trị đều yêu cầu đăng nh�
 ### Yêu cầu
 
 - PHP **8.0 trở lên** được khuyến nghị; mã nền có kiểm tra PHP >= 7.2.
-- Apache có `mod_rewrite` và hỗ trợ `.htaccess`.
+- Apache 2.4 có `mod_rewrite`, `AllowOverride All`, website đặt ở DocumentRoot (ví dụ `C:\xampp\htdocs`). Không triển khai trong URL thư mục con nếu chưa bổ sung base path.
 - MySQL/MariaDB với `pdo_mysql`.
 - PHP có quyền ghi vào `storage/` để lưu dữ liệu giới hạn lượt thao tác và lịch sử nạp.
 - Cấu hình SMTP nếu sử dụng các chức năng gửi mã xác minh email.
@@ -85,9 +85,9 @@ Không chạy lại file dump `kpah.sql` trên database đang hoạt động. Sa
 Sao chép mẫu:
 
 ```text
-config.register.local.sample.php
+config/register.local.sample.php
                 ↓
-config.register.local.php
+config/register.local.php
 ```
 
 Điền kết nối database, SMTP và các đường dẫn cần dùng. File `config.register.local.php` được `.gitignore` loại trừ; **không commit mật khẩu hay khóa API**.
@@ -102,7 +102,9 @@ KPAH_DB_USER
 KPAH_DB_PASS
 ```
 
-Tham số mặc định nằm trong `config.register.php`. Bộ nạp cấu hình đặt tại `includes/config_loader.php` và được gọi qua `includes/bootstrap.php`.
+Cấu hình cũ `config.register.local.php` ở thư mục gốc vẫn được đọc nếu chưa tạo `config/register.local.php`; cấu hình mới được ưu tiên. Không cần chuyển file cấu hình trên VPS ngay.
+
+Tham số mặc định nằm trong `config/register.php`. Bộ nạp cấu hình đặt tại `app/includes/config_loader.php` và được gọi qua `app/includes/bootstrap.php`.
 
 > Repo website không thay thế code game server. Một số nghiệp vụ, đặc biệt là cấp tài nguyên sau khi thanh toán, cần được kiểm tra ở phía game server trước khi sử dụng thực tế.
 
@@ -129,7 +131,7 @@ Bộ mã giới thiệu có file `database/referral_codes.sql` dành cho môi tr
 
 ## Bảng xếp hạng
 
-Trang `rankings.php` dùng truy vấn **chỉ đọc**, chọn hạng mục bằng danh sách cố định ở `includes/rankings.php`. Hiện có 9 hạng mục: Cấp độ, Danh vọng, Điểm PK, Bang hội, Nạp Lượng, Điểm sự kiện, Thách đấu, Chiếm thành và Sự kiện WC.
+Trang `rankings.php` dùng truy vấn **chỉ đọc**, chọn hạng mục bằng danh sách cố định ở `app/includes/rankings.php`. Hiện có 9 hạng mục: Cấp độ, Danh vọng, Điểm PK, Bang hội, Nạp Lượng, Điểm sự kiện, Thách đấu, Chiếm thành và Sự kiện WC.
 
 Giao diện hiển thị Top 1 ở trung tâm, Top 2 trái, Top 3 phải; Top 4–10 bên dưới. Nếu bảng chưa có dữ liệu, hiển thị trạng thái trống. Hình chiến binh/pháp sư/cung thủ là SVG minh họa, không phải sprite nhân vật thực tế.
 
@@ -161,7 +163,7 @@ Tỷ lệ mặc định cho mỗi **10.000 VNĐ**:
 | Lượng khóa | 200 |
 | Xu | Chưa bật quy đổi VNĐ mặc định |
 
-Admin có thể sửa tỷ lệ tại `/topup/admin/rates.php`. Không bắt buộc người dùng chọn gói giá cố định; giao dịch thẻ phải nhập đúng mệnh giá của nhà phát hành.
+Admin có thể sửa tỷ lệ tại `/quan-tri/ty-le`. Không bắt buộc người dùng chọn gói giá cố định; giao dịch thẻ phải nhập đúng mệnh giá của nhà phát hành.
 
 Cấu hình tỷ lệ và nhật ký của module nạp được lưu trong vùng riêng tại `storage/topup/`, không thêm bảng SQL. Thư mục `storage/` có cấu hình chặn truy cập trực tiếp qua web.
 
@@ -177,26 +179,23 @@ Chi tiết quy trình, biến môi trường, lưu ý về MyISAM và điều ki
 
 ## Cấu trúc chính
 
-```text
-web-kpah/
-├── index.php                     Trang chủ công khai
-├── register.php                  Đăng ký
-├── login.php                     Đăng nhập
-├── forgot-password.php           Khôi phục mật khẩu
-├── home.php                      Hồ sơ, nhân vật và xếp hạng
-├── admin/                        Trang quản trị và mã giới thiệu
-├── api/                          Xử lý đăng ký, hồ sơ, mật khẩu, email
-├── topup/                        Nạp thẻ, lịch sử, xếp hạng, ngân hàng
-│   └── admin/                    Tỷ lệ, cộng tài nguyên, đối soát
-├── includes/                     Kết nối DB, bảo mật và xử lý nghiệp vụ
-├── assets/                       CSS, JS, hình ảnh và giao diện
-├── storage/                      Dữ liệu vận hành ngoài database
-├── database/                     SQL hỗ trợ và kiểm tra schema
-├── docs/                         Tài liệu triển khai
-├── tests/                        Kiểm tra module nạp
-├── config.register.php           Cấu hình mặc định
-└── config.register.local.sample.php
-```
+| Thư mục/file | Trách nhiệm |
+| --- | --- |
+| `index.php` | Điểm vào HTTP duy nhất |
+| `config/routes.php` | Danh sách URL, alias cũ và loại session |
+| `config/register.php` | Cấu hình mặc định |
+| `config/register.local.php` | Cấu hình riêng, không commit |
+| `app/pages/` | Trang chủ và tài khoản người chơi |
+| `app/admin/` | Đăng nhập admin, tổng quan, mã giới thiệu |
+| `app/topup/` | Trang nạp và quản trị nạp |
+| `app/api/` | Endpoint xử lý form, hồ sơ và email |
+| `app/includes/` | Nghiệp vụ, database, session và bảo mật |
+| `assets/` | CSS, JavaScript, font và hình ảnh công khai |
+| `storage/` | Session phụ, giới hạn truy cập và nhật ký nạp |
+| `database/` | SQL hỗ trợ quản trị, giới thiệu |
+| `tools/` | Chẩn đoán nội bộ, bị chặn qua HTTP |
+| `tests/` | Kiểm thử đơn vị, HTTP và schema mẫu |
+| `docs/` | Hướng dẫn triển khai, bảo mật, kiểm thử |
 
 ## Bảo mật admin và database
 
@@ -209,10 +208,10 @@ Lưu ý: không để dump SQL, khóa API, file `.env` hay `storage/topup/` tron
 Kiểm tra cú pháp PHP, ví dụ:
 
 ```bat
-C:\xampp\php\php.exe -l home.php
-C:\xampp\php\php.exe -l topup\index.php
-C:\xampp\php\php.exe -l topup\card.php
-C:\xampp\php\php.exe -l topup\admin\grant.php
+C:\xampp\php\php.exe -l app\pages\home.php
+C:\xampp\php\php.exe -l app\topup\index.php
+C:\xampp\php\php.exe -l app\topup\card.php
+C:\xampp\php\php.exe -l app\topup\admin\grant.php
 ```
 
 Nếu có PHP CLI, chạy bộ kiểm tra quy đổi:
@@ -249,3 +248,7 @@ Các issue là nơi theo dõi tiến độ và review; không đồng nghĩa có
 ---
 
 **NGHIỆN KPAH** · [Website](https://nghienkpah.io.vn) · [Mã nguồn](https://github.com/thachdeptrai/web-kpah)
+
+## URL và kiểm thử hồi quy
+
+Xem [hướng dẫn chuyển cấu trúc và triển khai](docs/ROUTING.md), [phạm vi kiểm thử](docs/TESTING.md). Thay đổi này không chạy migration hoặc sửa dữ liệu game.

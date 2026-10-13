@@ -1,0 +1,3 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Không tìm thấy trang · NGHIỆN KPAH</title><link rel="stylesheet" href="/assets/css/landing.css"></head>
+<body class="landing-page"><main class="lp-wrap lp-hero"><p class="lp-eyebrow">NGHIỆN KPAH · 404</p><h1>Trang này không còn ở đây.</h1><p class="lp-lead">Có thể liên kết đã thay đổi hoặc bạn nhập nhầm địa chỉ.</p><div class="lp-hero-actions"><a class="lp-button" href="/">Về trang chủ</a><a class="lp-button lp-button-secondary" href="/tai-khoan">Tài khoản của tôi</a></div></main></body></html>

@@ -1,8 +1,0 @@
-<?php
-// Compatibility URL for the former Top nạp page.
-// The shared leaderboard now offers Top nạp together with eight other rankings.
-require __DIR__.'/../includes/bootstrap.php';
-require_once __DIR__.'/../includes/player_portal.php';
-kp_player_account();
-header('Location: ../rankings.php?type=nap',true,302);
-exit;

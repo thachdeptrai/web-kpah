@@ -2,8 +2,8 @@
 
 ## Trạng thái thực hiện
 
-- **Đã có giao diện:** `/topup/index.php` (chọn chức năng), `/topup/card.php` (thẻ cào), `/topup/history.php`, `/topup/top.php` (top nạp từ `tob_event_top`), `/topup/bank.php` (chưa kích hoạt).
-- **Đã có admin tách trang:** `/topup/admin/index.php`, `rates.php`, `grant.php`, `orders.php`. Trang admin cũ chỉ có thêm nút dẫn đến khu quản lý nạp.
+- **Đã có giao diện:** `/nap` (chọn chức năng), `/nap-the` (thẻ cào), `/lich-su-nap`, `/top-nap` (top nạp từ `tob_event_top`), `/nap-ngan-hang` (chưa kích hoạt).
+- **Đã có admin tách trang:** `/quan-tri/nap`, `rates.php`, `grant.php`, `orders.php`. Trang admin cũ chỉ có thêm nút dẫn đến khu quản lý nạp.
 - **Đã có backend:** tạo yêu cầu thẻ, gửi API thẻ theo phương thức `charging`, nhận callback có kiểm tra chữ ký, xác minh lại qua API `check`, lưu idempotency/hồ sơ giao dịch ở `storage/topup`.
 - **CHƯA LIVE nạp thẻ tự động:** mặc định khóa nút gửi thẻ thật. Phải có API đối tác và phải xác minh game server sử dụng `board_naptien` chính xác trước khi bật.
 - **Ngân hàng:** chưa triển khai, không hiển thị thông tin nhận tiền.
@@ -34,7 +34,7 @@ Mặc định cho mỗi 10.000đ:
 - `luonglock` = 200 Lượng khóa.
 - `gold` = 0 Xu (không bật quy đổi theo VNĐ; admin vẫn có thể cộng trực tiếp).
 
-Admin cập nhật tỷ lệ tại `/topup/admin/rates.php`. Giá trị lưu trong `storage/topup/rates.json`, tự tạo sau khi admin lưu. Đảm bảo Apache/PHP có quyền ghi `storage/topup`. `storage/.htaccess` có sẵn để chặn truy cập tệp lưu lịch sử và cấu hình.
+Admin cập nhật tỷ lệ tại `/quan-tri/ty-le`. Giá trị lưu trong `storage/topup/rates.json`, tự tạo sau khi admin lưu. Đảm bảo Apache/PHP có quyền ghi `storage/topup`. `storage/.htaccess` có sẵn để chặn truy cập tệp lưu lịch sử và cấu hình.
 
 Có thể nhập VNĐ **bất kỳ** khi quy đổi; phần lẻ chưa đủ 1 đơn vị tài nguyên được làm tròn xuống.
 

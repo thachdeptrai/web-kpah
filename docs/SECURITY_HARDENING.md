@@ -5,12 +5,12 @@ Tài liệu áp dụng cho repo \`web-kpah\` dùng PHP/MySQL/MariaDB trên Windo
 ## Phạm vi bản cập nhật
 
 **Đã thay đổi code:**
-- Gom kiểm tra quyền truy cập admin về \`includes/admin_security.php\`; các trang admin và trang nạp admin sử dụng cùng cơ chế.
+- Gom kiểm tra quyền truy cập admin về \`app/includes/admin_security.php\`; các trang admin và trang nạp admin sử dụng cùng cơ chế.
 - Kiểm tra quyền từ \`kpah_web_admins\` trong mỗi yêu cầu; giới hạn 30 phút không hoạt động, 8 giờ phiên tối đa, ràng buộc User-Agent và thay ID phiên định kỳ.
 - Thêm hỗ trợ TOTP từ Google/Microsoft Authenticator: tùy chọn cấu hình trên VPS, không cần SQL.
 - Giới hạn đoán mật khẩu theo IP **và** theo tên admin; không bỏ qua giới hạn khi thư mục lưu bị lỗi.
 - CSRF token, xác thực role và kiểm tra trạng thái active vẫn giữ nguyên.
-- Ngăn truy cập HTTP vào \`.git\`, \`storage/\`, \`includes/\`, \`database/\`, \`tests/\`, \`docs/\`, bản dump, file backup và \`check.php\`.
+- Ngăn truy cập HTTP vào \`.git\`, \`storage/\`, \`app/includes/\`, \`database/\`, \`tests/\`, \`docs/\`, bản dump, file backup và \`check.php\`.
 - PDO dùng prepared statements thật (\`ATTR_EMULATE_PREPARES=false\`), vô hiệu hóa multi-statements khi driver hỗ trợ.
 - Bổ sung headers \`Referrer-Policy: no-referrer\`, \`nosniff\`, CSP, và HSTS khi PHP nhận ra kết nối HTTPS.
 
@@ -138,4 +138,4 @@ Kiểm tra không kết nối SQL:
 C:\xampp\php\php.exe tests\admin_csrf_smoke.php
 ```
 
-Bài kiểm tra bảo đảm phiên admin/người chơi có tên cookie khác nhau, token CSRF được kiểm tra và chặn các yêu cầu cross-site, đồng thời hỗ trợ reverse proxy. Chưa thể xác nhận tình trạng cookie/session lưu thực tế trên VPS từ riêng mã nguồn repo.
+Bài kiểm tra bảo đảm phiên app/admin/người chơi có tên cookie khác nhau, token CSRF được kiểm tra và chặn các yêu cầu cross-site, đồng thời hỗ trợ reverse proxy. Chưa thể xác nhận tình trạng cookie/session lưu thực tế trên VPS từ riêng mã nguồn repo.
