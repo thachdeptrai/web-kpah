@@ -1,31 +1,12 @@
 <?php
 require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin_security.php';
 require_once __DIR__ . '/../includes/referrals.php';
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 
-function kp_admin_require_role()
-{
-    if (empty($_SESSION['kp_admin_id']) || ($_SESSION['kp_admin_role'] ?? '') !== 'admin') {
-        header('Location: login.php');
-        exit;
-    }
-    if (empty($_SESSION['kp_admin_last_seen']) || time() - (int) $_SESSION['kp_admin_last_seen'] > 1800) {
-        unset($_SESSION['kp_admin_id'], $_SESSION['kp_admin_username'], $_SESSION['kp_admin_role']);
-        header('Location: login.php?expired=1');
-        exit;
-    }
-    $_SESSION['kp_admin_last_seen'] = time();
-    $st = kp_db()->prepare('SELECT role, is_active FROM kpah_web_admins WHERE id = ? LIMIT 1');
-    $st->execute([(int) $_SESSION['kp_admin_id']]);
-    $row = $st->fetch();
-    if (!$row || $row['role'] !== 'admin' || (int) $row['is_active'] !== 1) {
-        unset($_SESSION['kp_admin_id'], $_SESSION['kp_admin_username'], $_SESSION['kp_admin_role']);
-        header('Location: login.php');
-        exit;
-    }
-}
-kp_admin_require_role();
+// One central admin guard: role, active status, MFA, session age and browser binding.
+kp_admin_require();
 
 $notice = '';
 $error = '';
