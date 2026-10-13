@@ -104,6 +104,23 @@ function kp_send_security_headers($isPage)
     }
 }
 
+/**
+ * Admin and player sessions must NOT share their PHP session cookie.
+ * Player login regenerates the session ID; sharing a cookie invalidates an
+ * already-open admin login CSRF form (or the reverse).
+ *
+ * SCRIPT_NAME is the server-resolved PHP script, not a user query parameter.
+ * Both /admin/ and /topup/admin/ use the same admin session.
+ */
+function kp_session_cookie_name()
+{
+    $script = str_replace('\\\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (preg_match('~(?:^|/)(?:admin|topup/admin)/[^/]+\\.php$~i', $script)) {
+        return (string)kp_config('security.admin_session_name', 'KPAHADMIN');
+    }
+    return (string)kp_config('security.session_name', 'KPAHREG');
+}
+
 function kp_session_start()
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -112,7 +129,7 @@ function kp_session_start()
     $secure = kp_is_https();
     $path   = (string) kp_config('security.cookie_path', '/');
 
-    session_name((string) kp_config('security.session_name', 'KPAHREG'));
+    session_name(kp_session_cookie_name());
     @ini_set('session.use_strict_mode', '1');
     @ini_set('session.use_only_cookies', '1');
     @ini_set('session.cookie_httponly', '1');
