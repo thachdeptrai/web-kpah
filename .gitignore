@@ -1,3 +1,42 @@
+# Secrets: never commit real database or third-party credentials
 config.register.local.php
-storage/ratelimit/*
-!storage/ratelimit/.gitkeep
+config.register.local.*
+!config.register.local.sample.php
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime state: rate-limit buckets, admin MFA replay data, payment records
+/storage/*
+!/storage/.htaccess
+!/storage/ratelimit/
+!/storage/ratelimit/.gitkeep
+
+# Databases, dumps, backups and generated archives
+*.sql
+*.sql.gz
+*.sql.zip
+*.sqlite
+*.sqlite3
+*.db
+*.bak
+*.backup
+*.dump
+*.log
+*.orig
+*.swp
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.zip
+
+# Local tooling
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
