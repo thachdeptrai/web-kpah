@@ -53,7 +53,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     <?php elseif(!$rows): ?>
         <div class="lb-empty" role="status"><span aria-hidden="true">◇</span><h3>Chưa có người trên bảng vinh danh</h3><p>Dữ liệu của hạng mục này hiện chưa có trong database. Khi game ghi nhận, bảng Top sẽ tự hiển thị.</p></div>
     <?php else: ?>
-    <div class="rank-podium" aria-label="Ba vị trí dẫn đầu">
+    <div class="rank-podium rank-podium--count-<?= min(3,count($rows)) ?>" aria-label="Các vị trí dẫn đầu">
         <?php foreach(array_slice($rows,0,3) as $i=>$person):
             $rank=$i+1;
             $name=(string)$person['name'];
@@ -106,7 +106,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
         <?php endif; ?>
     </div>
     <?php endif; ?>
-    <div class="lb-source">Nguồn xếp hạng: <code><?= kp_e($current['source']) ?></code>. Minh họa chiến binh mang tính trang trí, không phải hình nhân vật trong game.</div>
+    <div class="lb-source">Bảng xếp hạng lấy dữ liệu từ game. Hình chiến binh chỉ là minh họa, không phải ngoại hình thật của nhân vật.</div>
 </section>
 <div class="portal-return"><a href="home.php">← Về khu tài khoản</a><a href="characters.php">Nhân vật của tôi ↗</a></div>
 <?php kp_player_foot(); ?>
