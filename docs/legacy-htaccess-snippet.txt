@@ -1,4 +1,4 @@
-# ==========================================================================
+ARCHIVE - DO NOT USE WITH THE CURRENT WEBSITE.\nThese historical sample rules are kept only for reference; the real and tested rules live in /.htaccess.\n\n# ==========================================================================
 # KPAH hardening – GỘP vào .htaccess gốc ĐANG CÓ, không ghi đè toàn bộ file.
 # Kiểm tra các route hiện tại sau khi thêm. Yêu cầu Apache + mod_rewrite.
 # Thư mục includes/, storage/, database/ đã có .htaccess riêng.

@@ -1,10 +1,10 @@
 # KPAH – User account portal
 
 ## Trang và luồng
-- `login.php`: đăng nhập tài khoản game.
-- `register.php`: đăng ký hiện có; có liên kết quay lại đăng nhập.
-- `home.php`: trang chủ tài khoản, chỉ truy cập sau đăng nhập.
-- `forgot-password.php`: khôi phục mật khẩu bằng mã gửi tới email đã liên kết.
+- `/dang-nhap`: đăng nhập tài khoản game.
+- `/dang-ky`: đăng ký hiện có; có liên kết quay lại đăng nhập.
+- `/tai-khoan`: trang chủ tài khoản, chỉ truy cập sau đăng nhập.
+- `/quen-mat-khau`: khôi phục mật khẩu bằng mã gửi tới email đã liên kết.
 - `api/logout.php`: đăng xuất.
 - `api/user-profile.php`: cập nhật email và số điện thoại.
 - `api/forgot-password.php`: gửi mã và đặt lại mật khẩu.
@@ -18,8 +18,10 @@ Không thêm bảng hoặc cột mới. Dùng các cột đã có trong `team_us
 1. Đảm bảo cấu hình DB trong `config.register.local.php` đang trỏ tới database game.
 2. SMTP trong cấu hình local phải có `smtp_host`, `smtp_user`, `smtp_pass`, `from_email`; với Gmail dùng App Password, không dùng mật khẩu đăng nhập Gmail thông thường.
 3. Tài khoản MySQL của website cần quyền `SELECT` và `UPDATE` trên `team_user` cho trang hồ sơ/khôi phục mật khẩu. Luồng đăng ký hiện tại cần thêm `INSERT`.
-4. Mở `/login.php`, đăng nhập bằng username và mật khẩu của tài khoản game. Sau đăng nhập chuyển sang `/home.php`.
+4. Mở `/dang-nhap`, đăng nhập bằng username và mật khẩu của tài khoản game. Sau đăng nhập chuyển sang `/tai-khoan`.
 5. Nếu quên mật khẩu hoặc cập nhật email không gửi được mã, kiểm tra log PHP/Apache trên máy chủ và thông tin SMTP. Không đưa mật khẩu SMTP vào Git.
 
 ## Lưu ý
 Chưa thể chạy thử với database/SMTP thực tế của máy chủ từ GitHub. Hãy thử trên môi trường staging trước khi dùng thật; đặc biệt xác nhận server game vẫn nhận mật khẩu theo định dạng hiện có.
+
+Trang tài khoản hiện có đường dẫn `/tai-khoan/ho-so`, `/tai-khoan/nhan-vat`, `/bang-xep-hang`. Các file `.php` cũ chỉ còn làm đường dẫn tương thích.
