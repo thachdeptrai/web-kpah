@@ -53,9 +53,9 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                     <div class="profile-field">
                         <label for="email">Email <?= $hasEmail ? 'muốn thay đổi' : 'liên kết' ?></label>
-                        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" <?= $hasEmail ? 'required' : 'readonly aria-describedby="email-help"' ?> value="<?= kp_e($email) ?>" placeholder="<?= $hasEmail ? 'name@example.com' : 'Chưa có email' ?>">
-                        <p class="field-note" id="email-help"><?= $hasEmail ? 'Khi đổi email, cần xác minh địa chỉ hiện tại và địa chỉ mới.' : 'Tài khoản chưa có email. Để liên kết an toàn, hãy liên hệ hỗ trợ bên dưới.' ?></p>
-                        <?php if (!$hasEmail): ?><a class="profile-help-link" href="https://zalo.me/g/zmyedl5en7sldmd9el1z" target="_blank" rel="noopener noreferrer">Liên hệ hỗ trợ ↗</a><?php endif; ?>
+                        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" <?= $hasEmail ? 'required' : 'aria-describedby="email-help"' ?> value="<?= kp_e($email) ?>" placeholder="<?= $hasEmail ? 'name@example.com' : 'Chưa có email' ?>">
+                        <p class="field-note" id="email-help"><?= $hasEmail ? 'Khi đổi email, cần xác minh địa chỉ hiện tại và địa chỉ mới.' : 'Nhập email muốn liên kết, nhận mã xác minh gửi đến email đó rồi lưu.' ?></p>
+                        
                     </div>
                     <?php if ($hasEmail): ?>
                     <div class="profile-field">
@@ -75,9 +75,8 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                     </div>
                     <?php else: ?>
                     <input type="hidden" id="old_email_code" name="old_email_code" value="">
-                    <input type="hidden" id="email_code" name="email_code" value="">
                     <button type="button" id="send-old-code" hidden>Gửi mã</button>
-                    <button type="button" id="send-code" hidden>Gửi mã</button>
+                    <div class="profile-field"><label for="email_code">Mã xác minh email lần đầu</label><div class="input-with-action"><input id="email_code" name="email_code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="Nhập mã 6 chữ số"><button type="button" id="send-code">Gửi mã email</button></div></div>
                     <?php endif; ?>
                     <div class="profile-field">
                         <label for="phone">Số điện thoại</label>
@@ -85,7 +84,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                     </div>
                     <div class="form-feedback" id="profile-feedback" role="status" aria-live="polite"></div>
                     <div class="profile-form-footer">
-                        <span class="form-lock"><span aria-hidden="true">◇</span> <?= $hasEmail ? 'Đổi email phải xác minh hai địa chỉ' : 'Vẫn có thể cập nhật số điện thoại' ?></span>
+                        <span class="form-lock"><span aria-hidden="true">◇</span> <?= $hasEmail ? 'Đổi email phải xác minh hai địa chỉ' : 'Liên kết email lần đầu cần mã xác minh' ?></span>
                         <button type="submit" class="save-button"><span>Lưu thay đổi</span><span aria-hidden="true">↗</span></button>
                     </div>
                 </form>
