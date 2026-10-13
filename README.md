@@ -1,214 +1,222 @@
-# KPAH – Module đăng ký tài khoản
+# NGHIỆN KPAH
 
-Trang đăng ký tài khoản cho game KPAH (PHP + MySQL/MariaDB), giao diện MMORPG fantasy tối màu, responsive,
-ghi tài khoản **trực tiếp vào bảng `team_user`** đúng định dạng game đang dùng.
+Website dành cho cộng đồng người chơi KPAH: đăng ký, đăng nhập, quản lý tài khoản, xem nhân vật, bảng xếp hạng và khu nạp tài nguyên.
 
-> **Đọc trước – giới hạn của bản bàn giao này**
-> Mình chỉ nhận được `kpah.sql`. Mình **không có** source hiện tại (`config.php`, `index.php`, `admin/`, `api/`, `ip/`, `.htaccess`, trang đăng nhập).
-> Vì vậy module được làm **độc lập, không ghi đè** file nào của bạn, và mọi thứ về database đều lấy từ `kpah.sql`.
-> Chi tiết ở mục *Chưa xác minh được* bên dưới.
+**Website:** [nghienkpah.io.vn](https://nghienkpah.io.vn)  
+**Công nghệ:** PHP · MySQL/MariaDB · HTML/CSS/JavaScript  
+**Giao diện:** Desktop và mobile
+
+## Chức năng
+
+| Khu vực | Chức năng |
+| --- | --- |
+| Trang chủ | Thông tin website, liên kết tài khoản, cộng đồng và tải game khi được cấu hình |
+| Tài khoản | Đăng ký, đăng nhập, khôi phục mật khẩu qua email |
+| Hồ sơ | Thông tin tài khoản, cập nhật liên hệ, đổi mật khẩu |
+| Nhân vật | Xem nhân vật thuộc tài khoản đang đăng nhập, cấp độ, kinh nghiệm, Xu, Lượng và Lượng khóa |
+| Xếp hạng | Top cấp độ và Top nạp Lượng từ dữ liệu game |
+| Quản trị | Tổng quan, tài khoản quản trị và mã giới thiệu |
+| Quản lý nạp | Tỷ lệ quy đổi, cộng tài nguyên thủ công, lịch sử và đối soát |
+| Nạp thẻ | Đã có giao diện và mã tích hợp đối tác, **chưa bật nhận thẻ thật mặc định** |
+| Nạp ngân hàng | Có trang riêng, **chưa triển khai thanh toán** |
+
+### Đường dẫn
+
+**Người chơi**
+
+| Đường dẫn | Nội dung |
+| --- | --- |
+| `/` | Trang chủ |
+| `/dang-ky` | Đăng ký |
+| `/dang-nhap` | Đăng nhập |
+| `/quen-mat-khau` | Lấy lại mật khẩu |
+| `/tai-khoan` | Hồ sơ và nhân vật |
+| `/nap` | Chọn phương thức nạp |
+| `/nap-the` | Nạp thẻ cào |
+| `/nap-ngan-hang` | Nạp ngân hàng (chưa mở) |
+| `/topup/history.php` | Lịch sử nạp của tài khoản |
+| `/topup/top.php` | Top nạp Lượng |
+
+Các đường dẫn ngắn sử dụng `.htaccess`. Trang nạp chính được tổ chức trong `topup/`; các đường dẫn nạp cũ chuyển hướng về đó.
+
+**Quản trị**
+
+| Đường dẫn | Nội dung |
+| --- | --- |
+| `/admin/login.php` | Đăng nhập quản trị |
+| `/admin/index.php` | Trang quản trị chính |
+| `/admin/referrals.php` | Quản lý mã giới thiệu |
+| `/topup/admin/index.php` | Tổng quan quản lý nạp |
+| `/topup/admin/rates.php` | Chỉnh tỷ lệ quy đổi |
+| `/topup/admin/grant.php` | Cộng tài nguyên cho nhân vật |
+| `/topup/admin/orders.php` | Xem giao dịch, đối soát |
+| `/topup/admin/legacy.php` | Xem bảng nạp game hiện có (chỉ đọc) |
+
+Các trang trong khu tài khoản và quản trị đều yêu cầu đăng nhập với quyền tương ứng.
+
+## Cài đặt và cập nhật
+
+### Yêu cầu
+
+- PHP **8.0 trở lên** được khuyến nghị; mã nền có kiểm tra PHP >= 7.2.
+- Apache có `mod_rewrite` và hỗ trợ `.htaccess`.
+- MySQL/MariaDB với `pdo_mysql`.
+- PHP có quyền ghi vào `storage/` để lưu dữ liệu giới hạn lượt thao tác và lịch sử nạp.
+- Cấu hình SMTP nếu sử dụng các chức năng gửi mã xác minh email.
+- HTTPS cho website hoạt động công khai.
+- `curl` chỉ cần khi kết nối API đối tác nạp thẻ.
+
+### Cập nhật trên VPS
+
+Nếu website đã được triển khai từ GitHub, trong thư mục dự án chạy:
+
+```bat
+cd C:\xampp\htdocs
+git pull --ff-only origin main
+```
+
+Không chạy lại file dump `kpah.sql` trên database đang hoạt động. Sao lưu dữ liệu và file cấu hình riêng trước khi nâng cấp.
+
+### Cấu hình website
+
+Sao chép mẫu:
+
+```text
+config.register.local.sample.php
+                ↓
+config.register.local.php
+```
+
+Điền kết nối database, SMTP và các đường dẫn cần dùng. File `config.register.local.php` được `.gitignore` loại trừ; **không commit mật khẩu hay khóa API**.
+
+Có thể dùng biến môi trường cho database:
+
+```text
+KPAH_DB_HOST
+KPAH_DB_PORT
+KPAH_DB_NAME
+KPAH_DB_USER
+KPAH_DB_PASS
+```
+
+Tham số mặc định nằm trong `config.register.php`. Bộ nạp cấu hình đặt tại `includes/config_loader.php` và được gọi qua `includes/bootstrap.php`.
+
+> Repo website không thay thế code game server. Một số nghiệp vụ, đặc biệt là cấp tài nguyên sau khi thanh toán, cần được kiểm tra ở phía game server trước khi sử dụng thực tế.
+
+## Database
+
+Website đang dùng các bảng có sẵn trong database KPAH. Một số bảng quan trọng:
+
+| Bảng | Mục đích |
+| --- | --- |
+| `team_user` | Tài khoản game |
+| `tob_web_info_char` | Liên kết nhân vật với tài khoản trên web |
+| `tob_char` | Nhân vật và số dư Xu/Lượng/Lượng khóa |
+| `tob_char_luong` | Dữ liệu cấp độ/kinh nghiệm phục vụ hiển thị |
+| `tob_event_top` | Thống kê Top nạp Lượng |
+| `board_naptien`, `board_created` | Các bảng nạp có sẵn của game; chưa xác nhận đầy đủ cách server xử lý |
+| `kpah_referral_codes`, `kpah_referral_code_uses` | Mã giới thiệu và lịch sử sử dụng |
+| `kpah_web_admins` | Tài khoản quản trị website |
+
+**Phân biệt hai ID tài khoản:** `team_user.id` là ID dùng để liên kết dữ liệu nhân vật trong luồng web hiện tại; `team_user.userid` là cột khác, không được dùng thay tùy ý.
+
+Khu nạp mới **không yêu cầu thêm bảng hay thay đổi schema SQL**. Tuy nhiên, chức năng cộng tài nguyên thủ công của admin có thể cập nhật các cột số dư hiện có trong `tob_char` sau khi admin xác nhận.
+
+Bộ mã giới thiệu có file `database/referral_codes.sql` dành cho môi trường chưa có các bảng quản trị/giới thiệu tương ứng. **Không import lại trên hệ thống đang chạy khi các bảng đã tồn tại và hoạt động bình thường.**
+
+## Quản trị
+
+Tài khoản quản trị web lưu tại `kpah_web_admins`, độc lập với tài khoản game `team_user`. Hệ thống kiểm tra quyền `admin` và trạng thái tài khoản trước khi vào các trang quản trị.
+
+Các thao tác đang hỗ trợ:
+
+- Tạo và quản lý mã giới thiệu.
+- Xem thông tin tổng quan từ database.
+- Điều chỉnh tỷ lệ quy đổi Xu, Lượng thường và Lượng khóa.
+- Cộng tài nguyên thủ công cho đúng nhân vật, kèm xác nhận và nhật ký.
+- Xem các giao dịch nạp và dữ liệu tại `board_naptien` / `board_created`.
+
+Trước khi cộng tài nguyên thủ công, **nhân vật phải thoát game**. Bảng `tob_char` trong bản SQL đã kiểm tra dùng MyISAM, không có rollback giao dịch. Nếu thao tác chưa rõ kết quả, phải đối soát thay vì bấm cộng lần nữa.
+
+## Nạp tài nguyên
+
+Tỷ lệ mặc định cho mỗi **10.000 VNĐ**:
+
+| Tài nguyên | Số nhận |
+| --- | ---: |
+| Lượng thường (không khóa) | 100 |
+| Lượng khóa | 200 |
+| Xu | Chưa bật quy đổi VNĐ mặc định |
+
+Admin có thể sửa tỷ lệ tại `/topup/admin/rates.php`. Không bắt buộc người dùng chọn gói giá cố định; giao dịch thẻ phải nhập đúng mệnh giá của nhà phát hành.
+
+Cấu hình tỷ lệ và nhật ký của module nạp được lưu trong vùng riêng tại `storage/topup/`, không thêm bảng SQL. Thư mục `storage/` có cấu hình chặn truy cập trực tiếp qua web.
+
+**Trạng thái hiện tại**
+
+- Có màn hình gửi thẻ, lịch sử và phần tích hợp API đối tác.
+- **Chưa mở gửi thẻ thật mặc định.** Phải cấu hình đối tác và xác minh cơ chế game server tiêu thụ `board_naptien` trước khi kích hoạt.
+- Nạp ngân hàng chưa kết nối, không có QR hay tài khoản ngân hàng để chuyển tiền.
+- Một giao dịch ở trạng thái chờ cấp **không đồng nghĩa** tài nguyên đã vào game.
+- Nạp thật, webhook và cập nhật số dư chưa được xác nhận hoạt động trọn vẹn trên môi trường production.
+
+Chi tiết quy trình, biến môi trường, lưu ý về MyISAM và điều kiện bật nạp tại [`docs/TOPUP_TEAMWORK.md`](docs/TOPUP_TEAMWORK.md).
+
+## Cấu trúc chính
+
+```text
+web-kpah/
+├── index.php                     Trang chủ công khai
+├── register.php                  Đăng ký
+├── login.php                     Đăng nhập
+├── forgot-password.php           Khôi phục mật khẩu
+├── home.php                      Hồ sơ, nhân vật và xếp hạng
+├── admin/                        Trang quản trị và mã giới thiệu
+├── api/                          Xử lý đăng ký, hồ sơ, mật khẩu, email
+├── topup/                        Nạp thẻ, lịch sử, xếp hạng, ngân hàng
+│   └── admin/                    Tỷ lệ, cộng tài nguyên, đối soát
+├── includes/                     Kết nối DB, bảo mật và xử lý nghiệp vụ
+├── assets/                       CSS, JS, hình ảnh và giao diện
+├── storage/                      Dữ liệu vận hành ngoài database
+├── database/                     SQL hỗ trợ và kiểm tra schema
+├── docs/                         Tài liệu triển khai
+├── tests/                        Kiểm tra module nạp
+├── config.register.php           Cấu hình mặc định
+└── config.register.local.sample.php
+```
+
+## Kiểm tra trước khi chạy thật
+
+Kiểm tra cú pháp PHP, ví dụ:
+
+```bat
+C:\xampp\php\php.exe -l home.php
+C:\xampp\php\php.exe -l topup\index.php
+C:\xampp\php\php.exe -l topup\card.php
+C:\xampp\php\php.exe -l topup\admin\grant.php
+```
+
+Nếu có PHP CLI, chạy bộ kiểm tra quy đổi:
+
+```bat
+C:\xampp\php\php.exe tests\topup_smoke.php
+```
+
+Sau khi cập nhật, kiểm tra giao diện PC/mobile, đăng nhập, đăng ký, OTP, quyền admin và link CSS/JS. Với giao diện đang được cache qua trình duyệt hoặc Cloudflare, thử tải lại mạnh hoặc xóa cache của file tương ứng.
+
+**Không sử dụng giao dịch thẻ thật để thử hệ thống.** Luồng nhà cung cấp, xác minh callback, chống cấp trùng và server game phải được kiểm tra trên môi trường staging trước.
+
+## Theo dõi phát triển
+
+Công việc khu nạp được chia thành bốn nhóm trên GitHub:
+
+- [Backend và tích hợp database game](https://github.com/thachdeptrai/web-kpah/issues/2)
+- [Frontend và responsive](https://github.com/thachdeptrai/web-kpah/issues/3)
+- [Quản trị nạp](https://github.com/thachdeptrai/web-kpah/issues/4)
+- [API đối tác và bảo mật giao dịch](https://github.com/thachdeptrai/web-kpah/issues/5)
+
+Các issue là nơi theo dõi tiến độ và review; không đồng nghĩa có agent hay thành viên khác đang tự động thực hiện.
 
 ---
 
-## 1. Schema đã xác minh từ `kpah.sql`
-
-| Nội dung | Kết quả | Hệ quả cho code |
-|---|---|---|
-| Bảng tài khoản | `team_user` (MyISAM, utf8) | Chỉ `INSERT` vào bảng này, không tạo bảng/cột mới |
-| Mật khẩu | Dạng `PASSWORD()` của MySQL: `*` + SHA1(SHA1(mk)) viết hoa, 41 ký tự | PHP: `'*'.strtoupper(sha1(sha1($pw,true)))`. Đã đối chiếu: `123456` → `*6BB4837E…2AD9` **trùng dữ liệu thật** |
-| `username` | `varchar(20)`, UNIQUE `uk_team_user_username` | Kiểm tra trùng ở PHP **và** có ràng buộc DB; bắt lỗi 1062 |
-| `userid` | `INT UNSIGNED NOT NULL`, UNIQUE `Index_2`, **không tự tăng, không default** | Web tự cấp `MAX(userid)+1` trong `GET_LOCK`, thử lại nếu trùng |
-| `id` | khoá chính AUTO_INCREMENT | để DB tự cấp |
-| `phone` | `NOT NULL DEFAULT ''`, dữ liệu thật dạng `+84xxxxxxxxx` | Tuỳ chọn nhập; chuẩn hoá về `+84…` |
-| `newagent`/`newprovider`/`ban`/`fromgame` | có default | `newagent`/`newprovider` để DB áp default `'-1'`; `ban=0`, `fromgame=0`, `provider=0`, `agent=-1` |
-| `regdate` | `datetime`, dữ liệu thật đang theo giờ Việt Nam | PHP ghi giờ `Asia/Ho_Chi_Minh` (đổi trong config) |
-
-**Không cần migration.** Các ràng buộc cần thiết đã có sẵn. Chạy `database/verify_schema.sql` (chỉ đọc) trên DB thật để đối chiếu.
-
-Quan sát thêm (không sửa gì): vài tài khoản cũ (id 23–31) có mật khẩu dạng văn bản thô `1`; băm SHA1 kép không có salt là yếu –
-chỉ nên đổi sang `password_hash()` **khi đã xác nhận server game hỗ trợ**, nên module này giữ nguyên định dạng cũ.
-File dump chứa mã băm mật khẩu và số điện thoại thật: đừng gửi công khai.
-
-## 2. Cấu trúc file
-
-```
-index.php                    Trang chủ – nạp register.php (để mở thẳng http://localhost/kpah-register/)
-register.php                 Trang đăng ký (HTML)
-captcha.php                  Ảnh CAPTCHA (PNG, GD, mã lưu trong session)
-api/register.php             API xử lý đăng ký (POST → JSON)
-includes/bootstrap.php       Khởi động: cấu hình, session, múi giờ, không hiện lỗi PHP
-includes/config_loader.php   Nạp cấu hình: mặc định → local → (tuỳ chọn) config.php dự án → biến môi trường
-includes/security.php        Header/CSP, session cookie, CSRF, IP client, giới hạn tần suất, escape
-includes/db.php              Kết nối PDO (đọc từ cấu hình, không ghi cứng)
-includes/captcha.php         Sinh/kiểm tra/vẽ CAPTCHA (PNG nếu có GD, tự chuyển sang SVG nếu không)
-includes/captcha_glyphs.php  Nét vẽ ký tự cho CAPTCHA SVG
-includes/validator.php       Validate phía server (username, mật khẩu, SĐT, điều khoản)
-includes/account.php         Băm mật khẩu + INSERT vào team_user
-includes/terms_content.php   Nội dung điều khoản (BẢN MẪU – hãy sửa)
-config.register.php          Cấu hình mặc định (không chứa mật khẩu)
-config.register.local.sample.php   Mẫu cấu hình bí mật
-config.register.local.php    Cấu hình sẵn cho XAMPP (root, không mật khẩu, DB `kpah`) – ĐỔI khi lên hosting
-assets/css|js|img|fonts      Giao diện, script, nền SVG, font cho CAPTCHA (DejaVu, giấy phép tự do)
-storage/ratelimit/           Dữ liệu giới hạn tần suất (file, tự dọn)
-check.php                    Trang chẩn đoán (chỉ localhost, chỉ đọc) – XOÁ khi lên hosting
-htaccess-snippet.txt         Đoạn .htaccess gợi ý để GỘP vào file cũ
-database/verify_schema.sql   Câu lệnh chỉ-đọc để đối chiếu schema + mẫu cấp quyền DB tối thiểu
-```
-
-`index.php` chỉ nạp `register.php`; nếu thư mục đích đã có `index.php` riêng của bạn thì đừng chép đè (dùng `register.php` trực tiếp). Module không tạo `config.php` hay `.htaccess` ở gốc để không đè file của bạn.
-
-## 3. Triển khai
-
-1. **Giải nén** vào thư mục web (gốc hoặc thư mục con đều được – mọi đường dẫn là tương đối). Nếu thư mục đã có file cùng tên, so sánh trước khi chép.
-2. **Cấu hình DB:** sao chép `config.register.local.sample.php` → `config.register.local.php`, điền host/tên DB/user/mật khẩu.
-   Hoặc dùng biến môi trường `KPAH_DB_HOST`, `KPAH_DB_PORT`, `KPAH_DB_NAME`, `KPAH_DB_USER`, `KPAH_DB_PASS`.
-   Nếu `config.php` của bạn `return` một mảng có khoá `db`/`security`/`captcha`, bật `integration.load_project_config = true` để dùng lại (mặc định tắt để tránh xung đột).
-3. **Tạo user DB riêng quyền tối thiểu** (`SELECT, INSERT` trên `team_user`) – mẫu trong `database/verify_schema.sql`.
-4. **Quyền ghi:** `storage/ratelimit/` phải ghi được bởi PHP (chmod 750/755 tuỳ hosting). Nếu không, module tự dùng thư mục tạm của hệ thống; nếu cả hai đều không ghi được thì **giới hạn tần suất bị bỏ qua** (có ghi log).
-5. **Gộp `.htaccess`:** xem `htaccess-snippet.txt`. Các thư mục `includes/`, `storage/`, `database/` đã tự chặn truy cập.
-6. **Đường dẫn thật:** điền `links.login` (trang đăng nhập có thật của bạn) và `links.download` trong `config.register.local.php`; để trống thì nút/liên kết tự ẩn – module **không tự bịa đường dẫn đăng nhập**.
-7. **PHP:** cần ≥ 7.2, extension `pdo_mysql`, `mbstring`. Extension `gd` không bắt buộc: có GD thì CAPTCHA là ảnh PNG, không có thì tự dùng ảnh SVG (`captcha.driver` = `auto`). Nên chạy HTTPS (cookie tự thêm cờ `Secure` khi phát hiện HTTPS).
-8. **Phía sau Cloudflare/proxy:** đặt `security.trusted_ip_header` (vd `HTTP_CF_CONNECTING_IP`) để giới hạn tần suất theo IP thật; chỉ bật khi chắc header do proxy của bạn gán.
-9. Truy cập `https://domain-cua-ban/…/register.php`.
-
-## 3a. Chạy trên XAMPP (máy cá nhân)
-
-1. Bật **Apache** và **MySQL** trong XAMPP Control Panel.
-2. Vào `http://localhost/phpmyadmin` → import `kpah.sql` (tạo database tên `kpah`).
-3. Giải nén thư mục `kpah-register` vào `C:\xampp\htdocs\`.
-4. Kiểm tra `config.register.local.php` (đã điền sẵn `root`, mật khẩu rỗng, DB `kpah`; sửa nếu bạn đặt khác).
-5. Mở `http://localhost/kpah-register/` (hoặc `.../register.php`).
-
-**Nếu đăng ký báo "Hệ thống đang bận hoặc bảo trì"**: mở `http://localhost/kpah-register/check.php` – trang này kiểm tra từng bước (PHP, pdo_mysql, kết nối DB, bảng `team_user`, cột, ràng buộc) và ghi rõ dòng nào LỖI kèm cách sửa. Lỗi chi tiết cũng được ghi vào `C:\xampp\apache\logs\error.log`. Xoá `check.php` khi xong.
-
-Nếu muốn dùng CAPTCHA ảnh PNG: mở `C:\xampp\php\php.ini`, bỏ dấu `;` trước `extension=gd`, rồi **Restart Apache**. Không làm cũng được vì đã có SVG dự phòng.
-Mỗi lần đăng ký thử thành công sẽ tạo dòng thật trong `team_user`; giới hạn mặc định 5 tài khoản/24 giờ/IP – khi thử nhiều, tăng `security.rate_success` hoặc xoá file trong `storage/ratelimit/`.
-
-### Cấu hình chính (`config.register.php`)
-- Đăng ký yêu cầu **email đã xác minh bằng mã OTP, số điện thoại và mã giới thiệu hợp lệ**. Đã bỏ CAPTCHA dạng ảnh; email OTP vẫn là bước xác minh.
-- Mã giới thiệu được kiểm tra ở máy chủ; mã bị khóa, hết hạn hoặc hết lượt sẽ không thể dùng.
-- Email được chuẩn hóa chữ thường; trước khi gửi OTP và trước khi tạo tài khoản, server kiểm tra email đã tồn tại trong `team_user` chưa. Mỗi email chỉ được dùng cho một tài khoản thông qua luồng đăng ký web.
-- Sao chép `config.register.local.sample.php` thành `config.register.local.php`, điền SMTP và thông tin DB thật. Nếu file local cũ đang đặt `registration.phone` thành `optional`, đổi thành `required`; file local sẽ ưu tiên cấu hình mặc định.
-- `security.username_pattern` (mặc định `/^[a-z0-9_]{4,20}$/`), `username_hint`, `password_min` = 6, `password_max` = 32.
-- `security.rate_attempts` = 10 lượt gửi / 10 phút / IP; `rate_success` = 5 tài khoản / 24 giờ / IP (IP dùng chung như quán net có thể cần tăng).
-- `registration.open`, `registration.phone` (`off|optional|required`), `registration.terms_required`.
-- `captcha.enabled`, `captcha.driver` (`auto` | `gd` | `svg`). Thiếu GD thì tự dùng SVG, CAPTCHA không bao giờ bị bỏ qua âm thầm.
-- `security.use_bad_word_table` (mặc định tắt): chặn tên chứa từ trong bảng `bad_word`; khớp chuỗi con nên có thể chặn nhầm.
-
-## 4. Bảo mật đã áp dụng
-Admin có giao diện responsive riêng, kiểm tra role/active từ database mỗi lần mở dashboard, tự hết phiên sau 30 phút và giới hạn 8 lần đăng nhập/15 phút theo IP + tên tài khoản. CSS/JS admin được tải từ file riêng để tương thích CSP.
-
-Để chặn file cấu hình, SQL, log, backup và thư mục nội bộ, hãy **gộp** `htaccess-snippet.txt` vào `.htaccess` gốc hiện có (không ghi đè `.htaccess` của website). Các file JavaScript/CSS và API mà trình duyệt cần dùng vẫn có thể nhìn thấy URL; không thể bảo mật bằng cách giấu URL, nên phải bảo vệ dữ liệu và quyền truy cập ở server.
-Prepared statements (không dùng emulate); CSRF token trong session (xoay sau mỗi lần gửi); CAPTCHA kiểm tra phía server, dùng một lần, hết hạn 5 phút;
-honeypot + chặn gửi quá nhanh; giới hạn tần suất theo IP; escape toàn bộ output (`htmlspecialchars`); CSP không cho script/style nội tuyến;
-`X-Frame-Options`, `nosniff`, `Referrer-Policy`; cookie session `HttpOnly` + `SameSite=Lax` (+ `Secure` khi HTTPS), tên riêng `KPAHREG`; `session_regenerate_id` sau khi thành công;
-lỗi PHP/SQL không hiển thị ra web, log không chứa mật khẩu; mật khẩu giới hạn ASCII in được, không khoảng trắng.
-Chưa bật HSTS (tự bật ở web server khi đã chắc chắn dùng HTTPS lâu dài).
-
-## 5. Đã kiểm thử gì – và chưa kiểm thử gì
-
-**Đã chạy thật (trong môi trường của mình):**
-- Thuật toán băm mật khẩu so với dữ liệu thật trong `kpah.sql` → khớp.
-- JavaScript: kiểm tra cú pháp; 24 test đơn vị cho username/mật khẩu/SĐT/độ mạnh → đạt.
-- Giao diện bằng trình duyệt headless (Chromium) với **API giả lập**: validate client, tự viết thường tên tài khoản, hiện/ẩn mật khẩu, thanh độ mạnh, khớp mật khẩu, hộp điều khoản, trạng thái loading, chặn gửi trùng khi bấm liên tục,
-  hiển thị lỗi server (CAPTCHA sai, trùng tên), xoá mật khẩu nhưng giữ tên tài khoản, cập nhật CSRF, màn hình thành công, “đăng ký tài khoản khác” → 25/25 đạt.
-- Chụp màn hình desktop (1366px), tablet (820px), mobile (390px).
-- Rà soát tĩnh PHP: cân bằng ngoặc, các `require` tồn tại, không dùng cú pháp PHP 8-only, mọi hàm `kp_*` được gọi đều có định nghĩa.
-
-**CHƯA chạy được (máy mình không có PHP/MySQL):**
-- Chưa thực thi bất kỳ dòng PHP nào, chưa có `php -l`. **Hãy chạy `php -l` cho từng file PHP và thử đăng ký thật trên môi trường staging trước.**
-- Chưa chạy thật: INSERT vào MySQL/MariaDB, `GET_LOCK`, vẽ ảnh CAPTCHA bằng GD, giới hạn tần suất bằng file, header/CSP/cookie.
-- Giao diện đã xem với font dự phòng (sandbox không tải được Google Fonts); trên mạng thật sẽ dùng Cinzel / Philosopher / Be Vietnam Pro.
-
-### Checklist nghiệm thu trên staging
-1. `php -l` mọi file `.php` → không lỗi.
-2. Mở `register.php` trên điện thoại và desktop; CAPTCHA hiện ảnh; font tiếng Việt đúng.
-3. Đăng ký tên mới hợp lệ → thành công; kiểm tra `SELECT * FROM team_user ORDER BY id DESC LIMIT 1` (mật khẩu 41 ký tự bắt đầu `*`, `userid` = trước đó + 1, `phone` dạng `+84…`).
-4. **Đăng nhập vào game bằng tài khoản vừa tạo** – đây là bằng chứng duy nhất cho “server game chấp nhận định dạng”.
-5. Đăng ký lại cùng tên → bị từ chối; mật khẩu < 6 hoặc > 32 → bị từ chối; CAPTCHA sai → bị từ chối.
-6. Sửa/bỏ token CSRF (DevTools) → bị từ chối (403); gửi > 10 lần/10 phút → 429.
-7. Truy cập trực tiếp `/includes/db.php`, `/storage/`, `/database/verify_schema.sql`, `/config.register.local.php` → 403 hoặc trang trống, **không** lộ nội dung.
-8. Các route/chức năng cũ của site vẫn chạy sau khi gộp `.htaccess`.
-9. Xoá tài khoản test thủ công sau khi thử (module không có chức năng xoá).
-
-## 6. Chưa xác minh được vì thiếu thông tin
-- **Server game có đăng nhập đúng bằng băm `PASSWORD()` hay không** (suy ra từ dữ liệu hiện có, nhưng chỉ bước 4 ở trên mới chứng minh).
-- Game có cần tạo thêm dòng ở bảng khác khi tạo tài khoản mới không (trong dump, `tob_char` chỉ tạo khi tạo nhân vật nên mình không ghi gì thêm).
-- Cách game server tự cấp `userid` khi đăng ký trong game (module dùng `MAX+1` và thử lại khi trùng; nếu game dùng cơ chế khác, hãy báo để chỉnh).
-- `config.php`, `index.php`, `admin/`, `api/`, `ip/`, `.htaccess` hiện có; có/không trang đăng nhập; phiên bản PHP của hosting.
-- Điều khoản sử dụng, thông tin phiên bản và liên kết chính thức: hiện là bản mẫu/để trống.
-- Hình nền là SVG tự vẽ cho module này; nếu bạn có artwork KPAH riêng, thay `assets/img/scene.svg` / `emblem.svg` (giữ tên file).
-
-## Mã giới thiệu bắt buộc + trang quản trị
-
-### 1. Tạo bảng SQL
-Import file `database/referral_codes.sql` vào **đúng database đang được cấu hình** trong `config.register.local.php`. File tạo 3 bảng:
-- `kpah_referral_codes`: danh sách mã; `count` là tổng lượt được phép, `used_count` là số lượt đã dùng, số lượt còn lại = `count - used_count`; `date` là hạn sử dụng (NULL = không hết hạn).
-- `kpah_referral_code_uses`: lịch sử mỗi lần đăng ký thành công dùng mã nào, tạo tài khoản nào, thời điểm nào.
-- `kpah_web_admins`: tài khoản đăng nhập trang quản trị, có cột `role`; chỉ `role='admin'` và tài khoản đang bật mới được vào.
-
-### 2. Tạo tài khoản admin đầu tiên
-Chạy trên máy chủ có PHP CLI, thay mật khẩu mẫu bằng mật khẩu mạnh:
-```bash
-php -r "echo password_hash('THAY_BANG_MAT_KHAU_MANH', PASSWORD_DEFAULT), PHP_EOL;"
-```
-Copy chuỗi hash được in ra, rồi chạy SQL (thay `PASTE_HASH_HERE`):
-```sql
-INSERT INTO kpah_web_admins (username, password_hash, role)
-VALUES ('admin', 'PASTE_HASH_HERE', 'admin');
-```
-Không đưa mật khẩu thật hoặc hash vào Git. Nếu dùng Windows/XAMPP, có thể chạy lệnh bằng `php.exe` trong thư mục PHP của XAMPP.
-
-### 3. Sử dụng
-- Mở `/admin/login.php`, đăng nhập bằng tài khoản admin vừa tạo.
-- Trong `/admin/referrals.php`, tạo mã thủ công hoặc để trống để tự sinh mã; chọn tổng lượt và hạn sử dụng.
-- Trang quản trị hiển thị đã dùng, tổng lượt, còn lại, trạng thái và 100 lượt sử dụng gần nhất.
-- Người đăng ký bắt buộc nhập mã hợp lệ. Mã hết hạn, bị khóa hoặc hết lượt sẽ bị từ chối phía máy chủ.
-- Các trang quản trị kiểm tra session đăng nhập và kiểm tra lại role/trạng thái admin từ database mỗi lần truy cập. Phiên quản trị hết hạn sau 30 phút không hoạt động.
-
-Lưu ý: module này vốn không có hệ thống đăng nhập quản trị sẵn, vì vậy chức năng trên dùng bảng `kpah_web_admins` riêng; không tự suy đoán quyền admin từ bảng tài khoản game `team_user`.
-### 4. SQL tạm
-- -- 1. Bảng mã giới thiệu
-CREATE TABLE IF NOT EXISTS `kpah_referral_codes` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `code` VARCHAR(64) NOT NULL,
-  `count` INT UNSIGNED NOT NULL DEFAULT 1,
-  `used_count` INT UNSIGNED NOT NULL DEFAULT 0,
-  `date` DATETIME NULL DEFAULT NULL,
-  `created_by` BIGINT UNSIGNED NULL DEFAULT NULL,
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_kpah_referral_code` (`code`),
-  KEY `idx_kpah_referral_expiry` (`date`),
-  KEY `idx_kpah_referral_active` (`is_active`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_unicode_ci;
-
--- 2. Bảng lịch sử sử dụng mã
-CREATE TABLE IF NOT EXISTS `kpah_referral_code_uses` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `referral_id` BIGINT UNSIGNED NOT NULL,
-  `code` VARCHAR(64) NOT NULL,
-  `username` VARCHAR(20) NOT NULL,
-  `used_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ip_hash` CHAR(64) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_kpah_referral_username` (`username`),
-  KEY `idx_kpah_referral_uses_code` (`referral_id`),
-  KEY `idx_kpah_referral_uses_date` (`used_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_unicode_ci;
-
--- 3. Bảng tài khoản quản trị web
-CREATE TABLE IF NOT EXISTS `kpah_web_admins` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(64) NOT NULL,
-  `password_hash` VARCHAR(255) NOT NULL,
-  `role` VARCHAR(20) NOT NULL DEFAULT 'admin',
-  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_kpah_web_admin_username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_unicode_ci;
+**NGHIỆN KPAH** · [Website](https://nghienkpah.io.vn) · [Mã nguồn](https://github.com/thachdeptrai/web-kpah)
