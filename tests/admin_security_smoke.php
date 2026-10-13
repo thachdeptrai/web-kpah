@@ -59,7 +59,7 @@ try {
     unset($_SERVER['HTTP_ORIGIN'], $_SERVER['HTTP_HOST']);
     // Verify that the Apache rewrite deny rules cover common dump exposure
     // without blocking normal player and admin pages. HTTP checks are still needed.
-    $htaccess = (string)file_get_contents(KP_ROOT.'/.htaccess');
+    $htaccess = (string)file_get_contents(KP_ROOT.'/public/.htaccess');
     preg_match_all('/^RewriteRule "([^"]+)" - \[F,END,NC\]$/m', $htaccess, $matches);
     $blockPatterns = $matches[1];
     if (count($blockPatterns) < 5) throw new RuntimeException('Missing deny rewrite rules.');
