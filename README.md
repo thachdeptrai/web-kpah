@@ -185,6 +185,12 @@ web-kpah/
 └── config.register.local.sample.php
 ```
 
+## Bảo mật admin và database
+
+Hướng dẫn bật xác thực hai bước (TOTP), giới hạn IP, bảo vệ backup SQL, phân quyền MySQL và kiểm tra VPS: [`docs/SECURITY.md`](docs/SECURITY.md).
+
+Lưu ý: không để dump SQL, khóa API, file `.env` hay `storage/topup/` trong Git hoặc thư mục có thể tải công khai. Các lớp bảo vệ trong code không thay thế cập nhật Apache/PHP, quyền DB tối thiểu và Cloudflare.
+
 ## Kiểm tra trước khi chạy thật
 
 Kiểm tra cú pháp PHP, ví dụ:
