@@ -14,12 +14,15 @@ function kp_topup_cfg() {
     $id = kp_topup_env('KPAH_CARD_PARTNER_ID');
     $key = kp_topup_env('KPAH_CARD_PARTNER_KEY');
     $secret = kp_topup_env('KPAH_TOPUP_SIGNING_SECRET');
+    $discount = kp_topup_env('KPAH_CARD_DISCOUNT_PERCENT', '');
+    $discountValid = preg_match('/^(?:[0-9]|[1-9][0-9])$/D', $discount) === 1;
     return [
+        'discount_percent' => $discountValid ? (int)$discount : null,
         'partner_id' => $id,
         'partner_key' => $key,
         'secret' => $secret,
         'api_url' => 'https://napthesieure.vn/chargingws/v2',
-        'card_ready' => $id !== '' && $key !== '' && strlen($secret) >= 32 && function_exists('curl_init'),
+        'card_ready' => $id !== '' && $key !== '' && strlen($secret) >= 32 && $discountValid && function_exists('curl_init'),
         // Off until game-server code confirms the semantics of board_naptien.
         'game_queue_verified' => kp_topup_env('KPAH_TOPUP_GAME_QUEUE_VERIFIED') === '1',
         'server_id' => (int) kp_topup_env('KPAH_TOPUP_SERVER_ID', '-1'),
@@ -115,6 +118,12 @@ function kp_topup_units($vnd, $per10k) {
     $units = intdiv($vnd * $per10k, 10000);
     if ($units < 1 || $units > 1000000000) throw new RuntimeException('Giá trị quy đổi vượt giới hạn.');
     return $units;
+}
+function kp_topup_after_discount($faceValue, $discountPercent) {
+    if (!is_int($faceValue) || $faceValue < 1 || $faceValue > 1000000000 || !is_int($discountPercent) || $discountPercent < 0 || $discountPercent > 99) {
+        throw new RuntimeException('Mệnh giá hoặc chiết khấu không hợp lệ.');
+    }
+    return intdiv($faceValue * (100 - $discountPercent), 100);
 }
 function kp_topup_user() {
     $id = (int)($_SESSION['kp_user_id'] ?? 0);
