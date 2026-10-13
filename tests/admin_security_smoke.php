@@ -9,6 +9,7 @@ if (!@mkdir($testDir, 0700)) { fwrite(STDERR, "No test directory\n"); exit(1); }
 function kp_rate_dir() { global $testDir; return $testDir; }
 function kp_log($message, $error = null) {}
 function kp_client_ip() { return (string)($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'); }
+function kp_csrf_check($token) { return $token === 'test-csrf-token'; }
 require KP_ROOT.'/includes/admin_security.php';
 function verify($value, $expected, $name)
 {
@@ -46,6 +47,14 @@ try {
     $_SERVER['REMOTE_ADDR']='127.0.0.1';
     verify(kp_admin_allowed_ip(), true, 'admin IP allowlist allows configured IP');
     putenv('KPAH_ADMIN_ALLOWED_IPS');
+    $_SERVER['HTTP_HOST'] = 'nghienkpah.io.vn';
+    $_SERVER['HTTP_ORIGIN'] = 'https://nghienkpah.io.vn';
+    verify(kp_admin_csrf_valid('test-csrf-token'), true, 'valid same-origin admin CSRF');
+    $_SERVER['HTTP_ORIGIN'] = 'https://malicious.example';
+    verify(kp_admin_csrf_valid('test-csrf-token'), false, 'foreign origin is rejected');
+    $_SERVER['HTTP_ORIGIN'] = 'https://nghienkpah.io.vn';
+    verify(kp_admin_csrf_valid('wrong-token'), false, 'invalid CSRF token rejected');
+    unset($_SERVER['HTTP_ORIGIN'], $_SERVER['HTTP_HOST']);
     // Verify that the Apache rewrite deny rules cover common dump exposure
     // without blocking normal player and admin pages. HTTP checks are still needed.
     $htaccess = (string)file_get_contents(KP_ROOT.'/.htaccess');
