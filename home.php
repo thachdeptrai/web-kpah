@@ -43,6 +43,7 @@ try {
                 COALESCE(l.exp, c.xp, 0) AS xp,
                 COALESCE(c.gold, l.gold, 0) AS gold,
                 COALESCE(c.luong, l.luong, 0) AS luong,
+                COALESCE(c.luonglock, 0) AS luonglock,
                 c.lastLog, clan.clanName
          FROM tob_web_info_char AS w
          LEFT JOIN tob_char AS c ON c.charname = w.charname AND c.userId = w.userid
@@ -109,7 +110,7 @@ $numberFormat = function ($number) {
     <link rel="stylesheet" href="assets/css/register.css?v=1">
     <link rel="stylesheet" href="assets/css/user-home.css?v=6">
     <link rel="stylesheet" href="assets/css/home-theme.css?v=7">
-    <link rel="stylesheet" href="assets/css/characters.css?v=1">
+    <link rel="stylesheet" href="assets/css/characters.css?v=2">
 </head>
 <body class="home-page">
 
@@ -269,6 +270,10 @@ $numberFormat = function ($number) {
                                     <div class="char-ui-stat char-ui-stat--silver">
                                         <dt><span class="char-ui-stat-icon" aria-hidden="true">◆</span> Lượng</dt>
                                         <dd><?= $numberFormat($character['luong'] ?? 0) ?></dd>
+                                    </div>
+                                    <div class="char-ui-stat char-ui-stat--locked">
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">◇</span> Lượng khóa</dt>
+                                        <dd><?= $numberFormat($character['luonglock'] ?? 0) ?></dd>
                                     </div>
                                 </dl>
                                 <div class="char-ui-card-bottom">
