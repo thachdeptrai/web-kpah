@@ -31,37 +31,19 @@ try {
     exit('Chưa thể tải trang tài khoản. Vui lòng thử lại sau.');
 }
 
-// Thống kê cộng đồng: chỉ dùng cột đã xác nhận trong team_user và bảng referral của module.
-$communityStats = ['accounts' => null, 'new_players' => [], 'top_codes' => []];
+// Bảng xếp hạng công khai: chỉ đọc các cột đã xác nhận trong bảng player.
+$topPlayers = [];
 try {
-    $pdo = kp_db();
-    $communityStats['accounts'] = (int) $pdo->query('SELECT COUNT(*) FROM team_user')->fetchColumn();
-
-    $recentStmt = $pdo->query(
-        'SELECT username, userid, regdate FROM team_user
-         ORDER BY regdate DESC, id DESC LIMIT 5'
+    $rankStmt = kp_db()->query(
+        'SELECT name, power, pet_power, (power + pet_power) AS total_power
+         FROM player
+         ORDER BY total_power DESC
+         LIMIT 10'
     );
-    $communityStats['new_players'] = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Bảng referral chỉ tồn tại nếu database/referral_codes.sql đã được import.
-    $dbName = (string) $pdo->query('SELECT DATABASE()')->fetchColumn();
-    $tableCheck = $pdo->prepare(
-        'SELECT COUNT(*) FROM information_schema.tables
-         WHERE table_schema = ? AND table_name = ?'
-    );
-    $tableCheck->execute([$dbName, 'kpah_referral_codes']);
-    if ((int) $tableCheck->fetchColumn() > 0) {
-        $codeStmt = $pdo->query(
-            'SELECT code, used_count, count
-             FROM kpah_referral_codes
-             WHERE is_active = 1
-             ORDER BY used_count DESC, id DESC LIMIT 5'
-        );
-        $communityStats['top_codes'] = $codeStmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $topPlayers = $rankStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) {
-    // Dashboard chính vẫn hoạt động nếu DB chưa có bảng phụ hoặc thiếu quyền đọc.
-    kp_log('không tải được thống kê cộng đồng', $e);
+    // Không để lỗi bảng game ảnh hưởng trang tài khoản; chi tiết chỉ ghi vào log.
+    kp_log('không tải được bảng xếp hạng người chơi', $e);
 }
 
 $csrf = kp_csrf_token();
@@ -96,7 +78,7 @@ if ($registeredAt === '') {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="assets/css/register.css?v=1">
     <link rel="stylesheet" href="assets/css/user-home.css?v=6">
-    <link rel="stylesheet" href="assets/css/home-theme.css?v=4">
+    <link rel="stylesheet" href="assets/css/home-theme.css?v=5">
 </head>
 <body class="home-page">
 
@@ -169,69 +151,40 @@ if ($registeredAt === '') {
     <section class="community-dashboard" id="community" aria-labelledby="community-title">
         <div class="section-heading community-heading">
             <div>
-                <p class="kicker">KPAH COMMUNITY <span>/ LIVE DATA</span></p>
-                <h2 id="community-title">Nhịp đập cộng đồng</h2>
+                <p class="kicker">KPAH COMMUNITY <span>/ PLAYER RANKING</span></p>
+                <h2 id="community-title">Bảng xếp hạng sức mạnh</h2>
             </div>
-            <p>Dữ liệu đọc trực tiếp từ database hiện có. Không tự tạo điểm lực chiến hay thứ hạng nhân vật khi chưa xác minh được bảng game.</p>
+            <p>Top 10 nhân vật theo tổng sức mạnh và sức mạnh đệ tử, lấy trực tiếp từ dữ liệu game.</p>
         </div>
 
-        <div class="community-grid">
-            <section class="community-panel community-recent" aria-labelledby="recent-title">
+        <div class="community-grid community-grid-single">
+            <section class="community-panel community-ranking" aria-labelledby="ranking-title">
                 <div class="community-panel-heading">
-                    <div><span class="card-index">01 / NEW ARRIVALS</span><h3 id="recent-title">Người chơi mới</h3></div>
+                    <div><span class="card-index">TOP 10 / POWER</span><h3 id="ranking-title">Những chiến binh mạnh nhất</h3></div>
                     <span class="community-panel-icon" aria-hidden="true">✦</span>
                 </div>
-                <?php if (!empty($communityStats['new_players'])): ?>
-                    <div class="community-player-list">
-                        <?php foreach ($communityStats['new_players'] as $i => $player): ?>
-                            <?php
-                            $playerName = (string) ($player['username'] ?? 'Player');
-                            $playerInitial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($playerName, 0, 1, 'UTF-8'), 'UTF-8') : strtoupper(substr($playerName, 0, 1));
-                            $playerDate = '';
-                            if (!empty($player['regdate'])) {
-                                $playerTs = is_numeric($player['regdate']) ? (int) $player['regdate'] : strtotime((string) $player['regdate']);
-                                if ($playerTs !== false && $playerTs > 0) $playerDate = date('d/m/Y', $playerTs);
-                            }
-                            ?>
-                            <div class="community-player-row">
-                                <span class="community-player-avatar"><?= kp_e($playerInitial) ?></span>
-                                <span class="community-player-main"><strong><?= kp_e($playerName) ?></strong><small>Player ID · <?= kp_e($player['userid'] ?? '—') ?></small></span>
-                                <span class="community-player-date"><?= kp_e($playerDate !== '' ? $playerDate : 'Thành viên') ?></span>
+                <?php if (!empty($topPlayers)): ?>
+                    <div class="community-rank-table" role="table" aria-label="Top 10 sức mạnh">
+                        <div class="community-rank-header" role="row">
+                            <span role="columnheader">Hạng</span>
+                            <span role="columnheader">Nhân vật</span>
+                            <span role="columnheader">Sức mạnh</span>
+                            <span role="columnheader">Tổng lực</span>
+                        </div>
+                        <?php foreach ($topPlayers as $i => $player): ?>
+                            <div class="community-rank-row" role="row">
+                                <span class="community-rank rank-<?= (int) $i + 1 ?>" role="cell"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
+                                <strong class="community-rank-name" role="cell"><?= kp_e($player['name'] ?? 'Ẩn danh') ?></strong>
+                                <span class="community-rank-power" role="cell"><?= number_format((int) ($player['power'] ?? 0), 0, ',', '.') ?></span>
+                                <strong class="community-rank-total" role="cell"><?= number_format((int) ($player['total_power'] ?? 0), 0, ',', '.') ?></strong>
                             </div>
                         <?php endforeach; ?>
                     </div>
+                    <p class="community-panel-foot">Sắp xếp giảm dần theo power + pet_power. Đây là bảng xếp hạng công khai, không hiển thị tài khoản, email hoặc số điện thoại.</p>
                 <?php else: ?>
-                    <p class="community-empty">Chưa có dữ liệu người chơi mới để hiển thị.</p>
-                <?php endif; ?>
-                <p class="community-panel-foot">5 tài khoản đăng ký gần đây nhất · sắp xếp theo ngày tạo</p>
-            </section>
-
-            <section class="community-panel community-codes" aria-labelledby="codes-title">
-                <div class="community-panel-heading">
-                    <div><span class="card-index">02 / REFERRALS</span><h3 id="codes-title">Top mã giới thiệu</h3></div>
-                    <span class="community-panel-icon" aria-hidden="true">↗</span>
-                </div>
-                <?php if (!empty($communityStats['top_codes'])): ?>
-                    <div class="community-code-list">
-                        <?php foreach ($communityStats['top_codes'] as $i => $code): ?>
-                            <div class="community-code-row">
-                                <span class="community-rank rank-<?= (int) $i + 1 ?>"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
-                                <span class="community-code-main"><strong><?= kp_e($code['code'] ?? '') ?></strong><small>Mã giới thiệu</small></span>
-                                <span class="community-code-count"><strong><?= number_format((int) ($code['used_count'] ?? 0), 0, ',', '.') ?></strong><small>/ <?= number_format((int) ($code['count'] ?? 0), 0, ',', '.') ?> lượt</small></span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="community-panel-foot">Xếp theo lượt sử dụng thực tế của mã đang hoạt động.</p>
-                <?php else: ?>
-                    <p class="community-empty">Chưa có bảng mã giới thiệu hoặc chưa có mã hoạt động. Khu vực này tự hiện dữ liệu khi bảng đã được cài đặt.</p>
+                    <p class="community-empty">Chưa có dữ liệu xếp hạng để hiển thị.</p>
                 <?php endif; ?>
             </section>
-        </div>
-
-        <div class="community-summary">
-            <div class="community-summary-icon" aria-hidden="true">◎</div>
-            <div><strong><?= $communityStats['accounts'] !== null ? number_format((int) $communityStats['accounts'], 0, ',', '.') : '—' ?> tài khoản</strong><p>Tổng số tài khoản trong <code>team_user</code>.</p></div>
-            <span class="community-summary-tag">DATABASE</span>
         </div>
     </section>
 
