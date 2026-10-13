@@ -74,7 +74,7 @@ function kp_admin_log_event($event, $adminId = 0)
     kp_log('admin_security '.$safe.' actor='.(int)$adminId);
 }
 
-function kp_admin_deny($redirect = '/admin/login.php')
+function kp_admin_deny($redirect = '/quan-tri/dang-nhap')
 {
     foreach ([
         'kp_admin_id', 'kp_admin_username', 'kp_admin_role',
@@ -248,7 +248,7 @@ function kp_admin_create_session(array $admin, $totpOk)
     kp_admin_log_event('login_success', (int)$admin['id']);
 }
 
-function kp_admin_require($redirect = '/admin/login.php')
+function kp_admin_require($redirect = '/quan-tri/dang-nhap')
 {
     $id = (int)($_SESSION['kp_admin_id'] ?? 0);
     $now = time();

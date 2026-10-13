@@ -118,24 +118,24 @@ function kp_topup_units($vnd, $per10k) {
 }
 function kp_topup_user() {
     $id = (int)($_SESSION['kp_user_id'] ?? 0);
-    if ($id <= 0) { header('Location: ../login.php'); exit; }
+    if ($id <= 0) { header('Location: /dang-nhap'); exit; }
     if (empty($_SESSION['kp_user_last_seen']) || time() - (int)$_SESSION['kp_user_last_seen'] > 1800) {
         unset($_SESSION['kp_user_id'], $_SESSION['kp_user_username'], $_SESSION['kp_user_last_seen']);
-        header('Location: ../login.php?expired=1'); exit;
+        header('Location: /dang-nhap?expired=1'); exit;
     }
     $s = kp_db()->prepare('SELECT id,username,ban FROM team_user WHERE id=? LIMIT 1');
     $s->execute([$id]);
     $user = $s->fetch();
     if (!$user || (int)$user['ban'] !== 0) {
         unset($_SESSION['kp_user_id'], $_SESSION['kp_user_username'], $_SESSION['kp_user_last_seen']);
-        header('Location: ../login.php'); exit;
+        header('Location: /dang-nhap'); exit;
     }
     $_SESSION['kp_user_last_seen'] = time();
     return $user;
 }
 function kp_topup_admin() {
     require_once __DIR__ . '/admin_security.php';
-    return kp_admin_require('/admin/login.php');
+    return kp_admin_require('/quan-tri/dang-nhap');
 }
 function kp_topup_recent($kind, $userId = null, $limit = 50) {
     $dir = kp_topup_root() . '/' . $kind;

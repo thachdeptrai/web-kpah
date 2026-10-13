@@ -79,9 +79,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 // Avoid accidentally echoing submitted card PIN/serial anywhere below.
 kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 ?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>Lượng.</em></h1><p class="tp-lead">Chọn Lượng thường hoặc Lượng khóa. Tiền được quy đổi theo tỷ lệ đang áp dụng, không cần chọn gói nạp của website.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ <em>nhanh gọn.</em></h1><p class="tp-lead">Bạn chọn loại Lượng muốn nhận, phần còn lại cứ nhập đúng mệnh giá thẻ.</p></section>
 <?php if($error!==''): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
-<?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="history.php">Xem lịch sử →</a></div><?php endif; ?>
+<?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="/nap/lich-su">Xem lịch sử →</a></div><?php endif; ?>
 <?php if(!$cardLive): ?>
 <div class="tp-alert warning"><strong>Chưa mở gửi thẻ thật.</strong> Chỉ kích hoạt sau khi đã có tài khoản đối tác và xác minh game server xử lý <code>board_naptien</code>. Không có trường hợp gửi thẻ thành công nhưng tính năng cấp Lượng chưa sẵn sàng.</div>
 <?php endif; ?>
@@ -103,5 +103,5 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <div class="tp-panel"><span class="tp-eyebrow">TỶ LỆ HIỆN TẠI</span><h2>Đổi được bao nhiêu?</h2><p class="tp-muted">Áp dụng theo mệnh giá thẻ được đối tác xác nhận. Nếu khai báo sai mệnh giá, yêu cầu cần được đối soát.</p><div class="tp-summary tp-summary--two tp-mt-19"><div><small>10.000đ → Lượng thường</small><strong><?= number_format((int)$rates['luong'],0,',','.') ?></strong></div><div><small>10.000đ → Lượng khóa</small><strong><?= number_format((int)$rates['luonglock'],0,',','.') ?></strong></div></div></div>
 <div class="tp-panel"><span class="tp-eyebrow">QUY TRÌNH</span><h2>3 bước nạp thẻ</h2><div class="tp-steps tp-steps--stack tp-mt-15"><div class="tp-step"><span class="tp-step-number">01</span><b>Gửi đúng thông tin thẻ</b><span>Chỉ gửi khi cổng thẻ đã mở.</span></div><div class="tp-step"><span class="tp-step-number">02</span><b>Đối tác xác minh</b><span>Chỉ thẻ hợp lệ mới được chấp nhận.</span></div><div class="tp-step"><span class="tp-step-number">03</span><b>Kiểm tra trạng thái</b><span>Trạng thái chờ cấp không có nghĩa là đã nhận tài nguyên.</span></div></div></div>
 </div></div></section>
-<script src="../assets/js/topup-forms.js?v=1" defer></script>
+<script src="/assets/js/topup-forms.js?v=1" defer></script>
 <?php kp_topup_page_end(); ?>
