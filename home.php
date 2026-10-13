@@ -31,6 +31,39 @@ try {
     exit('Chưa thể tải trang tài khoản. Vui lòng thử lại sau.');
 }
 
+// Thống kê cộng đồng: chỉ dùng cột đã xác nhận trong team_user và bảng referral của module.
+$communityStats = ['accounts' => null, 'new_players' => [], 'top_codes' => []];
+try {
+    $pdo = kp_db();
+    $communityStats['accounts'] = (int) $pdo->query('SELECT COUNT(*) FROM team_user')->fetchColumn();
+
+    $recentStmt = $pdo->query(
+        'SELECT username, userid, regdate FROM team_user
+         ORDER BY regdate DESC, id DESC LIMIT 5'
+    );
+    $communityStats['new_players'] = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Bảng referral chỉ tồn tại nếu database/referral_codes.sql đã được import.
+    $dbName = (string) $pdo->query('SELECT DATABASE()')->fetchColumn();
+    $tableCheck = $pdo->prepare(
+        'SELECT COUNT(*) FROM information_schema.tables
+         WHERE table_schema = ? AND table_name = ?'
+    );
+    $tableCheck->execute([$dbName, 'kpah_referral_codes']);
+    if ((int) $tableCheck->fetchColumn() > 0) {
+        $codeStmt = $pdo->query(
+            'SELECT code, used_count, count
+             FROM kpah_referral_codes
+             WHERE is_active = 1
+             ORDER BY used_count DESC, id DESC LIMIT 5'
+        );
+        $communityStats['top_codes'] = $codeStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (Throwable $e) {
+    // Dashboard chính vẫn hoạt động nếu DB chưa có bảng phụ hoặc thiếu quyền đọc.
+    kp_log('không tải được thống kê cộng đồng', $e);
+}
+
 $csrf = kp_csrf_token();
 $username = (string) ($user['username'] ?? 'Player');
 $email = trim((string) ($user['email'] ?? ''));
@@ -62,8 +95,8 @@ if ($registeredAt === '') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="assets/css/register.css?v=1">
-    <link rel="stylesheet" href="assets/css/user-home.css?v=5">
-    <link rel="stylesheet" href="assets/css/home-theme.css?v=3">
+    <link rel="stylesheet" href="assets/css/user-home.css?v=6">
+    <link rel="stylesheet" href="assets/css/home-theme.css?v=4">
 </head>
 <body class="home-page">
 
@@ -74,7 +107,7 @@ if ($registeredAt === '') {
     <div class="rail-line" aria-hidden="true"></div>
     <a class="rail-icon active" href="#overview" aria-label="Tổng quan" title="Tổng quan"><span aria-hidden="true">⌂</span></a>
     <a class="rail-icon" href="#profile" aria-label="Hồ sơ tài khoản" title="Hồ sơ"><span aria-hidden="true">◎</span></a>
-    <a class="rail-icon" href="#security" aria-label="Bảo mật" title="Bảo mật"><span aria-hidden="true">◇</span></a>
+    <a class="rail-icon" href="#community" aria-label="Cộng đồng" title="Cộng đồng" title="Bảo mật"><span aria-hidden="true">◇</span></a>
     <div class="rail-bottom">
         <a class="rail-icon rail-logout" href="api/logout.php" aria-label="Đăng xuất" title="Đăng xuất"><span aria-hidden="true">↗</span></a>
     </div>
@@ -130,6 +163,75 @@ if ($registeredAt === '') {
             <strong class="state-value"><i></i> ĐANG HOẠT ĐỘNG</strong>
             <small>Đăng nhập hợp lệ · <?= kp_e($registeredAt) ?></small>
         </article>
+    </section>
+
+    <section class="community-dashboard" id="community" aria-labelledby="community-title">
+        <div class="section-heading community-heading">
+            <div>
+                <p class="kicker">KPAH COMMUNITY <span>/ LIVE DATA</span></p>
+                <h2 id="community-title">Nhịp đập cộng đồng</h2>
+            </div>
+            <p>Dữ liệu đọc trực tiếp từ database hiện có. Không tự tạo điểm lực chiến hay thứ hạng nhân vật khi chưa xác minh được bảng game.</p>
+        </div>
+
+        <div class="community-grid">
+            <section class="community-panel community-recent" aria-labelledby="recent-title">
+                <div class="community-panel-heading">
+                    <div><span class="card-index">01 / NEW ARRIVALS</span><h3 id="recent-title">Người chơi mới</h3></div>
+                    <span class="community-panel-icon" aria-hidden="true">✦</span>
+                </div>
+                <?php if (!empty($communityStats['new_players'])): ?>
+                    <div class="community-player-list">
+                        <?php foreach ($communityStats['new_players'] as $i => $player): ?>
+                            <?php
+                            $playerName = (string) ($player['username'] ?? 'Player');
+                            $playerInitial = function_exists('mb_substr') ? mb_strtoupper(mb_substr($playerName, 0, 1, 'UTF-8'), 'UTF-8') : strtoupper(substr($playerName, 0, 1));
+                            $playerDate = '';
+                            if (!empty($player['regdate'])) {
+                                $playerTs = is_numeric($player['regdate']) ? (int) $player['regdate'] : strtotime((string) $player['regdate']);
+                                if ($playerTs !== false && $playerTs > 0) $playerDate = date('d/m/Y', $playerTs);
+                            }
+                            ?>
+                            <div class="community-player-row">
+                                <span class="community-player-avatar"><?= kp_e($playerInitial) ?></span>
+                                <span class="community-player-main"><strong><?= kp_e($playerName) ?></strong><small>Player ID · <?= kp_e($player['userid'] ?? '—') ?></small></span>
+                                <span class="community-player-date"><?= kp_e($playerDate !== '' ? $playerDate : 'Thành viên') ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="community-empty">Chưa có dữ liệu người chơi mới để hiển thị.</p>
+                <?php endif; ?>
+                <p class="community-panel-foot">5 tài khoản đăng ký gần đây nhất · sắp xếp theo ngày tạo</p>
+            </section>
+
+            <section class="community-panel community-codes" aria-labelledby="codes-title">
+                <div class="community-panel-heading">
+                    <div><span class="card-index">02 / REFERRALS</span><h3 id="codes-title">Top mã giới thiệu</h3></div>
+                    <span class="community-panel-icon" aria-hidden="true">↗</span>
+                </div>
+                <?php if (!empty($communityStats['top_codes'])): ?>
+                    <div class="community-code-list">
+                        <?php foreach ($communityStats['top_codes'] as $i => $code): ?>
+                            <div class="community-code-row">
+                                <span class="community-rank rank-<?= (int) $i + 1 ?>"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
+                                <span class="community-code-main"><strong><?= kp_e($code['code'] ?? '') ?></strong><small>Mã giới thiệu</small></span>
+                                <span class="community-code-count"><strong><?= number_format((int) ($code['used_count'] ?? 0), 0, ',', '.') ?></strong><small>/ <?= number_format((int) ($code['count'] ?? 0), 0, ',', '.') ?> lượt</small></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="community-panel-foot">Xếp theo lượt sử dụng thực tế của mã đang hoạt động.</p>
+                <?php else: ?>
+                    <p class="community-empty">Chưa có bảng mã giới thiệu hoặc chưa có mã hoạt động. Khu vực này tự hiện dữ liệu khi bảng đã được cài đặt.</p>
+                <?php endif; ?>
+            </section>
+        </div>
+
+        <div class="community-summary">
+            <div class="community-summary-icon" aria-hidden="true">◎</div>
+            <div><strong><?= $communityStats['accounts'] !== null ? number_format((int) $communityStats['accounts'], 0, ',', '.') : '—' ?> tài khoản</strong><p>Tổng số tài khoản trong <code>team_user</code>.</p></div>
+            <span class="community-summary-tag">DATABASE</span>
+        </div>
     </section>
 
     <section class="account-section" id="profile" aria-labelledby="profile-title">
