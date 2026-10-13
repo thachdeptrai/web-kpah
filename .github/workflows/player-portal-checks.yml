@@ -1,0 +1,60 @@
+name: Player portal and leaderboard checks
+
+on:
+  push:
+    paths:
+      - 'home.php'
+      - 'profile.php'
+      - 'characters.php'
+      - 'rankings.php'
+      - 'includes/player_portal.php'
+      - 'includes/rankings.php'
+      - 'assets/css/player-portal.css'
+      - 'assets/img/rank-*.svg'
+      - 'tests/rankings_smoke.php'
+      - '.github/workflows/player-portal-checks.yml'
+  pull_request:
+    paths:
+      - 'home.php'
+      - 'profile.php'
+      - 'characters.php'
+      - 'rankings.php'
+      - 'includes/player_portal.php'
+      - 'includes/rankings.php'
+      - 'assets/css/player-portal.css'
+      - 'assets/img/rank-*.svg'
+      - 'tests/rankings_smoke.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          coverage: none
+      - name: Lint player pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in home.php profile.php characters.php rankings.php includes/player_portal.php includes/rankings.php tests/rankings_smoke.php; do
+            php -l "$path"
+          done
+      - name: Test static leaderboard queries and category whitelist
+        run: php tests/rankings_smoke.php
+      - name: Parse podium SVG images
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          for path in ('assets/img/rank-guardian.svg','assets/img/rank-sorcerer.svg','assets/img/rank-archer.svg'):
+              root=ET.parse(path).getroot()
+              assert root.tag.endswith('svg')
+              print(path,'valid SVG')
+          PY
