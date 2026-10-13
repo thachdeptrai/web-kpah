@@ -1,12 +1,4 @@
 <?php
-require __DIR__.'/includes/bootstrap.php';
-require_once __DIR__.'/includes/topup_settings.php';
-kp_send_security_headers(true);header('Content-Type: text/html; charset=utf-8');
-$user=kp_topup_require_user();
-$rates=kp_topup_rates();
-?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080e19"><title>Nạp tài nguyên · KPAH</title><link rel="stylesheet" href="assets/css/topup.css?v=1"></head><body>
-<header><div class="inner"><a href="home.php" class="logo">✦ KPAH <small>NẠP TÀI NGUYÊN</small></a><nav><a href="home.php">Tài khoản</a><a class="active" href="nap.php">Nạp tài nguyên</a><a href="nap-the.php">Thẻ cào</a><a href="nap-bank.php">Ngân hàng</a></nav></div></header>
-<main class="wrap"><section class="hero"><span class="eyebrow">KPAH / THANH TOÁN</span><h1>Chọn cách nạp</h1><p>Chào <?=kp_e($user['username'])?>. Nạp thẻ và chuyển khoản được tách riêng, dễ theo dõi và không ép chọn gói tiền cố định.</p><div class="chips"><span class="chip">Tỷ lệ Lượng: <strong>10.000đ / <?=kp_topup_display($rates['luong'])?></strong></span><span class="chip">Lượng khóa: <strong>10.000đ / <?=kp_topup_display($rates['luonglock'])?></strong></span></div></section>
-<div class="grid"><article class="card"><div class="symbol">▤</div><h2>Nạp bằng thẻ cào</h2><p>Chọn tài nguyên, nhập mệnh giá thẻ và thông tin thẻ. Kết nối đối tác duyệt thẻ sẽ được bật sau khi có API.</p><a class="cta" href="nap-the.php">Mở nạp thẻ →</a></article><article class="card"><div class="symbol">▦</div><h2>Nạp ngân hàng</h2><p>Phần chuyển khoản đang chuẩn bị. Chưa cung cấp QR hay tài khoản nhận tiền để tránh chuyển nhầm.</p><a class="cta" href="nap-bank.php">Xem trang ngân hàng →</a></article><article class="card"><div class="symbol">✧</div><h2>Tài khoản của tôi</h2><p>Xem các nhân vật và số dư hiện tại. Dữ liệu chỉ hiển thị cho tài khoản đang đăng nhập.</p><a class="cta" href="home.php#characters">Xem nhân vật →</a></article></div>
-<div class="alert">Hiện chưa kết nối nhà cung cấp thẻ cào và luồng cấp tài nguyên của game server. Website chưa nhận thẻ thật hoặc tự động cộng Lượng/Xu.</div>
-</main><footer>KPAH · Thanh toán chỉ được kích hoạt sau khi hoàn thiện đối soát</footer></body></html>
+// Compatible entry point. The module uses one canonical rate store and UI.
+header('Location: topup/index.php', true, 302);
+exit;
