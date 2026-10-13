@@ -115,7 +115,11 @@ function kp_send_security_headers($isPage)
 function kp_session_cookie_name()
 {
     $script = str_replace(chr(92), '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
-    if (preg_match('~(?:^|/)(?:admin|topup/admin)/[^/]+\\.php$~i', $script)) {
+    $requestedPath = parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
+    // Apache may retain the clean URL in SCRIPT_NAME under some proxies.
+    // Restrict this fallback to the explicitly routed /quan-tri namespace.
+    if (preg_match('~(?:^|/)(?:admin|topup/admin)/[^/]+\\.php$~i', $script)
+        || (is_string($requestedPath) && preg_match('~^/quan-tri(?:/|$)~i', $requestedPath))) {
         return (string)kp_config('security.admin_session_name', 'KPAHADMIN');
     }
     return (string)kp_config('security.session_name', 'KPAHREG');
