@@ -59,7 +59,8 @@ try {
   kp_profile_reply(['ok'=>true,'message'=>'Đã gửi mã đến Gmail đang liên kết. Nhập mã này rồi mới được yêu cầu mã Gmail mới.']);
  }
  if ($action==='send_email_code') {
-  if ($oldEmail==='' || !filter_var($oldEmail,FILTER_VALIDATE_EMAIL)) kp_profile_reply(['ok'=>false,'message'=>'Tài khoản chưa có Gmail hiện tại hợp lệ.'],422);
+  $firstLink = $oldEmail==='' || !filter_var($oldEmail,FILTER_VALIDATE_EMAIL);
+  if (!$firstLink) {
   list($verifyAllowed,$verifyRetry)=kp_rate_limit('profile_old_email_verify',$userId.'|'.kp_client_ip(),8,600,true);
   if (!$verifyAllowed) kp_profile_reply(['ok'=>false,'message'=>'Bạn nhập mã Gmail cũ quá nhiều lần. Hãy thử lại sau ít phút.'],429);
   if (!kp_profile_code_valid('kp_profile_old_email',$oldCode,$userId,$oldEmail)) kp_profile_reply(['ok'=>false,'message'=>'Mã Gmail hiện tại không đúng hoặc đã hết hạn. Hãy gửi lại mã Gmail cũ.'],422);
@@ -69,21 +70,23 @@ try {
   if ($dupe->fetchColumn()) kp_profile_reply(['ok'=>false,'message'=>'Email này đã được tài khoản khác sử dụng.'],409);
   $_SESSION['kp_profile_old_email_verified_email']=$oldEmail; $_SESSION['kp_profile_old_email_verified_expiry']=time()+600;
   unset($_SESSION['kp_profile_old_email_hash'],$_SESSION['kp_profile_old_email_expiry'],$_SESSION['kp_profile_old_email_target'],$_SESSION['kp_profile_old_email_user']);
+  }
   list($allowed,$retry)=kp_rate_limit('profile_email_code',$userId.'|'.kp_client_ip(),4,600,true);
   if (!$allowed) kp_profile_reply(['ok'=>false,'message'=>'Bạn yêu cầu mã Gmail mới quá nhiều lần. Hãy thử lại sau ít phút.'],429);
   $code=(string)random_int(100000,999999); $ttl=max(60,(int)kp_config('registration.email_code_ttl',600));
   $newPlain = "Mã xác minh để liên kết Gmail mới với tài khoản KPAH: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nChỉ nhập mã này trên website chính thức. Nếu bạn không yêu cầu thay đổi email, hãy bỏ qua thư này.\nCộng đồng KPAH: https://zalo.me/g/zmyedl5en7sldmd9el1z";
   kp_send_mail_smtp($email,'Mã xác minh thay đổi email KPAH',$newPlain,kp_profile_email_html('Xác minh email mới','Bạn vừa yêu cầu liên kết địa chỉ email mới với tài khoản KPAH. Nhập mã bên dưới để tiếp tục.',$code,(int)ceil($ttl/60)));
   $_SESSION['kp_profile_email_hash']=hash('sha256',$code); $_SESSION['kp_profile_email_expiry']=time()+$ttl; $_SESSION['kp_profile_email_target']=$email; $_SESSION['kp_profile_email_user']=$userId;
-  kp_profile_reply(['ok'=>true,'message'=>'Đã xác minh Gmail cũ và gửi mã đến Gmail mới. Nhập mã mới rồi bấm Lưu thay đổi.']);
+  kp_profile_reply(['ok'=>true,'message'=>$firstLink ? 'Đã gửi mã tới email muốn liên kết. Nhập mã rồi bấm Lưu thay đổi.' : 'Đã xác minh Gmail cũ và gửi mã đến Gmail mới. Nhập mã mới rồi bấm Lưu thay đổi.']);
  }
  if ($action!=='update') kp_profile_reply(['ok'=>false,'message'=>'Yêu cầu không hợp lệ.'],400);
  $phone=trim((string)($_POST['phone'] ?? ''));
  if ($email!=='' && (!filter_var($email,FILTER_VALIDATE_EMAIL)||strlen($email)>254)) kp_profile_reply(['ok'=>false,'message'=>'Địa chỉ email không hợp lệ.'],422);
  if ($phone!=='' && !preg_match('/^(?:\+84|0)(?:3|5|7|8|9)\d{8}$/',$phone)) kp_profile_reply(['ok'=>false,'message'=>'Số điện thoại chưa đúng định dạng. Dùng 0xxxxxxxxx hoặc +84xxxxxxxxx.'],422);
  if ($email!==$oldEmail) {
+  if ($email==='') kp_profile_reply(['ok'=>false,'message'=>'Không thể gỡ email đã liên kết bằng thao tác này.'],422);
   $verifiedOld=isset($_SESSION['kp_profile_old_email_verified_email'],$_SESSION['kp_profile_old_email_verified_expiry']) && time()<=(int)$_SESSION['kp_profile_old_email_verified_expiry'] && hash_equals((string)$_SESSION['kp_profile_old_email_verified_email'],$oldEmail);
-  if (!$verifiedOld) kp_profile_reply(['ok'=>false,'message'=>'Bạn phải xác minh mã gửi đến Gmail hiện tại trước khi đổi email.'],403);
+  if ($oldEmail!=='' && !$verifiedOld) kp_profile_reply(['ok'=>false,'message'=>'Bạn phải xác minh mã gửi đến Gmail hiện tại trước khi đổi email.'],403);
   if (!kp_profile_code_valid('kp_profile_email',$newCode,$userId,$email)) kp_profile_reply(['ok'=>false,'message'=>'Gmail mới chưa được xác minh hoặc mã đã hết hạn. Hãy xác minh cả Gmail cũ và Gmail mới.'],422);
   $dupe=$db->prepare('SELECT 1 FROM team_user WHERE LOWER(TRIM(email)) = ? AND id <> ? LIMIT 1'); $dupe->execute([$email,$userId]);
   if ($dupe->fetchColumn()) kp_profile_reply(['ok'=>false,'message'=>'Email này đã được tài khoản khác sử dụng.'],409);
