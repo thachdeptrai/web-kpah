@@ -68,7 +68,7 @@ foreach ($expect as $route=>$script) {
 $assert($resolve('/tai-khoan/nhan-vat/xyz')===null,'unknown nested route does not match');
 $assert($resolve('/quan-tri/nap/ti-le/injection')===null,'admin route not overbroad');
 $assert((bool)preg_match('/\(\?:app\|tools\|storage\|includes/',$raw),'internal app/tools storage blocked by Apache');
-$assert((bool)preg_match('/\.git/',$raw) && strpos($raw,'\\.sql')!==false,'Git internals and SQL dumps blocked');
+$assert((bool)preg_match('/\.git/',$raw) && strpos($raw,'(?:sql')!==false,'Git internals and SQL dumps blocked');
 $assert(strpos($raw,'Options -Indexes -MultiViews')!==false,'no directory listings or MultiViews');
 
 $pages=[
