@@ -11,7 +11,7 @@ kp_player_head('Nhân vật của tôi','characters',$user,true);
 ?>
 <section class="portal-hero portal-hero--compact">
     <div class="portal-hero-copy"><span class="portal-kicker"><i></i> THẾ GIỚI KPAH</span>
-    <h1>Nhân vật <em>của tôi.</em></h1><p>Cấp độ, kinh nghiệm, Xu, Lượng và Lượng khóa — chỉ bạn xem được thông tin nhân vật của mình.</p></div>
+    <h1>Nhân vật <em>của tôi.</em></h1><p>Xem cấp độ, kinh nghiệm và tài nguyên của những nhân vật bạn đang chơi.</p></div>
     <a class="portal-hero-action" href="/bang-xep-hang">Xem bảng xếp hạng ↗</a>
 </section>
 <section class="characters-section" id="characters" aria-labelledby="characters-title">
@@ -19,7 +19,7 @@ kp_player_head('Nhân vật của tôi','characters',$user,true);
             <div class="characters-intro-copy">
                 <p class="characters-eyebrow"><span class="characters-eyebrow-glyph" aria-hidden="true">✦</span> HỒ SƠ NHÂN VẬT <span class="characters-eyebrow-line" aria-hidden="true"></span> KPAH</p>
                 <h2 id="characters-title">Nhân vật <em>của bạn</em></h2>
-                <p class="characters-intro-note">Danh sách nhân vật thuộc tài khoản đang đăng nhập.</p>
+                <p class="characters-intro-note">Các nhân vật của bạn trong KPAH.</p>
             </div>
             <?php if (!$charactersUnavailable && !empty($characters)): ?>
                 <div class="characters-count" aria-label="Đang hiển thị <?= count($characters) ?> nhân vật">

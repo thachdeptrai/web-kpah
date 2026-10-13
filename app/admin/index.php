@@ -33,22 +33,22 @@ try {
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH / ADMIN CONSOLE</small><strong>Control Center</strong></span></a>
+  <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH · QUẢN TRỊ</small><strong>Control Center</strong></span></a>
   <div class="top-actions"><span class="secure"><i></i> Phiên bảo mật</span><span class="user"><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
 <main class="shell">
   <section class="welcome">
-    <div><div class="eyebrow">OVERVIEW / TỔNG QUAN</div><h1>Chào mừng trở lại.</h1><p>Mọi thông tin vận hành quan trọng của website KPAH, gói gọn trong một bảng điều khiển.</p></div>
+    <div><div class="eyebrow">OVERVIEW / TỔNG QUAN</div><h1>Chào mừng trở lại.</h1><p>Tài khoản, mã giới thiệu và nạp tài nguyên — chọn mục bạn cần.</p></div>
     <div class="welcome-mark" aria-hidden="true"><span>✦</span><small>ADMIN<br>SPACE</small></div>
   </section>
   <?php if ($dbError): ?><div class="alert">Không thể tải một phần dữ liệu. Kiểm tra database và các bảng trong <code>database/referral_codes.sql</code>; chi tiết đã được ghi vào log máy chủ.</div><?php endif; ?>
   <section class="metrics" aria-label="Thống kê tổng quan">
-    <article class="metric"><div class="metric-top"><span>Tài khoản game</span><span class="metric-icon">♙</span></div><strong><?= number_format($stats['accounts']) ?></strong><small>Tổng tài khoản trong team_user</small></article>
+    <article class="metric"><div class="metric-top"><span>Tài khoản game</span><span class="metric-icon">♙</span></div><strong><?= number_format($stats['accounts']) ?></strong><small>Tài khoản game đã tạo</small></article>
     <article class="metric"><div class="metric-top"><span>Mã giới thiệu</span><span class="metric-icon purple">⌘</span></div><strong><?= number_format($stats['codes']) ?></strong><small>Tổng mã đã tạo</small></article>
     <article class="metric"><div class="metric-top"><span>Mã đang khả dụng</span><span class="metric-icon green">↗</span></div><strong><?= number_format($stats['active_codes']) ?></strong><small>Còn lượt, chưa hết hạn và chưa khóa</small></article>
     <article class="metric"><div class="metric-top"><span>Lượt dùng mã</span><span class="metric-icon cyan">◷</span></div><strong><?= number_format($stats['uses']) ?></strong><small>Lịch sử sử dụng được ghi nhận</small></article>
   </section>
-  <section class="section-heading"><div><div class="eyebrow">WORKSPACE</div><h2>Khu vực quản lý</h2><p>Chọn chức năng để tiếp tục công việc.</p></div><span class="admin-count"><?= number_format($stats['admins']) ?> admin đang bật</span></section>
+  <section class="section-heading"><div><div class="eyebrow">WORKSPACE</div><h2>Khu vực quản lý</h2><p>Chọn mục cần làm.</p></div><span class="admin-count"><?= number_format($stats['admins']) ?> admin đang bật</span></section>
   <section class="actions">
     <a class="action-card featured" href="/quan-tri/nap"><span class="action-icon">✧</span><span class="action-copy"><small>THANH TOÁN / 01</small><strong>Quản lý nạp tài nguyên</strong><span>Trang riêng cho tỷ lệ quy đổi, dữ liệu nạp game và kiểm tra luồng nạp.</span><b>Mở quản lý nạp <span aria-hidden="true">↗</span></b></span></a>
     <a class="action-card" href="/quan-tri/ma-gioi-thieu"><span class="action-icon">⌘</span><span class="action-copy"><small>REGISTRATION / 01</small><strong>Quản lý mã giới thiệu</strong><span>Tạo mã, đặt hạn dùng, khóa/mở mã và theo dõi lịch sử đăng ký.</span><b>Mở quản lý <span aria-hidden="true">↗</span></b></span></a>

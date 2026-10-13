@@ -27,7 +27,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                 <p class="kicker">THÔNG TIN TÀI KHOẢN</p>
                 <h2 id="profile-title">Thông tin của bạn</h2>
             </div>
-            <p>Cập nhật thông tin liên hệ hoặc đổi mật khẩu của bạn.</p>
+            <p>Muốn đổi email hay số điện thoại? Sửa ngay bên dưới.</p>
         </div>
 
         <div class="profile-layout">
@@ -101,7 +101,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                     <span class="security-spark spark-b">✧</span>
                 </div>
                 <p class="kicker">BẢO MẬT TÀI KHOẢN</p>
-                <h3 id="security-title">Giữ tài khoản của bạn an toàn.</h3>
+                <h3 id="security-title">Bảo vệ tài khoản của bạn.</h3>
                 <p class="security-description">Không dùng chung mật khẩu với tài khoản khác. Đừng chia sẻ mã xác minh.</p>
 
                 <div class="security-row">

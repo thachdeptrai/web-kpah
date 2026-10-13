@@ -88,18 +88,18 @@ try {
         <div class="lp-feature-list">
             <article class="lp-feature"><span class="lp-feature-mark">I.</span><h3>Theo dấu nhân vật</h3><p>Xem cấp độ, kinh nghiệm và tài nguyên của các nhân vật thuộc tài khoản bạn.</p></article>
             <article class="lp-feature"><span class="lp-feature-mark">II.</span><h3>Giữ tài khoản của bạn</h3><p>Cập nhật email, số điện thoại và đổi mật khẩu khi cần.</p></article>
-            <article class="lp-feature"><span class="lp-feature-mark">III.</span><h3>Kết nối cộng đồng</h3><p>Đi tới kênh cộng đồng để trao đổi, hỏi đáp và theo dõi các thông báo được chia sẻ.</p></article>
+            <article class="lp-feature"><span class="lp-feature-mark">III.</span><h3>Kết nối cộng đồng</h3><p>Có gì chưa rõ cứ hỏi anh em trong nhóm, biết đâu lại tìm được đồng đội mới.</p></article>
         </div>
     </section>
 
     <section class="lp-wrap lp-section" id="thong-tin" aria-labelledby="info-title">
         <div class="lp-section-head">
-            <div><span class="lp-index">02 / THÔNG TIN</span><h2 id="info-title">Mọi thứ cần thiết, rõ ràng.</h2></div>
+            <div><span class="lp-index">02 / THÔNG TIN</span><h2 id="info-title">Vào game từ đây.</h2></div>
             <p>Đăng ký lần đầu hay quay lại sau một thời gian, bạn đều có thể bắt đầu từ đây.</p>
         </div>
         <div class="lp-info-grid">
             <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">⌘</span><div><h3>Tài khoản người chơi</h3><p>Chọn tên đăng nhập, đặt mật khẩu và làm theo hướng dẫn xác minh trên trang đăng ký.</p></div></article>
-            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">◇</span><div><h3>Bảo mật tài khoản</h3><p>Quản lý email, số điện thoại và mật khẩu tại khu tài khoản; không chia sẻ mã xác minh hoặc mật khẩu.</p></div></article>
+            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">◇</span><div><h3>Bảo mật tài khoản</h3><p>Cập nhật email, số điện thoại và đổi mật khẩu khi cần.</p></div></article>
             <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">↗</span><div><h3>Khôi phục truy cập</h3><p>Quên mật khẩu? Dùng email đã liên kết để lấy lại quyền truy cập.</p></div></article>
             <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">✦</span><div><h3>Theo dõi bảng xếp hạng</h3><p>Xem những nhân vật và bang hội dẫn đầu về cấp độ, danh vọng và thành tích tranh tài.</p></div></article>
         </div>
@@ -131,7 +131,7 @@ try {
         <div class="lp-site-links">
             <a class="lp-site-link" href="<?= kp_e($registerUrl) ?>"><span aria-hidden="true">＋</span><strong>Đăng ký tài khoản</strong><small>Chọn tên đăng nhập và bắt đầu cùng anh em.</small></a>
             <a class="lp-site-link" href="<?= kp_e($isLoggedIn ? $accountUrl : $loginUrl) ?>"><span aria-hidden="true">◎</span><strong><?= $isLoggedIn ? 'Khu tài khoản' : 'Đăng nhập' ?></strong><small><?= $isLoggedIn ? 'Quản lý thông tin và bảo mật tài khoản.' : 'Đăng nhập để mở khu vực tài khoản cá nhân.' ?></small></a>
-            <a class="lp-site-link" href="/quen-mat-khau"><span aria-hidden="true">◇</span><strong>Quên mật khẩu</strong><small>Bắt đầu quy trình khôi phục quyền truy cập.</small></a>
+            <a class="lp-site-link" href="/quen-mat-khau"><span aria-hidden="true">◇</span><strong>Quên mật khẩu</strong><small>Lấy lại mật khẩu qua email.</small></a>
         </div>
         <?php if ($supportUrl !== ''): ?>
             <p class="lp-intro">Cần hỗ trợ? <a href="<?= kp_e($supportUrl) ?>">Liên hệ kênh hỗ trợ</a>.</p>

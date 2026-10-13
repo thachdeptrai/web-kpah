@@ -47,5 +47,5 @@ Các test mô phỏng không xác nhận giao dịch tiền thật hoặc email 
 - 64 file PHP qua kiểm tra cú pháp; 6 bộ smoke test đều qua.
 - 258 kiểm tra HTTP qua trên PHP 8.3.6/MariaDB 10.11, gồm 6 kiểm tra đăng ký với OTP mô phỏng.
 - Chín truy vấn xếp hạng và liên kết nhân vật chạy trên cấu trúc SQL đã cung cấp.
-- Chưa chạy được Apache thực tế tại máy kiểm thử do giới hạn đổi user/group; workflow CI đã chuẩn bị nhưng chưa chạy vì push cần xác nhận.
+- Chưa chạy được Apache thực tế tại máy kiểm thử do giới hạn đổi user/group; workflow CI đã chạy thành công trên PHP 8.0 và 8.3 CLI cùng PHP 8.3/Apache với MariaDB fixture; kết quả không thay thế kiểm thử staging VPS.
 - Chưa xác nhận giao diện bằng trình duyệt: runtime thiếu Chromium và tải bộ cài không thành công. Kiểm tra asset HTTP đã qua; không coi đó là kiểm tra responsive.
