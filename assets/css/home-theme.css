@@ -57,3 +57,102 @@ body.home-page { background:linear-gradient(180deg,#0b0d14 0%,#0d111b 58%,#0b0d1
  .community-rank-power,.community-rank-total{font-size:10px}
  .community-rank{width:28px;height:28px}
 }
+
+/* KPAH account dashboard 2026: comfortable typography, game character data */
+.home-page { --home-line:rgba(214,222,242,.14); --home-muted:#aab4c7; }
+.home-main { max-width:1572px; }
+.home-breadcrumb { font-size:11px; letter-spacing:.06em; }
+.top-user-name,.top-logout { font-size:12px; }
+.top-status,.kicker,.metric-label,.security-overline,.security-status { font-size:11px; }
+.welcome-block { min-height:248px; padding:35px 0; }
+.welcome-description { font-size:14px; line-height:1.75; }
+.welcome-secure { font-size:11px; line-height:1.6; letter-spacing:0; }
+.jump-link { font-size:13px; padding:13px 17px; }
+.metric-card { min-height:134px; padding:21px 19px; }
+.metric-card strong { font-size:clamp(17px,1.55vw,22px);overflow-wrap:anywhere;white-space:normal; }
+.metric-card .metric-value { font-size:13px; line-height:1.6; }
+.metric-card small { font-size:11px; }
+.section-heading h2 { font-size:clamp(23px,2.4vw,32px); }
+.section-heading>p { font-size:12px; }
+.card-index { font-size:11px; }
+.profile-card label,.security-card label { font-size:13px; }
+.profile-card input,.security-card input { font-size:14px; height:46px; }
+.field-note,.password-help,.form-lock,.security-footnote { font-size:11px; }
+.profile-identity strong { font-size:15px; }
+.profile-identity .identity-copy span { font-size:11px; }
+.identity-tag { font-size:10px; }
+.input-with-action button,#profile-form .input-with-action button { font-size:12px; line-height:1.4; min-height:44px; }
+.form-feedback { font-size:12px; }
+.save-button { font-size:13px; min-height:46px; }
+.security-description,.security-row,.security-row b,.security-link { font-size:12px; }
+.home-footer { font-size:10px; }
+.characters-section { padding:36px 0 12px; scroll-margin-top:30px; }
+.characters-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px; }
+.character-card { min-width:0;border:1px solid var(--home-line);border-radius:16px;padding:22px;background:linear-gradient(145deg,rgba(23,30,43,.97),rgba(14,19,29,.97)); }
+.character-card-head { display:flex;align-items:center;gap:13px;min-width:0; }
+.character-avatar { width:52px;height:52px;display:grid;place-items:center;flex:none;border-radius:13px;color:#ffdea3;background:rgba(230,189,105,.12);border:1px solid rgba(230,189,105,.23);font-weight:700;font-size:20px; }
+.character-card-head>div { flex:1;min-width:0; }
+.character-card h3 { margin:0;font-size:17px;line-height:1.4;overflow-wrap:anywhere; }
+.character-card-head p { margin:5px 0 0;font-size:12px;color:var(--home-muted);overflow-wrap:anywhere; }
+.character-level { display:inline-flex;white-space:nowrap;padding:7px 11px;border:1px solid rgba(230,189,105,.3);border-radius:9px;background:rgba(230,189,105,.06);color:var(--home-gold-hi);font-size:12px;font-weight:700; }
+.character-stats { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:20px 0 0;padding-top:17px;border-top:1px solid var(--home-line); }
+.character-stats>div { min-width:0; }
+.character-stats dt { color:var(--home-muted);font-size:11px; }
+.character-stats dd { margin:7px 0 0;overflow-wrap:anywhere;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums; }
+.character-last { margin:17px 0 0;font-size:11px;color:var(--home-muted); }
+.character-empty { display:flex;flex-direction:column;align-items:flex-start;gap:9px;border:1px dashed rgba(214,222,242,.2);border-radius:14px;padding:24px;color:var(--home-muted);font-size:13px; }
+.character-empty strong { color:var(--home-text);font-size:15px; }
+.community-dashboard { margin:22px 0 42px; }
+.community-panel { padding:25px; }
+.community-panel-heading h3 { font-size:19px; }
+.community-rank-header { font-size:11px; }
+.community-rank-row { padding-top:15px;padding-bottom:15px; }
+.community-rank-name { font-size:14px; }
+.community-rank-power,.community-rank-total { font-size:13px; }
+.community-rank { font-size:12px; }
+.community-empty { font-size:13px; }
+#profile,#security,#community { scroll-margin-top:22px; }
+@media(max-width:1100px){
+ .characters-grid { grid-template-columns:1fr; }
+}
+@media(max-width:760px){
+ .welcome-block { min-height:240px;padding:30px 0; }
+ .welcome-description { font-size:13px; }
+ .metric-card { min-height:122px;padding:16px 13px; }
+ .metric-card strong { font-size:17px; }
+ .metric-card .metric-value { font-size:12px; }
+ .metric-card small { font-size:10px; }
+ .metric-label { font-size:10px; }
+ .section-heading>p { font-size:11px; }
+ .characters-section { padding-top:26px; }
+ .character-card { padding:17px; }
+ .character-card h3 { font-size:15px; }
+ .character-level { font-size:11px; }
+ .community-panel { padding:17px 14px; }
+ .community-rank-header { font-size:10px; }
+ .community-rank-name,.community-rank-power,.community-rank-total { font-size:12px; }
+ .home-breadcrumb { font-size:10px; }
+ .top-user-name { font-size:11px; }
+}
+@media(max-width:520px){
+ .home-main { padding-inline:13px; }
+ .welcome-secure { display:none; }
+ .community-rank-header,.community-rank-row { grid-template-columns:32px minmax(0,1fr) 45px minmax(65px,.8fr);gap:7px; }
+ .community-rank-header { font-size:9px; }
+ .community-rank-power,.community-rank-total { font-size:11px; }
+ .character-card-head { flex-wrap:wrap; }
+ .character-card-head>div { flex:1 1 100px; }
+ .character-level { margin-left:auto; }
+ .character-stats dd { font-size:12px; }
+ .character-stats dt { font-size:10px; }
+ .top-user-name { max-width:72px; }
+ .rail-icon { margin-bottom:5px; }
+}
+@media(max-width:385px){
+ .metric-strip { grid-template-columns:minmax(0,1fr); }
+ .metric-card { min-height:auto; }
+ .home-top { flex-wrap:wrap; padding:13px 0; }
+ .home-breadcrumb { width:100%; }
+ .welcome-copy h1 { font-size:27px; }
+ .character-stats { gap:6px; }
+}
