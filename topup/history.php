@@ -11,5 +11,5 @@ kp_topup_page_start('Lịch sử nạp','history',(string)$user['username']);?>
 <?php foreach($orders as $order): ?>
 <tr><td><b>#<?= kp_e(strtoupper(substr((string)$order['id'],0,10))) ?></b></td><td><?= date('d/m/Y H:i',(int)$order['created_at']) ?></td><td><?= kp_e($order['telco']) ?></td><td><?= number_format((int)$order['amount'],0,',','.') ?>đ</td><td><?= number_format((int)$order['units'],0,',','.') ?> <?= ($order['currency']??'')==='luonglock'?'Lượng khóa':'Lượng thường' ?></td><td><span class="tp-pill <?= kp_e($order['status']) ?>"><?= kp_e(kp_topup_status_label($order['status'])) ?></span></td></tr>
 <?php endforeach; ?></tbody></table></div><?php endif; ?>
-<p class="tp-muted" style="margin-top:16px">Nếu thẻ đã được gửi nhưng trạng thái chưa cập nhật, đừng gửi thẻ lại. Hãy liên hệ quản trị viên bằng mã giao dịch để đối soát.</p>
+<p class="tp-muted tp-mt-16">Nếu thẻ đã được gửi nhưng trạng thái chưa cập nhật, đừng gửi thẻ lại. Hãy liên hệ quản trị viên bằng mã giao dịch để đối soát.</p>
 </div></section><?php kp_topup_page_end(); ?>
