@@ -30,7 +30,10 @@ Website dành cho cộng đồng người chơi KPAH: đăng ký, đăng nhập,
 | `/dang-ky` | Đăng ký |
 | `/dang-nhap` | Đăng nhập |
 | `/quen-mat-khau` | Lấy lại mật khẩu |
-| `/tai-khoan` | Hồ sơ và nhân vật |
+| `/tai-khoan` | Tổng quan và các nút chuyển trang |
+| `/profile.php` | Hồ sơ, cập nhật liên hệ và đổi mật khẩu |
+| `/characters.php` | Nhân vật của tài khoản đang đăng nhập |
+| `/rankings.php` | Chín bảng xếp hạng, Top 1–3 và 4–10 |
 | `/nap` | Chọn phương thức nạp |
 | `/nap-the` | Nạp thẻ cào |
 | `/nap-ngan-hang` | Nạp ngân hàng (chưa mở) |
@@ -123,6 +126,16 @@ Website đang dùng các bảng có sẵn trong database KPAH. Một số bảng
 Khu nạp mới **không yêu cầu thêm bảng hay thay đổi schema SQL**. Tuy nhiên, chức năng cộng tài nguyên thủ công của admin có thể cập nhật các cột số dư hiện có trong `tob_char` sau khi admin xác nhận.
 
 Bộ mã giới thiệu có file `database/referral_codes.sql` dành cho môi trường chưa có các bảng quản trị/giới thiệu tương ứng. **Không import lại trên hệ thống đang chạy khi các bảng đã tồn tại và hoạt động bình thường.**
+
+## Bảng xếp hạng
+
+Trang `rankings.php` dùng truy vấn **chỉ đọc**, chọn hạng mục bằng danh sách cố định ở `includes/rankings.php`. Hiện có 9 hạng mục: Cấp độ, Danh vọng, Điểm PK, Bang hội, Nạp Lượng, Điểm sự kiện, Thách đấu, Chiếm thành và Sự kiện WC.
+
+Giao diện hiển thị Top 1 ở trung tâm, Top 2 trái, Top 3 phải; Top 4–10 bên dưới. Nếu bảng chưa có dữ liệu, hiển thị trạng thái trống. Hình chiến binh/pháp sư/cung thủ là SVG minh họa, không phải sprite nhân vật thực tế.
+
+Trang tài khoản `home.php` chỉ hiển thị tổng quan. Các form đã chuyển sang `profile.php` và danh sách nhân vật đã chuyển sang `characters.php`; API cũ giữ nguyên.
+
+**Không yêu cầu thay đổi SQL.** Không hiển thị bảng/cột game, mật khẩu, số điện thoại hay số dư riêng tư trên bảng xếp hạng.
 
 ## Quản trị
 
