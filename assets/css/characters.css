@@ -382,3 +382,22 @@
   .characters-section .char-ui-card,.characters-section .char-ui-portrait,.characters-section .char-ui-stat,
   .characters-count,.char-ui-level{border:1px solid CanvasText}
 }
+/* Locked Luong: four balanced currency/XP items on PC, 2x2 on phones. */
+.characters-section .char-ui-stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.char-ui-stat--locked .char-ui-stat-icon{color:#d4b4f9;border-color:rgba(212,180,249,.28);background:rgba(212,180,249,.08)}
+.char-ui-stat--locked dd{color:#e7d8ff}
+@media(max-width:1320px) and (min-width:1091px){
+ .characters-section .char-ui-card:not(.char-ui-card--featured) .char-ui-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ .characters-section .char-ui-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+ .characters-section .char-ui-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .characters-section .char-ui-stat--xp{grid-column:auto}
+ .characters-section .char-ui-stat--xp dd{font-size:16px}
+}
+@media(max-width:410px){
+ .characters-section .char-ui-stat dt{font-size:10px;white-space:normal;align-items:flex-start}
+ .characters-section .char-ui-stat{padding:11px 9px}
+}
