@@ -78,7 +78,7 @@ function kp_send_mail_smtp($to, $subject, $body, $htmlBody = null)
         $cmd('RCPT TO:<'.$to.'>', [250, 251]);
         $cmd('DATA', [354]);
 
-        $name = trim((string)($c['from_name'] ?? 'Support KPAH'));
+        $name = 'Support KPAH';
         if ($name === '') { $name = 'Support KPAH'; }
         $fromDomain = substr(strrchr($from, '@'), 1);
         $headers = [
