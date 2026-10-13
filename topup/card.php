@@ -87,7 +87,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <?php endif; ?>
 <section class="tp-section"><div class="tp-grid two">
 <div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cardLive ? 'SẴN SÀNG NẠP' : 'CHƯA MỞ' ?></span></div>
-<form class="tp-form" method="post" autocomplete="off">
+<form class="tp-form" id="card-topup-form" data-rate-luong="<?= (int)$rates['luong'] ?>" data-rate-luonglock="<?= (int)$rates['luonglock'] ?>" method="post" autocomplete="off">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <div class="tp-row">
 <label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cardLive?'disabled':'' ?>><option value="VIETTEL">Viettel</option><option value="VINAPHONE">Vinaphone</option><option value="MOBIFONE">Mobifone</option><option value="VNMOBI">Vietnamobile</option><option value="GATE">Gate</option><option value="ZING">Zing</option></select></label>
@@ -95,6 +95,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 </div>
 <label class="tp-field"><span>Nhận tài nguyên</span><select class="tp-select" name="currency" required <?= !$cardLive?'disabled':'' ?>><option value="luong">Lượng thường (không khóa)</option><option value="luonglock">Lượng khóa</option></select></label>
 <div class="tp-row"><label class="tp-field"><span>Mã nạp thẻ</span><input class="tp-input" name="code" type="password" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Mã PIN dưới lớp phủ" required <?= !$cardLive?'disabled':'' ?>></label><label class="tp-field"><span>Số serial</span><input class="tp-input" name="serial" type="text" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Serial in trên thẻ" required <?= !$cardLive?'disabled':'' ?>></label></div>
+<p id="tp-estimate" class="tp-alert warning" aria-live="polite">Nhập mệnh giá để ước tính số Lượng nhận.</p>
 <label class="tp-check"><input type="checkbox" required <?= !$cardLive?'disabled':'' ?>><span>Tôi đã kiểm tra số serial, mã thẻ và mệnh giá. Mỗi thẻ chỉ được gửi một lần.</span></label>
 <button class="tp-button" type="submit" <?= !$cardLive?'disabled':'' ?>>Gửi thẻ để kiểm tra <span aria-hidden="true">↗</span></button>
 </form></div>
@@ -102,4 +103,5 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <div class="tp-panel"><span class="tp-eyebrow">TỶ LỆ HIỆN TẠI</span><h2>Đổi được bao nhiêu?</h2><p class="tp-muted">Áp dụng theo mệnh giá thẻ được đối tác xác nhận. Nếu khai báo sai mệnh giá, yêu cầu cần được đối soát.</p><div class="tp-summary" style="margin-top:19px;grid-template-columns:repeat(2,minmax(0,1fr))"><div><small>10.000đ → Lượng thường</small><strong><?= number_format((int)$rates['luong'],0,',','.') ?></strong></div><div><small>10.000đ → Lượng khóa</small><strong><?= number_format((int)$rates['luonglock'],0,',','.') ?></strong></div></div></div>
 <div class="tp-panel"><span class="tp-eyebrow">QUY TRÌNH</span><h2>3 bước nạp thẻ</h2><div class="tp-steps" style="grid-template-columns:1fr;margin-top:15px"><div class="tp-step"><span class="tp-step-number">01</span><b>Gửi đúng thông tin thẻ</b><span>Chỉ gửi khi cổng thẻ đã mở.</span></div><div class="tp-step"><span class="tp-step-number">02</span><b>Đối tác xác minh</b><span>Chỉ thẻ hợp lệ mới được chấp nhận.</span></div><div class="tp-step"><span class="tp-step-number">03</span><b>Kiểm tra trạng thái</b><span>Trạng thái chờ cấp không có nghĩa là đã nhận tài nguyên.</span></div></div></div>
 </div></div></section>
+<script src="../assets/js/topup-forms.js?v=1" defer></script>
 <?php kp_topup_page_end(); ?>
