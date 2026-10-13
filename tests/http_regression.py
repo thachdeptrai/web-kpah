@@ -35,6 +35,11 @@ def clean_page(c,path):
     for url in set(re.findall(r'(?:href|src)="(/assets/[^"?]+)',body)):
         check(c.request(url)[0]==200,path+' asset '+url)
     return body
+for ext in ('png','jpg','jpeg','gif','webp','ico','woff','woff2'):
+    candidates=list((ROOT/'assets').rglob('*.'+ext))
+    if candidates:
+        asset='/' + candidates[0].relative_to(ROOT).as_posix()
+        check(Client().request(asset)[0]==200,'static asset delivered '+asset)
 catalog=json.loads(subprocess.check_output([PHP,'-r','echo json_encode(require '+repr(str(ROOT/'config/routes.php'))+');'],text=True))
 guest=Client()
 for old,new in catalog['aliases'].items():
