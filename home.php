@@ -31,19 +31,41 @@ try {
     exit('Chưa thể tải trang tài khoản. Vui lòng thử lại sau.');
 }
 
-// Bảng xếp hạng công khai: chỉ đọc các cột đã xác nhận trong bảng player.
+// Tài khoản đăng nhập sử dụng team_user.id. Nhân vật thuộc team_user.userid.
+// Chỉ lấy dữ liệu nhân vật của chính tài khoản hiện tại.
+$characters = [];
+$charactersUnavailable = false;
+try {
+    $charStmt = kp_db()->prepare(
+        'SELECT c.charname, c.lastLv, c.xp, c.gold, c.luong, c.lastLog, c.idClan,
+                clan.clanName
+         FROM tob_char AS c
+         LEFT JOIN tob_clan AS clan ON clan.id_clan = c.idClan AND clan.isdel = 0
+         WHERE c.userId = ?
+         ORDER BY c.xp DESC, c.id ASC
+         LIMIT 8'
+    );
+    $charStmt->execute([(int) $user['userid']]);
+    $characters = $charStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    $charactersUnavailable = true;
+    kp_log('không tải được nhân vật của tài khoản', $e);
+}
+
+// Top cấp độ công khai theo bảng nhân vật KPAH (không truy vấn bảng player của NRO).
 $topPlayers = [];
+$rankingUnavailable = false;
 try {
     $rankStmt = kp_db()->query(
-        'SELECT name, power, pet_power, (power + pet_power) AS total_power
-         FROM player
-         ORDER BY total_power DESC
+        'SELECT charname, lv, exp
+         FROM tob_char_luong
+         ORDER BY lv DESC, exp DESC, id ASC
          LIMIT 10'
     );
     $topPlayers = $rankStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) {
-    // Không để lỗi bảng game ảnh hưởng trang tài khoản; chi tiết chỉ ghi vào log.
-    kp_log('không tải được bảng xếp hạng người chơi', $e);
+    $rankingUnavailable = true;
+    kp_log('không tải được top cấp độ', $e);
 }
 
 $csrf = kp_csrf_token();
@@ -60,9 +82,10 @@ if (!empty($user['regdate'])) {
         $registeredAt = date('d/m/Y', $registeredTimestamp);
     }
 }
-if ($registeredAt === '') {
-    $registeredAt = 'Thành viên KPAH';
-}
+$hasEmail = $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL);
+$numberFormat = function ($number) {
+    return number_format((float) $number, 0, ',', '.');
+};
 ?><!doctype html>
 <html lang="vi">
 <head>
@@ -78,7 +101,7 @@ if ($registeredAt === '') {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="assets/css/register.css?v=1">
     <link rel="stylesheet" href="assets/css/user-home.css?v=6">
-    <link rel="stylesheet" href="assets/css/home-theme.css?v=5">
+    <link rel="stylesheet" href="assets/css/home-theme.css?v=7">
 </head>
 <body class="home-page">
 
@@ -89,6 +112,7 @@ if ($registeredAt === '') {
     <div class="rail-line" aria-hidden="true"></div>
     <a class="rail-icon active" href="#overview" aria-label="Tổng quan" title="Tổng quan"><span aria-hidden="true">⌂</span></a>
     <a class="rail-icon" href="#profile" aria-label="Hồ sơ tài khoản" title="Hồ sơ"><span aria-hidden="true">◎</span></a>
+    <a class="rail-icon" href="#characters" aria-label="Nhân vật" title="Nhân vật"><span aria-hidden="true">♙</span></a>
     <a class="rail-icon" href="#community" aria-label="Cộng đồng" title="Cộng đồng"><span aria-hidden="true">♧</span></a>
     <a class="rail-icon" href="#security" aria-label="Bảo mật" title="Bảo mật"><span aria-hidden="true">◇</span></a>
     <div class="rail-bottom">
@@ -114,7 +138,7 @@ if ($registeredAt === '') {
             <p class="welcome-description">Quản lý thông tin tài khoản, cập nhật Gmail và đổi mật khẩu ngay tại đây.</p>
             <div class="welcome-actions">
                 <a class="jump-link" href="#profile">Quản lý hồ sơ <span aria-hidden="true">↘</span></a>
-                <span class="welcome-secure"><span aria-hidden="true">✦</span> TÀI KHOẢN CỦA BẠN CỦA TÔI</span>
+                <span class="welcome-secure">Thông tin chỉ hiển thị trong phiên đăng nhập của bạn</span>
             </div>
         </div>
 
@@ -124,15 +148,15 @@ if ($registeredAt === '') {
     <section class="metric-strip" aria-label="Tóm tắt tài khoản">
         <article class="metric-card">
             <span class="metric-icon" aria-hidden="true">⌘</span>
-            <span class="metric-label">MÃ NGƯỜI CHƠI</span>
+            <span class="metric-label">MÃ NGƯỜI DÙNG</span>
             <strong>#<?= kp_e($playerId) ?></strong>
-            <small>Mã tài khoản trong game</small>
+            <small>Mã liên kết nhân vật trong game</small>
         </article>
         <article class="metric-card">
             <span class="metric-icon" aria-hidden="true">✉</span>
-            <span class="metric-label">GMAIL LIÊN KẾT</span>
+            <span class="metric-label">EMAIL LIÊN KẾT</span>
             <strong class="metric-value"><?= $email !== '' ? kp_e($email) : 'Chưa liên kết' ?></strong>
-            <small><?= $email !== '' ? 'Dùng để nhận mã xác minh và khôi phục tài khoản' : 'Thêm Gmail để dễ lấy lại tài khoản khi cần' ?></small>
+            <small><?= $hasEmail ? 'Dùng để nhận mã xác minh' : 'Chưa có email; liên hệ hỗ trợ để liên kết an toàn' ?></small>
         </article>
         <article class="metric-card">
             <span class="metric-icon" aria-hidden="true">⌕</span>
@@ -144,45 +168,97 @@ if ($registeredAt === '') {
             <span class="metric-icon" aria-hidden="true">✧</span>
             <span class="metric-label">TRẠNG THÁI</span>
             <strong class="state-value"><i></i> ĐANG ĐĂNG NHẬP</strong>
-            <small>Tham gia từ <?= kp_e($registeredAt) ?></small>
+            <small><?= $registeredAt !== '' ? 'Tham gia từ ' . kp_e($registeredAt) : 'Tài khoản KPAH' ?></small>
         </article>
+    </section>
+
+    <section class="characters-section" id="characters" aria-labelledby="characters-title">
+        <div class="section-heading">
+            <div>
+                <p class="kicker">NHÂN VẬT CỦA BẠN</p>
+                <h2 id="characters-title">Nhân vật đang có</h2>
+            </div>
+            <p>Danh sách liên kết với tài khoản này.</p>
+        </div>
+        <?php if ($charactersUnavailable): ?>
+            <div class="character-empty">Chưa tải được nhân vật. Bạn hãy thử lại sau.</div>
+        <?php elseif (empty($characters)): ?>
+            <div class="character-empty">
+                <strong>Chưa có nhân vật nào.</strong>
+                <span>Tạo nhân vật trong game để xem thông tin ở đây.</span>
+            </div>
+        <?php else: ?>
+            <div class="characters-grid">
+                <?php foreach ($characters as $index => $character): ?>
+                    <?php
+                    $charName = (string) ($character['charname'] ?? '');
+                    $clanName = trim((string) ($character['clanName'] ?? ''));
+                    $lastSeen = '';
+                    if (!empty($character['lastLog']) && (string) $character['lastLog'] !== '2010-01-01 00:00:00') {
+                        $stamp = strtotime((string) $character['lastLog']);
+                        if ($stamp !== false) {
+                            $lastSeen = date('d/m/Y H:i', $stamp);
+                        }
+                    }
+                    ?>
+                    <article class="character-card">
+                        <div class="character-card-head">
+                            <span class="character-avatar" aria-hidden="true"><?= kp_e(function_exists('mb_substr') ? mb_strtoupper(mb_substr($charName, 0, 1, 'UTF-8'), 'UTF-8') : strtoupper(substr($charName, 0, 1))) ?></span>
+                            <div>
+                                <h3><?= kp_e($charName) ?></h3>
+                                <p><?= $clanName !== '' ? 'Bang: ' . kp_e($clanName) : 'Chưa có bang hội' ?></p>
+                            </div>
+                            <span class="character-level">Cấp <?= (int) ($character['lastLv'] ?? 0) ?></span>
+                        </div>
+                        <dl class="character-stats">
+                            <div><dt>Kinh nghiệm</dt><dd><?= $numberFormat($character['xp'] ?? 0) ?></dd></div>
+                            <div><dt>Xu</dt><dd><?= $numberFormat($character['gold'] ?? 0) ?></dd></div>
+                            <div><dt>Lượng</dt><dd><?= $numberFormat($character['luong'] ?? 0) ?></dd></div>
+                        </dl>
+                        <?php if ($lastSeen !== ''): ?>
+                            <p class="character-last">Đăng nhập game: <?= kp_e($lastSeen) ?></p>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </section>
 
     <section class="community-dashboard" id="community" aria-labelledby="community-title">
         <div class="section-heading community-heading">
             <div>
                 <p class="kicker">CỘNG ĐỒNG KPAH</p>
-                <h2 id="community-title">Top sức mạnh</h2>
+                <h2 id="community-title">Bảng xếp hạng</h2>
             </div>
-            <p>10 nhân vật có tổng sức mạnh cao nhất hiện tại.</p>
+            <p>Top cấp độ theo dữ liệu nhân vật KPAH.</p>
         </div>
 
         <div class="community-grid community-grid-single">
             <section class="community-panel community-ranking" aria-labelledby="ranking-title">
                 <div class="community-panel-heading">
-                    <div><span class="card-index">TOP 10</span><h3 id="ranking-title">Nhân vật nổi bật</h3></div>
+                    <div><span class="card-index">TOP 10</span><h3 id="ranking-title">Cấp độ nhân vật</h3></div>
                     <span class="community-panel-icon" aria-hidden="true">✦</span>
                 </div>
                 <?php if (!empty($topPlayers)): ?>
-                    <div class="community-rank-table" role="table" aria-label="Top 10 sức mạnh">
+                    <div class="community-rank-table" role="table" aria-label="Top 10 cấp độ">
                         <div class="community-rank-header" role="row">
                             <span role="columnheader">Hạng</span>
                             <span role="columnheader">Nhân vật</span>
-                            <span role="columnheader">Sức mạnh</span>
-                            <span role="columnheader">Tổng sức mạnh</span>
+                            <span role="columnheader">Cấp</span>
+                            <span role="columnheader">Kinh nghiệm</span>
                         </div>
                         <?php foreach ($topPlayers as $i => $player): ?>
                             <div class="community-rank-row" role="row">
                                 <span class="community-rank rank-<?= (int) $i + 1 ?>" role="cell"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
-                                <strong class="community-rank-name" role="cell"><?= kp_e($player['name'] ?? 'Ẩn danh') ?></strong>
-                                <span class="community-rank-power" role="cell"><?= number_format((int) ($player['power'] ?? 0), 0, ',', '.') ?></span>
-                                <strong class="community-rank-total" role="cell"><?= number_format((int) ($player['total_power'] ?? 0), 0, ',', '.') ?></strong>
+                                <strong class="community-rank-name" role="cell"><?= kp_e($player['charname'] ?? 'Nhân vật') ?></strong>
+                                <span class="community-rank-power" role="cell"><?= (int) ($player['lv'] ?? 0) ?></span>
+                                <strong class="community-rank-total" role="cell"><?= $numberFormat($player['exp'] ?? 0) ?></strong>
                             </div>
                         <?php endforeach; ?>
                     </div>
                     
                 <?php else: ?>
-                    <p class="community-empty">Chưa có dữ liệu xếp hạng.</p>
+                    <p class="community-empty"><?= $rankingUnavailable ? 'Bảng xếp hạng đang tạm thời không tải được.' : 'Chưa có nhân vật trong bảng xếp hạng.' ?></p>
                 <?php endif; ?>
             </section>
         </div>
@@ -194,7 +270,7 @@ if ($registeredAt === '') {
                 <p class="kicker">THÔNG TIN TÀI KHOẢN</p>
                 <h2 id="profile-title">Hồ sơ tài khoản</h2>
             </div>
-            <p>Bạn có thể đổi Gmail, cập nhật số điện thoại và xác minh trước khi lưu.</p>
+            <p>Cập nhật thông tin liên hệ hoặc đổi mật khẩu của bạn.</p>
         </div>
 
         <div class="profile-layout">
@@ -211,18 +287,19 @@ if ($registeredAt === '') {
                     <div class="big-avatar" aria-hidden="true"><?= kp_e($initial) ?></div>
                     <div class="identity-copy">
                         <strong><?= kp_e($username) ?></strong>
-                        <span><?= kp_e($appName) ?> Player · <?= kp_e($registeredAt) ?></span>
+                        <span><?= kp_e($appName) ?><?= $registeredAt !== '' ? ' · Tham gia ' . kp_e($registeredAt) : '' ?></span>
                     </div>
-                    <span class="identity-tag">PLAYER</span>
+                    <span class="identity-tag">TÀI KHOẢN</span>
                 </div>
 
                 <form id="profile-form" data-endpoint="api/user-profile.php">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                     <div class="profile-field">
-                        <label for="email">Gmail mới</label>
+                        <label for="email">Email <?= $hasEmail ? 'muốn thay đổi' : 'liên kết' ?></label>
                         <input id="email" name="email" type="email" maxlength="254" autocomplete="email" required value="<?= kp_e($email) ?>" placeholder="name@example.com">
-                        <p class="field-note">Để đổi Gmail, bạn cần xác minh cả địa chỉ cũ và địa chỉ mới.</p>
+                        <p class="field-note"><?= $hasEmail ? 'Khi đổi email, cần xác minh địa chỉ hiện tại và địa chỉ mới.' : 'Tài khoản chưa có email. Chức năng thêm email cần xác minh riêng; hãy liên hệ hỗ trợ.' ?></p>
                     </div>
+                    <?php if ($hasEmail): ?>
                     <div class="profile-field">
                         <label for="old_email_code">Mã xác minh Gmail cũ</label>
                         <div class="input-with-action">
@@ -236,15 +313,21 @@ if ($registeredAt === '') {
                             <input id="email_code" name="email_code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="Mã 6 chữ số từ Gmail mới">
                             <button type="button" id="send-code">Xác minh và gửi mã mới</button>
                         </div>
-                        <p class="field-note">Nhập mã từ Gmail cũ trước. Mã xác minh chỉ có hiệu lực trong một khoảng thời gian.</p>
+                        <p class="field-note">Mã gửi đến email có thời hạn. Chỉ nhập mã trên trang này.</p>
                     </div>
+                    <?php else: ?>
+                    <input type="hidden" id="old_email_code" name="old_email_code" value="">
+                    <input type="hidden" id="email_code" name="email_code" value="">
+                    <button type="button" id="send-old-code" hidden>Gửi mã</button>
+                    <button type="button" id="send-code" hidden>Gửi mã</button>
+                    <?php endif; ?>
                     <div class="profile-field">
                         <label for="phone">Số điện thoại</label>
                         <input id="phone" name="phone" type="tel" maxlength="16" autocomplete="tel" placeholder="0xxxxxxxxx hoặc +84xxxxxxxxx" value="<?= kp_e($phone) ?>">
                     </div>
                     <div class="form-feedback" id="profile-feedback" role="status" aria-live="polite"></div>
                     <div class="profile-form-footer">
-                        <span class="form-lock"><span aria-hidden="true">◇</span> Cần xác minh 2 bước khi đổi Gmail</span>
+                        <span class="form-lock"><span aria-hidden="true">◇</span> <?= $hasEmail ? 'Đổi email phải xác minh hai địa chỉ' : 'Vẫn có thể cập nhật số điện thoại' ?></span>
                         <button type="submit" class="save-button"><span>Lưu thay đổi</span><span aria-hidden="true">↗</span></button>
                     </div>
                 </form>
@@ -261,15 +344,15 @@ if ($registeredAt === '') {
                 </div>
                 <p class="kicker">BẢO MẬT TÀI KHOẢN CỦA TÔI <span>/ 03</span></p>
                 <h3 id="security-title">Giữ tài khoản của bạn an toàn.</h3>
-                <p class="security-description">Kiểm tra Gmail và số điện thoại để có thể lấy lại tài khoản khi cần.</p>
+                <p class="security-description">Không dùng chung mật khẩu với tài khoản khác. Đừng chia sẻ mã xác minh.</p>
 
                 <div class="security-row">
                     <span><i></i> Phiên đăng nhập</span>
                     <b>Đang hoạt động</b>
                 </div>
                 <div class="security-row">
-                    <span><i class="<?= $email !== '' ? 'verified' : 'pending' ?>"></i> Gmail liên kết</span>
-                    <b><?= $email !== '' ? 'Đã có Gmail' : 'Chưa có Gmail' ?></b>
+                    <span><i class="<?= $hasEmail ? 'verified' : 'pending' ?>"></i> Email liên kết</span>
+                    <b><?= $hasEmail ? 'Đã liên kết' : 'Chưa liên kết' ?></b>
                 </div>
 
                 <div class="password-change">
