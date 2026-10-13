@@ -7,6 +7,9 @@ RewriteEngine On
 RewriteRule ^dang-nhap/?$ login.php [END,QSA]
 RewriteRule ^dang-ky/?$ register.php [END,QSA]
 RewriteRule ^tai-khoan/?$ home.php [END,QSA]
+RewriteRule ^nap/?$ nap.php [END,QSA]
+RewriteRule ^nap-the/?$ nap-the.php [END,QSA]
+RewriteRule ^nap-ngan-hang/?$ nap-bank.php [END,QSA]
 RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
 RewriteRule ^$ index.php [END]
 
