@@ -115,3 +115,27 @@ GitHub Actions workflow \`.github/workflows/security-checks.yml\` cũng chạy l
 - TOTP là lựa chọn tăng cường, **chưa tự bật** khi chưa có secret trong môi trường máy chủ.
 - Phần cộng Lượng trực tiếp và tự động cần kiểm chứng riêng cơ chế game server, nhất là MyISAM, cache nhân vật và chống cấp trùng.
 - Bản cập nhật repo không đồng nghĩa đã pentest production hoặc kiểm toán được firewall/Cloudflare. Các bước kiểm tra server thật phải do người quản trị xác nhận.
+
+
+## Sửa lỗi đăng nhập admin báo "Phiên làm việc hết hạn"
+
+**Đã xử lý trong code:** admin chuyển sang cookie phiên riêng `KPAHADMIN`, trang người chơi giữ `KPAHREG`. Nhờ vậy thao tác đăng nhập người chơi không làm mất mã CSRF ở biểu mẫu admin đang mở. Cả `/admin/*.php` và `/topup/admin/*.php` dùng chung phiên admin; logout admin không phải logout người chơi.
+
+CSRF vẫn bắt buộc token từ session phía server. Kiểm tra `Sec-Fetch-Site` ngăn yêu cầu khác origin. Khi Cloudflare/reverse proxy chuyển tiếp với hostname nội bộ, request có `Sec-Fetch-Site: same-origin` của trình duyệt vẫn hợp lệ. Nếu cần hỗ trợ trình duyệt cũ và Apache nhận `HTTP_HOST` khác tên miền công khai, thiết lập `KPAH_PUBLIC_HOST=nghienkpah.io.vn` ngoài source và Git, trong cấu hình VirtualHost của VPS. Không dùng `X-Forwarded-Host` chưa xác minh làm bằng chứng cùng origin.
+
+### Cách triển khai
+
+1. Sao lưu `config.register.local.php` và pull code về VPS.
+2. Mở tab mới tại `https://nghienkpah.io.vn/admin/login.php` và tải lại mạnh (`Ctrl+Shift+R`), **không gửi lại biểu mẫu admin đã mở trước khi pull**; biểu mẫu cũ dùng cookie `KPAHREG`.
+3. Đăng nhập lại một lần với mật khẩu (và OTP nếu đã bật MFA). Session admin trước khi cập nhật không được giữ lại; đây là thay đổi có chủ ý.
+4. Kiểm tra trong DevTools → Application → Cookies có cookie `KPAHADMIN` với `HttpOnly`, `SameSite=Lax` và `Secure` nếu PHP nhận dạng kết nối HTTPS. Cookie của người chơi `KPAHREG` vẫn độc lập.
+5. Nếu còn báo lỗi, xem `C:\xampp\apache\logs\error.log` (hoặc PHP error log đã cấu hình) với tiền tố `[KPAH] admin_security login_csrf_...` để phân biệt mất cookie, token cũ hoặc nguồn yêu cầu bị chặn. Không gửi cookie, CSRF token hay OTP vào GitHub Issue.
+6. Nếu xuất hiện `session_start failed`, sửa quyền ghi `session.save_path` cho tài khoản chạy Apache/PHP; hệ thống **không được tắt CSRF** để né lỗi. Đồng thời tránh Cloudflare Cache Everything cho `/admin/*` và `/topup/admin/*`.
+
+Kiểm tra không kết nối SQL:
+
+```bat
+C:\xampp\php\php.exe tests\admin_csrf_smoke.php
+```
+
+Bài kiểm tra bảo đảm phiên admin/người chơi có tên cookie khác nhau, token CSRF được kiểm tra và chặn các yêu cầu cross-site, đồng thời hỗ trợ reverse proxy. Chưa thể xác nhận tình trạng cookie/session lưu thực tế trên VPS từ riêng mã nguồn repo.
