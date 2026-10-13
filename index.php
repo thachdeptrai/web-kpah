@@ -116,7 +116,7 @@ try {
         <div class="lp-community">
             <div>
                 <h3>Cộng đồng NGHIỆN KPAH</h3>
-                <p>Tham gia nhóm Zalo cộng đồng để trao đổi và theo dõi thông tin được chia sẻ. Website hiện chưa có bảng bài viết diễn đàn trong SQL, nên nút này dẫn tới kênh cộng đồng thực tế thay vì tạo liên kết diễn đàn không tồn tại.</p>
+                <p>Tham gia nhóm Zalo cộng đồng để trao đổi và theo dõi thông tin được chia sẻ. Kênh thảo luận hiện tại là nhóm Zalo cộng đồng; khu diễn đàn riêng có thể được bổ sung khi hệ thống bài viết sẵn sàng.</p>
                 <p class="lp-community-note">Khi bổ sung hệ thống bài viết/diễn đàn vào sau, khu vực này có thể chuyển sang hiển thị bài mới và chủ đề nổi bật.</p>
             </div>
             <a class="lp-button" href="https://zalo.me/g/zmyedl5en7sldmd9el1z" target="_blank" rel="noopener noreferrer">VÀO CỘNG ĐỒNG ZALO <span aria-hidden="true">↗</span></a>
