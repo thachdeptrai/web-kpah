@@ -7,7 +7,7 @@ Tài liệu vận hành cho website PHP/MariaDB hiện tại. Việc thêm quy t
 - **Admin:** xác thực mật khẩu hash, truy vấn PDO có tham số, kiểm tra quyền `role=admin` và `is_active=1` từ DB, session timeout/rotation, kiểm tra user-agent, giới hạn đăng nhập theo IP + tài khoản, hỗ trợ TOTP 2FA, chống dùng lại mã TOTP, tùy chọn IP allowlist. Các trang nạp admin gọi cùng `kp_admin_require()`.
 - **Phiên & biểu mẫu:** cookie HttpOnly/SameSite, Secure nếu PHP nhận biết HTTPS; CSRF với hành động qua form, CSP chống script inline, chống iframe, không in lỗi SQL ra trình duyệt, validate và escape dữ liệu.
 - **Database:** dùng PDO prepared statements cho đầu vào biến thiên; những chỗ dùng tên cột động (chẳng hạn Xu/Lượng/Lượng khóa) chỉ lựa chọn từ danh sách cố định ở PHP.
-- **Chống lộ file:** Apache `.htaccess` chặn `storage/`, `includes/`, `database/`, `tests/`, `docs/`, dotfiles, file SQL/log/dump và các bản backup/archives. `.gitignore` loại trừ secrets và dữ liệu vận hành.
+- **Chống lộ file:** Apache `.htaccess` chặn `storage/`, `includes/`, `database/`, `tests/`, `docs/`, dotfiles, file SQL/log/dump và những bản backup có tên nhận diện được. File nén tùy ý vẫn phải đưa ra ngoài web root. `.gitignore` loại trừ secrets và dữ liệu vận hành.
 - **Nạp thẻ:** vẫn khóa gửi thẻ thật tới khi xác minh đối tác và tích hợp game server. Không mở bán chỉ vì giao diện đã có.
 
 ## Bắt buộc kiểm tra ở VPS
@@ -70,5 +70,5 @@ Workflow `.github/workflows/topup-lint.yml` chạy PHP lint và kiểm tra bảo
 - Không thể tuyên bố "không thể SQL injection" chỉ nhờ `.htaccess`. Cần tiếp tục audit query động và tất cả API khi thay code.
 - SQL injection, quyền MySQL quá rộng, thông tin xác thực bị lộ, mật khẩu yếu và VPS bị chiếm quyền là những đường khác nhau dẫn tới lộ/dump dữ liệu.
 - Chức năng cộng tài nguyên đang đụng bảng MyISAM nên cần đối soát game server và nhật ký; bảo vệ admin chưa làm giao dịch thành atomic.
-- Quy tắc `.htaccess` chặn các file nén tải trực tiếp trong thư mục website. Nếu cung cấp bản cài game dạng ZIP, nên phát qua GitHub Releases/CDN riêng ngoài web root hoặc thiết kế route download đã kiểm soát.
+- Quy tắc `.htaccess` chỉ chặn các file nén có tên gợi ý backup/dump/database hoặc dạng SQL nén, không chặn mọi file ZIP. Không lưu backup nén dưới web root. Nếu cung cấp bản cài game dạng ZIP, nên phát qua GitHub Releases/CDN riêng ngoài web root hoặc thiết kế route download đã kiểm soát.
 - Không đặt tài liệu kỹ thuật hay dữ liệu chứa secrets công khai qua HTTP.
