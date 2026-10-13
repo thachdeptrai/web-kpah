@@ -67,9 +67,11 @@ try {
             $rawQty=kp_topup_int($_POST['quantity'] ?? '',1000000000);
             if ($mode==='vnd') {
                 $rate=(int)$rates[$type]['units_per_vnd_unit'];
-                // amount must be divisible by the reference currency; no arbitrary/hidden rounding.
-                if ($rate<=0 || $rawQty%10000!==0) throw new RuntimeException('VNĐ phải là bội số của 10.000 và loại tài nguyên phải có tỷ lệ.');
-                $quantity=(int)($rawQty/10000)*$rate;
+                // Do not force 10k VND price milestones. Calculate using integer arithmetic.
+                // Amounts yielding less than one game unit are rejected rather than silently lost.
+                if ($rate<=0) throw new RuntimeException('Loại tài nguyên này chưa bật quy đổi VNĐ.');
+                $quantity=intdiv($rawQty*$rate,10000);
+                if ($quantity<1) throw new RuntimeException('Số VNĐ quá nhỏ để quy đổi ra 1 đơn vị tài nguyên.');
                 if ($quantity>1000000000) throw new RuntimeException('Số tài nguyên quy đổi vượt giới hạn.');
             } elseif ($mode==='direct') $quantity=$rawQty;
             else throw new RuntimeException('Chế độ cộng không hợp lệ.');
@@ -94,6 +96,11 @@ try {
                 $s=$db->prepare('SELECT id,charname,userId,gold,luong,luonglock,del,ban FROM tob_char WHERE id=? AND userId=? LIMIT 1');
                 $s->execute([$charId,(int)$owner['id']]);$char=$s->fetch();
                 if (!$char) throw new RuntimeException('Nhân vật không thuộc tài khoản đã nhập.');
+                // MyISAM writes cannot be rolled back. Do not allow further grants when
+                // an earlier operation on the same character needs manual reconciliation.
+                $pending=$db->prepare("SELECT id FROM kpah_topup_grants WHERE char_id=? AND status IN ('processing','needs_review') LIMIT 1");
+                $pending->execute([$charId]);
+                if ($pending->fetchColumn()) throw new RuntimeException('Nhân vật còn thao tác chờ đối soát. Kiểm tra lịch sử và DB trước khi cộng tiếp.');
                 if ((int)$char['del']!==1 || (int)$char['ban']!==0) throw new RuntimeException('Nhân vật đang bị xóa/khóa, không thể cộng.');
                 $before=(int)$char[$type];
                 $limit=$type==='gold'?PHP_INT_MAX:4294967295;
@@ -180,13 +187,13 @@ $requestKey=bin2hex(random_bytes(16));
 <label for="currency">Loại tài nguyên</label><select id="currency" name="currency" required><option value="gold">Xu</option><option value="luong">Lượng không khóa (Lượng thường)</option><option value="luonglock">Lượng khóa</option></select>
 <label for="mode">Cách nhập</label><select id="mode" name="mode"><option value="direct">Nhập số tài nguyên cộng trực tiếp</option><option value="vnd">Nhập số tiền VNĐ để quy đổi</option></select>
 <label for="quantity">Số lượng (hoặc số tiền VNĐ)</label><input id="quantity" type="number" name="quantity" min="1" max="1000000000" step="1" required placeholder="VD: 100">
-<p class="hint">Quy đổi VNĐ chỉ hoạt động khi loại tài nguyên đã có tỷ lệ; số tiền cần chia hết cho 10.000đ.</p>
+<p class="hint">Không giới hạn mốc nạp: nhập số VNĐ bất kỳ. Ví dụ 5.000đ = 50 Lượng thường hoặc 100 Lượng khóa theo tỷ lệ mặc định. Phần lẻ dưới 1 đơn vị được làm tròn xuống.</p>
 <label for="note">Lý do / mã tham chiếu</label><textarea id="note" name="note" minlength="5" maxlength="255" rows="2" required placeholder="VD: Admin cộng theo đơn hỗ trợ #..."></textarea>
 <label class="check"><input type="checkbox" name="offline_confirm" value="1" required><span>Tôi đã kiểm tra nhân vật đã <strong>thoát game</strong>, đúng tài khoản, đúng số lượng. Tôi hiểu dữ liệu game có thể bị ghi đè nếu nhân vật còn online.</span></label>
 <button type="submit" class="primary" id="grant-button" <?= $dbError ? 'disabled':'' ?>>Xác nhận cộng tài nguyên</button>
 </form><?php endif; ?>
 </section></div>
-<section class="panel history"><div class="panel-top"><p class="eyebrow">ĐỐI SOÁT</p><h2>50 thao tác gần nhất</h2><p class="muted">Trạng thái <b>needs_review</b> phải kiểm tra số dư trong DB và log trước khi thực hiện yêu cầu mới.</p></div>
+<section class="panel history"><div class="panel-top"><p class="eyebrow">ĐỐI SOÁT</p><h2>50 thao tác gần nhất</h2><p class="muted">Trạng thái <b>needs_review</b> hoặc <b>processing</b> sẽ khóa cộng tiếp vào nhân vật đó cho tới khi admin đối soát; tuyệt đối không gửi lại một yêu cầu chưa rõ kết quả.</p></div>
 <div class="scroll"><table><thead><tr><th>ID</th><th>Thời gian</th><th>Admin</th><th>Tài khoản</th><th>Nhân vật</th><th>Loại</th><th>Đã cộng</th><th>Trước</th><th>Sau</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead><tbody>
 <?php foreach($history as $h): ?><tr><td>#<?= (int)$h['id'] ?></td><td><?= kp_e($h['created_at']) ?></td><td><?= (int)$h['admin_id'] ?></td><td><?= kp_e($h['account_username']) ?></td><td><?= kp_e($h['charname']) ?></td><td><?= kp_e($names[$h['currency']] ?? $h['currency']) ?></td><td><?= number_format((float)$h['quantity'],0,',','.') ?></td><td><?= number_format((float)$h['balance_before'],0,',','.') ?></td><td><?= number_format((float)$h['balance_after'],0,',','.') ?></td><td><span class="pill <?= kp_e($h['status']) ?>"><?= kp_e($h['status']) ?></span></td><td><?= kp_e($h['note']) ?></td></tr><?php endforeach; ?>
 <?php if(!$history): ?><tr><td colspan="11">Chưa có lịch sử cộng tài nguyên.</td></tr><?php endif; ?></tbody></table></div></section>
