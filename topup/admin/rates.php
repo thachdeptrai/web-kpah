@@ -6,7 +6,7 @@ $admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$notice='';
 try {
     $rates=kp_topup_rates();
     if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
-        if(!kp_csrf_check($_POST['csrf']??null))throw new RuntimeException('Phiên đã hết hạn. Tải lại trang.');
+        if(!kp_admin_csrf_valid($_POST['csrf']??null))throw new RuntimeException('Phiên đã hết hạn. Tải lại trang.');
         $new=[];
         foreach(['gold','luong','luonglock'] as $key){
             $raw=trim((string)($_POST[$key]??''));
