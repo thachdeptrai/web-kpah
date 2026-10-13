@@ -11,7 +11,7 @@ kp_admin_require();
 $notice = '';
 $error = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    if (!kp_csrf_check($_POST['csrf'] ?? '')) {
+    if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
         $error = 'Phiên đã hết hạn. Tải lại trang rồi thử lại.';
     } else {
         $action = (string) ($_POST['action'] ?? '');
