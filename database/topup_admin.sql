@@ -1,6 +1,8 @@
 -- KPAH top-up administration: run ONCE in the existing KPAH database.
 -- Game tables remain untouched (tob_char is MyISAM).
--- 10,000 VND = 100 unlocked Luong. Other rates must be explicitly configured.
+-- Default: 10,000 VND = 100 unlocked Luong or 200 locked Luong. Xu rate is disabled by default.
+-- Rates are editable from the admin panel. Amount in VND can be any positive integer;
+-- conversions floor fractional game units. Game schema and balances are never reset.
 CREATE TABLE IF NOT EXISTS kpah_topup_rates (
   currency VARCHAR(16) NOT NULL,
   vnd_unit INT UNSIGNED NOT NULL DEFAULT 10000,
@@ -11,7 +13,11 @@ CREATE TABLE IF NOT EXISTS kpah_topup_rates (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT IGNORE INTO kpah_topup_rates(currency,vnd_unit,units_per_vnd_unit) VALUES
-('gold',10000,0),('luong',10000,100),('luonglock',10000,0);
+('gold',10000,0),('luong',10000,100),('luonglock',10000,200);
+
+-- For previously imported versions where locked Luong rate was 0, set it to 200 ONCE
+-- from the admin panel. Existing administrator-customized nonzero rates are preserved.
+UPDATE kpah_topup_rates SET units_per_vnd_unit=200 WHERE currency='luonglock' AND units_per_vnd_unit=0;
 
 CREATE TABLE IF NOT EXISTS kpah_topup_grants (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
