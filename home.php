@@ -107,7 +107,8 @@ if ($registeredAt === '') {
     <div class="rail-line" aria-hidden="true"></div>
     <a class="rail-icon active" href="#overview" aria-label="Tổng quan" title="Tổng quan"><span aria-hidden="true">⌂</span></a>
     <a class="rail-icon" href="#profile" aria-label="Hồ sơ tài khoản" title="Hồ sơ"><span aria-hidden="true">◎</span></a>
-    <a class="rail-icon" href="#community" aria-label="Cộng đồng" title="Cộng đồng" title="Bảo mật"><span aria-hidden="true">◇</span></a>
+    <a class="rail-icon" href="#community" aria-label="Cộng đồng" title="Cộng đồng"><span aria-hidden="true">♧</span></a>
+    <a class="rail-icon" href="#security" aria-label="Bảo mật" title="Bảo mật"><span aria-hidden="true">◇</span></a>
     <div class="rail-bottom">
         <a class="rail-icon rail-logout" href="api/logout.php" aria-label="Đăng xuất" title="Đăng xuất"><span aria-hidden="true">↗</span></a>
     </div>
