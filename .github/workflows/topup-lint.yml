@@ -5,6 +5,10 @@ on:
       - 'topup/**'
       - 'includes/topup_core.php'
       - 'tests/topup_smoke.php'
+      - 'tests/security_smoke.php'
+      - 'includes/admin_security.php'
+      - '.htaccess'
+      - '.gitignore'
       - 'assets/css/topup.css'
       - 'assets/js/topup-forms.js'
       - '.github/workflows/topup-lint.yml'
@@ -13,6 +17,10 @@ on:
       - 'topup/**'
       - 'includes/topup_core.php'
       - 'tests/topup_smoke.php'
+      - 'tests/security_smoke.php'
+      - 'includes/admin_security.php'
+      - '.htaccess'
+      - '.gitignore'
       - 'assets/css/topup.css'
       - 'assets/js/topup-forms.js'
   workflow_dispatch:
@@ -37,8 +45,12 @@ jobs:
           php -l includes/topup_core.php
           find topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l tests/topup_smoke.php
+          php -l tests/security_smoke.php
+          php -l includes/admin_security.php
       - name: Test topup conversions and idempotency status labels
         run: php tests/topup_smoke.php
+      - name: Verify admin guard, TOTP and dump protection
+        run: php tests/security_smoke.php
       - name: Reject SQL migrations in payment module
         shell: bash
         run: |
