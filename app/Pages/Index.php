@@ -81,7 +81,7 @@ try {
 
     <section class="lp-wrap lp-section" id="gioi-thieu" aria-labelledby="intro-title">
         <div class="lp-section-head">
-            <div><span class="lp-index">01 / GIỚI THIỆU</span><h2 id="intro-title">Chất KPAH, theo cách của bạn.</h2></div>
+            <div><span class="lp-index">01 / GIỚI THIỆU</span><h2 id="intro-title">KPAH vẫn ở đây.</h2></div>
             <p>Tài khoản, nhân vật, bảng Top và cộng đồng — tìm là thấy.</p>
         </div>
         <p class="lp-intro"><strong>NGHIỆN KPAH</strong> là cổng thông tin và tài khoản dành cho cộng đồng người chơi. Từ đây, bạn có thể bắt đầu hành trình bằng tài khoản của mình, xem các thông tin hữu ích và tìm nơi kết nối với những người cùng đam mê. Đến để tạo tài khoản, xem bảng Top hoặc quay lại trò chuyện cùng đồng đội.</p>
@@ -94,14 +94,14 @@ try {
 
     <section class="lp-wrap lp-section" id="thong-tin" aria-labelledby="info-title">
         <div class="lp-section-head">
-            <div><span class="lp-index">02 / THÔNG TIN</span><h2 id="info-title">Mọi thứ cần thiết, rõ ràng.</h2></div>
+            <div><span class="lp-index">02 / THÔNG TIN</span><h2 id="info-title">Chơi tiếp từ đây.</h2></div>
             <p>Những thứ bạn cần khi quay lại KPAH.</p>
         </div>
         <div class="lp-info-grid">
-            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">⌘</span><div><h3>Tài khoản người chơi</h3><p>Tạo tài khoản bằng biểu mẫu đăng ký hiện có. Hệ thống yêu cầu xác minh email và thông tin theo cấu hình đăng ký.</p></div></article>
-            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">◇</span><div><h3>Bảo mật tài khoản</h3><p>Quản lý email, số điện thoại và mật khẩu tại khu tài khoản; không chia sẻ mã xác minh hoặc mật khẩu.</p></div></article>
-            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">↗</span><div><h3>Khôi phục truy cập</h3><p>Nếu quên mật khẩu, sử dụng trang khôi phục hiện có để bắt đầu quy trình đặt lại.</p></div></article>
-            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">✦</span><div><h3>Thông tin minh bạch</h3><p>Theo dõi các mục đang hoạt động trên website; thông báo mới sẽ được cập nhật khi có.</p></div></article>
+            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">⌘</span><div><h3>Tài khoản người chơi</h3><p>Chọn tên tài khoản, xác minh email rồi vào game thôi.</p></div></article>
+            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">◇</span><div><h3>Bảo mật tài khoản</h3><p>Đổi mật khẩu hay kiểm tra thông tin liên hệ ngay trong khu tài khoản.</p></div></article>
+            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">↗</span><div><h3>Khôi phục truy cập</h3><p>Quên mật khẩu? Nhận mã qua email để đặt lại.</p></div></article>
+            <article class="lp-info"><span class="lp-info-icon" aria-hidden="true">✦</span><div><h3>Thông tin minh bạch</h3><p>Xem nhân vật và các bảng xếp hạng ngay sau khi đăng nhập.</p></div></article>
         </div>
         <?php if ($accountCount !== null): ?>
             <div class="lp-count"><span>Số tài khoản đã đăng ký trên hệ thống</span><strong><?= number_format($accountCount, 0, ',', '.') ?></strong></div>
@@ -116,8 +116,8 @@ try {
         <div class="lp-community">
             <div>
                 <h3>Cộng đồng NGHIỆN KPAH</h3>
-                <p>Tham gia nhóm Zalo cộng đồng để trao đổi và theo dõi thông tin được chia sẻ. Kênh thảo luận hiện tại là nhóm Zalo cộng đồng; khu diễn đàn riêng có thể được bổ sung khi hệ thống bài viết sẵn sàng.</p>
-                <p class="lp-community-note">Khi bổ sung hệ thống bài viết/diễn đàn vào sau, khu vực này có thể chuyển sang hiển thị bài mới và chủ đề nổi bật.</p>
+                <p>Rủ đồng đội vào nhóm Zalo, hỏi mẹo chơi hoặc đơn giản là tám chuyện KPAH.</p>
+                <p class="lp-community-note">Nhóm Zalo vẫn là nơi trò chuyện của cộng đồng lúc này.</p>
             </div>
             <a class="lp-button" href="https://zalo.me/g/zmyedl5en7sldmd9el1z" target="_blank" rel="noopener noreferrer">VÀO CỘNG ĐỒNG ZALO <span aria-hidden="true">↗</span></a>
         </div>
@@ -126,12 +126,12 @@ try {
     <section class="lp-wrap lp-section" id="website" aria-labelledby="site-title">
         <div class="lp-section-head">
             <div><span class="lp-index">04 / WEBSITE</span><h2 id="site-title">Bắt đầu nhanh.</h2></div>
-            <p>Các lối tắt dẫn tới đúng trang đang có, không thay đổi API hay luồng tài khoản.</p>
+            <p>Bạn muốn đăng ký, đăng nhập hay lấy lại mật khẩu?</p>
         </div>
         <div class="lp-site-links">
-            <a class="lp-site-link" href="<?= kp_e($registerUrl) ?>"><span aria-hidden="true">＋</span><strong>Đăng ký tài khoản</strong><small>Tạo tài khoản mới theo quy trình xác minh hiện tại.</small></a>
+            <a class="lp-site-link" href="<?= kp_e($registerUrl) ?>"><span aria-hidden="true">＋</span><strong>Đăng ký tài khoản</strong><small>Đăng ký và xác minh email để bắt đầu.</small></a>
             <a class="lp-site-link" href="<?= kp_e($isLoggedIn ? $accountUrl : $loginUrl) ?>"><span aria-hidden="true">◎</span><strong><?= $isLoggedIn ? 'Khu tài khoản' : 'Đăng nhập' ?></strong><small><?= $isLoggedIn ? 'Quản lý thông tin và bảo mật tài khoản.' : 'Đăng nhập để mở khu vực tài khoản cá nhân.' ?></small></a>
-            <a class="lp-site-link" href="/quen-mat-khau"><span aria-hidden="true">◇</span><strong>Quên mật khẩu</strong><small>Bắt đầu quy trình khôi phục quyền truy cập.</small></a>
+            <a class="lp-site-link" href="/quen-mat-khau"><span aria-hidden="true">◇</span><strong>Quên mật khẩu</strong><small>Lấy lại mật khẩu qua email.</small></a>
         </div>
         <?php if ($supportUrl !== ''): ?>
             <p class="lp-intro">Cần hỗ trợ? <a href="<?= kp_e($supportUrl) ?>">Liên hệ kênh hỗ trợ</a>.</p>

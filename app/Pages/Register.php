@@ -31,7 +31,7 @@ $canSubmit = $isOpen;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Đăng ký tài khoản – <?= kp_e($appName) ?></title>
-    <meta name="description" content="Tạo tài khoản để đăng nhập vào game <?= kp_e($appName) ?>.">
+    <meta name="description" content="Đặt tên tài khoản, xác minh email rồi bắt đầu khám phá <?= kp_e($appName) ?>.">
     <meta name="robots" content="noindex,follow">
     <meta name="theme-color" content="#0b0a16">
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -73,7 +73,7 @@ $canSubmit = $isOpen;
         <div class="emblem" aria-hidden="true"><img src="/assets/img/emblem.svg" alt="" width="400" height="400"></div>
         <p class="wordmark" aria-label="<?= kp_e($appName) ?>"><?= kp_e($appName) ?></p>
         <h1 id="page-title">Đăng ký tài khoản</h1>
-        <p class="lead">Tạo tài khoản để đăng nhập vào game <?= kp_e($appName) ?>.</p>
+        <p class="lead">Đặt tên tài khoản, xác minh email rồi bắt đầu khám phá <?= kp_e($appName) ?>.</p>
 
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tên tài khoản:</strong> <?= kp_e($userHint) ?></span></li>
@@ -256,7 +256,7 @@ $canSubmit = $isOpen;
                     <li>Chọn đăng nhập.</li>
                     <li>Nhập tên tài khoản và mật khẩu vừa tạo.</li>
                 </ol>
-                <p class="note">Hãy ghi nhớ mật khẩu. Hệ thống không lưu mật khẩu gốc nên không thể xem lại giúp bạn.</p>
+                <p class="note">Giữ mật khẩu ở nơi an toàn nhé. Đừng chia sẻ với người khác.</p>
                 <div class="success-actions">
                     <?php if ($linkDownload !== ''): ?>
                         <a class="btn btn-primary" href="<?= kp_e($linkDownload) ?>"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Tải game</a>

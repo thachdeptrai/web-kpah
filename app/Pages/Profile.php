@@ -71,7 +71,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                             <input id="email_code" name="email_code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="Mã 6 chữ số từ Gmail mới">
                             <button type="button" id="send-code">Xác minh và gửi mã mới</button>
                         </div>
-                        <p class="field-note">Mã gửi đến email có thời hạn. Chỉ nhập mã trên trang này.</p>
+                        <p class="field-note">Mã chỉ dùng được trong ít phút. Đừng gửi cho ai khác.</p>
                     </div>
                     <?php else: ?>
                     <input type="hidden" id="old_email_code" name="old_email_code" value="">
@@ -101,7 +101,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                     <span class="security-spark spark-b">✧</span>
                 </div>
                 <p class="kicker">BẢO MẬT TÀI KHOẢN</p>
-                <h3 id="security-title">Giữ tài khoản của bạn an toàn.</h3>
+                <h3 id="security-title">Tài khoản của bạn, bảo vệ thật kỹ.</h3>
                 <p class="security-description">Không dùng chung mật khẩu với tài khoản khác. Đừng chia sẻ mã xác minh.</p>
 
                 <div class="security-row">

@@ -33,7 +33,7 @@ try {
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH / ADMIN CONSOLE</small><strong>Control Center</strong></span></a>
+  <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH · QUẢN TRỊ</small><strong>Control Center</strong></span></a>
   <div class="top-actions"><span class="secure"><i></i> Phiên bảo mật</span><span class="user"><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
 <main class="shell">
@@ -43,7 +43,7 @@ try {
   </section>
   <?php if ($dbError): ?><div class="alert">Không thể tải một phần dữ liệu. Kiểm tra database và các bảng trong <code>database/referral_codes.sql</code>; chi tiết đã được ghi vào log máy chủ.</div><?php endif; ?>
   <section class="metrics" aria-label="Thống kê tổng quan">
-    <article class="metric"><div class="metric-top"><span>Tài khoản game</span><span class="metric-icon">♙</span></div><strong><?= number_format($stats['accounts']) ?></strong><small>Tổng tài khoản trong team_user</small></article>
+    <article class="metric"><div class="metric-top"><span>Tài khoản game</span><span class="metric-icon">♙</span></div><strong><?= number_format($stats['accounts']) ?></strong><small>Tài khoản đã tạo</small></article>
     <article class="metric"><div class="metric-top"><span>Mã giới thiệu</span><span class="metric-icon purple">⌘</span></div><strong><?= number_format($stats['codes']) ?></strong><small>Tổng mã đã tạo</small></article>
     <article class="metric"><div class="metric-top"><span>Mã đang khả dụng</span><span class="metric-icon green">↗</span></div><strong><?= number_format($stats['active_codes']) ?></strong><small>Còn lượt, chưa hết hạn và chưa khóa</small></article>
     <article class="metric"><div class="metric-top"><span>Lượt dùng mã</span><span class="metric-icon cyan">◷</span></div><strong><?= number_format($stats['uses']) ?></strong><small>Lịch sử sử dụng được ghi nhận</small></article>
@@ -61,6 +61,6 @@ try {
     <?php if (!$recent && !$dbError): ?><tr><td colspan="4" class="empty">Chưa có tài khoản để hiển thị.</td></tr><?php elseif (!$recent && $dbError): ?><tr><td colspan="4" class="empty">Dữ liệu chưa sẵn sàng. Kiểm tra cấu hình kết nối.</td></tr><?php endif; ?>
     </tbody></table></div>
   </section>
-  <footer><span>KPAH CONTROL CENTER</span><span>Đăng nhập được bảo vệ · Tự hết phiên sau 30 phút không hoạt động</span></footer>
+  <footer><span>NGHIỆN KPAH · QUẢN TRỊ</span><span>Đăng nhập được bảo vệ · Tự hết phiên sau 30 phút không hoạt động</span></footer>
 </main>
 </body></html>
