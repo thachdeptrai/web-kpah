@@ -84,6 +84,10 @@ try {
             $locked=false;$ledgerInserted=false;$applied=false;
             try {
                 kp_topup_lock($db,$lock); $locked=true;
+                $pendingStmt=$db->prepare("SELECT id FROM kpah_topup_grants WHERE char_id=? AND status IN ('processing','needs_review') LIMIT 1");
+                $pendingStmt->execute([$charId]);
+                if ($pendingStmt->fetchColumn()) throw new RuntimeException('Nhân vật có giao dịch chưa đối soát, chưa thể cộng thêm.');
+
                 $s=$db->prepare('SELECT id,username FROM team_user WHERE username=? LIMIT 1');
                 $s->execute([$searchName]);$owner=$s->fetch();
                 if (!$owner) throw new RuntimeException('Không tìm thấy tài khoản.');
