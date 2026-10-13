@@ -6,7 +6,7 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
  * For Gmail SMTP, align the visible From address with the authenticated Gmail
  * account; a mismatched From address can hurt authentication and deliverability.
  */
-function kp_send_mail_smtp($to, $subject, $body)
+function kp_send_mail_smtp($to, $subject, $body, $htmlBody = null)
 {
     $c = kp_config('mail', []);
     foreach (['smtp_host','smtp_user','smtp_pass','from_email'] as $k) {
@@ -29,9 +29,6 @@ function kp_send_mail_smtp($to, $subject, $body)
         throw new RuntimeException('Tiêu đề email không hợp lệ.');
     }
 
-    // Gmail SMTP: use the authenticated Gmail address as From to avoid spoof-like headers.
-    // If a verified Gmail "Send mail as" alias is intentionally used, configure smtp_user
-    // to that supported account/alias setup rather than spoofing an unrelated address.
     if (in_array(strtolower($host), ['smtp.gmail.com', 'smtp.googlemail.com'], true)) {
         $from = $smtpUser;
     }
@@ -43,7 +40,6 @@ function kp_send_mail_smtp($to, $subject, $body)
     stream_set_timeout($fp, 15);
 
     $read = function($expected) use ($fp) {
-        $line = '';
         do {
             $line = fgets($fp, 515);
             if ($line === false) { throw new RuntimeException('SMTP đóng kết nối.'); }
@@ -93,17 +89,35 @@ function kp_send_mail_smtp($to, $subject, $body)
             'Message-ID: <'.bin2hex(random_bytes(16)).'@'.$fromDomain.'>',
             'Reply-To: <'.$from.'>',
             'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding: base64',
             'Auto-Submitted: auto-generated',
             'X-Auto-Response-Suppress: All',
             'X-Mailer: KPAH Account Mailer',
         ];
 
-        // Base64-encode UTF-8 text for reliable transport of Vietnamese characters.
         $plainBody = str_replace(["\r\n", "\r"], "\n", (string)$body);
-        $encodedBody = rtrim(chunk_split(base64_encode($plainBody), 76, "\r\n"), "\r\n");
-        $message = implode("\r\n", $headers)."\r\n\r\n".$encodedBody;
+        if (is_string($htmlBody) && trim($htmlBody) !== '') {
+            $boundary = 'kpah_alt_'.bin2hex(random_bytes(12));
+            $headers[] = 'Content-Type: multipart/alternative; boundary="'.$boundary.'"';
+            $plainEncoded = rtrim(chunk_split(base64_encode($plainBody), 76, "\r\n"), "\r\n");
+            $htmlNormalized = str_replace(["\r\n", "\r"], "\n", $htmlBody);
+            $htmlEncoded = rtrim(chunk_split(base64_encode($htmlNormalized), 76, "\r\n"), "\r\n");
+            $message = implode("\r\n", $headers)."\r\n\r\n"
+                .'--'.$boundary."\r\n"
+                ."Content-Type: text/plain; charset=UTF-8\r\n"
+                ."Content-Transfer-Encoding: base64\r\n\r\n"
+                .$plainEncoded."\r\n"
+                .'--'.$boundary."\r\n"
+                ."Content-Type: text/html; charset=UTF-8\r\n"
+                ."Content-Transfer-Encoding: base64\r\n\r\n"
+                .$htmlEncoded."\r\n"
+                .'--'.$boundary."--";
+        } else {
+            $headers[] = 'Content-Type: text/plain; charset=UTF-8';
+            $headers[] = 'Content-Transfer-Encoding: base64';
+            $encodedBody = rtrim(chunk_split(base64_encode($plainBody), 76, "\r\n"), "\r\n");
+            $message = implode("\r\n", $headers)."\r\n\r\n".$encodedBody;
+        }
+
         $message = preg_replace('/\r?\n\./', "\r\n..", $message);
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         fwrite($fp, str_replace("\n", "\r\n", $message)."\r\n.\r\n");
