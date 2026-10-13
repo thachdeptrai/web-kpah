@@ -69,7 +69,8 @@ try {
   </section>
   <section class="section-heading"><div><div class="eyebrow">WORKSPACE</div><h2>Khu vực quản lý</h2><p>Chọn chức năng để tiếp tục công việc.</p></div><span class="admin-count"><?= number_format($stats['admins']) ?> admin đang bật</span></section>
   <section class="actions">
-    <a class="action-card featured" href="referrals.php"><span class="action-icon">⌘</span><span class="action-copy"><small>REGISTRATION / 01</small><strong>Quản lý mã giới thiệu</strong><span>Tạo mã, đặt hạn dùng, khóa/mở mã và theo dõi lịch sử đăng ký.</span><b>Mở quản lý <span aria-hidden="true">↗</span></b></span></a>
+    <a class="action-card featured" href="topup.php"><span class="action-icon">✧</span><span class="action-copy"><small>TÀI NGUYÊN / 01</small><strong>Cộng Xu, Lượng, Lượng khóa</strong><span>Cộng thủ công theo nhân vật, thiết lập tỷ lệ quy đổi và xem lịch sử đối soát.</span><b>Mở quản lý nạp <span aria-hidden="true">↗</span></b></span></a>
+    <a class="action-card" href="referrals.php"><span class="action-icon">⌘</span><span class="action-copy"><small>REGISTRATION / 01</small><strong>Quản lý mã giới thiệu</strong><span>Tạo mã, đặt hạn dùng, khóa/mở mã và theo dõi lịch sử đăng ký.</span><b>Mở quản lý <span aria-hidden="true">↗</span></b></span></a>
     <a class="action-card" href="../register.php" target="_blank" rel="noopener"><span class="action-icon cyan">↗</span><span class="action-copy"><small>PUBLIC WEBSITE / 02</small><strong>Trang đăng ký</strong><span>Mở giao diện đăng ký công khai trong tab mới để kiểm tra luồng người dùng.</span><b>Mở trang đăng ký <span aria-hidden="true">↗</span></b></span></a>
   </section>
   <section class="panel">
