@@ -33,10 +33,13 @@
         estimate.textContent = 'Nhập mệnh giá để ước tính số Lượng nhận.';
         return;
       }
-      var units = Math.floor(amount * rate / 10000);
+      var discount = Number(card.getAttribute('data-discount-percent'));
+      if (!Number.isInteger(discount) || discount < 0 || discount > 99) { estimate.textContent='Chưa cấu hình chiết khấu thẻ.'; return; }
+      var net = Math.floor(amount * (100 - discount) / 100);
+      var units = Math.floor(net * rate / 10000);
       estimate.textContent = 'Ước tính: ' + units.toLocaleString('vi-VN') + ' ' +
         (currencyField.value === 'luonglock' ? 'Lượng khóa' : 'Lượng thường') +
-        ' · theo mệnh giá hợp lệ được xác nhận.';
+        ' · Giá trị sau chiết khấu ' + discount + '%: ' + net.toLocaleString('vi-VN') + 'đ.';
     };
     amountField.addEventListener('input', recalc);
     currencyField.addEventListener('change', recalc);
