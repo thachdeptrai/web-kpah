@@ -10,6 +10,9 @@ function check($actual, $expected, $name) {
     echo "OK {$name}\n";
 }
 check(kp_topup_units(10000,100),100,'default normal Luong');
+check(kp_topup_after_discount(10000,20),8000,'card net value after 20 percent deduction');
+check(kp_topup_units(kp_topup_after_discount(10000,20),100),80,'normal Luong after discount');
+check(kp_topup_after_discount(10000,0),10000,'zero discount');
 check(kp_topup_units(10000,200),200,'default locked Luong');
 check(kp_topup_units(5000,100),50,'any amount 5000 normal Luong');
 check(kp_topup_units(5000,200),100,'any amount 5000 locked Luong');
