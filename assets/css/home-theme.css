@@ -156,3 +156,9 @@ body.home-page { background:linear-gradient(180deg,#0b0d14 0%,#0d111b 58%,#0b0d1
  .welcome-copy h1 { font-size:27px; }
  .character-stats { gap:6px; }
 }
+
+/* Account support links and read-only email status. */
+.profile-help-link{display:inline-flex;margin-top:9px;align-items:center;gap:6px;color:#f2ce8e;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.profile-help-link:hover{color:#ffe7b7}
+#profile-form input[readonly]{opacity:.76;cursor:not-allowed;background:#161d28}
+#profile-form button[hidden]{display:none!important}
