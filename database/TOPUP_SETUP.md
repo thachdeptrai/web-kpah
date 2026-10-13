@@ -28,7 +28,7 @@ Bảng chính:
 - Lượng khóa = `tob_char.luonglock` (INT UNSIGNED).
 
 Panel cho phép nhập số tài nguyên cộng trực tiếp, hoặc nhập **VNĐ** để quy đổi theo tỷ lệ đã đặt.
-Tỷ lệ mặc định: **10.000 VNĐ = 100 Lượng không khóa** hoặc **200 Lượng khóa**. Xu mặc định **0** (chưa bật quy đổi VNĐ); admin có thể sửa cả ba tỷ lệ.
+Tỷ lệ mặc định: **10.000 VNĐ = 100 Lượng không khóa**. Xu và Lượng khóa mặc định **0** (chưa bật quy đổi VNĐ); admin có thể sửa cả ba tỷ lệ.
 Số tiền VNĐ **không cần chia hết cho 10.000đ** và không có gói nạp cố định. Ví dụ ở tỷ lệ mặc định, 5.000đ đổi được 50 Lượng không khóa; Xu và Lượng khóa chưa có tỷ lệ cho đến khi admin đặt. Quy đổi bằng phép tính số nguyên, phần lẻ dưới 1 đơn vị bị làm tròn xuống và không chấp nhận số tiền quá nhỏ cho ra 0 tài nguyên.
 
 ## 3. Lưu ý trước khi cộng
