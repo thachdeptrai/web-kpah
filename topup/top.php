@@ -10,7 +10,7 @@ kp_topup_page_start('Top nạp Lượng','top',(string)$user['username']);?>
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">XẾP HẠNG</span><h2>20 nhân vật đứng đầu</h2></div><span class="tp-chip">TOP 20</span></div>
 <?php if($err): ?><div class="tp-alert bad">Chưa tải được bảng xếp hạng.</div>
 <?php elseif(!$top): ?><div class="tp-alert warning">Chưa có dữ liệu nạp Lượng để xếp hạng.</div>
-<?php else: ?><div class="tp-table-wrap"><table class="tp-table" style="min-width:380px"><thead><tr><th>Hạng</th><th>Nhân vật</th><th>Lượng đã nạp</th></tr></thead><tbody>
+<?php else: ?><div class="tp-table-wrap"><table class="tp-table tp-table--narrow"><thead><tr><th>Hạng</th><th>Nhân vật</th><th>Lượng đã nạp</th></tr></thead><tbody>
 <?php foreach($top as $i=>$p): ?><tr><td><span class="tp-pill"><?= str_pad((string)($i+1),2,'0',STR_PAD_LEFT) ?></span></td><td><b><?= kp_e($p['charname']) ?></b></td><td><?= number_format((float)$p['luongnap'],0,',','.') ?></td></tr><?php endforeach; ?>
 </tbody></table></div><?php endif; ?>
 </div></section><?php kp_topup_page_end(); ?>
