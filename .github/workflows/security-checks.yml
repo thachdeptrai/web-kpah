@@ -3,10 +3,9 @@ name: Security regression checks
 on:
   push:
     paths:
-      - 'admin/**'
-      - 'api/**'
-      - 'includes/**'
-      - 'topup/**'
+      - 'app/**'
+      - 'public/**'
+      - 'tools/**'
       - 'tests/admin_security_smoke.php'
       - 'tests/webroot_smoke.php'
       - 'tests/admin_csrf_smoke.php'
@@ -14,10 +13,9 @@ on:
       - '.github/workflows/security-checks.yml'
   pull_request:
     paths:
-      - 'admin/**'
-      - 'api/**'
-      - 'includes/**'
-      - 'topup/**'
+      - 'app/**'
+      - 'public/**'
+      - 'tools/**'
       - 'tests/admin_security_smoke.php'
       - 'tests/webroot_smoke.php'
       - 'tests/admin_csrf_smoke.php'
@@ -57,9 +55,11 @@ jobs:
         run: |
           set -euo pipefail
           test ! -f config.register.local.php
+          test ! -f app/config/config.register.local.php
           test ! -f .env
+          test -f public/.htaccess
           test -f storage/.htaccess
-          test -f includes/.htaccess
+          test -f app/includes/.htaccess
           test -f database/.htaccess
           if git ls-files | grep -Ei '(^|/)(\.env|kpah\.sql|database[-_]?dump|.*\.(pem|p12|pfx))$'; then
             echo 'Secret/dump-like artifact tracked in git'
