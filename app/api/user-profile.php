@@ -60,6 +60,10 @@ try {
  }
  if ($action==='send_email_code') {
   $firstLink = $oldEmail==='' || !filter_var($oldEmail,FILTER_VALIDATE_EMAIL);
+  if (!$email || strlen($email)>254 || !filter_var($email,FILTER_VALIDATE_EMAIL)) kp_profile_reply(['ok'=>false,'message'=>'Hãy nhập email mới hợp lệ.'],422);
+  if ($oldEmail===$email) kp_profile_reply(['ok'=>false,'message'=>'Email mới phải khác email đang liên kết.'],422);
+  $dupe=$db->prepare('SELECT 1 FROM team_user WHERE LOWER(TRIM(email)) = ? AND id <> ? LIMIT 1'); $dupe->execute([$email,$userId]);
+  if ($dupe->fetchColumn()) kp_profile_reply(['ok'=>false,'message'=>'Email này đã được tài khoản khác sử dụng.'],409);
   if (!$firstLink) {
   list($verifyAllowed,$verifyRetry)=kp_rate_limit('profile_old_email_verify',$userId.'|'.kp_client_ip(),8,600,true);
   if (!$verifyAllowed) kp_profile_reply(['ok'=>false,'message'=>'Bạn nhập mã Gmail cũ quá nhiều lần. Hãy thử lại sau ít phút.'],429);
