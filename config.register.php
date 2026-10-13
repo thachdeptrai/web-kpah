@@ -56,6 +56,7 @@ return [
         'trust_forwarded_proto' => false,       // true nếu proxy gửi X-Forwarded-Proto và bạn tin nó
 
         'session_name' => 'KPAHREG',
+        'admin_session_name' => 'KPAHADMIN', // admin và người chơi dùng phiên PHP riêng, tránh CSRF mất hiệu lực
         'cookie_path'  => '/',
     ],
 
