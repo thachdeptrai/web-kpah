@@ -49,7 +49,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                     <span class="identity-tag">TÀI KHOẢN</span>
                 </div>
 
-                <form id="profile-form" data-endpoint="api/user-profile.php">
+                <form id="profile-form" data-endpoint="/api/tai-khoan/ho-so">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                     <div class="profile-field">
                         <label for="email">Email <?= $hasEmail ? 'muốn thay đổi' : 'liên kết' ?></label>
@@ -119,7 +119,7 @@ kp_player_head('Hồ sơ & bảo mật','profile',$user);
                         <span class="password-key" aria-hidden="true">⌁</span>
                     </div>
                     <p class="password-help">Nhập mật khẩu hiện tại, sau đó đặt mật khẩu mới.</p>
-                    <form id="change-password-form" data-endpoint="api/change-password.php" autocomplete="off">
+                    <form id="change-password-form" data-endpoint="/api/tai-khoan/mat-khau" autocomplete="off">
                         <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                         <div class="profile-field">
                             <label for="current_password">Mật khẩu hiện tại</label>

@@ -59,7 +59,7 @@ try {
     $update = kp_db()->prepare('UPDATE team_user SET password = ? WHERE id = ?');
     $update->execute([$newHash, (int) $_SESSION['kp_recovery_user']]);
     unset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user']);
-    kp_recovery_reply(['ok'=>true,'message'=>'Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.','redirect'=>'/login.php']);
+    kp_recovery_reply(['ok'=>true,'message'=>'Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.','redirect'=>'/dang-nhap']);
 } catch (Throwable $e) {
     kp_log('đặt lại mật khẩu thất bại', $e);
     kp_recovery_reply(['ok'=>false,'message'=>'Chưa thể đổi mật khẩu lúc này. Hãy thử lại sau.'],503);

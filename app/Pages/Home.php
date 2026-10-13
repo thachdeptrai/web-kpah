@@ -59,16 +59,16 @@ kp_player_head('Tổng quan tài khoản','home',$user);
             <span class="portal-action-copy"><small>VINH DANH · 03</small><strong>Bảng xếp hạng</strong><span>Top 1–3 trên bục vinh danh, Top 4–10 bên dưới.</span></span>
             <span class="portal-action-go" aria-hidden="true">↗</span>
         </a>
-        <a class="portal-action-card portal-action-topup" href="nap.php">
+        <a class="portal-action-card portal-action-topup" href="/nap">
             <span class="portal-action-icon" aria-hidden="true">✦</span>
             <span class="portal-action-copy"><small>TÀI NGUYÊN · 04</small><strong>Nạp tài nguyên</strong><span>Thẻ cào, lịch sử và thông tin nạp.</span></span>
             <span class="portal-action-go" aria-hidden="true">↗</span>
         </a>
     </div>
     <div class="portal-quick-links">
-        <a href="profile.php#security"><span aria-hidden="true">◇</span> Đổi mật khẩu <span aria-hidden="true">↗</span></a>
+        <a href="/tai-khoan/ho-so#security"><span aria-hidden="true">◇</span> Đổi mật khẩu <span aria-hidden="true">↗</span></a>
         <a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp Lượng <span aria-hidden="true">↗</span></a>
-        <a href="index.php#dien-dan"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
+        <a href="/#dien-dan"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
     </div>
 </section>
 <?php kp_player_foot(); ?>

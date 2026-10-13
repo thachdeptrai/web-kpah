@@ -64,7 +64,7 @@ $version = trim((string) kp_config('app.version', ''));
             </div>
             <h2 id="panel-title">Quên mật khẩu?</h2>
             <p class="login-intro">Nhập tài khoản hoặc email đã đăng ký. Sau khi nhận mã, hãy đặt mật khẩu mới.</p>
-            <form id="recovery-form" data-endpoint="api/forgot-password.php" autocomplete="on">
+            <form id="recovery-form" data-endpoint="/api/tai-khoan/khoi-phuc" autocomplete="on">
                 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                 <div class="fields">
                     <div class="field">

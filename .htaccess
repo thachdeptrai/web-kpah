@@ -19,6 +19,14 @@ RewriteRule "(^|/)(?:config(?:\.[^/]*)?|\.env(?:\.[^/]*)?|[^/]+\.php)\.(?:txt|sa
 RewriteRule "(^|/)(?:debug|test-db|db-test|adminer|phpmyadmin|phpinfo|server-status)(?:\.[^/]*)?$" - [F,END,NC]
 
 # Canonical URLs. Legacy PHP entrypoints stay available for integrations and POSTs.
+RewriteRule ^dang-xuat/?$ api/logout.php [END,QSA]
+RewriteRule ^api/dang-ky/?$ api/register.php [END,QSA]
+RewriteRule ^api/email/gui-ma/?$ api/send-email-code.php [END,QSA]
+RewriteRule ^api/email/xac-minh/?$ api/verify-email-code.php [END,QSA]
+RewriteRule ^api/tai-khoan/ho-so/?$ api/user-profile.php [END,QSA]
+RewriteRule ^api/tai-khoan/mat-khau/?$ api/change-password.php [END,QSA]
+RewriteRule ^api/tai-khoan/khoi-phuc/?$ api/forgot-password.php [END,QSA]
+RewriteRule ^captcha/?$ captcha.php [END,QSA]
 RewriteRule ^dang-nhap/?$ login.php [END,QSA]
 RewriteRule ^dang-ky/?$ register.php [END,QSA]
 RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]

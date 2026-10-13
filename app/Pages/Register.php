@@ -110,16 +110,16 @@ $canSubmit = $isOpen;
                     </div>
                 </noscript>
 
-                <form id="reg-form" method="post" action="api/register.php" novalidate autocomplete="on"
-                      data-endpoint="api/register.php"
+                <form id="reg-form" method="post" action="/api/dang-ky" novalidate autocomplete="on"
+                      data-endpoint="/api/dang-ky"
                       data-user-pattern="<?= kp_e($patBody) ?>"
                       data-user-flags="<?= kp_e($patFlags) ?>"
                       data-user-hint="<?= kp_e($userHint) ?>"
                       data-pw-min="<?= $pwMin ?>"
                       data-pw-max="<?= $pwMax ?>"
                       data-phone-mode="<?= kp_e($phoneMode) ?>"
-                      data-email-code-endpoint="api/send-email-code.php"
-                      data-email-verify-endpoint="api/verify-email-code.php">
+                      data-email-code-endpoint="/api/email/gui-ma"
+                      data-email-verify-endpoint="/api/email/xac-minh">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 
                     <div class="hp" aria-hidden="true">
