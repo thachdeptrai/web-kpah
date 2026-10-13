@@ -12,13 +12,16 @@ import urllib.request
 
 BASE = "http://127.0.0.1:9098"
 cookies = http.cookiejar.CookieJar()
-opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookies))
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
 
-opener.add_handler(NoRedirect())
+# Replace the default redirect handler BEFORE making requests. Adding it later
+# leaves urllib's built-in redirect handler installed and masks 302 responses.
+opener = urllib.request.build_opener(
+    NoRedirect, urllib.request.HTTPCookieProcessor(cookies)
+)
 failures = []
 
 def request(path, *, method="GET", data=None, headers=None):
