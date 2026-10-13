@@ -6,7 +6,7 @@ RewriteEngine On
 # Stop accidental exposure of Git internals, logs, SQL dumps and diagnostics.
 # Apache 2.4 / mod_rewrite; applies before public routes.
 RewriteRule "(^|/)\.(?!well-known(?:/|$))" - [F,END,NC]
-RewriteRule "(^|/)(?:storage|includes|database|tests|docs|vendor|\.git|\.svn|\.hg|\.github)(?:/|$)" - [F,END,NC]
+RewriteRule "(^|/)(?:app|storage|includes|database|tests|docs|vendor|\.git|\.svn|\.hg|\.github)(?:/|$)" - [F,END,NC]
 RewriteRule "(^|/)(?:check|phpinfo|info)\.php$" - [F,END,NC]
 RewriteRule "(^|/)(?:composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|pnpm-lock\.yaml|web\.config)$" - [F,END,NC]
 RewriteRule "\.(?:sql(?:\.(?:gz|zip|bz2|7z|rar))?|sqlite(?:3)?|db|bak|backup|old|orig|save|swp|log|ini|conf|pem|key|p12|pfx|phps|inc)$" - [F,END,NC]
@@ -18,15 +18,31 @@ RewriteRule "(^|/)(?:config(?:\.[^/]*)?|\.env(?:\.[^/]*)?|[^/]+\.php)\.(?:txt|sa
 # Deny common accidental debug and test endpoints, including nested directories.
 RewriteRule "(^|/)(?:debug|test-db|db-test|adminer|phpmyadmin|phpinfo|server-status)(?:\.[^/]*)?$" - [F,END,NC]
 
-# Friendly routes
+# Canonical URLs. Legacy PHP entrypoints stay available for integrations and POSTs.
 RewriteRule ^dang-nhap/?$ login.php [END,QSA]
 RewriteRule ^dang-ky/?$ register.php [END,QSA]
-RewriteRule ^tai-khoan/?$ home.php [END,QSA]
-RewriteRule ^nap/?$ nap.php [END,QSA]
-RewriteRule ^nap-the/?$ nap-the.php [END,QSA]
-RewriteRule ^nap-ngan-hang/?$ nap-bank.php [END,QSA]
 RewriteRule ^quen-mat-khau/?$ forgot-password.php [END,QSA]
-RewriteRule ^$ index.php [END]
+RewriteRule ^tai-khoan/?$ home.php [END,QSA]
+RewriteRule ^tai-khoan/ho-so/?$ profile.php [END,QSA]
+RewriteRule ^tai-khoan/nhan-vat/?$ characters.php [END,QSA]
+RewriteRule ^bang-xep-hang/?$ rankings.php [END,QSA]
+RewriteRule ^nap/?$ topup/index.php [END,QSA]
+RewriteRule ^nap/the/?$ topup/card.php [END,QSA]
+RewriteRule ^nap/ngan-hang/?$ topup/bank.php [END,QSA]
+RewriteRule ^nap/lich-su/?$ topup/history.php [END,QSA]
+RewriteRule ^nap/top/?$ topup/top.php [END,QSA]
+RewriteRule ^quan-tri/?$ admin/index.php [END,QSA]
+RewriteRule ^quan-tri/dang-nhap/?$ admin/login.php [END,QSA]
+RewriteRule ^quan-tri/dang-xuat/?$ admin/logout.php [END,QSA]
+RewriteRule ^quan-tri/ma-gioi-thieu/?$ admin/referrals.php [END,QSA]
+RewriteRule ^quan-tri/nap/?$ topup/admin/index.php [END,QSA]
+RewriteRule ^quan-tri/nap/ti-le/?$ topup/admin/rates.php [END,QSA]
+RewriteRule ^quan-tri/nap/cong-tai-nguyen/?$ topup/admin/grant.php [END,QSA]
+RewriteRule ^quan-tri/nap/doi-soat/?$ topup/admin/orders.php [END,QSA]
+RewriteRule ^quan-tri/nap/du-lieu-game/?$ topup/admin/legacy.php [END,QSA]
+RewriteRule ^nap-the/?$ topup/card.php [END,QSA]
+RewriteRule ^nap-ngan-hang/?$ topup/bank.php [END,QSA]
+RewriteRule ^$ index.php [END,QSA]
 
 # Do not expose environment files, credentials, backups, or database dumps.
 <FilesMatch "(?i)^(?:\.env(?:\..*)?|\.htaccess|\.htpasswd|config(?:\..*)?\.php|.*\.(?:sql|sqlite|log|ini|bak|old|orig|swp|pem|key|p12|pfx))$">
