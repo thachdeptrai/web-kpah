@@ -88,7 +88,11 @@ function kp_send_security_headers($isPage)
     }
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: DENY');
-    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('Referrer-Policy: no-referrer');
+    header('X-Permitted-Cross-Domain-Policies: none');
+    if (kp_is_https()) {
+        header('Strict-Transport-Security: max-age=31536000');
+    }
     header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()');
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
     header('Pragma: no-cache');
@@ -193,44 +197,47 @@ function kp_rate_dir()
 function kp_rate_limit($bucket, $key, $limit, $window, $consume = true)
 {
     $dir = kp_rate_dir();
+    $window = max(1, (int)$window);
+    $limit = max(1, (int)$limit);
+    // Fail closed on writable-storage errors. Otherwise brute-force protection
+    // silently disappears when permissions/disk capacity change.
     if ($dir === '') {
-        return [true, 0];
+        return [false, $window];
     }
     $file = $dir . '/' . hash('sha256', $bucket . '|' . $key) . '.json';
     $fh = @fopen($file, 'c+');
     if (!$fh) {
-        return [true, 0];
+        kp_log('rate_limit file access failed');
+        return [false, $window];
     }
-    flock($fh, LOCK_EX);
-
-    $raw  = stream_get_contents($fh);
-    $hits = json_decode($raw ? $raw : '[]', true);
-    if (!is_array($hits)) {
-        $hits = [];
+    @chmod($file, 0600);
+    try {
+        if (!@flock($fh, LOCK_EX)) return [false, $window];
+        rewind($fh);
+        $raw = stream_get_contents($fh);
+        if ($raw === false || strlen($raw) > 32768) return [false, $window];
+        $hits = $raw === '' ? [] : json_decode($raw, true);
+        if (!is_array($hits)) return [false, $window];
+        $now = time();
+        $hits = array_values(array_filter($hits, function ($t) use ($now, $window) {
+            return is_int($t) && $t > $now - $window;
+        }));
+        $allowed = count($hits) < $limit;
+        $retry = $allowed ? 0 : max(1, min($hits) + $window - $now);
+        if ($consume && $allowed) $hits[] = $now;
+        $serialized = json_encode($hits);
+        if (!is_string($serialized)) return [false, $window];
+        rewind($fh);
+        if (!ftruncate($fh, 0) || fwrite($fh, $serialized) !== strlen($serialized)
+            || !fflush($fh)) {
+            kp_log('rate_limit persistence failed');
+            return [false, $window];
+        }
+    } finally {
+        @flock($fh, LOCK_UN);
+        fclose($fh);
     }
-    $now  = time();
-    $hits = array_values(array_filter($hits, function ($t) use ($now, $window) {
-        return is_int($t) && $t > $now - $window;
-    }));
-
-    $allowed = count($hits) < $limit;
-    $retry   = 0;
-    if (!$allowed) {
-        $retry = max(1, min($hits) + $window - $now);
-    } elseif ($consume) {
-        $hits[] = $now;
-    }
-
-    ftruncate($fh, 0);
-    rewind($fh);
-    fwrite($fh, json_encode($hits));
-    fflush($fh);
-    flock($fh, LOCK_UN);
-    fclose($fh);
-
-    if (mt_rand(1, 60) === 1) {
-        kp_rate_gc($dir);
-    }
+    if (mt_rand(1, 60) === 1) kp_rate_gc($dir);
     return [$allowed, $retry];
 }
 
