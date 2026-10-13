@@ -83,8 +83,12 @@ function kp_topup_rates($new = null) {
     try {
         if (!flock($lock, LOCK_EX)) throw new RuntimeException('Lỗi khóa tỷ lệ.');
         $rates = ['gold' => 0, 'luong' => 100, 'luonglock' => 200];
-        if (is_file($path)) {
-            $existing = kp_topup_read_file($path);
+        // Read the earlier module's rates as a one-way fallback. Never delete
+        // or overwrite that file; new saves go to the canonical path only.
+        $legacyRatesPath = KP_ROOT . '/storage/topup-rates.json';
+        $source = is_file($path) ? $path : (is_file($legacyRatesPath) ? $legacyRatesPath : null);
+        if ($source !== null) {
+            $existing = kp_topup_read_file($source);
             foreach ($rates as $currency => $v) {
                 if (isset($existing[$currency]) && is_int($existing[$currency]) && $existing[$currency] >= 0 && $existing[$currency] <= 1000000000) {
                     $rates[$currency] = $existing[$currency];
