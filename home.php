@@ -62,7 +62,7 @@ if ($registeredAt === '') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="assets/css/register.css?v=1">
-    <link rel="stylesheet" href="assets/css/user-home.css?v=4">
+    <link rel="stylesheet" href="assets/css/user-home.css?v=5">
     <link rel="stylesheet" href="assets/css/home-theme.css?v=3">
 </head>
 <body class="home-page">
@@ -162,29 +162,33 @@ if ($registeredAt === '') {
 
                 <form id="profile-form" data-endpoint="api/user-profile.php">
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
-
                     <div class="profile-field">
-                        <label for="email">Địa chỉ email</label>
+                        <label for="email">Gmail mới</label>
+                        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" required value="<?= kp_e($email) ?>" placeholder="name@example.com">
+                        <p class="field-note">Đổi Gmail cần xác minh cả Gmail đang liên kết và Gmail mới.</p>
+                    </div>
+                    <div class="profile-field">
+                        <label for="old_email_code">Mã gửi đến Gmail hiện tại</label>
                         <div class="input-with-action">
-                            <input id="email" name="email" type="email" maxlength="254" autocomplete="email" required value="<?= kp_e($email) ?>" placeholder="name@example.com">
-                            <button type="button" id="send-code">Gửi mã xác minh</button>
+                            <input id="old_email_code" name="old_email_code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="Mã 6 chữ số từ Gmail cũ">
+                            <button type="button" id="send-old-code">Gửi mã Gmail cũ</button>
                         </div>
-                        <p class="field-note">Mã sẽ được gửi tới địa chỉ email mới mà bạn nhập.</p>
                     </div>
-
                     <div class="profile-field">
-                        <label for="email_code">Mã xác minh email</label>
-                        <input id="email_code" name="email_code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="Nhập mã gồm 6 chữ số">
+                        <label for="email_code">Mã gửi đến Gmail mới</label>
+                        <div class="input-with-action">
+                            <input id="email_code" name="email_code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="Mã 6 chữ số từ Gmail mới">
+                            <button type="button" id="send-code">Xác minh mã cũ &amp; gửi mã mới</button>
+                        </div>
+                        <p class="field-note">Nhập mã Gmail cũ trước khi bấm gửi mã mới. Cả hai mã đều có thời hạn.</p>
                     </div>
-
                     <div class="profile-field">
                         <label for="phone">Số điện thoại</label>
                         <input id="phone" name="phone" type="tel" maxlength="16" autocomplete="tel" placeholder="0xxxxxxxxx hoặc +84xxxxxxxxx" value="<?= kp_e($phone) ?>">
                     </div>
-
                     <div class="form-feedback" id="profile-feedback" role="status" aria-live="polite"></div>
                     <div class="profile-form-footer">
-                        <span class="form-lock"><span aria-hidden="true">◇</span> Thông tin được gửi qua phiên bảo mật</span>
+                        <span class="form-lock"><span aria-hidden="true">◇</span> Đổi Gmail yêu cầu xác minh 2 bước</span>
                         <button type="submit" class="save-button"><span>Lưu thay đổi</span><span aria-hidden="true">↗</span></button>
                     </div>
                 </form>
