@@ -33,19 +33,38 @@ function kp_admin_allowed_ip()
  */
 function kp_admin_csrf_valid($token)
 {
+    // Never accept a POST that does not match this browser's server-side token.
     if (!kp_csrf_check($token)) return false;
-    if (isset($_SERVER['HTTP_ORIGIN']) && (string)$_SERVER['HTTP_ORIGIN'] !== '') {
-        $origin = parse_url((string)$_SERVER['HTTP_ORIGIN']);
-        $request = parse_url('http://'.(string)($_SERVER['HTTP_HOST'] ?? ''));
-        $sourceHost = is_array($origin) ? ($origin['host'] ?? '') : '';
-        $targetHost = is_array($request) ? ($request['host'] ?? '') : '';
-        if (!is_string($sourceHost) || !is_string($targetHost)
-            || $sourceHost === '' || $targetHost === ''
-            || !hash_equals(strtolower($targetHost), strtolower($sourceHost))) {
-            return false;
-        }
+
+    // Fetch Metadata is set by modern browsers and describes the origin seen
+    // by the browser. It stays correct when a trusted reverse proxy rewrites
+    // the upstream Host header or forwards HTTP to an HTTPS-facing site.
+    $site = strtolower(trim((string)($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '')));
+    if ($site === 'cross-site' || $site === 'same-site') return false;
+    if ($site === 'same-origin') return true;
+    if ($site !== '' && $site !== 'none') return false;
+
+    // Older browsers may omit Sec-Fetch-Site. When an Origin is provided,
+    // compare it to the public Host or an explicitly configured canonical
+    // hostname. Never trust X-Forwarded-Host supplied by a browser.
+    $origin = trim((string)($_SERVER['HTTP_ORIGIN'] ?? ''));
+    if ($origin === '') return true; // Session-bound CSRF token is still required.
+    $parsed = parse_url($origin);
+    if (!is_array($parsed) || !in_array(strtolower((string)($parsed['scheme'] ?? '')), ['http','https'], true)) {
+        return false;
     }
-    return true;
+    $originHost = strtolower((string)($parsed['host'] ?? ''));
+    if ($originHost === '') return false;
+
+    $hosts = [];
+    $publicHost = kp_admin_env('KPAH_PUBLIC_HOST');
+    if ($publicHost !== '') $hosts[] = strtolower($publicHost);
+    $host = parse_url('http://'.(string)($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST);
+    if (is_string($host) && $host !== '') $hosts[] = strtolower($host);
+    foreach ($hosts as $candidate) {
+        if (hash_equals($candidate, $originHost)) return true;
+    }
+    return false;
 }
 
 function kp_admin_log_event($event, $adminId = 0)
