@@ -146,7 +146,14 @@ function kp_session_start()
     } else {
         session_set_cookie_params(0, $path . '; samesite=Lax', '', $secure, true);
     }
-    session_start();
+    if (!@session_start() || session_status() !== PHP_SESSION_ACTIVE) {
+        // A login form must not be shown with an unpersisted CSRF token.
+        // Surface a server-side session storage error instead of repeated
+        // misleading "session expired" failures on every admin POST.
+        kp_log('session_start failed: check PHP session.save_path and permissions');
+        http_response_code(503);
+        exit('Không thể tạo phiên đăng nhập. Vui lòng thử lại sau hoặc liên hệ quản trị VPS.');
+    }
 }
 
 /* ------------------------------------------------------------------ */
