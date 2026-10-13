@@ -122,6 +122,7 @@ $numberFormat = function ($number) {
     <a class="rail-icon active" href="#overview" aria-label="Tổng quan" title="Tổng quan"><span aria-hidden="true">⌂</span></a>
     <a class="rail-icon" href="#profile" aria-label="Hồ sơ tài khoản" title="Hồ sơ"><span aria-hidden="true">◎</span></a>
     <a class="rail-icon" href="#characters" aria-label="Nhân vật" title="Nhân vật"><span aria-hidden="true">♙</span></a>
+    <a class="rail-icon" href="nap.php" aria-label="Nạp tài nguyên" title="Nạp tài nguyên"><span aria-hidden="true">✦</span></a>
     <a class="rail-icon" href="#community" aria-label="Cộng đồng" title="Cộng đồng"><span aria-hidden="true">♧</span></a>
     <a class="rail-icon" href="#security" aria-label="Bảo mật" title="Bảo mật"><span aria-hidden="true">◇</span></a>
     <div class="rail-bottom">
@@ -147,6 +148,7 @@ $numberFormat = function ($number) {
             <p class="welcome-description">Quản lý thông tin tài khoản, cập nhật Gmail và đổi mật khẩu ngay tại đây.</p>
             <div class="welcome-actions">
                 <a class="jump-link" href="#profile">Quản lý hồ sơ <span aria-hidden="true">↘</span></a>
+                <a class="jump-link" href="nap.php">Nạp tài nguyên <span aria-hidden="true">↗</span></a>
                 <span class="welcome-secure">Chúc bạn chơi game vui vẻ.</span>
             </div>
         </div>
