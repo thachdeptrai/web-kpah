@@ -63,7 +63,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
             <div class="podium-stage">
                 <div class="podium-halo" aria-hidden="true"><span></span><span></span></div>
                 <div class="podium-avatar">
-                    <img src="assets/img/rank-guardian.svg" alt="" width="220" height="247" loading="<?= $rank===1?'eager':'lazy' ?>">
+                    <img src="<?= kp_e([1=>'assets/img/rank-guardian.svg',2=>'assets/img/rank-sorcerer.svg',3=>'assets/img/rank-archer.svg'][$rank]) ?>" alt="" width="220" height="247" loading="<?= $rank===1?'eager':'lazy' ?>">
                 </div>
                 <span class="podium-rank-badge">#<?= $rank ?></span>
                 <span class="podium-spark podium-spark-a" aria-hidden="true">✦</span>
