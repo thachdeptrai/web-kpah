@@ -2,6 +2,7 @@
 // Pure source/schema checks: php tests/rankings_smoke.php
 define('KP_ROOT', dirname(__DIR__));
 require KP_ROOT.'/includes/rankings.php';
+require KP_ROOT.'/includes/player_portal.php';
 function rank_check($cond,$label) {
     if (!$cond) { fwrite(STDERR,"FAILED: ".$label."\n"); exit(1); }
     echo "PASS: ".$label."\n";
@@ -20,4 +21,6 @@ foreach($catalog as $key=>$category){
 }
 try { kp_rankings_fetch('level; DROP TABLE team_user'); rank_check(false,'reject type injection'); }
 catch(InvalidArgumentException $e) { rank_check(true,'reject type injection'); }
+rank_check(kp_player_format('18446744073709551615') === '18.446.744.073.709.551.615','bigint EXP is formatted exactly');
+rank_check(kp_player_format('1000000') === '1.000.000','standard scores are formatted');
 echo "PASS: leaderboard SQL is fixed and never includes request-supplied identifiers\n";
