@@ -14,7 +14,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10131e"><meta name="robots" content="noindex,nofollow">
 <title><?= kp_e($title) ?> · KPAH</title>
-<link rel="stylesheet" href="<?= $admin ? '../../' : '../' ?>assets/css/topup.css?v=1">
+<link rel="stylesheet" href="<?= $admin ? '../../' : '../' ?>assets/css/topup.css?v=<?= (int) @filemtime(KP_ROOT . '/assets/css/topup.css') ?>">
 </head>
 <body class="tp-page<?= $admin ? ' tp-admin' : '' ?>">
 <div class="tp-shell">
