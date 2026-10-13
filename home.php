@@ -240,7 +240,7 @@ $numberFormat = function ($number) {
                                     <path d="m100 50 12 27 29 3-22 20 7 29-26-14-26 14 7-29-22-20 29-3 12-27Z" stroke="currentColor" stroke-width=".75" opacity=".65"/>
                                 </svg>
                                 <span class="char-ui-avatar"><?= kp_e($charInitial) ?></span>
-                                <span class="char-ui-portrait-foot">KIẾM THẾ KPAH</span>
+                                <span class="char-ui-portrait-foot">KPAH · ANH HÙNG</span>
                             </div>
                             <div class="char-ui-card-content">
                                 <div class="char-ui-identity">
