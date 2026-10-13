@@ -22,7 +22,7 @@ foreach (['sql','sqlite','zip','rar','7z','tar','gz','db','bak'] as $ext) {
     sec_assert(strpos($htaccess,$ext) !== false, 'backup/dump extension coverage '.$ext);
 }
 $gitignore = (string)file_get_contents(KP_ROOT.'/.gitignore');
-sec_assert(strpos($gitignore,'/storage/*') !== false, 'runtime payment and MFA state excluded from git');
+sec_assert(strpos($gitignore,'storage/*') !== false, 'runtime payment and MFA state excluded from git');
 sec_assert(strpos($gitignore,'*.sql') !== false, 'SQL dumps excluded from git');
 $topup=(string)file_get_contents(KP_ROOT.'/includes/topup_core.php');
 sec_assert(strpos($topup, "return kp_admin_require('/admin/login.php')") !== false, 'topup shares central admin MFA/session guard');

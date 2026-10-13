@@ -65,7 +65,7 @@ jobs:
           php tests/security_smoke.php
           php tests/rankings_smoke.php
           php tests/topup_smoke.php
-      - name: HTTP smoke (PHP test router: NOT Apache production)
+      - name: 'HTTP smoke with PHP test router (not Apache production)'
         shell: bash
         run: |
           set -euo pipefail
