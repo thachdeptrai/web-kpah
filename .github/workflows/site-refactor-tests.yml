@@ -1,0 +1,89 @@
+name: Site refactor regression suite
+
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'admin/**'
+      - 'api/**'
+      - 'assets/**'
+      - 'includes/**'
+      - 'topup/**'
+      - 'tests/**'
+      - 'tools/**'
+      - '*.php'
+      - '.htaccess'
+      - '.github/workflows/site-refactor-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'admin/**'
+      - 'api/**'
+      - 'assets/**'
+      - 'includes/**'
+      - 'topup/**'
+      - 'tests/**'
+      - 'tools/**'
+      - '*.php'
+      - '.htaccess'
+      - '.github/workflows/site-refactor-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regressions:
+    name: PHP ${{ matrix.php }} - regression suite
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.0', '8.2']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, mbstring, pdo_mysql
+          coverage: none
+      - name: Lint every PHP entrypoint, view, service and test
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -path './.git' -prune -o -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Static layout / route / link contracts
+        run: php tests/site_contract_smoke.php
+      - name: Existing auth, security and leaderboard regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tests/admin_security_smoke.php
+          php tests/admin_csrf_smoke.php
+          php tests/security_smoke.php
+          php tests/rankings_smoke.php
+          php tests/topup_smoke.php
+      - name: HTTP smoke (PHP test router: NOT Apache production)
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -S 127.0.0.1:9098 -t . tests/dev_router.php > /tmp/kpah-test-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true; cat /tmp/kpah-test-server.log | tail -80' EXIT
+          for i in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:9098/dang-nhap >/dev/null; then break; fi
+            sleep 1
+          done
+          python3 tests/http_smoke.py
+      - name: Verify no SQL schema changes in PR
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin ${{ github.base_ref }}
+          if git diff --name-only "origin/${{ github.base_ref }}" HEAD | grep -E '\.sql$'; then
+            echo 'SQL files must not be changed by the website refactor.' >&2
+            exit 1
+          fi
