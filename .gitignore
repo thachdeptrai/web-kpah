@@ -1,7 +1,5 @@
-# Secrets: never commit real database or third-party credentials
+# Private environment and deployment configuration
 config.register.local.php
-config.register.local.*
-!config.register.local.sample.php
 .env
 .env.*
 !.env.example
@@ -10,33 +8,23 @@ config.register.local.*
 *.p12
 *.pfx
 
-# Runtime state: rate-limit buckets, admin MFA replay data, payment records
-/storage/*
-!/storage/.htaccess
-!/storage/ratelimit/
-!/storage/ratelimit/.gitkeep
+# Runtime files must never be published to the public repository.
+storage/*
+!storage/.htaccess
+!storage/ratelimit/
+storage/ratelimit/*
+!storage/ratelimit/.gitkeep
 
-# Databases, dumps, backups and generated archives
+# Data exports, backups and temporary files (tracked existing files unaffected).
 *.sql
-*.sql.gz
-*.sql.zip
+!database/referral_codes.sql
+!database/verify_schema.sql
 *.sqlite
 *.sqlite3
 *.db
 *.bak
 *.backup
-*.dump
-*.log
 *.orig
 *.swp
-*.tar.gz
-*.tgz
-*.rar
-*.7z
-*.zip
-
-# Local tooling
-.idea/
-.vscode/
-.DS_Store
-Thumbs.db
+*.log
+*~
