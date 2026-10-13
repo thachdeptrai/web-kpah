@@ -7,7 +7,7 @@ on:
       - 'app/includes/topup_core.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
-      - 'includes/admin_security.php'
+      - 'app/includes/admin_security.php'
       - '.htaccess'
       - '.gitignore'
       - 'public/assets/css/topup.css'
@@ -20,7 +20,7 @@ on:
       - 'app/includes/topup_core.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
-      - 'includes/admin_security.php'
+      - 'app/includes/admin_security.php'
       - '.htaccess'
       - '.gitignore'
       - 'public/assets/css/topup.css'
@@ -48,7 +48,7 @@ jobs:
           find app/pages/topup public/topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l tests/topup_smoke.php
           php -l tests/security_smoke.php
-          php -l includes/admin_security.php
+          php -l app/includes/admin_security.php
       - name: Test topup conversions and idempotency status labels
         run: php tests/topup_smoke.php
       - name: Verify admin guard, TOTP and dump protection
