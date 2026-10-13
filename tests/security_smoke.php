@@ -14,7 +14,7 @@ function sec_assert($condition, $message) {
 sec_assert(kp_admin_totp_step('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', '287082', 59) === 1, 'TOTP RFC known-answer sample');
 sec_assert(kp_admin_totp_step('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', '287083', 59) === false, 'TOTP rejects incorrect code');
 sec_assert(kp_admin_base32_decode('%%%%') === false, 'TOTP rejects invalid base32');
-$htaccess = (string)file_get_contents(KP_ROOT.'/.htaccess');
+$htaccess = (string)file_get_contents(KP_ROOT.'/public/.htaccess');
 foreach (['storage','database','includes','vendor','tests','docs'] as $dir) {
     sec_assert(strpos($htaccess,$dir) !== false, 'web boundary includes private '.$dir);
 }
