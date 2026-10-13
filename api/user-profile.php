@@ -12,6 +12,32 @@ function kp_profile_code_valid($prefix, $code, $userId, $email) {
         && preg_match('/^\d{6}$/', $code) === 1
         && hash_equals((string)$_SESSION[$prefix.'_hash'], hash('sha256', $code));
 }
+
+function kp_profile_email_html($heading, $intro, $code, $minutes) {
+    $communityUrl = 'https://zalo.me/g/zmyedl5en7sldmd9el1z';
+    $safeHeading = htmlspecialchars($heading, ENT_QUOTES, 'UTF-8');
+    $safeIntro = htmlspecialchars($intro, ENT_QUOTES, 'UTF-8');
+    $safeCode = htmlspecialchars($code, ENT_QUOTES, 'UTF-8');
+    $safeMinutes = htmlspecialchars((string)$minutes, ENT_QUOTES, 'UTF-8');
+    return '<!doctype html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Support KPAH</title></head>'
+      .'<body style="margin:0;padding:0;background:#f6f8fa;font-family:Arial,Helvetica,sans-serif;color:#24292f;">'
+      .'<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f8fa;padding:28px 12px;"><tr><td align="center">'
+      .'<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#fff;border:1px solid #d8dee4;border-radius:12px;overflow:hidden;">'
+      .'<tr><td style="padding:22px 28px;border-bottom:1px solid #d8dee4;"><div style="font-size:22px;font-weight:700;color:#24292f;">Support KPAH</div><div style="font-size:12px;color:#656d76;margin-top:5px;">BẢO MẬT TÀI KHOẢN</div></td></tr>'
+      .'<tr><td style="padding:28px;"><h1 style="font-size:22px;line-height:1.35;margin:0 0 18px;">'.$safeHeading.'</h1>'
+      .'<p style="font-size:15px;line-height:1.65;margin:0 0 22px;">'.$safeIntro.'</p>'
+      .'<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f8fa;border:1px solid #d8dee4;border-radius:10px;"><tr><td align="center" style="padding:22px 12px;">'
+      .'<div style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:#656d76;">MÃ XÁC MINH CỦA BẠN</div>'
+      .'<div style="font-size:34px;line-height:1.5;font-weight:700;letter-spacing:8px;color:#0969da;padding-left:8px;">'.$safeCode.'</div>'
+      .'<div style="font-size:12px;color:#656d76;">Mã có hiệu lực trong '.$safeMinutes.' phút</div></td></tr></table>'
+      .'<p style="font-size:13px;line-height:1.65;color:#57606a;margin:20px 0 0;">Chỉ nhập mã này trên website chính thức. Không chia sẻ mã cho bất kỳ ai. Nếu bạn không yêu cầu thao tác này, hãy bảo vệ tài khoản và liên hệ quản trị viên.</p>'
+      .'<div style="height:1px;background:#d8dee4;margin:24px 0;"></div><p style="font-size:14px;font-weight:700;margin:0 0 8px;">Cần hỗ trợ?</p>'
+      .'<p style="font-size:14px;line-height:1.6;color:#57606a;margin:0 0 16px;">Tham gia cộng đồng KPAH trên Zalo để nhận hỗ trợ và cập nhật.</p>'
+      .'<table role="presentation" cellspacing="0" cellpadding="0"><tr><td bgcolor="#0969da" style="border-radius:6px;"><a href="'.$communityUrl.'" style="display:inline-block;padding:11px 16px;color:#fff;text-decoration:none;font-size:14px;font-weight:700;">Tham gia cộng đồng Zalo</a></td></tr></table>'
+      .'</td></tr><tr><td style="padding:18px 28px;background:#f6f8fa;border-top:1px solid #d8dee4;font-size:12px;line-height:1.6;color:#656d76;">Support KPAH · Email tự động, vui lòng không trả lời.<br>Nếu nút không mở được: <a href="'.$communityUrl.'" style="color:#0969da;word-break:break-all;">'.$communityUrl.'</a></td></tr>'
+      .'</table></td></tr></table></body></html>';
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Allow: POST'); kp_profile_reply(['ok'=>false,'message'=>'Phương thức không hợp lệ.'],405); }
 if (empty($_SESSION['kp_user_id'])) kp_profile_reply(['ok'=>false,'message'=>'Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.'],401);
 if (!kp_csrf_check($_POST['csrf'] ?? '')) kp_profile_reply(['ok'=>false,'message'=>'Phiên bảo mật hết hạn. Tải lại trang rồi thử lại.'],403);
@@ -26,7 +52,8 @@ try {
   list($allowed,$retry)=kp_rate_limit('profile_old_email_code',$userId.'|'.kp_client_ip(),3,600,true);
   if (!$allowed) kp_profile_reply(['ok'=>false,'message'=>'Bạn yêu cầu mã Gmail cũ quá nhiều lần. Hãy thử lại sau ít phút.'],429);
   $code=(string)random_int(100000,999999); $ttl=max(60,(int)kp_config('registration.email_code_ttl',600));
-  kp_send_mail_smtp($oldEmail,'Xác minh bảo mật tài khoản KPAH',"Mã xác minh để thay đổi email tài khoản KPAH: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nChỉ nhập mã này trên website chính thức. Nếu bạn không yêu cầu thay đổi email, hãy đổi mật khẩu và liên hệ quản trị viên.");
+  $oldPlain = "Mã xác minh để thay đổi email tài khoản KPAH: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nChỉ nhập mã này trên website chính thức. Nếu bạn không yêu cầu thay đổi email, hãy đổi mật khẩu và liên hệ quản trị viên.\nCộng đồng KPAH: https://zalo.me/g/zmyedl5en7sldmd9el1z";
+  kp_send_mail_smtp($oldEmail,'Xác minh bảo mật tài khoản KPAH',$oldPlain,kp_profile_email_html('Xác minh thay đổi email','Bạn hoặc ai đó vừa yêu cầu thay đổi email tài khoản KPAH. Dùng mã này để xác minh email hiện tại.',$code,(int)ceil($ttl/60)));
   $_SESSION['kp_profile_old_email_hash']=hash('sha256',$code); $_SESSION['kp_profile_old_email_expiry']=time()+$ttl; $_SESSION['kp_profile_old_email_target']=$oldEmail; $_SESSION['kp_profile_old_email_user']=$userId;
   unset($_SESSION['kp_profile_old_email_verified_email'],$_SESSION['kp_profile_old_email_verified_expiry'],$_SESSION['kp_profile_email_hash'],$_SESSION['kp_profile_email_expiry'],$_SESSION['kp_profile_email_target'],$_SESSION['kp_profile_email_user']);
   kp_profile_reply(['ok'=>true,'message'=>'Đã gửi mã đến Gmail đang liên kết. Nhập mã này rồi mới được yêu cầu mã Gmail mới.']);
@@ -45,7 +72,8 @@ try {
   list($allowed,$retry)=kp_rate_limit('profile_email_code',$userId.'|'.kp_client_ip(),4,600,true);
   if (!$allowed) kp_profile_reply(['ok'=>false,'message'=>'Bạn yêu cầu mã Gmail mới quá nhiều lần. Hãy thử lại sau ít phút.'],429);
   $code=(string)random_int(100000,999999); $ttl=max(60,(int)kp_config('registration.email_code_ttl',600));
-  kp_send_mail_smtp($email,'Mã xác minh thay đổi email KPAH',"Mã xác minh để liên kết Gmail mới với tài khoản KPAH: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nChỉ nhập mã này trên website chính thức. Nếu bạn không yêu cầu thay đổi email, hãy bỏ qua thư này.");
+  $newPlain = "Mã xác minh để liên kết Gmail mới với tài khoản KPAH: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nChỉ nhập mã này trên website chính thức. Nếu bạn không yêu cầu thay đổi email, hãy bỏ qua thư này.\nCộng đồng KPAH: https://zalo.me/g/zmyedl5en7sldmd9el1z";
+  kp_send_mail_smtp($email,'Mã xác minh thay đổi email KPAH',$newPlain,kp_profile_email_html('Xác minh email mới','Bạn vừa yêu cầu liên kết địa chỉ email mới với tài khoản KPAH. Nhập mã bên dưới để tiếp tục.',$code,(int)ceil($ttl/60)));
   $_SESSION['kp_profile_email_hash']=hash('sha256',$code); $_SESSION['kp_profile_email_expiry']=time()+$ttl; $_SESSION['kp_profile_email_target']=$email; $_SESSION['kp_profile_email_user']=$userId;
   kp_profile_reply(['ok'=>true,'message'=>'Đã xác minh Gmail cũ và gửi mã đến Gmail mới. Nhập mã mới rồi bấm Lưu thay đổi.']);
  }
