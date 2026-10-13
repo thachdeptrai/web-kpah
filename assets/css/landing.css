@@ -2,12 +2,12 @@
 :root{--lp-ink:#0b091b;--lp-paper:#f5f0ff;--lp-muted:#b7b0d0;--lp-gold:#f1ce83;--lp-purple:#a79bff;--lp-line:rgba(226,216,255,.15)}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:92px}
-body.landing-page{margin:0;min-height:100vh;background:#090817;color:var(--lp-paper);font-family:"Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-body.landing-page:before{position:fixed;inset:0;z-index:-2;content:"";background:linear-gradient(180deg,rgba(8,7,24,.30),rgba(8,7,24,.82) 45%,#090817 100%),url("../img/scene.svg") center top/cover no-repeat}
-body.landing-page:after{position:fixed;inset:0;z-index:-1;pointer-events:none;content:"";background:radial-gradient(ellipse at 50% 8%,rgba(130,112,255,.16),transparent 38%)}
+html{background:#090817}body.landing-page{margin:0;min-height:100vh;background:#090817;color:var(--lp-paper);font-family:"Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body.landing-page:before{position:fixed;inset:0;z-index:0;content:"";background:linear-gradient(180deg,rgba(8,7,24,.30),rgba(8,7,24,.82) 45%,#090817 100%),url("../img/scene.svg") center top/cover no-repeat}
+body.landing-page:after{position:fixed;inset:0;z-index:1;pointer-events:none;content:"";background:radial-gradient(ellipse at 50% 8%,rgba(130,112,255,.16),transparent 38%)}
 .landing-page a{color:inherit;-webkit-tap-highlight-color:transparent}
 .landing-page a:focus-visible{outline:2px solid var(--lp-gold);outline-offset:4px}
-.lp-wrap{width:min(100% - 36px,980px);margin-inline:auto}
+.landing-page>header,.landing-page>main,.landing-page>footer{position:relative;z-index:2}.lp-wrap{width:min(100% - 36px,980px);margin-inline:auto}
 .lp-header{position:sticky;top:0;z-index:10;background:rgba(9,8,23,.84);backdrop-filter:blur(16px);border-bottom:1px solid var(--lp-line)}
 .lp-nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .lp-brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
