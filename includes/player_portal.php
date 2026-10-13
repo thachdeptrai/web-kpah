@@ -57,6 +57,16 @@ function kp_player_characters($accountId,$limit=8)
 
 function kp_player_format($value)
 {
+    // Preserve large UNSIGNED BIGINT values such as EXP, PK scores or Luong nap.
+    // Casting them to float loses digits above PHP's exact integer range.
+    $raw=trim((string)$value);
+    if (preg_match('/^-?[0-9]+$/D',$raw)) {
+        $negative=substr($raw,0,1)==='-';
+        $digits=ltrim($negative?substr($raw,1):$raw,'0');
+        if ($digits==='') $digits='0';
+        $formatted=preg_replace('/\\B(?=(\\d{3})+(?!\\d))/', '.', $digits);
+        return ($negative && $digits!=='0'?'-':'').$formatted;
+    }
     return number_format((float)$value,0,',','.');
 }
 
