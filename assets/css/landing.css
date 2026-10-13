@@ -1,0 +1,96 @@
+/* NGHIỆN KPAH — public landing page */
+:root{--lp-ink:#0b091b;--lp-paper:#f5f0ff;--lp-muted:#b7b0d0;--lp-gold:#f1ce83;--lp-purple:#a79bff;--lp-line:rgba(226,216,255,.15)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body.landing-page{margin:0;min-height:100vh;background:#090817;color:var(--lp-paper);font-family:"Be Vietnam Pro",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body.landing-page:before{position:fixed;inset:0;z-index:-2;content:"";background:linear-gradient(180deg,rgba(8,7,24,.30),rgba(8,7,24,.82) 45%,#090817 100%),url("../img/scene.svg") center top/cover no-repeat}
+body.landing-page:after{position:fixed;inset:0;z-index:-1;pointer-events:none;content:"";background:radial-gradient(ellipse at 50% 8%,rgba(130,112,255,.16),transparent 38%)}
+.landing-page a{color:inherit;-webkit-tap-highlight-color:transparent}
+.landing-page a:focus-visible{outline:2px solid var(--lp-gold);outline-offset:4px}
+.lp-wrap{width:min(100% - 36px,980px);margin-inline:auto}
+.lp-header{position:sticky;top:0;z-index:10;background:rgba(9,8,23,.84);backdrop-filter:blur(16px);border-bottom:1px solid var(--lp-line)}
+.lp-nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lp-brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
+.lp-brand img{width:43px;height:43px;object-fit:contain;filter:drop-shadow(0 0 15px rgba(183,163,255,.25))}
+.lp-brand-copy{display:flex;flex-direction:column;gap:2px}
+.lp-brand-copy strong{font:900 15px/1.1 Cinzel,Georgia,serif;letter-spacing:.045em;color:#fff2cf}
+.lp-brand-copy small{font-size:8px;letter-spacing:.22em;color:#a9a0d0}
+.lp-links{display:flex;align-items:center;justify-content:flex-end;gap:clamp(12px,2.4vw,27px);flex-wrap:wrap}
+.lp-links a{color:#d1cbe5;font-size:11px;text-decoration:none;transition:color .2s}
+.lp-links a:hover{color:var(--lp-gold)}
+.lp-links .lp-login{padding:10px 14px;border:1px solid rgba(241,206,131,.48);color:var(--lp-gold);font-weight:700}
+.lp-hero{position:relative;text-align:center;padding:clamp(58px,10vw,112px) 0 66px}
+.lp-eyebrow{display:inline-flex;align-items:center;gap:10px;margin:0 0 21px;color:#d8ccff;font-size:9px;font-weight:700;letter-spacing:.23em;text-transform:uppercase}
+.lp-eyebrow:before,.lp-eyebrow:after{width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--lp-gold));content:""}
+.lp-eyebrow:after{transform:rotate(180deg)}
+.lp-hero-emblem{width:clamp(94px,15vw,142px);height:auto;display:block;margin:0 auto 16px;filter:drop-shadow(0 0 28px rgba(147,130,255,.28))}
+.lp-hero h1{margin:0;color:#fff3d3;font:900 clamp(34px,7vw,68px)/1.08 Cinzel,Georgia,serif;letter-spacing:.025em;text-shadow:0 4px 30px rgba(8,5,25,.6)}
+.lp-hero h1 span{display:block;margin-top:8px;color:var(--lp-gold);font:700 clamp(13px,2.2vw,18px)/1.4 "Be Vietnam Pro",sans-serif;letter-spacing:.32em}
+.lp-lead{max-width:590px;margin:24px auto 0;color:#c7c0df;font-size:clamp(12px,1.6vw,14px);line-height:2}
+.lp-hero-actions{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin-top:29px}
+.lp-button{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:16px;padding:0 19px;border:1px solid rgba(241,206,131,.56);color:#21152b!important;background:linear-gradient(135deg,#f6dfa5,#d5a954);font-size:11px;font-weight:800;text-decoration:none;transition:transform .2s,filter .2s}
+.lp-button:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.lp-button-secondary{color:#eee8ff!important;background:rgba(21,16,49,.58);border-color:rgba(217,205,255,.27)}
+.lp-hero-note{margin:18px 0 0;color:#948caf;font-size:9px;letter-spacing:.05em}
+.lp-section{padding:49px 0 54px;border-top:1px solid var(--lp-line);scroll-margin-top:90px}
+.lp-section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.65fr);align-items:end;gap:24px;margin-bottom:25px}
+.lp-index{display:block;margin-bottom:9px;color:var(--lp-gold);font-size:9px;font-weight:700;letter-spacing:.2em}
+.lp-section h2{margin:0;color:#fff3d7;font:700 clamp(23px,4vw,34px)/1.2 "Be Vietnam Pro",sans-serif;letter-spacing:-.04em}
+.lp-section-head>p{margin:0;color:var(--lp-muted);font-size:11px;line-height:1.9}
+.lp-intro{max-width:760px;color:#c8c1df;font-size:13px;line-height:2.1}
+.lp-intro strong{color:#fff0c8;font-weight:700}
+.lp-feature-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:27px}
+.lp-feature{padding:17px 22px 16px 0;border-top:1px solid var(--lp-line)}
+.lp-feature+.lp-feature{padding-left:20px;border-left:1px solid var(--lp-line)}
+.lp-feature-mark{display:block;margin-bottom:12px;color:var(--lp-gold);font:700 19px Cinzel,Georgia,serif}
+.lp-feature h3{margin:0 0 8px;color:#f8f1ff;font-size:13px}
+.lp-feature p{margin:0;color:var(--lp-muted);font-size:10px;line-height:1.9}
+.lp-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.lp-info{display:flex;gap:16px;padding:20px 20px 20px 0;border-top:1px solid var(--lp-line)}
+.lp-info:nth-child(even){padding-left:20px;border-left:1px solid var(--lp-line)}
+.lp-info-icon{flex:none;width:36px;height:36px;display:grid;place-items:center;color:var(--lp-gold);border:1px solid rgba(241,206,131,.24);font-size:17px}
+.lp-info h3{margin:1px 0 7px;font-size:12px;color:#fff0d0}
+.lp-info p{margin:0;color:var(--lp-muted);font-size:10px;line-height:1.85}
+.lp-count{margin-top:25px;padding:17px 0;border-top:1px solid var(--lp-line);border-bottom:1px solid var(--lp-line);display:flex;align-items:center;justify-content:space-between;gap:15px}
+.lp-count strong{color:var(--lp-gold);font:700 25px Cinzel,Georgia,serif}
+.lp-count span{color:var(--lp-muted);font-size:10px}
+.lp-community{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:25px;padding:28px 0;border-top:1px solid rgba(241,206,131,.3);border-bottom:1px solid rgba(241,206,131,.3)}
+.lp-community h3{margin:0 0 9px;color:#fff1d0;font-size:19px}
+.lp-community p{max-width:600px;margin:0;color:var(--lp-muted);font-size:11px;line-height:1.9}
+.lp-community .lp-button{white-space:nowrap}
+.lp-community-note{margin-top:13px!important;font-size:9px!important;color:#8f88ad!important}
+.lp-site-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.lp-site-link{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:20px 18px 20px 0;border-top:1px solid var(--lp-line);text-decoration:none}
+.lp-site-link+.lp-site-link{padding-left:18px;border-left:1px solid var(--lp-line)}
+.lp-site-link span{color:var(--lp-gold);font-size:17px}
+.lp-site-link strong{font-size:12px;color:#f7f0ff}
+.lp-site-link small{color:var(--lp-muted);font-size:10px;line-height:1.7}
+.lp-site-link:hover strong{color:var(--lp-gold)}
+.lp-footer{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:24px 0 calc(28px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--lp-line);color:#928aa9;font-size:9px}
+.lp-footer strong{color:#e5d6a8;font:700 11px Cinzel,Georgia,serif;letter-spacing:.08em}
+.lp-footer a{color:#bcb2dc;text-decoration:none}
+.lp-skip{position:fixed;z-index:30;top:-80px;left:12px;padding:10px;background:#fff0c8;color:#1b1230}
+.lp-skip:focus{top:12px}
+@media(max-width:650px){
+ .lp-wrap{width:min(100% - 28px,980px)}
+ .lp-nav{min-height:67px;align-items:flex-start;padding:12px 0;flex-direction:column;gap:12px}
+ .lp-brand img{width:36px;height:36px}
+ .lp-links{width:100%;justify-content:flex-start;gap:17px}
+ .lp-links a{font-size:10px}
+ .lp-links .lp-login{margin-left:auto;padding:8px 10px}
+ .lp-hero{padding:51px 0 44px}
+ .lp-hero h1{font-size:clamp(31px,9vw,49px)}
+ .lp-hero h1 span{letter-spacing:.2em}
+ .lp-section{padding:35px 0 39px}
+ .lp-section-head{grid-template-columns:1fr;gap:10px;margin-bottom:20px}
+ .lp-feature-list{grid-template-columns:1fr}
+ .lp-feature,.lp-feature+.lp-feature{padding:15px 0;border-top:1px solid var(--lp-line);border-left:0}
+ .lp-info-grid{grid-template-columns:1fr}
+ .lp-info,.lp-info:nth-child(even){padding:16px 0;border-left:0}
+ .lp-community{grid-template-columns:1fr;gap:18px;padding:23px 0}
+ .lp-community .lp-button{justify-self:start}
+ .lp-site-links{grid-template-columns:1fr}
+ .lp-site-link,.lp-site-link+.lp-site-link{padding:16px 0;border-left:0}
+ .lp-footer{align-items:flex-start;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
