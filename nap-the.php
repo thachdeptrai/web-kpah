@@ -1,8 +1,4 @@
 <?php
-require __DIR__.'/includes/bootstrap.php';require_once __DIR__.'/includes/topup_settings.php';
-kp_send_security_headers(true);header('Content-Type: text/html; charset=utf-8');
-$user=kp_topup_require_user();$rates=kp_topup_rates();
-$types=['luong'=>'Lượng thường (không khóa)','luonglock'=>'Lượng khóa','gold'=>'Xu'];
-?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nạp thẻ cào · KPAH</title><link rel="stylesheet" href="assets/css/topup.css?v=1"></head><body><header><div class="inner"><a class="logo" href="nap.php">✦ KPAH <small>NẠP THẺ CÀO</small></a><nav><a href="nap.php">Các cách nạp</a><a class="active" href="nap-the.php">Thẻ cào</a><a href="nap-bank.php">Ngân hàng</a><a href="home.php">Tài khoản</a></nav></div></header>
-<main class="wrap"><section class="hero"><span class="eyebrow">NẠP THẺ / KPAH</span><h1>Nạp thẻ cào</h1><p>Chọn loại tài nguyên sẽ nhận. Tỷ lệ hiện tại hiển thị dưới đây để dễ đối chiếu trước khi nạp.</p></section><div class="grid"><?php foreach($types as $type=>$label): ?><article class="card"><div class="symbol"><?= $type==='gold'?'◈':($type==='luong'?'✦':'◇') ?></div><h2><?=kp_e($label)?></h2><div class="rate"><?= $rates[$type]>0?kp_topup_display($rates[$type]):'Chưa bật' ?> <small><?= $rates[$type]>0?'đơn vị / 10.000đ':'chưa có tỷ lệ' ?></small></div><p>Không yêu cầu nạp theo mốc cố định. Số lượng nhận tính từ số tiền được nhà cung cấp xác minh.</p></article><?php endforeach; ?></div>
-<section class="panel"><h2>Đang chuẩn bị kết nối thẻ cào</h2><p>Để tránh nhận thẻ nhưng không giao tài nguyên, biểu mẫu gửi mã thẻ và serial chưa được kích hoạt. Việc nạp sẽ chỉ mở khi API nhà cung cấp, chữ ký callback và cơ chế cấp tài nguyên game server được xác minh.</p><div class="alert">Hiện chưa nhận thanh toán và không lưu mã thẻ/serial của bạn.</div><a class="btn" href="nap.php">← Chọn cách nạp khác</a></section></main></body></html>
+// Compatible entry point. The module uses one canonical rate store and UI.
+header('Location: topup/card.php', true, 302);
+exit;
