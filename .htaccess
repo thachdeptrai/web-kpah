@@ -2,9 +2,9 @@
 # These rules are defense in depth if Apache still exposes the project root.
 Options -Indexes
 RewriteEngine On
-RewriteRule "(^|/)(?:app|storage|database|docs|tests|tools|vendor|\\.git|\\.svn|\\.github)(?:/|$)" - [F,END,NC]
-RewriteRule "(^|/)\\.(?!well-known(?:/|$))" - [F,END,NC]
-RewriteRule "\\.(?:sql|sqlite|db|log|bak|backup|old|orig|save|ini|conf|pem|key|p12|pfx|zip|rar|7z|tar|tgz|gz|bz2|xz|zst)$" - [F,END,NC]
-<FilesMatch "(?i)^(?:config(?:\\..*)?|\\.env(?:\\..*)?|README(?:\\..*)?|\\.htaccess|\\.gitignore|.*\\.(?:sql|sqlite|bak|log|ini|pem|key|p12|pfx))$">
+RewriteRule "(^|/)(?:app|storage|database|docs|tests|tools|vendor|\.git|\.svn|\.github)(?:/|$)" - [F,END,NC]
+RewriteRule "(^|/)\.(?!well-known(?:/|$))" - [F,END,NC]
+RewriteRule "\.(?:sql|sqlite|db|log|bak|backup|old|orig|save|ini|conf|pem|key|p12|pfx|zip|rar|7z|tar|tgz|gz|bz2|xz|zst)$" - [F,END,NC]
+<FilesMatch "(?i)^(?:config(?:\..*)?|\.env(?:\..*)?|README(?:\..*)?|\.htaccess|\.gitignore|.*\.(?:sql|sqlite|bak|log|ini|pem|key|p12|pfx))$">
     Require all denied
 </FilesMatch>
