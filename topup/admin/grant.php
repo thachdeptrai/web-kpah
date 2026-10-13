@@ -9,7 +9,7 @@ $names=['gold'=>'Xu','luong'=>'Lượng thường','luonglock'=>'Lượng khóa'
 if (strlen($search)>20) $search='';
 if (($_SERVER['REQUEST_METHOD']??'')==='POST') {
     try {
-        if (!kp_csrf_check($_POST['csrf']??null)) throw new RuntimeException('Phiên làm việc đã hết hạn. Tải lại trang.');
+        if (!kp_admin_csrf_valid($_POST['csrf']??null)) throw new RuntimeException('Phiên làm việc đã hết hạn. Tải lại trang.');
         if (($_POST['action']??'')==='grant') {
             list($allowed,$retry)=kp_rate_limit('kp_admin_grant',(string)$admin['id'],30,3600,true);
             if (!$allowed) throw new RuntimeException('Đã đạt giới hạn thao tác. Thử lại sau.');
