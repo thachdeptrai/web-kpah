@@ -46,6 +46,30 @@ try {
     $_SERVER['REMOTE_ADDR']='127.0.0.1';
     verify(kp_admin_allowed_ip(), true, 'admin IP allowlist allows configured IP');
     putenv('KPAH_ADMIN_ALLOWED_IPS');
+    // Verify that the Apache rewrite deny rules cover common dump exposure
+    // without blocking normal player and admin pages. HTTP checks are still needed.
+    $htaccess = (string)file_get_contents(KP_ROOT.'/.htaccess');
+    preg_match_all('/^RewriteRule "([^"]+)" - \[F,END,NC\]$/m', $htaccess, $matches);
+    $blockPatterns = $matches[1];
+    if (count($blockPatterns) < 5) throw new RuntimeException('Missing deny rewrite rules.');
+    foreach ([
+        '.git/config', '.env', 'includes/db.php', 'database/referral_codes.sql',
+        'storage/topup/rates.json', 'tests/admin_security_smoke.php',
+        'check.php', 'mysql_backup_2026.zip', 'site.sql', 'site.sql.gz'
+    ] as $path) {
+        $blocked = false;
+        foreach ($blockPatterns as $pattern) {
+            if (preg_match('#'.$pattern.'#i', $path) === 1) { $blocked = true; break; }
+        }
+        verify($blocked, true, 'protected HTTP path '.$path);
+    }
+    foreach (['topup/index.php','topup/card.php','admin/login.php','assets/css/topup.css'] as $path) {
+        $blocked = false;
+        foreach ($blockPatterns as $pattern) {
+            if (preg_match('#'.$pattern.'#i', $path) === 1) { $blocked = true; break; }
+        }
+        verify($blocked, false, 'public HTTP path '.$path);
+    }
     echo "ALL ADMIN SECURITY CHECKS PASSED\n";
 } finally {
     foreach (glob($testDir.'/*') ?: [] as $path) @unlink($path);
