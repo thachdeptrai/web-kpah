@@ -16,7 +16,14 @@ if (!empty($_SESSION['kp_admin_id']) && ($_SESSION['kp_admin_role'] ?? '') === '
 $error = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
-        $error = 'Phiên làm việc hết hạn. Tải lại trang rồi thử lại.';
+        // Never bypass CSRF: record only the failure category, not any token.
+        $token = $_POST['csrf'] ?? '';
+        $reason = !kp_csrf_check($token)
+            ? (empty($_COOKIE[session_name()]) ? 'login_csrf_cookie_missing' : 'login_csrf_token_stale')
+            : 'login_csrf_origin_rejected';
+        kp_admin_log_event($reason);
+        http_response_code(403);
+        $error = 'Phiên đăng nhập đã thay đổi. Mã xác minh mới đã được tạo, vui lòng nhập lại mật khẩu và thử lại.';
     } else {
         $username = trim((string)($_POST['username'] ?? ''));
         $password = (string)($_POST['password'] ?? '');
