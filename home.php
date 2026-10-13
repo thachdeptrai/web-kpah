@@ -133,16 +133,16 @@ $numberFormat = function ($number) {
 
     <section class="welcome-block" id="overview" aria-labelledby="welcome-title">
         <div class="welcome-copy">
-            <p class="kicker"><span class="kicker-mark"></span> TÀI KHOẢN <span class="kicker-date"><?= date('d.m.Y') ?></span></p>
-            <h1 id="welcome-title">Chào mừng trở lại,<br><em><?= kp_e($username) ?>.</em></h1>
+            <p class="kicker"><span class="kicker-mark"></span> KHU VỰC NGƯỜI CHƠI</p>
+            <h1 id="welcome-title">Xin chào, <em><?= kp_e($username) ?>!</em></h1>
             <p class="welcome-description">Quản lý thông tin tài khoản, cập nhật Gmail và đổi mật khẩu ngay tại đây.</p>
             <div class="welcome-actions">
                 <a class="jump-link" href="#profile">Quản lý hồ sơ <span aria-hidden="true">↘</span></a>
-                <span class="welcome-secure">Thông tin chỉ hiển thị trong phiên đăng nhập của bạn</span>
+                <span class="welcome-secure">Chúc bạn chơi game vui vẻ.</span>
             </div>
         </div>
 
-        <div class="welcome-index"><strong>01</strong><span> / 03</span></div>
+        
     </section>
 
     <section class="metric-strip" aria-label="Tóm tắt tài khoản">
@@ -296,8 +296,9 @@ $numberFormat = function ($number) {
                     <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
                     <div class="profile-field">
                         <label for="email">Email <?= $hasEmail ? 'muốn thay đổi' : 'liên kết' ?></label>
-                        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" required value="<?= kp_e($email) ?>" placeholder="name@example.com">
-                        <p class="field-note"><?= $hasEmail ? 'Khi đổi email, cần xác minh địa chỉ hiện tại và địa chỉ mới.' : 'Tài khoản chưa có email. Chức năng thêm email cần xác minh riêng; hãy liên hệ hỗ trợ.' ?></p>
+                        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" <?= $hasEmail ? 'required' : 'readonly aria-describedby="email-help"' ?> value="<?= kp_e($email) ?>" placeholder="<?= $hasEmail ? 'name@example.com' : 'Chưa có email' ?>">
+                        <p class="field-note" id="email-help"><?= $hasEmail ? 'Khi đổi email, cần xác minh địa chỉ hiện tại và địa chỉ mới.' : 'Tài khoản chưa có email. Để liên kết an toàn, hãy liên hệ hỗ trợ bên dưới.' ?></p>
+                        <?php if (!$hasEmail): ?><a class="profile-help-link" href="https://zalo.me/g/zmyedl5en7sldmd9el1z" target="_blank" rel="noopener noreferrer">Liên hệ hỗ trợ ↗</a><?php endif; ?>
                     </div>
                     <?php if ($hasEmail): ?>
                     <div class="profile-field">
@@ -342,7 +343,7 @@ $numberFormat = function ($number) {
                     <span class="security-spark spark-a">✦</span>
                     <span class="security-spark spark-b">✧</span>
                 </div>
-                <p class="kicker">BẢO MẬT TÀI KHOẢN CỦA TÔI <span>/ 03</span></p>
+                <p class="kicker">BẢO MẬT TÀI KHOẢN</p>
                 <h3 id="security-title">Giữ tài khoản của bạn an toàn.</h3>
                 <p class="security-description">Không dùng chung mật khẩu với tài khoản khác. Đừng chia sẻ mã xác minh.</p>
 
@@ -386,7 +387,7 @@ $numberFormat = function ($number) {
     </section>
 
     <footer class="home-footer">
-        <span class="footer-brand"><?= kp_e($appName) ?> <i>·</i> KPAH</span>
+        <span class="footer-brand"><?= kp_e($appName) ?> <i>·</i> Tài khoản</span>
         <span class="footer-id">MÃ TÀI KHOẢN <?= kp_e($user['id']) ?></span>
         <a href="api/logout.php">ĐĂNG XUẤT <span aria-hidden="true">↗</span></a>
     </footer>
