@@ -10,7 +10,7 @@ function kp_rate_dir() { global $testDir; return $testDir; }
 function kp_log($message, $error = null) {}
 function kp_client_ip() { return (string)($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'); }
 function kp_csrf_check($token) { return $token === 'test-csrf-token'; }
-require KP_ROOT.'/includes/admin_security.php';
+require KP_ROOT . '/app/includes/admin_security.php';
 function verify($value, $expected, $name)
 {
     if ($value !== $expected) {

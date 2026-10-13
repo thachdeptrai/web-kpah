@@ -8,6 +8,7 @@ on:
       - 'includes/**'
       - 'topup/**'
       - 'tests/admin_security_smoke.php'
+      - 'tests/webroot_smoke.php'
       - 'tests/admin_csrf_smoke.php'
       - '.htaccess'
       - '.github/workflows/security-checks.yml'
@@ -18,6 +19,7 @@ on:
       - 'includes/**'
       - 'topup/**'
       - 'tests/admin_security_smoke.php'
+      - 'tests/webroot_smoke.php'
       - 'tests/admin_csrf_smoke.php'
       - '.htaccess'
       - '.github/workflows/security-checks.yml'
@@ -42,6 +44,8 @@ jobs:
           set -euo pipefail
           find . -path './.git' -prune -o -type f -name '*.php' -print0 |
             xargs -0 -n1 php -l
+      - name: Validate public/private PHP separation
+        run: php tests/webroot_smoke.php
       - name: Admin MFA and rate limit regression tests
         run: php tests/admin_security_smoke.php
       - name: Admin session and CSRF regression tests

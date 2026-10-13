@@ -2,27 +2,29 @@ name: Topup PHP quality checks
 on:
   push:
     paths:
-      - 'topup/**'
-      - 'includes/topup_core.php'
+      - 'app/pages/topup/**'
+      - 'public/topup/**'
+      - 'app/includes/topup_core.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
       - 'includes/admin_security.php'
       - '.htaccess'
       - '.gitignore'
-      - 'assets/css/topup.css'
-      - 'assets/js/topup-forms.js'
+      - 'public/assets/css/topup.css'
+      - 'public/assets/js/topup-forms.js'
       - '.github/workflows/topup-lint.yml'
   pull_request:
     paths:
-      - 'topup/**'
-      - 'includes/topup_core.php'
+      - 'app/pages/topup/**'
+      - 'public/topup/**'
+      - 'app/includes/topup_core.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
       - 'includes/admin_security.php'
       - '.htaccess'
       - '.gitignore'
-      - 'assets/css/topup.css'
-      - 'assets/js/topup-forms.js'
+      - 'public/assets/css/topup.css'
+      - 'public/assets/js/topup-forms.js'
   workflow_dispatch:
 
 permissions:
@@ -42,8 +44,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          php -l includes/topup_core.php
-          find topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          php -l app/includes/topup_core.php
+          find app/pages/topup public/topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l tests/topup_smoke.php
           php -l tests/security_smoke.php
           php -l includes/admin_security.php
@@ -55,7 +57,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if find topup -type f \( -name '*.sql' -o -name '*.sqlite' \) | grep -q .; then
+          if find app/pages/topup public/topup -type f \( -name '*.sql' -o -name '*.sqlite' \) | grep -q .; then
             echo 'Payment module must not add SQL files.'
             exit 1
           fi

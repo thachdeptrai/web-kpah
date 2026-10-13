@@ -1,8 +1,8 @@
 <?php
 // Pure source/schema checks: php tests/rankings_smoke.php
 define('KP_ROOT', dirname(__DIR__));
-require KP_ROOT.'/includes/rankings.php';
-require KP_ROOT.'/includes/player_portal.php';
+require KP_ROOT . '/app/includes/rankings.php';
+require KP_ROOT . '/app/includes/player_portal.php';
 function rank_check($cond,$label) {
     if (!$cond) { fwrite(STDERR,"FAILED: ".$label."\n"); exit(1); }
     echo "PASS: ".$label."\n";

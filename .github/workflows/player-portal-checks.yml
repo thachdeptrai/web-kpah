@@ -3,26 +3,34 @@ name: Player portal and leaderboard checks
 on:
   push:
     paths:
-      - 'home.php'
-      - 'profile.php'
-      - 'characters.php'
-      - 'rankings.php'
-      - 'includes/player_portal.php'
-      - 'includes/rankings.php'
-      - 'assets/css/player-portal.css'
-      - 'assets/img/rank-*.svg'
+      - 'app/pages/home.php'
+      - 'public/home.php'
+      - 'app/pages/profile.php'
+      - 'public/profile.php'
+      - 'app/pages/characters.php'
+      - 'public/characters.php'
+      - 'app/pages/rankings.php'
+      - 'public/rankings.php'
+      - 'app/includes/player_portal.php'
+      - 'app/includes/rankings.php'
+      - 'public/assets/css/player-portal.css'
+      - 'public/assets/img/rank-*.svg'
       - 'tests/rankings_smoke.php'
       - '.github/workflows/player-portal-checks.yml'
   pull_request:
     paths:
-      - 'home.php'
-      - 'profile.php'
-      - 'characters.php'
-      - 'rankings.php'
-      - 'includes/player_portal.php'
-      - 'includes/rankings.php'
-      - 'assets/css/player-portal.css'
-      - 'assets/img/rank-*.svg'
+      - 'app/pages/home.php'
+      - 'public/home.php'
+      - 'app/pages/profile.php'
+      - 'public/profile.php'
+      - 'app/pages/characters.php'
+      - 'public/characters.php'
+      - 'app/pages/rankings.php'
+      - 'public/rankings.php'
+      - 'app/includes/player_portal.php'
+      - 'app/includes/rankings.php'
+      - 'public/assets/css/player-portal.css'
+      - 'public/assets/img/rank-*.svg'
       - 'tests/rankings_smoke.php'
   workflow_dispatch:
 
@@ -43,7 +51,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in home.php profile.php characters.php rankings.php includes/player_portal.php includes/rankings.php tests/rankings_smoke.php; do
+          for path in app/pages/home.php app/pages/profile.php app/pages/characters.php app/pages/rankings.php app/includes/player_portal.php app/includes/rankings.php public/home.php public/profile.php public/characters.php public/rankings.php tests/rankings_smoke.php; do
             php -l "$path"
           done
       - name: Test static leaderboard queries and category whitelist
@@ -53,7 +61,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
-          for path in ('assets/img/rank-guardian.svg','assets/img/rank-sorcerer.svg','assets/img/rank-archer.svg'):
+          for path in ('public/assets/img/rank-guardian.svg','public/assets/img/rank-sorcerer.svg','public/assets/img/rank-archer.svg'):
               root=ET.parse(path).getroot()
               assert root.tag.endswith('svg')
               print(path,'valid SVG')

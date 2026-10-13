@@ -28,3 +28,12 @@ storage/ratelimit/*
 *.swp
 *.log
 *~
+
+# Private configuration after migration to public/ DocumentRoot
+/app/config/config.register.local.php
+/app/config/*.local.php
+/public/.env*
+/public/*.sql
+
+# Runtime state stays outside Apache DocumentRoot.
+/app/cache/

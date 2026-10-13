@@ -69,28 +69,23 @@ Các trang trong khu tài khoản và quản trị đều yêu cầu đăng nh�
 - HTTPS cho website hoạt động công khai.
 - `curl` chỉ cần khi kết nối API đối tác nạp thẻ.
 
-### Cập nhật trên VPS
+### Triển khai webroot riêng trên VPS
 
-Nếu website đã được triển khai từ GitHub, trong thư mục dự án chạy:
+**Bản tái cấu trúc phải chuyển Apache DocumentRoot sang `C:/xampp/htdocs/public`.** Không chỉ `git pull` rồi để Apache trỏ vào root cũ, vì mã PHP đã di chuyển khỏi đó. Hãy làm theo [hướng dẫn chuyển đổi và rollback](docs/PRIVATE_WEBROOT.md); thử trên nhánh `refactor/private-webroot` trước khi thay đổi trang thật.
 
-```bat
-cd C:\xampp\htdocs
-git pull --ff-only origin main
-```
-
-Không chạy lại file dump `kpah.sql` trên database đang hoạt động. Sao lưu dữ liệu và file cấu hình riêng trước khi nâng cấp.
+**Không import lại SQL, không xóa dữ liệu game hoặc `storage/topup`.**
 
 ### Cấu hình website
 
 Sao chép mẫu:
 
 ```text
-config.register.local.sample.php
+app/config/config.register.local.sample.php
                 ↓
-config.register.local.php
+app/config/config.register.local.php
 ```
 
-Điền kết nối database, SMTP và các đường dẫn cần dùng. File `config.register.local.php` được `.gitignore` loại trừ; **không commit mật khẩu hay khóa API**.
+Điền kết nối database, SMTP và các đường dẫn cần dùng. File local config được `.gitignore` loại trừ (trong `app/config` hoặc tại root cũ khi nâng cấp); **không commit mật khẩu hay khóa API**.
 
 Có thể dùng biến môi trường cho database:
 
@@ -102,7 +97,7 @@ KPAH_DB_USER
 KPAH_DB_PASS
 ```
 
-Tham số mặc định nằm trong `config.register.php`. Bộ nạp cấu hình đặt tại `includes/config_loader.php` và được gọi qua `includes/bootstrap.php`.
+Tham số mặc định nằm trong `app/config/config.register.php`. Bộ nạp cấu hình nằm ở `app/includes/config_loader.php` và được gọi qua `app/includes/bootstrap.php`.
 
 > Repo website không thay thế code game server. Một số nghiệp vụ, đặc biệt là cấp tài nguyên sau khi thanh toán, cần được kiểm tra ở phía game server trước khi sử dụng thực tế.
 
@@ -129,7 +124,7 @@ Bộ mã giới thiệu có file `database/referral_codes.sql` dành cho môi tr
 
 ## Bảng xếp hạng
 
-Trang `rankings.php` dùng truy vấn **chỉ đọc**, chọn hạng mục bằng danh sách cố định ở `includes/rankings.php`. Hiện có 9 hạng mục: Cấp độ, Danh vọng, Điểm PK, Bang hội, Nạp Lượng, Điểm sự kiện, Thách đấu, Chiếm thành và Sự kiện WC.
+Trang `rankings.php` dùng truy vấn **chỉ đọc**, chọn hạng mục bằng danh sách cố định ở `app/includes/rankings.php`. Hiện có 9 hạng mục: Cấp độ, Danh vọng, Điểm PK, Bang hội, Nạp Lượng, Điểm sự kiện, Thách đấu, Chiếm thành và Sự kiện WC.
 
 Giao diện hiển thị Top 1 ở trung tâm, Top 2 trái, Top 3 phải; Top 4–10 bên dưới. Nếu bảng chưa có dữ liệu, hiển thị trạng thái trống. Hình chiến binh/pháp sư/cung thủ là SVG minh họa, không phải sprite nhân vật thực tế.
 
@@ -179,24 +174,26 @@ Chi tiết quy trình, biến môi trường, lưu ý về MyISAM và điều ki
 
 ```text
 web-kpah/
-├── index.php                     Trang chủ công khai
-├── register.php                  Đăng ký
-├── login.php                     Đăng nhập
-├── forgot-password.php           Khôi phục mật khẩu
-├── home.php                      Hồ sơ, nhân vật và xếp hạng
-├── admin/                        Trang quản trị và mã giới thiệu
-├── api/                          Xử lý đăng ký, hồ sơ, mật khẩu, email
-├── topup/                        Nạp thẻ, lịch sử, xếp hạng, ngân hàng
-│   └── admin/                    Tỷ lệ, cộng tài nguyên, đối soát
-├── includes/                     Kết nối DB, bảo mật và xử lý nghiệp vụ
-├── assets/                       CSS, JS, hình ảnh và giao diện
-├── storage/                      Dữ liệu vận hành ngoài database
-├── database/                     SQL hỗ trợ và kiểm tra schema
-├── docs/                         Tài liệu triển khai
-├── tests/                        Kiểm tra module nạp
-├── config.register.php           Cấu hình mặc định
-└── config.register.local.sample.php
+├── app/                         MÃ NGUỒN PHP RIÊNG TƯ
+│   ├── config/                  Cấu hình server + mẫu local
+│   ├── includes/                Database, bảo mật, mail và xử lý nghiệp vụ
+│   └── pages/                   Logic trang user, admin, API, nạp thẻ
+├── public/                      APACHE DOCUMENTROOT
+│   ├── .htaccess                URL thân thiện và chặn file nhạy cảm
+│   ├── assets/                  CSS, JavaScript, SVG và font
+│   ├── admin/, api/, topup/     PHP entrypoints nhỏ giữ URL cũ
+│   └── index.php, login.php...  PHP entrypoints nhỏ
+├── storage/                     Giới hạn lượt + lịch sử nạp riêng
+├── database/                    SQL hỗ trợ, không public
+├── docs/                        Hướng dẫn cài đặt và bảo mật
+├── tests/                       Kiểm tra hồi quy
+├── tools/                       Công cụ chẩn đoán ngoài webroot
+└── .github/                     CI
 ```
+
+Mọi URL web cũ vẫn được giữ. PHP xử lý thật nằm ngoài `public/`. Cấu hình Apache và quy trình chuyển đổi: [`docs/PRIVATE_WEBROOT.md`](docs/PRIVATE_WEBROOT.md).
+
+**Lưu ý:** GitHub repo đang Public. Nếu cần giấu mã nguồn khỏi người xem GitHub, phải đổi repository visibility thành **Private** sau khi bảo đảm VPS có quyền `git pull`. Việc đổi DocumentRoot chỉ bảo vệ mã nguồn trên server; HTML/CSS/JS phía trình duyệt vẫn có thể xem.
 
 ## Bảo mật admin và database
 
