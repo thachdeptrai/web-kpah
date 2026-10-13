@@ -39,8 +39,8 @@ $charactersUnavailable = false;
 try {
     $charStmt = kp_db()->prepare(
         'SELECT w.charname,
-                COALESCE(c.lastLv, l.lv, w.lv) AS lastLv,
-                COALESCE(c.xp, l.exp, 0) AS xp,
+                COALESCE(l.lv, c.lastLv, w.lv) AS lastLv,
+                COALESCE(l.exp, c.xp, 0) AS xp,
                 COALESCE(c.gold, l.gold, 0) AS gold,
                 COALESCE(c.luong, l.luong, 0) AS luong,
                 c.lastLog, clan.clanName
@@ -48,11 +48,11 @@ try {
          LEFT JOIN tob_char AS c ON c.charname = w.charname AND c.userId = w.userid
          LEFT JOIN tob_char_luong AS l ON l.charname = w.charname
          LEFT JOIN tob_clan AS clan ON clan.id_clan = COALESCE(c.idClan, l.idclan) AND clan.isdel = 0
-         WHERE w.userid = ? AND w.acountname = ?
+         WHERE w.userid = ?
          ORDER BY COALESCE(c.lastLv, l.lv, w.lv) DESC, COALESCE(c.xp, l.exp, 0) DESC
          LIMIT 8'
     );
-    $charStmt->execute([(int) $user['id'], (string) $user['username']]);
+    $charStmt->execute([(int) $user['id']]);
     $characters = $charStmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) {
     $charactersUnavailable = true;
