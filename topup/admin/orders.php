@@ -5,7 +5,7 @@ require_once __DIR__ . '/../_layout.php';
 $admin=kp_topup_admin();$csrf=kp_csrf_token();$cfg=kp_topup_cfg();$error='';$notice='';
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try{
-        if(!kp_csrf_check($_POST['csrf']??null))throw new RuntimeException('Phiên xác nhận đã hết hạn.');
+        if(!kp_admin_csrf_valid($_POST['csrf']??null))throw new RuntimeException('Phiên xác nhận đã hết hạn.');
         if(($_POST['action']??'')!=='check_card')throw new RuntimeException('Thao tác không hợp lệ.');
         $id=(string)($_POST['id']??'');
         if(!preg_match('/^[a-f0-9]{32}$/D',$id))throw new RuntimeException('Mã giao dịch không hợp lệ.');
