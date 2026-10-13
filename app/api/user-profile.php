@@ -59,7 +59,7 @@ try {
   kp_profile_reply(['ok'=>true,'message'=>'Đã gửi mã đến Gmail đang liên kết. Nhập mã này rồi mới được yêu cầu mã Gmail mới.']);
  }
  if ($action==='send_email_code') {
-  $firstLink = $oldEmail==='' || !filter_var($oldEmail,FILTER_VALIDATE_EMAIL);
+  $firstLink = $oldEmail==='';
   if (!$email || strlen($email)>254 || !filter_var($email,FILTER_VALIDATE_EMAIL)) kp_profile_reply(['ok'=>false,'message'=>'Hãy nhập email mới hợp lệ.'],422);
   if ($oldEmail===$email) kp_profile_reply(['ok'=>false,'message'=>'Email mới phải khác email đang liên kết.'],422);
   $dupe=$db->prepare('SELECT 1 FROM team_user WHERE LOWER(TRIM(email)) = ? AND id <> ? LIMIT 1'); $dupe->execute([$email,$userId]);
