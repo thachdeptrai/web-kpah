@@ -114,7 +114,7 @@ function kp_send_security_headers($isPage)
  */
 function kp_session_cookie_name()
 {
-    $script = str_replace('\\\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    $script = str_replace(chr(92), '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
     if (preg_match('~(?:^|/)(?:admin|topup/admin)/[^/]+\\.php$~i', $script)) {
         return (string)kp_config('security.admin_session_name', 'KPAHADMIN');
     }
