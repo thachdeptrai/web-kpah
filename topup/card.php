@@ -4,12 +4,14 @@ require_once __DIR__ . '/../includes/topup_core.php';
 require_once __DIR__ . '/_layout.php';
 $user = kp_topup_user();
 $cfg = kp_topup_cfg();
+// Do not charge real cards until BOTH provider and game-server queue are verified.
+$cardLive = $cfg['card_ready'] && $cfg['game_queue_verified'];
 $rates = kp_topup_rates();
 $csrf = kp_csrf_token();
 $error = ''; $notice = ''; $createdId = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     try {
-        if (!$cfg['card_ready']) throw new RuntimeException('Nạp thẻ đang chờ cấu hình đối tác. Không gửi mã thẻ lúc này.');
+        if (!$cardLive) throw new RuntimeException('Chưa bật nạp thẻ thật: cần cấu hình đối tác và xác minh cấp Lượng trên game server.');
         if (!kp_csrf_check($_POST['csrf'] ?? null)) throw new RuntimeException('Phiên đã hết hạn. Tải lại trang.');
         list($allow,$retry) = kp_rate_limit('kp_card', (string)$user['id'].'|'.kp_client_ip(), 5, 3600, true);
         if (!$allow) throw new RuntimeException('Bạn đã gửi nhiều yêu cầu. Thử lại sau '.(int)ceil($retry/60).' phút.');
@@ -80,23 +82,21 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>Lượng.</em></h1><p class="tp-lead">Chọn Lượng thường hoặc Lượng khóa. Tiền được quy đổi theo tỷ lệ đang áp dụng, không cần chọn gói nạp của website.</p></section>
 <?php if($error!==''): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="history.php">Xem lịch sử →</a></div><?php endif; ?>
-<?php if(!$cfg['card_ready']): ?>
-<div class="tp-alert warning"><strong>Chưa mở gửi thẻ thật.</strong> Admin cần cấu hình đối tác thẻ cào và khóa bảo mật trên VPS. Form bên dưới chỉ để xem giao diện; mã thẻ không được gửi đi.</div>
-<?php elseif(!$cfg['game_queue_verified']): ?>
-<div class="tp-alert warning">Cổng thẻ có thể xác minh thẻ, nhưng tự cộng vào game đang tắt cho tới khi xác nhận cơ chế xử lý <code>board_naptien</code>. Thẻ hợp lệ sẽ ở trạng thái <b>Chờ cấp</b>, không được báo là đã nhận Lượng.</div>
+<?php if(!$cardLive): ?>
+<div class="tp-alert warning"><strong>Chưa mở gửi thẻ thật.</strong> Chỉ kích hoạt sau khi đã có tài khoản đối tác và xác minh game server xử lý <code>board_naptien</code>. Không có trường hợp gửi thẻ thành công nhưng tính năng cấp Lượng chưa sẵn sàng.</div>
 <?php endif; ?>
 <section class="tp-section"><div class="tp-grid two">
-<div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cfg['card_ready'] ? 'CỔNG THẺ SẴN SÀNG' : 'CHƯA KẾT NỐI' ?></span></div>
+<div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cardLive ? 'SẴN SÀNG NẠP' : 'CHƯA MỞ' ?></span></div>
 <form class="tp-form" method="post" autocomplete="off">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <div class="tp-row">
-<label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cfg['card_ready']?'disabled':'' ?>><option value="VIETTEL">Viettel</option><option value="VINAPHONE">Vinaphone</option><option value="MOBIFONE">Mobifone</option><option value="VNMOBI">Vietnamobile</option><option value="GATE">Gate</option><option value="ZING">Zing</option></select></label>
-<label class="tp-field"><span>Mệnh giá ghi trên thẻ (VNĐ)</span><input class="tp-input" name="amount" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" placeholder="VD: 50000" required <?= !$cfg['card_ready']?'disabled':'' ?>><small>Nhập đúng mệnh giá được in trên thẻ.</small></label>
+<label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cardLive?'disabled':'' ?>><option value="VIETTEL">Viettel</option><option value="VINAPHONE">Vinaphone</option><option value="MOBIFONE">Mobifone</option><option value="VNMOBI">Vietnamobile</option><option value="GATE">Gate</option><option value="ZING">Zing</option></select></label>
+<label class="tp-field"><span>Mệnh giá ghi trên thẻ (VNĐ)</span><input class="tp-input" name="amount" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" placeholder="VD: 50000" required <?= !$cardLive?'disabled':'' ?>><small>Nhập đúng mệnh giá được in trên thẻ.</small></label>
 </div>
-<label class="tp-field"><span>Nhận tài nguyên</span><select class="tp-select" name="currency" required <?= !$cfg['card_ready']?'disabled':'' ?>><option value="luong">Lượng thường (không khóa)</option><option value="luonglock">Lượng khóa</option></select></label>
-<div class="tp-row"><label class="tp-field"><span>Mã nạp thẻ</span><input class="tp-input" name="code" type="password" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Mã PIN dưới lớp phủ" required <?= !$cfg['card_ready']?'disabled':'' ?>></label><label class="tp-field"><span>Số serial</span><input class="tp-input" name="serial" type="text" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Serial in trên thẻ" required <?= !$cfg['card_ready']?'disabled':'' ?>></label></div>
-<label class="tp-check"><input type="checkbox" required <?= !$cfg['card_ready']?'disabled':'' ?>><span>Tôi đã kiểm tra số serial, mã thẻ và mệnh giá. Mỗi thẻ chỉ được gửi một lần.</span></label>
-<button class="tp-button" type="submit" <?= !$cfg['card_ready']?'disabled':'' ?>>Gửi thẻ để kiểm tra <span aria-hidden="true">↗</span></button>
+<label class="tp-field"><span>Nhận tài nguyên</span><select class="tp-select" name="currency" required <?= !$cardLive?'disabled':'' ?>><option value="luong">Lượng thường (không khóa)</option><option value="luonglock">Lượng khóa</option></select></label>
+<div class="tp-row"><label class="tp-field"><span>Mã nạp thẻ</span><input class="tp-input" name="code" type="password" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Mã PIN dưới lớp phủ" required <?= !$cardLive?'disabled':'' ?>></label><label class="tp-field"><span>Số serial</span><input class="tp-input" name="serial" type="text" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Serial in trên thẻ" required <?= !$cardLive?'disabled':'' ?>></label></div>
+<label class="tp-check"><input type="checkbox" required <?= !$cardLive?'disabled':'' ?>><span>Tôi đã kiểm tra số serial, mã thẻ và mệnh giá. Mỗi thẻ chỉ được gửi một lần.</span></label>
+<button class="tp-button" type="submit" <?= !$cardLive?'disabled':'' ?>>Gửi thẻ để kiểm tra <span aria-hidden="true">↗</span></button>
 </form></div>
 <div>
 <div class="tp-panel"><span class="tp-eyebrow">TỶ LỆ HIỆN TẠI</span><h2>Đổi được bao nhiêu?</h2><p class="tp-muted">Áp dụng theo mệnh giá thẻ được đối tác xác nhận. Nếu khai báo sai mệnh giá, yêu cầu cần được đối soát.</p><div class="tp-summary" style="margin-top:19px;grid-template-columns:repeat(2,minmax(0,1fr))"><div><small>10.000đ → Lượng thường</small><strong><?= number_format((int)$rates['luong'],0,',','.') ?></strong></div><div><small>10.000đ → Lượng khóa</small><strong><?= number_format((int)$rates['luonglock'],0,',','.') ?></strong></div></div></div>
