@@ -212,6 +212,16 @@ Sau khi cập nhật, kiểm tra giao diện PC/mobile, đăng nhập, đăng k�
 
 **Không sử dụng giao dịch thẻ thật để thử hệ thống.** Luồng nhà cung cấp, xác minh callback, chống cấp trùng và server game phải được kiểm tra trên môi trường staging trước.
 
+## Bảo mật quản trị và dữ liệu
+
+Admin sử dụng lớp kiểm tra quyền dùng chung, giới hạn đăng nhập theo IP/tài khoản, CSRF và bảo vệ session. Có thể bật **xác thực hai bước TOTP** từ ứng dụng Authenticator bằng biến môi trường trên VPS, không cần thay đổi SQL.
+
+Website chặn truy cập trực tiếp vào thư mục Git, file cấu hình, SQL dump, backup và dữ liệu nội bộ qua Apache `.htaccess`. Các truy vấn sử dụng PDO prepared statements; vẫn cần kiểm thử thực tế và **giới hạn quyền tài khoản MariaDB**, tránh dùng `root` cho website.
+
+Xem [hướng dẫn bảo mật và cách bật 2FA](docs/SECURITY_HARDENING.md) để cấu hình Windows Server/XAMPP, Cloudflare và kiểm tra các URL nhạy cảm phải trả 403/404.
+
+> Những lớp bảo vệ trong code không thể thay thế firewall, quyền SQL tối thiểu, cập nhật máy chủ và kiểm thử xâm nhập.
+
 ## Theo dõi phát triển
 
 Công việc khu nạp được chia thành bốn nhóm trên GitHub:
