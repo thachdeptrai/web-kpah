@@ -105,7 +105,8 @@ function kp_send_mail_smtp($to, $subject, $body)
         $encodedBody = rtrim(chunk_split(base64_encode($plainBody), 76, "\r\n"), "\r\n");
         $message = implode("\r\n", $headers)."\r\n\r\n".$encodedBody;
         $message = preg_replace('/\r?\n\./', "\r\n..", $message);
-        fwrite($fp, str_replace(["\r\n", "\r", "\n"], "\r\n", $message)."\r\n.\r\n");
+        $message = str_replace(["\r\n", "\r"], "\n", $message);
+        fwrite($fp, str_replace("\n", "\r\n", $message)."\r\n.\r\n");
         $read([250]);
         $cmd('QUIT', [221]);
     } finally {
