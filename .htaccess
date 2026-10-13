@@ -5,12 +5,12 @@ RewriteEngine On
 
 # Stop accidental exposure of Git internals, logs, SQL dumps and diagnostics.
 # Apache 2.4 / mod_rewrite; applies before public routes.
-RewriteRule "(^|/)\\.(?!well-known(?:/|$))" - [F,END,NC]
-RewriteRule "(^|/)(?:storage|includes|database|tests|docs|vendor|\\.git|\\.svn|\\.hg|\\.github)(?:/|$)" - [F,END,NC]
-RewriteRule "(^|/)(?:check|phpinfo|info)\\.php$" - [F,END,NC]
-RewriteRule "(^|/)(?:composer\\.(?:json|lock)|package(?:-lock)?\\.json|yarn\\.lock|pnpm-lock\\.yaml|web\\.config)$" - [F,END,NC]
-RewriteRule "\\.(?:sql(?:\\.(?:gz|zip|bz2|7z|rar))?|sqlite(?:3)?|db|bak|backup|old|orig|save|swp|log|ini|conf|pem|key|p12|pfx|phps|inc)$" - [F,END,NC]
-RewriteRule "(^|/)[^/]*(?:backup|dump|database)[^/]*\\.(?:zip|rar|7z|tar|tgz|gz)$" - [F,END,NC]
+RewriteRule "(^|/)\.(?!well-known(?:/|$))" - [F,END,NC]
+RewriteRule "(^|/)(?:storage|includes|database|tests|docs|vendor|\.git|\.svn|\.hg|\.github)(?:/|$)" - [F,END,NC]
+RewriteRule "(^|/)(?:check|phpinfo|info)\.php$" - [F,END,NC]
+RewriteRule "(^|/)(?:composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|pnpm-lock\.yaml|web\.config)$" - [F,END,NC]
+RewriteRule "\.(?:sql(?:\.(?:gz|zip|bz2|7z|rar))?|sqlite(?:3)?|db|bak|backup|old|orig|save|swp|log|ini|conf|pem|key|p12|pfx|phps|inc)$" - [F,END,NC]
+RewriteRule "(^|/)[^/]*(?:backup|dump|database)[^/]*\.(?:zip|rar|7z|tar|tgz|gz)$" - [F,END,NC]
 
 # Friendly routes
 RewriteRule ^dang-nhap/?$ login.php [END,QSA]
