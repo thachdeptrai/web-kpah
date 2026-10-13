@@ -6,7 +6,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
     $base = $admin ? '../' : '';
     $home = $admin ? '../../admin/index.php' : '../home.php';
     $nav = $admin
-        ? [['index.php','Tổng quan','index'],['rates.php','Tỷ lệ quy đổi','rates'],['grant.php','Cộng tài nguyên','grant'],['orders.php','Đối soát','orders']]
+        ? [['index.php','Tổng quan','index'],['rates.php','Tỷ lệ quy đổi','rates'],['grant.php','Cộng tài nguyên','grant'],['orders.php','Đối soát','orders'],['legacy.php','Bảng nạp game','legacy']]
         : [['index.php','Tổng quan','index'],['card.php','Nạp thẻ','card'],['history.php','Lịch sử','history'],['top.php','Top nạp','top'],['bank.php','Ngân hàng','bank']];
     ?>
 <!doctype html>
