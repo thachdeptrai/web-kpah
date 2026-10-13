@@ -35,3 +35,25 @@ body.home-page { background:linear-gradient(180deg,#0b0d14 0%,#0d111b 58%,#0b0d1
 .community-summary-tag{color:var(--home-acid);font-size:9px;font-weight:700;letter-spacing:.16em}
 @media(max-width:760px){.community-grid{grid-template-columns:1fr}.community-panel{padding:18px 16px}.community-dashboard{margin-bottom:36px}}
 @media(max-width:420px){.community-player-date{max-width:65px;text-align:right;font-size:9px}.community-summary{padding:14px}.community-summary-tag{display:none}}
+
+
+/* Public player ranking only; account-wide/admin statistics are intentionally absent. */
+.community-grid-single{grid-template-columns:minmax(0,1fr)}
+.community-ranking{width:100%}
+.community-rank-table{width:100%;margin-top:4px}
+.community-rank-header,.community-rank-row{display:grid;grid-template-columns:64px minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr);align-items:center;gap:14px}
+.community-rank-header{padding:12px 10px;color:var(--home-muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--home-line)}
+.community-rank-row{padding:14px 10px;border-bottom:1px solid rgba(205,216,239,.07)}
+.community-rank-row:last-child{border-bottom:0}
+.community-rank-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--home-text);font-size:13px}
+.community-rank-power,.community-rank-total{font-size:12px;font-variant-numeric:tabular-nums;text-align:right}
+.community-rank-power{color:#b7c0d2}
+.community-rank-total{color:var(--home-acid)}
+.community-rank-header span:nth-child(n+3){text-align:right}
+@media(max-width:560px){
+ .community-rank-header,.community-rank-row{grid-template-columns:38px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:8px;padding-left:2px;padding-right:2px}
+ .community-rank-header{font-size:8px;letter-spacing:0}
+ .community-rank-name{font-size:11px}
+ .community-rank-power,.community-rank-total{font-size:10px}
+ .community-rank{width:28px;height:28px}
+}
