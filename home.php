@@ -148,7 +148,6 @@ $numberFormat = function ($number) {
             <p class="welcome-description">Quản lý thông tin tài khoản, cập nhật Gmail và đổi mật khẩu ngay tại đây.</p>
             <div class="welcome-actions">
                 <a class="jump-link" href="#profile">Quản lý hồ sơ <span aria-hidden="true">↘</span></a>
-                <a class="jump-link" href="topup/index.php">Nạp tài nguyên <span aria-hidden="true">↗</span></a>
                 <a class="jump-link" href="nap.php">Nạp tài nguyên <span aria-hidden="true">↗</span></a>
                 <span class="welcome-secure">Chúc bạn chơi game vui vẻ.</span>
             </div>
