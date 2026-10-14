@@ -38,8 +38,8 @@ function kp_bank_create($user,$amount,$currency,$csrf){
  $cfg=kp_bank_cfg();
  if(!$cfg['ready'])throw new RuntimeException('Thanh toán ngân hàng chưa mở.');
  if(!in_array($currency,['luong','luonglock'],true)||!isset(kp_card_packages()[$amount]))throw new RuntimeException('Mệnh giá không hợp lệ.');
- list($allow,$retry)=kp_rate_limit('bank_create',$user['id'].'|'.kp_client_ip(),5,3600,true);
- if(!$allow)throw new RuntimeException('Bạn tạo quá nhiều đơn nạp. Hãy thử lại sau.');
+ list($allow,$retry)=kp_rate_limit('bank_create',(string)$user['id'],3,900,true);
+ if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
  $db=kp_db();
  // Random positive order code fitting payOS signed 64-bit and MySQL BIGINT.
  $code=random_int(100000000,999999999);
