@@ -10,7 +10,7 @@ try{
  $st->execute([$code,$userId]);$status=$st->fetchColumn();
  if($status===false){http_response_code(404);echo '{"ok":false}';exit;}
  // Poll reads our trusted database only; payOS webhook/CLI reconciliation remains authoritative.
- $paid=in_array($status,['paid_waiting_delivery','crediting','queued','needs_review'],true);
- $labels=['creating'=>'Đang tạo QR','pending'=>'Đang chờ chuyển khoản','paid_waiting_delivery'=>'Đã nhận tiền, đang chờ cấp Lượng','crediting'=>'Đang xác minh cấp Lượng','queued'=>'Đã đưa vào hàng chờ game','needs_review'=>'Đã ghi nhận thanh toán, cần đối soát'];
+ $paid=in_array($status,['paid_waiting_delivery','crediting','queued','needs_review','completed'],true);
+ $labels=['creating'=>'Đang tạo QR','pending'=>'Đang chờ chuyển khoản','paid_waiting_delivery'=>'Đã nhận tiền, đang chờ cấp Lượng','crediting'=>'Đang xác minh cấp Lượng','queued'=>'Đã đưa vào hàng chờ game','completed'=>'Đã cộng vào nhân vật','needs_review'=>'Đã ghi nhận thanh toán, cần đối soát'];
  echo json_encode(['ok'=>true,'status'=>$status,'paid'=>$paid,'label'=>$labels[$status]??'Đang kiểm tra'],JSON_UNESCAPED_UNICODE);
 }catch(Throwable $e){kp_log('payOS status polling failed',$e);http_response_code(503);echo '{"ok":false}';}
