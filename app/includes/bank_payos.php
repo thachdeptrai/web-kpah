@@ -36,7 +36,11 @@ function kp_bank_rewards($amount,$currency){
  return kp_card_package_units($amount,$amount,$currency);
 }
 function kp_bank_is_wallet_order(array $order): bool {
- return strpos((string)($order['status']??''),'wallet_')===0
+ // This marker is snapshotted into the existing provider_reference column at
+ // checkout creation. It survives the transition to status=completed.
+ $ref=(string)($order['provider_reference']??'');
+ return preg_match('/^VND_BONUS:(?:100|[1-9]?[0-9])$/D',$ref)===1
+    || strpos((string)($order['status']??''),'wallet_')===0
     || (($order['delivery_mode']??'')==='wallet');
 }
 function kp_bank_order_bonus(array $order): int {
@@ -194,12 +198,71 @@ function kp_bank_recover_queued($code,$charId,$queueId,$confirmation) {
  * New payment mode: verified payOS => account VNĐ wallet, never game currency.
  * InnoDB ledger uniquely keyed by payOS code allows safe webhook replay/retry.
  */
+/**
+ * Finalize a wallet top-up ONLY if its durable per-payment wallet journal
+ * confirms that the exact account/amount/bonus was credited already.
+ * Never change team_user.vnd or tongnap here; safe for repeated webhooks.
+ */
+function kp_bank_finalize_wallet_completed($code,array $order): string {
+ $code=(string)$code;
+ $status=(string)($order['status']??'');
+ if($status==='completed')return 'completed';
+ if(!in_array($status,['wallet_crediting','wallet_credited'],true))
+  return $status;
+ // Completed orders require a durable discriminator, otherwise a future
+ // webhook might mistake them for old direct-to-game orders.
+ $ref=(string)($order['provider_reference']??'');
+ if(!preg_match('/^VND_BONUS:(?:100|[1-9]?[0-9])$/D',$ref))
+  return $status;
+ $journal=kp_topup_read_file(kp_vnd_record_path('payos',$code));
+ if(!is_array($journal)||($journal['status']??'')!=='completed'
+    ||(int)($journal['user_id']??0)!==(int)$order['user_id']
+    ||(int)($journal['base']??-1)!==(int)$order['amount']
+    ||(int)($journal['bonus_percent']??-1)!==kp_bank_order_bonus($order)){
+  kp_log('payOS completed-state deferred: missing or mismatched wallet journal code='.$code);
+  return $status;
+ }
+ $st=kp_db()->prepare('UPDATE kp_bank_orders SET status="completed"
+   WHERE order_code=? AND status IN ("wallet_crediting","wallet_credited")
+     AND provider_reference=?');
+ $st->execute([$code,$ref]);
+ if($st->rowCount()===1)return 'completed';
+ $st=kp_db()->prepare('SELECT status FROM kp_bank_orders WHERE order_code=? LIMIT 1');
+ $st->execute([$code]);
+ $actual=$st->fetchColumn();
+ return $actual===false?$status:(string)$actual;
+}
+/** Convert previously credited wallet orders without replaying any credit. */
+function kp_bank_finalize_legacy_wallet_statuses(int $limit=50,?int $userId=null): int {
+ $db=kp_db();
+ $limit=max(1,min(150,$limit));
+ if($userId===null){
+  $st=$db->query("SELECT order_code,user_id,amount,status,provider_reference
+                  FROM kp_bank_orders
+                  WHERE status='wallet_credited' AND provider_reference LIKE 'VND_BONUS:%'
+                  ORDER BY id DESC LIMIT ".$limit);
+ }else{
+  $st=$db->prepare("SELECT order_code,user_id,amount,status,provider_reference
+                    FROM kp_bank_orders WHERE user_id=? AND status='wallet_credited'
+                    AND provider_reference LIKE 'VND_BONUS:%'
+                    ORDER BY id DESC LIMIT ".$limit);
+  $st->execute([$userId]);
+ }
+ $count=0;
+ foreach($st->fetchAll(PDO::FETCH_ASSOC) as $order){
+  try{
+   if(kp_bank_finalize_wallet_completed((string)$order['order_code'],$order)==='completed')$count++;
+  }catch(Throwable $e){kp_log('wallet completed status backfill deferred',$e);}
+ }
+ return $count;
+}
 function kp_bank_reconcile_wallet($code,array $order){
  $db=kp_db();
- if($order['status']==='wallet_credited'){
+ if(in_array($order['status'],['completed','wallet_credited'],true)){
+  $status=$order['status']==='completed'?'completed':kp_bank_finalize_wallet_completed($code,$order);
   try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
   catch(Throwable $e){kp_log('wallet loyalty retry deferred',$e);}
-  return 'wallet_credited';
+  return $status;
  }
  if(in_array($order['status'],['failed','cancelled','expired'],true))return $order['status'];
  $remote=kp_bank_api('GET','/'.rawurlencode((string)$code));
@@ -210,10 +273,12 @@ function kp_bank_reconcile_wallet($code,array $order){
     ->execute([$code]);
  try{
   kp_vnd_credit((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],kp_bank_order_bonus($order));
-  $db->prepare('UPDATE kp_bank_orders SET status="wallet_credited" WHERE order_code=? AND status="wallet_crediting"')->execute([$code]);
+  $order['status']='wallet_crediting';
+  $status=kp_bank_finalize_wallet_completed($code,$order);
+  if($status!=='completed')throw new RuntimeException('Ví đã cộng tiền nhưng chưa lưu trạng thái hoàn thành, cần đối soát.');
   try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
   catch(Throwable $e){kp_log('bank Point retry needed',$e);}
-  return 'wallet_credited';
+  return 'completed';
  }catch(Throwable $e){
   kp_log('verified payOS wallet credit retry needed '.$code,$e);
   return 'wallet_crediting';
