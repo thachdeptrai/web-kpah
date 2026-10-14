@@ -26,6 +26,7 @@ return [
         '/quan-tri/dang-nhap' => ['file' => 'app/admin/login.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/dang-xuat' => ['file' => 'app/admin/logout.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/ma-gioi-thieu' => ['file' => 'app/admin/referrals.php', 'scope' => 'admin', 'redirect_legacy' => true],
+        '/quan-tri/tai-khoan-key' => ['file' => 'app/admin/key-users.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/nap' => ['file' => 'app/topup/admin/index.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/ty-le' => ['file' => 'app/topup/admin/rates.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/cong-tai-nguyen' => ['file' => 'app/topup/admin/grant.php', 'scope' => 'admin', 'redirect_legacy' => true],
