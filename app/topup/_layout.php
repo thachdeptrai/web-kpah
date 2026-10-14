@@ -6,7 +6,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
     header('Content-Type: text/html; charset=utf-8');
     $home = $admin ? '/quan-tri' : '/tai-khoan';
     $nav = $admin
-        ? [['/quan-tri/nap','Tổng quan','index'],['/quan-tri/ty-le','Tỷ lệ quy đổi','rates'],['/quan-tri/cong-tai-nguyen','Cộng tài nguyên','grant'],['/quan-tri/doi-soat','Đối soát','orders'],['/quan-tri/diem-tich-luy','Point & đổi quà','points']]
+        ? [['/quan-tri/nap','Tổng quan','index'],['/quan-tri/ty-le','Tỷ lệ quy đổi','rates'],['/quan-tri/cong-tai-nguyen','Cộng tài nguyên','grant'],['/quan-tri/cong-vnd','Cộng VNĐ & tổng nạp','wallet-credit'],['/quan-tri/doi-soat','Đối soát','orders'],['/quan-tri/diem-tich-luy','Point & đổi quà','points']]
         : [['/nap','Tổng quan','index'],['/nap-the','Nạp thẻ','card'],['/lich-su-nap','Lịch sử','history'],['/top-nap','Top nạp','top'],['/nap-ngan-hang','Ngân hàng','bank'],['/diem-tich-luy','Point & đổi quà','points'],['/vi-vnd','Ví VNĐ & đổi mốc','wallet']];
     ?>
 <!doctype html>
