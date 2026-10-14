@@ -11,7 +11,8 @@ function kp_dashboard_data(int $userId): array {
     $result=[
         'vnd'=>null,'tongnap'=>null,'points'=>null,'earned'=>null,
         'characters'=>[],'characters_ready'=>false,'characters_count'=>null,
-        'payments'=>[],'payments_ready'=>false,'reward'=>null,'rewards_ready'=>false
+        'payments'=>[],'payments_ready'=>false,'reward'=>null,'rewards_ready'=>false,
+        'achievement'=>null
     ];
     $db=kp_db();
 
@@ -45,6 +46,26 @@ function kp_dashboard_data(int $userId): array {
         $result['characters']=kp_player_characters($userId,3);
         $result['characters_ready']=true;
     }catch(Throwable $e){kp_log('dashboard character preview unavailable',$e);}
+
+    try{
+        // The character must be linked to THIS user's tob_web_info_char row.
+        $st=$db->prepare('SELECT l.charname,l.lv,l.honor,l.nPK
+                          FROM tob_web_info_char AS w
+                          INNER JOIN tob_char_luong AS l ON l.charname=w.charname
+                          WHERE w.userid=? ORDER BY l.lv DESC,l.exp DESC LIMIT 1');
+        $st->execute([$userId]);
+        $honors=$st->fetch(PDO::FETCH_ASSOC);
+        if($honors){
+            $honors['vip']=null;
+            try{
+                $vip=$db->prepare('SELECT vip FROM tob_char_vip WHERE charname=? ORDER BY vip DESC LIMIT 1');
+                $vip->execute([(string)$honors['charname']]);
+                $vipValue=$vip->fetchColumn();
+                if($vipValue!==false)$honors['vip']=$vipValue;
+            }catch(Throwable $e){kp_log('dashboard VIP preview unavailable',$e);}
+            $result['achievement']=$honors;
+        }
+    }catch(Throwable $e){kp_log('dashboard personal achievements unavailable',$e);}
 
     try{
         $st=$db->prepare('SELECT id,title,points_cost FROM kp_points_rewards WHERE is_active=1 AND (stock IS NULL OR stock>0) ORDER BY points_cost ASC,id ASC LIMIT 1');
