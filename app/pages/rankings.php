@@ -18,7 +18,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     <div class="portal-hero-copy">
         <span class="portal-kicker"><i></i> ĐẠI SẢNH VINH DANH · KPAH</span>
         <h1>Bảng <em>xếp hạng.</em></h1>
-        <p>Ai đang dẫn đầu? Khám phá bảng vinh danh về nhân vật, chiến đấu, bang hội, nạp Lượng và các hoạt động trong game.</p>
+        <p>Ai đang dẫn đầu? Khám phá bảng vinh danh về nhân vật, chiến đấu, bang hội, nạp VNĐ và các hoạt động trong game.</p>
     </div>
     <div class="lb-hero-mark" aria-hidden="true">
         <span class="lb-orbit lb-orbit-1"></span><span class="lb-orbit lb-orbit-2"></span>
@@ -84,7 +84,11 @@ $rankGroups=[
                     <span>Lượng <b><?= kp_player_format($type==='rich'?$person['secondary']:$person['score']) ?></b></span>
                 </div>
                 <?php elseif($type==='nap'): ?>
-                <div class="lb-podium-breakdown"><span>Lượng cũ đã cấp <b><?= kp_player_format($person['secondary']) ?></b></span></div>
+                <div class="lb-podium-breakdown">
+                    <span>Ngân hàng <b><?=number_format((int)$person['bank_vnd'],0,',','.')?>đ</b></span>
+                    <span>Thẻ cào <b><?=number_format((int)$person['card_vnd'],0,',','.')?>đ</b></span>
+                    <?php if((int)$person['stored_vnd']>0):?><span>Tổng nạp SQL <b><?=number_format((int)$person['stored_vnd'],0,',','.')?>đ</b></span><?php endif;?>
+                </div>
                 <?php endif; ?>
             </div>
             <div class="podium-base"><span><?= sprintf('%02d',$rank) ?></span><i aria-hidden="true">✦</i></div>
@@ -110,9 +114,12 @@ $rankGroups=[
                 <span class="lb-list-avatar" aria-hidden="true"><?= kp_e($initial) ?></span>
                 <span class="lb-list-name"><?= kp_e($name) ?></span>
                 <?php if($current['secondary']!==null): ?>
-                    <span class="lb-list-secondary"><?= kp_e($current['secondary']) ?> <b><?= kp_player_format($person['secondary']) ?></b></span>
+                    <span class="lb-list-secondary"><?php if($type==='nap'):?>
+                    Ngân hàng <b><?=number_format((int)$person['bank_vnd'],0,',','.')?>đ</b> ·
+                    Thẻ cào <b><?=number_format((int)$person['card_vnd'],0,',','.')?>đ</b>
+                <?php else:?><?= kp_e($current['secondary']) ?> <b><?= kp_player_format($person['secondary']) ?></b><?php endif;?></span>
                 <?php endif; ?>
-                <span class="lb-list-score"><small><?= kp_e($current['metric']) ?></small><strong><?= kp_player_format($person['score']) ?></strong></span>
+                <span class="lb-list-score"><small><?= kp_e($current['metric']) ?></small><strong><?= $type==='nap'?number_format((int)$person['score'],0,',','.').'đ':kp_player_format($person['score']) ?></strong></span>
             </div>
         <?php endforeach; ?>
         </div>
