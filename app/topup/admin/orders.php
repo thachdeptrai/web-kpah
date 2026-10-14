@@ -7,7 +7,17 @@ $admin=kp_topup_admin();$csrf=kp_csrf_token();$cfg=kp_topup_cfg();$error='';$not
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try{
         if(!kp_admin_csrf_valid($_POST['csrf']??null))throw new RuntimeException('Phiên xác nhận đã hết hạn.');
-        if(($_POST['action']??'')==='check_bank'){
+        if(($_POST['action']??'')==='recover_bank'){
+            list($allow,$retry)=kp_rate_limit('kp_admin_bank_recover',(string)$admin['id'],4,3600,true);
+            if(!$allow)throw new RuntimeException('Đã đạt giới hạn thao tác phục hồi trong giờ.');
+            $code=filter_var($_POST['code']??null,FILTER_VALIDATE_INT);
+            $char=filter_var($_POST['char_id']??null,FILTER_VALIDATE_INT);
+            $queue=filter_var($_POST['queue_id']??null,FILTER_VALIDATE_INT);
+            if($code===false||$char===false||$queue===false)throw new RuntimeException('Mã đơn, nhân vật hoặc queue ID không hợp lệ.');
+            $status=kp_bank_recover_queued((int)$code,(int)$char,(int)$queue,(string)($_POST['confirmation']??''));
+            $notice='Phục hồi đơn #'.$code.': '.$status.'.';
+            if($status==='needs_review')$notice.=' Không thao tác lại, đối chiếu SQL trước.';
+        } elseif(($_POST['action']??'')==='check_bank'){
             $code=filter_var($_POST['code']??null,FILTER_VALIDATE_INT);
             if($code===false||$code<=0)throw new RuntimeException('Mã đơn ngân hàng không hợp lệ.');
             list($allow,$retry)=kp_rate_limit('kp_admin_bank_check',(string)$admin['id'],30,3600,true);
@@ -15,7 +25,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
             $status=kp_bank_reconcile($code);
             $notice='Đơn ngân hàng #'.$code.': '.$status;
         } elseif(($_POST['action']??'')!=='check_card')throw new RuntimeException('Thao tác không hợp lệ.');
-        if(($_POST['action']??'')==='check_bank')throw new LogicException('bank_handled');
+        if(in_array(($_POST['action']??''),['check_bank','recover_bank'],true))throw new LogicException('bank_handled');
         $id=(string)($_POST['id']??'');
         if(!preg_match('/^[a-f0-9]{32}$/D',$id))throw new RuntimeException('Mã giao dịch không hợp lệ.');
         list($allow,$retry)=kp_rate_limit('kp_topup_admin_check',(string)$admin['id'],30,3600,true);
@@ -50,9 +60,25 @@ kp_topup_page_start('Lịch sử & đối soát','orders',(string)$admin['userna
 </div></section>
 
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">NGÂN HÀNG / PAYOS</span><h2>Đơn chuyển khoản</h2></div></div>
-<?php try { $bankOrders=kp_db()->query('SELECT order_code,username,amount,currency,units,status,created_at FROM kp_bank_orders ORDER BY id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC); ?>
+<?php try { $bankOrders=kp_db()->query('SELECT order_code,user_id,char_id,username,amount,currency,units,status,created_at FROM kp_bank_orders ORDER BY id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC); ?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Thời gian</th><th>Tài khoản</th><th>VNĐ</th><th>Lượng</th><th>Trạng thái</th><th>Đối soát</th></tr></thead><tbody>
 <?php foreach($bankOrders as $b):?><tr><td><?=kp_e($b['order_code'])?></td><td><?=kp_e($b['created_at'])?></td><td><?=kp_e($b['username'])?></td><td><?=number_format((int)$b['amount'],0,',','.')?></td><td><?=number_format((int)$b['units'],0,',','.')?> <?= $b['currency']==='luong'?'L':'LK' ?></td><td><?=kp_e($b['status'])?></td><td><?php if(!in_array($b['status'],['completed','queued','crediting','needs_review'],true)&&kp_bank_cfg()['ready']):?><form method="post"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="check_bank"><input type="hidden" name="code" value="<?=kp_e($b['order_code'])?>"><button class="tp-button-secondary tp-btn--small" type="submit">Kiểm tra ↻</button></form><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div>
+<div class="tp-alert warning">Phục hồi đơn queued cũ: phải xác minh nhân vật CHƯA nhận Lượng, đã thoát game và game server KHÔNG còn đọc queue. Mỗi lần chọn đúng một dòng <code>board_naptien.id</code>. Nếu thất bại / needs_review thì dừng, không thao tác lại.</div>
+<?php foreach($bankOrders as $b):if($b['status']!=='queued'||(int)$b['char_id']!==0)continue;
+$charSt=kp_db()->prepare('SELECT id,charname FROM tob_char WHERE userId=? AND del=1 AND ban=0 ORDER BY id DESC LIMIT 25');
+$charSt->execute([(int)$b['user_id']]);$options=$charSt->fetchAll(PDO::FETCH_ASSOC);
+$queueCol=$b['currency']==='luong'?'luong':'luongKhoa';
+$qSt=kp_db()->prepare('SELECT id,svID FROM board_naptien WHERE username=? AND '.$queueCol.'=? AND xu=0 AND ve=0 ORDER BY id DESC LIMIT 20');
+$qSt->execute([(string)$b['username'],(int)$b['units']]);$queues=$qSt->fetchAll(PDO::FETCH_ASSOC);
+?>
+<div class="tp-panel tp-mt-19"><h2>Phục hồi #<?=kp_e($b['order_code'])?> · <?=kp_e($b['username'])?></h2>
+<p class="tp-muted"><?=number_format((int)$b['units'],0,',','.')?> <?= $b['currency']==='luong'?'Lượng mở':'Lượng khóa' ?> · Chỉ dùng nếu CHƯA được nhận trong game.</p>
+<form method="post" class="tp-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="recover_bank"><input type="hidden" name="code" value="<?=kp_e($b['order_code'])?>">
+<label class="tp-field"><span>Nhân vật nhận</span><select class="tp-select" name="char_id" required><option value="">Chọn nhân vật đã thoát game</option><?php foreach($options as $c):?><option value="<?=(int)$c['id']?>"><?=kp_e($c['charname'])?> (#<?=(int)$c['id']?>)</option><?php endforeach;?></select></label>
+<label class="tp-field"><span>Dòng queue cũ cần loại bỏ</span><select class="tp-select" name="queue_id" required><option value="">Chọn đúng ID từ SQL</option><?php foreach($queues as $q):?><option value="<?=(int)$q['id']?>">#<?=(int)$q['id']?> · svID <?=(int)$q['svID']?></option><?php endforeach;?></select></label>
+<label class="tp-field"><span>Nhập nguyên văn để xác nhận</span><input class="tp-input" name="confirmation" required autocomplete="off" placeholder="TOI DA KIEM TRA CHUA NHAN LUONG"></label>
+<button type="submit" class="tp-button" <?= (!$options||!$queues)?'disabled':'' ?>>Xác minh payOS và cộng một lần ↗</button></form></div>
+<?php endforeach;?>
 <?php }catch(Throwable $e) { ?><p class="tp-muted">Chưa có bảng ngân hàng. Chạy database/payos_bank.sql trước.</p><?php } ?>
 </div></section>
 <?php kp_topup_page_end(); ?>
