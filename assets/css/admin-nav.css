@@ -9,3 +9,9 @@
 
 .kp-key-users-content{max-width:1280px;margin:0 auto;padding:18px 24px 40px}
 @media(max-width:720px){.kp-key-users-content{padding:10px 12px 28px}}
+
+
+/* Admin pages use the SAME nav; remove the old duplicate, uneven side rail. */
+.tp-page.tp-admin .tp-sidebar{display:none}
+.tp-page.tp-admin .tp-shell{display:block}
+.tp-page.tp-admin .tp-content{max-width:1320px;margin-left:auto;margin-right:auto}
