@@ -20,7 +20,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         $amount = filter_var($_POST['amount'] ?? null, FILTER_VALIDATE_INT);
         $code = strtoupper(trim((string)($_POST['code'] ?? '')));
         $serial = strtoupper(trim((string)($_POST['serial'] ?? '')));
-        if (!in_array($telco,['VIETTEL','VINAPHONE','MOBIFONE','VNMOBI','GATE','ZING'],true)) {
+        if (!in_array($telco,['VINAPHONE','GARENA','ZING','VCOIN','VIETTEL','MOBIFONE'],true)) {
             throw new RuntimeException('Loại thẻ không hỗ trợ.');
         }
         if (!in_array($currency,['luong','luonglock'],true)) throw new RuntimeException('Chọn loại Lượng muốn nhận.');
@@ -95,7 +95,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <form class="tp-form" id="card-topup-form" data-rate-luong="<?= (int)$rates['luong'] ?>" data-rate-luonglock="<?= (int)$rates['luonglock'] ?>" data-fee-endpoint="/api/card-fees" method="post" autocomplete="off">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <div class="tp-row">
-<label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cardLive?'disabled':'' ?>><option value="VIETTEL">Viettel</option><option value="VINAPHONE">Vinaphone</option><option value="MOBIFONE">Mobifone</option><option value="VNMOBI">Vietnamobile</option><option value="GATE">Gate</option><option value="ZING">Zing</option></select></label>
+<label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cardLive?'disabled':'' ?>><option value="VINAPHONE">Vinaphone</option><option value="GARENA">Garena</option><option value="ZING">Zing</option><option value="VCOIN">Vcoin</option><option value="VIETTEL">Viettel</option><option value="MOBIFONE">Mobifone</option></select></label>
 <label class="tp-field"><span>Mệnh giá ghi trên thẻ (VNĐ)</span><input class="tp-input" name="amount" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" placeholder="VD: 50000" required <?= !$cardLive?'disabled':'' ?>><small>Nhập đúng mệnh giá được in trên thẻ.</small></label>
 </div>
 <label class="tp-field"><span>Nhận tài nguyên</span><select class="tp-select" name="currency" required <?= !$cardLive?'disabled':'' ?>><option value="luong">Lượng thường (không khóa)</option><option value="luonglock">Lượng khóa</option></select></label>
