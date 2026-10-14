@@ -4,6 +4,7 @@
  * Không thay đổi luồng đăng nhập, đăng ký hay cấu trúc database game.
  */
 require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/game_downloads.php';
 
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
@@ -13,7 +14,7 @@ $isLoggedIn = !empty($_SESSION['kp_user_id']);
 $loginUrl = '/dang-nhap';
 $registerUrl = '/dang-ky';
 $accountUrl = '/tai-khoan';
-$downloadUrl = kp_safe_url(kp_config('links.download', ''));
+$downloadCatalog = kp_game_download_catalog();
 $downloadPlatforms = [
     ['key' => 'android', 'name' => 'Android', 'icon' => '▣', 'detail' => 'Điện thoại Android · APK'],
     ['key' => 'windows', 'name' => 'Windows', 'icon' => '▦', 'detail' => 'Máy tính · Windows'],
@@ -21,11 +22,15 @@ $downloadPlatforms = [
 ];
 $downloadAvailable = false;
 foreach ($downloadPlatforms as &$platform) {
-    $platform['url'] = kp_safe_url(kp_config('links.download_' . $platform['key'], ''));
+    $release = $downloadCatalog[$platform['key']];
+    $platform['enabled'] = $release['enabled'];
+    $platform['url'] = !$release['enabled'] ? '' :
+        ($release['source'] === 'file'
+            ? '/tai-game/tep?nen-tang=' . $platform['key']
+            : $release['url']);
     if ($platform['url'] !== '') $downloadAvailable = true;
 }
 unset($platform);
-if ($downloadUrl !== '') $downloadAvailable = true;
 $supportUrl = kp_safe_url(kp_config('links.support', ''));
 $accountCount = null;
 
@@ -47,7 +52,7 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;display=swap">
-    <link rel="stylesheet" href="/assets/css/landing.css?v=2">
+    <link rel="stylesheet" href="/assets/css/landing.css?v=3">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body class="landing-page">
@@ -107,18 +112,13 @@ try {
                 <?php if ($platform['url'] !== ''): ?>
                     <a class="lp-download-action" href="<?= kp_e($platform['url']) ?>" target="_blank" rel="noopener noreferrer" aria-label="Tải NGHIỆN KPAH cho <?= kp_e($platform['name']) ?>">Tải xuống <span aria-hidden="true">↗</span></a>
                 <?php else: ?>
-                    <span class="lp-download-soon">Đang cập nhật</span>
+                    <span class="lp-download-soon"><?= $platform['enabled'] ? 'Đang cập nhật' : 'Tạm chưa mở tải' ?></span>
                 <?php endif; ?>
             </article>
             <?php endforeach; ?>
         </div>
-        <?php if ($downloadUrl !== ''): ?>
-            <div class="lp-download-extra">
-                <span>Muốn xem các phiên bản khác?</span>
-                <a href="<?= kp_e($downloadUrl) ?>" target="_blank" rel="noopener noreferrer">Xem tất cả bản tải <span aria-hidden="true">↗</span></a>
-            </div>
-        <?php elseif (!$downloadAvailable): ?>
-            <p class="lp-download-note">Link tải đang được chuẩn bị. Ghé lại sớm nhé!</p>
+        <?php if (!$downloadAvailable): ?>
+            <p class="lp-download-note">Các bản tải đang được chuẩn bị. Hãy quay lại sau nhé!</p>
         <?php endif; ?>
         <div class="lp-download-footer">
             <span>Chưa có tài khoản? Đăng ký miễn phí để bắt đầu hành trình.</span>
