@@ -55,7 +55,7 @@ $rankGroups=[
 <?php endforeach; ?></nav>
 
 <section class="rankings-board" aria-labelledby="ranking-heading">
-    <?php if($current===null): ?><div class="lb-empty" role="status"><h3>Chưa có bảng xếp hạng nào có dữ liệu</h3><p>Các hạng mục sẽ tự hiển thị khi game ghi nhận thành tích.</p></div><?php else: ?>
+    <?php if($current===null): ?><div class="lb-empty" role="status"><h3>Chưa có bảng xếp hạng nào có dữ liệu</h3><p>Các bảng xếp hạng mới sẽ sớm xuất hiện tại đây.</p></div><?php else: ?>
     <div class="rankings-board-heading">
         <div>
             <span class="portal-kicker"><i></i> BẢNG VINH DANH</span>
@@ -98,7 +98,7 @@ $rankGroups=[
                 <div class="lb-podium-breakdown">
                     <span>Ngân hàng <b><?=number_format((int)$person['bank_vnd'],0,',','.')?>đ</b></span>
                     <span>Thẻ cào <b><?=number_format((int)$person['card_vnd'],0,',','.')?>đ</b></span>
-                    <?php if((int)$person['stored_vnd']>0):?><span>Tổng nạp SQL <b><?=number_format((int)$person['stored_vnd'],0,',','.')?>đ</b></span><?php endif;?>
+                    <?php if((int)$person['stored_vnd']>0):?><span>Tổng đã nạp <b><?=number_format((int)$person['stored_vnd'],0,',','.')?>đ</b></span><?php endif;?>
                 </div>
                 <?php endif; ?>
             </div>
@@ -137,7 +137,7 @@ $rankGroups=[
         <?php endif; ?>
     </div>
     <?php endif; ?>
-    <div class="lb-source">Danh sách cập nhật theo thành tích ghi nhận trên hệ thống. Hình chiến binh chỉ mang tính minh họa.</div>
+    <div class="lb-source">Những cái tên nổi bật của KPAH. Bạn sẽ là người tiếp theo chứ?</div>
     <?php endif; ?>
 </section>
 <div class="portal-return"><a href="/tai-khoan">← Về khu tài khoản</a><a href="/nhan-vat">Nhân vật của tôi ↗</a></div>
