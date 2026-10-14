@@ -24,7 +24,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             throw new RuntimeException('Loại thẻ không hỗ trợ.');
         }
         if (!in_array($currency,['luong','luonglock'],true)) throw new RuntimeException('Chọn loại Lượng muốn nhận.');
-        if ($amount === false || $amount < 1000 || $amount > 1000000) throw new RuntimeException('Mệnh giá cần từ 1.000đ đến 1.000.000đ.');
+        if ($amount === false || !array_key_exists((int)$amount,kp_card_packages())) throw new RuntimeException('Chỉ hỗ trợ 10k, 50k, 100k, 500k, 1.000k.');
         if (!preg_match('/^[A-Z0-9]{6,32}$/D',$code) || !preg_match('/^[A-Z0-9]{6,32}$/D',$serial)) {
             throw new RuntimeException('Mã thẻ hoặc serial không hợp lệ.');
         }
@@ -47,7 +47,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 'id'=>$createdId,'user_id'=>(int)$user['id'],'username'=>(string)$user['username'],
                 'currency'=>$currency,'telco'=>$telco,'amount'=>(int)$amount,
                 'discount_percent'=>$discountPercent,'net_amount'=>$netAmount,
-                'units'=>$units,'rate'=>(int)$rates[$currency],
+                'units'=>$units,'rate'=>(int)$rates[$currency],'pricing'=>'card_packages_v1',
                 'fingerprint'=>$fingerprint,'serial_end'=>substr($serial,-4),
                 'sealed_card'=>kp_topup_secretbox(json_encode(['code'=>$code,'serial'=>$serial]),$cfg['secret']),
                 'status'=>'submitting','created_at'=>time(),'updated_at'=>time()
@@ -84,7 +84,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 // Avoid accidentally echoing submitted card PIN/serial anywhere below.
 kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 ?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>Lượng.</em></h1><p class="tp-lead">Chọn Lượng thường hoặc Lượng khóa. Lượng nhận được tính từ mệnh giá hợp lệ sau khi trừ chiết khấu thẻ.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>Lượng.</em></h1><p class="tp-lead">Chọn Lượng thường hoặc Lượng khóa. Bảng nạp theo mệnh giá; Lượng thực nhận được điều chỉnh theo chiết khấu API.</p></section>
 <?php if($error!==''): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="/lich-su-nap">Xem lịch sử →</a></div><?php endif; ?>
 <?php if(!$cardLive): ?>
@@ -92,11 +92,11 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <?php endif; ?>
 <section class="tp-section"><div class="tp-grid two">
 <div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cardLive ? 'SẴN SÀNG NẠP' : 'CHƯA MỞ' ?></span></div>
-<form class="tp-form" id="card-topup-form" data-rate-luong="<?= (int)$rates['luong'] ?>" data-rate-luonglock="<?= (int)$rates['luonglock'] ?>" data-fee-endpoint="/api/card-fees" method="post" autocomplete="off">
+<form class="tp-form" id="card-topup-form" data-rate-luong="<?= (int)$rates['luong'] ?>" data-rate-luonglock="<?= (int)$rates['luonglock'] ?>" data-fee-endpoint="/api/card-fees" data-packages="1" method="post" autocomplete="off">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <div class="tp-row">
 <label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cardLive?'disabled':'' ?>><option value="VINAPHONE">Vinaphone</option><option value="GARENA">Garena</option><option value="ZING">Zing</option><option value="VCOIN">Vcoin</option><option value="VIETTEL">Viettel</option><option value="MOBIFONE">Mobifone</option></select></label>
-<label class="tp-field"><span>Mệnh giá ghi trên thẻ (VNĐ)</span><input class="tp-input" name="amount" type="number" inputmode="numeric" min="1000" max="1000000" step="1000" placeholder="VD: 50000" required <?= !$cardLive?'disabled':'' ?>><small>Nhập đúng mệnh giá được in trên thẻ.</small></label>
+<label class="tp-field"><span>Mệnh giá ghi trên thẻ (VNĐ)</span><input class="tp-input" name="amount" type="number" inputmode="numeric" min="10000" max="1000000" step="10000" placeholder="VD: 50000" required <?= !$cardLive?'disabled':'' ?>><small>Chỉ hỗ trợ 10k · 50k · 100k · 500k · 1.000k.</small></label>
 </div>
 <label class="tp-field"><span>Nhận tài nguyên</span><select class="tp-select" name="currency" required <?= !$cardLive?'disabled':'' ?>><option value="luong">Lượng thường (không khóa)</option><option value="luonglock">Lượng khóa</option></select></label>
 <div class="tp-row"><label class="tp-field"><span>Mã nạp thẻ</span><input class="tp-input" name="code" type="password" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Mã PIN dưới lớp phủ" required <?= !$cardLive?'disabled':'' ?>></label><label class="tp-field"><span>Số serial</span><input class="tp-input" name="serial" type="text" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Serial in trên thẻ" required <?= !$cardLive?'disabled':'' ?>></label></div>
