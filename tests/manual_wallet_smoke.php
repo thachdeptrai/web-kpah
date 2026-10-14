@@ -15,7 +15,7 @@ $assert=function($condition,$message){
 $assert(strpos($routes,"'/quan-tri/cong-vnd'")!==false,'new admin route');
 $assert(strpos($routes,"'/quan-tri/cong-tong-nap'")!==false,'old URL compatibility');
 $assert(strpos($routes,"'scope' => 'admin'")!==false,'admin route scope');
-$assert(strpos($nav,"['wallet-credit','/quan-tri/cong-vnd'")!==false,'shared admin nav');
+$assert(strpos($nav,"'wallet-credit' => ['/quan-tri/cong-vnd'")!==false,'shared admin nav');
 $assert(strpos($page,'$admin=kp_topup_admin();')!==false,'admin-only server guard');
 $assert(strpos($page,'kp_admin_csrf_valid')!==false,'CSRF validation');
 $assert(strpos($page,'kp_admin_limit')!==false,'rate limit');
