@@ -99,7 +99,7 @@ for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the
         check('/assets/css/dashboard.css' in body and '/assets/css/site-responsive.css' in body,
               'account dashboard and responsive CSS are loaded')
     if path=='/quan-tri':
-        check('/quan-tri/tai-khoan-key' not in body and '/quan-tri/cong-tong-nap' not in body,
+        check('/quan-tri/nap-game' not in body and '/quan-tri/cong-tong-nap' not in body,
               'retired admin routes not shown')
 
 for category in ['level','honor','pk','clan','nap','event','duel','siege','wc']:
