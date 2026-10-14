@@ -35,6 +35,9 @@ return [
     ],
     'links' => [
         'login'    => '',   // điền đường dẫn trang đăng nhập THẬT của bạn
-        'download' => '',   // điền link tải game (nếu có)
+        'download' => '',           // trang tổng hợp các bản tải, nếu có
+        'download_android' => '',   // link APK thật
+        'download_windows' => '',   // link bản Windows thật
+        'download_ios' => '',       // link bản iOS thật
     ],
 ];
