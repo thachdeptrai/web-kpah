@@ -2,13 +2,14 @@
 require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/bank_payos.php';
 require_once __DIR__.'/_layout.php';
-$user=kp_topup_user();$cfg=kp_bank_cfg();$csrf=kp_csrf_token();$error='';
+$user=kp_topup_user();$cfg=kp_bank_cfg();$csrf=kp_csrf_token();$error='';$checkout='';$activeCode=0;
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
  try{
   $amount=filter_var($_POST['amount']??null,FILTER_VALIDATE_INT);
   if($amount===false)throw new RuntimeException('Mệnh giá không hợp lệ.');
   $url=kp_bank_create($user,(int)$amount,(string)($_POST['currency']??''),(string)($_POST['csrf']??''));
-  header('Location: '.$url,true,303);exit;
+  $checkout=$url;
+  $activeCode=(int)kp_db()->query('SELECT MAX(order_code) FROM kp_bank_orders WHERE user_id='.(int)$user['id'])->fetchColumn();
  }catch(Throwable $e){$error=$e instanceof RuntimeException?$e->getMessage():'Chưa tạo được yêu cầu. Thử lại sau.';}
 }
 $recent=[];
@@ -28,4 +29,20 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><tr><td><?=number_format($vnd,0,',','.')?></td><td><?=number_format($pkg['luong'],0,',','.')?></td><td><?=number_format($pkg['luonglock'],0,',','.')?></td></tr><?php endforeach;?></tbody></table></div></div></div></section>
 <section class="tp-section"><div class="tp-panel"><h2>Giao dịch của tôi</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>VNĐ</th><th>Nhận</th><th>Trạng thái</th><th>Thanh toán</th></tr></thead><tbody>
 <?php foreach($recent as $o):?><tr><td><?=kp_e($o['order_code'])?></td><td><?=kp_e($o['created_at'])?></td><td><?=number_format((int)$o['amount'],0,',','.')?></td><td><?=number_format((int)$o['units'],0,',','.')?> <?= $o['currency']==='luong'?'L':'LK' ?></td><td><?=kp_e($o['status'])?></td><td><?php if($o['status']==='pending'&&filter_var($o['checkout_url'],FILTER_VALIDATE_URL)):?><a href="<?=kp_e($o['checkout_url'])?>" target="_blank" rel="noopener">Mở QR ↗</a><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div></div></section>
+<?php if($checkout!==''):?>
+<section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">VIETQR / PAYOS</span><h2>Quét QR ngay tại đây</h2><p id="bank-payment-status" class="tp-muted" role="status" aria-live="polite">Đang mở QR. Website tự cập nhật trạng thái sau khi ngân hàng xác nhận.</p><div id="payos-embed" style="width:100%;min-height:600px"></div><p class="tp-muted">Nếu QR không hiển thị, <a href="<?=kp_e($checkout)?>" target="_blank" rel="noopener noreferrer">mở trang thanh toán payOS ↗</a></p></div></section>
+<script src="https://cdn.payos.vn/payos-checkout/v1/stable/payos-initialize.js"></script>
+<script>
+(function(){
+ var url=<?=json_encode($checkout,JSON_UNESCAPED_SLASHES)?>;
+ var note=document.getElementById('bank-payment-status');
+ function refresh(){fetch('/api/payos-status?code='+<?=json_encode($activeCode)?>,{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.json();}).then(function(d){if(d.ok){note.textContent=d.label;if(d.paid){window.location.reload();}}}).catch(function(){});}
+ if(window.PayOSCheckout && typeof PayOSCheckout.usePayOS==='function'){
+  try{PayOSCheckout.usePayOS({RETURN_URL:window.location.origin+'/nap-ngan-hang',ELEMENT_ID:'payos-embed',CHECKOUT_URL:url,embedded:true,onSuccess:refresh,onCancel:refresh,onExit:refresh}).open();}
+  catch(e){note.textContent='Không nhúng được QR. Mở đường dẫn payOS bên dưới.';}
+ }else{note.textContent='Chưa tải được thư viện QR. Mở đường dẫn payOS bên dưới.';}
+ setInterval(refresh,5000);
+})();
+</script>
+<?php endif;?>
 <?php kp_topup_page_end();?>
