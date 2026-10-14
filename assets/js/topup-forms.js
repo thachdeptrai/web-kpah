@@ -26,23 +26,30 @@
   if (card && estimate) {
     var amountField = card.querySelector('[name=amount]');
     var currencyField = card.querySelector('[name=currency]');
-    var recalc = function () {
-      var amount = Number(amountField.value);
-      var rate = Number(card.getAttribute('data-rate-' + currencyField.value) || 0);
-      if (!Number.isSafeInteger(amount) || amount <= 0 || !Number.isSafeInteger(rate)) {
-        estimate.textContent = 'Nhập mệnh giá để ước tính số Lượng nhận.';
-        return;
+    var telcoField=card.querySelector('[name=telco]');
+    var tick=0;
+    var recalc=function(){
+      var amount=Number(amountField.value),rate=Number(card.getAttribute('data-rate-'+currencyField.value)||0);
+      var telco=telcoField.value;
+      var current=++tick;
+      if(!Number.isSafeInteger(amount)||amount<1000||amount>1000000||!Number.isSafeInteger(rate)||rate<1){
+        estimate.textContent='Nhập mệnh giá để xem phí thẻ thực tế.';return;
       }
-      var discount = Number(card.getAttribute('data-discount-percent'));
-      if (!Number.isInteger(discount) || discount < 0 || discount > 99) { estimate.textContent='Chưa cấu hình chiết khấu thẻ.'; return; }
-      var net = Math.floor(amount * (100 - discount) / 100);
-      var units = Math.floor(net * rate / 10000);
-      estimate.textContent = 'Ước tính: ' + units.toLocaleString('vi-VN') + ' ' +
-        (currencyField.value === 'luonglock' ? 'Lượng khóa' : 'Lượng thường') +
-        ' · Giá trị sau chiết khấu ' + discount + '%: ' + net.toLocaleString('vi-VN') + 'đ.';
+      estimate.textContent='Đang lấy phí từ TheCaoSieuToc…';
+      fetch('/api/card-fees?telco='+encodeURIComponent(telco)+'&amount='+amount,{credentials:'same-origin'})
+        .then(function(r){return r.json();})
+        .then(function(quote){
+          if(current!==tick)return;
+          if(!quote.ok||!Number.isSafeInteger(Number(quote.net))){estimate.textContent='Chưa có báo giá cho loại thẻ này.';return;}
+          var units=Math.floor(Number(quote.net)*rate/10000);
+          estimate.textContent='Chiết khấu đối tác: '+quote.fee+'% · Thực nhận dự kiến: '+Number(quote.net).toLocaleString('vi-VN')+'đ · Dự kiến '+units.toLocaleString('vi-VN')+' '+(currencyField.value==='luonglock'?'Lượng khóa':'Lượng thường')+'.';
+        }).catch(function(){if(current===tick)estimate.textContent='Chưa tải được bảng phí từ đối tác.';});
     };
-    amountField.addEventListener('input', recalc);
-    currencyField.addEventListener('change', recalc);
+    var timer;
+    function scheduled(){clearTimeout(timer);timer=setTimeout(recalc,350);}
+    amountField.addEventListener('input',scheduled);
+    currencyField.addEventListener('change',scheduled);
+    telcoField.addEventListener('change',scheduled);
     recalc();
   }
 })();
