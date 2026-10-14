@@ -51,15 +51,15 @@ for old,new in catalog['aliases'].items():
         check(status!=301,'legacy API/callback stays in place '+old)
 for path in ['/','/dang-nhap','/dang-ky','/quen-mat-khau','/quan-tri/dang-nhap']:
     clean_page(guest,path)
-for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap']:
+for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location','').startswith('/dang-nhap'),'guest login guard '+path)
-for path in ['/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/nap-game']:
+for path in ['/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location')=='/quan-tri/dang-nhap','admin guard '+path)
 for path in ['/app/pages/login.php','/config/routes.php','/tools/check.php','/includes/db.php','/storage/topup/rates.json','/database/referral_codes.sql','/tests/seed_fixture.php','/.git/config','/.env','/config.register.local.php','/check.php','/backup.sql','/dump.zip']:
     check(guest.request(path)[0]==403,'private HTTP boundary '+path)
-for path in ['/missing-route','/madeup.php','/api/missing','/index.php/extra']:
+for path in ['/missing-route','/madeup.php','/api/missing','/index.php/extra','/quan-tri/nap-game','/quan-tri/cong-tong-nap']:
     check(guest.request(path)[0]==404,'unknown route '+path)
 status,h,b=guest.request('/dang-nhap/?x=1')
 check(status==301 and h['Location']=='/dang-nhap?x=1','trailing slash canonical')
@@ -90,6 +90,16 @@ check({'KPAHREG','KPAHADMIN'}.issubset({cookie.name for cookie in c.cookies}),'d
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/nap-game']:
     body=clean_page(c,path)
     if path=='/nhan-vat':check('FixtureHero' in body and 'OtherHero' not in body,'character ownership never crosses accounts')
+    if path=='/tai-khoan':
+        for feature in ('Ví VNĐ hiện có','Tổng đã nạp','Point tích lũy','Nhân vật của tôi','Giao dịch','Bảo mật tài khoản'):
+            check(feature.lower() in body.lower(),'dashboard widget '+feature)
+        check('FixtureHero' in body and 'OtherHero' not in body,'private dashboard character preview')
+        check('/assets/css/dashboard.css' in body and '/assets/css/site-responsive.css' in body,
+              'account dashboard and responsive CSS are loaded')
+    if path=='/quan-tri':
+        check('/quan-tri/nap-game' not in body and '/quan-tri/cong-tong-nap' not in body,
+              'retired admin routes not shown')
+
 for category in ['level','honor','pk','clan','nap','event','duel','siege','wc']:
     status,h,b=c.request('/bang-xep-hang?type='+category)
     check(status==200 and 'Chưa tải được bảng xếp hạng' not in b,'schema-backed leaderboard '+category)
