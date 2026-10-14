@@ -32,3 +32,18 @@
 .tp-btn--small{min-height:31px;padding:7px 10px}
 .tp-flex-1{flex:1}
 @media(max-width:580px){.tp-summary--two{grid-template-columns:1fr}}
+
+
+/* Dedicated full-width payOS checkout — never constrain QR to the form columns. */
+.tp-payment-section{width:100%;min-width:0;padding-top:26px}
+.tp-payment-panel{width:100%;min-width:0;background:linear-gradient(155deg,#171c2d,#111625);border:1px solid rgba(154,171,215,.21);border-radius:22px;padding:clamp(18px,3vw,38px);box-sizing:border-box;overflow:hidden}
+.tp-payment-heading{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:24px}
+.tp-payment-heading h2{font-size:clamp(23px,2.6vw,34px);margin:9px 0}
+.tp-payment-heading .tp-muted{max-width:680px}
+.tp-payment-external{flex-shrink:0;text-align:center}
+.tp-payment-stage{display:flex;align-items:flex-start;justify-content:center;width:100%;max-width:100%;min-width:0;min-height:680px;padding:20px;background:#fff;border-radius:18px;box-sizing:border-box;overflow:visible}
+.tp-payment-embed{width:100%;max-width:860px;min-width:0;min-height:650px;margin:0 auto;display:flex;justify-content:center;align-items:stretch}
+.tp-payment-embed iframe{width:100%!important;max-width:100%!important;min-height:650px!important;border:0!important}
+.tp-payment-hint{font-size:13px;line-height:1.65;opacity:.78;margin:19px 0 0}
+@media(max-width:760px){.tp-payment-panel{padding:14px;border-radius:16px}.tp-payment-heading{gap:13px;margin-bottom:16px}.tp-payment-external{width:100%}.tp-payment-stage{min-height:560px;padding:8px;border-radius:13px}.tp-payment-embed,.tp-payment-embed iframe{min-height:550px!important}.tp-payment-hint{font-size:12px}}
+@media(max-width:410px){.tp-payment-stage{padding:4px}.tp-payment-panel{padding:10px}.tp-payment-embed{min-height:540px}}
