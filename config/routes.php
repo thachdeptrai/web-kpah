@@ -3,6 +3,7 @@
 return [
     'routes' => [
         '/' => ['file' => 'app/pages/index.php', 'scope' => 'player', 'redirect_legacy' => true],
+        '/tai-game/tep' => ['file' => 'app/pages/game-download.php', 'scope' => 'player', 'redirect_legacy' => false],
         '/dang-nhap' => ['file' => 'app/pages/login.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/dang-ky' => ['file' => 'app/pages/register.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/quen-mat-khau' => ['file' => 'app/pages/forgot-password.php', 'scope' => 'player', 'redirect_legacy' => true],
@@ -25,6 +26,7 @@ return [
         '/quan-tri' => ['file' => 'app/admin/index.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/dang-nhap' => ['file' => 'app/admin/login.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/dang-xuat' => ['file' => 'app/admin/logout.php', 'scope' => 'admin', 'redirect_legacy' => true],
+        '/quan-tri/tai-game' => ['file' => 'app/admin/downloads.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/ma-gioi-thieu' => ['file' => 'app/admin/referrals.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/tai-khoan-key' => ['file' => 'app/admin/key-users.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/nap' => ['file' => 'app/topup/admin/index.php', 'scope' => 'admin', 'redirect_legacy' => true],
