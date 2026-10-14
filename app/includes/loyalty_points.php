@@ -78,3 +78,34 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken): int
         return $id;
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }
+
+/** Admin-confirmed manual fulfillment or an atomic refund of pending rewards. */
+function kp_points_review_redemption(int $redemptionId, int $adminId, string $action, string $note): string {
+    if($redemptionId<1 || $adminId<1 || !in_array($action,['fulfilled','rejected'],true)
+        || trim($note)==='' || strlen($note)>200)
+        throw new InvalidArgumentException('Xác nhận đổi quà không hợp lệ.');
+    $db=kp_db();
+    $db->beginTransaction();
+    try {
+        $st=$db->prepare('SELECT * FROM kp_points_redemptions WHERE id=? FOR UPDATE');
+        $st->execute([$redemptionId]);$redemption=$st->fetch(PDO::FETCH_ASSOC);
+        if(!$redemption || $redemption['status']!=='pending')
+            throw new RuntimeException('Yêu cầu không còn chờ xử lý. Không thao tác lại.');
+        if($action==='rejected'){
+            $userId=(int)$redemption['user_id'];$cost=(int)$redemption['points_cost'];
+            $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
+            $st=$db->prepare('SELECT total_spent FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+            $st->execute([$userId]);$spent=$st->fetchColumn();
+            if($spent===false||(int)$spent<$cost)throw new RuntimeException('Ví Point không khớp để hoàn trả.');
+            $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
+            $st->execute([$userId,$cost,'refund',(string)$redemptionId,'Hoàn Point do yêu cầu đổi quà bị từ chối']);
+            $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_spent=total_spent-? WHERE user_id=?');
+            $st->execute([$cost,$cost,$userId]);
+            $db->prepare('UPDATE kp_points_rewards SET stock=stock+1 WHERE id=? AND stock IS NOT NULL')->execute([(int)$redemption['reward_id']]);
+        }
+        $st=$db->prepare('UPDATE kp_points_redemptions SET status=?,admin_note=? WHERE id=? AND status="pending"');
+        $st->execute([$action,'#'.$adminId.' '.$note,$redemptionId]);
+        if($st->rowCount()!==1)throw new RuntimeException('Không hoàn tất đối soát yêu cầu.');
+        $db->commit();return $action;
+    }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
+}
