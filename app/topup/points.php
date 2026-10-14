@@ -26,14 +26,14 @@ try {
     if(!$program)throw new RuntimeException('Chưa kích hoạt chương trình.');
     $ready=true;
     // Repair post-payment Points in case the site went offline after successful delivery.
-    $st=$db->prepare("SELECT order_code,amount,created_at FROM kp_bank_orders WHERE user_id=? AND status='completed' AND created_at>=? ORDER BY id DESC LIMIT 150");
+    $st=$db->prepare("SELECT order_code,amount,created_at FROM kp_bank_orders WHERE user_id=? AND status IN ('completed','wallet_credited') AND created_at>=? ORDER BY id DESC LIMIT 150");
     $st->execute([$userId,$program['activated_at']]);
     foreach($st->fetchAll(PDO::FETCH_ASSOC) as $b){
         try{kp_points_award($userId,'payos',(string)$b['order_code'],(int)$b['amount'],$b['created_at']);}
         catch(Throwable $e){kp_log('recheck bank loyalty points failed',$e);}
     }
     foreach(kp_topup_recent('orders',$userId,150) as $c){
-        if(!in_array(($c['status']??''),['verified_pending_delivery','queued'],true))continue;
+        if(!in_array(($c['status']??''),['verified_pending_delivery','queued','wallet_credited'],true))continue;
         try{kp_points_award($userId,'card',(string)$c['id'],(int)$c['amount'],$c['created_at']);}
         catch(Throwable $e){kp_log('recheck card loyalty points failed',$e);}
     }
