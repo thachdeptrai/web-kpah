@@ -33,19 +33,23 @@ function kp_bank_rewards($amount,$currency){
  // Bank payments do not suffer card-processing commission.
  return kp_card_package_units($amount,$amount,$currency);
 }
-function kp_bank_create($user,$amount,$currency,$csrf){
+function kp_bank_create($user,$amount,$currency,$csrf,$charId){
  if(!kp_csrf_check($csrf))throw new RuntimeException('Phiên bảo mật hết hạn.');
  $cfg=kp_bank_cfg();
  if(!$cfg['ready'])throw new RuntimeException('Thanh toán ngân hàng chưa mở.');
  if(!in_array($currency,['luong','luonglock'],true)||!isset(kp_card_packages()[$amount]))throw new RuntimeException('Mệnh giá không hợp lệ.');
+ if(!is_int($charId)||$charId<1)throw new RuntimeException('Hãy chọn nhân vật nhận Lượng.');
+ $check=kp_db()->prepare('SELECT id FROM tob_char WHERE id=? AND userId=? AND del=1 AND ban=0 LIMIT 1');
+ $check->execute([$charId,(int)$user['id']]);
+ if(!$check->fetchColumn())throw new RuntimeException('Nhân vật không tồn tại hoặc không thuộc tài khoản này.');
  list($allow,$retry)=kp_rate_limit('bank_create',(string)$user['id'],3,900,true);
  if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
  $db=kp_db();
  // Random positive order code fitting payOS signed 64-bit and MySQL BIGINT.
  $code=random_int(100000000,999999999);
  $units=kp_bank_rewards($amount,$currency);
- $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,"creating")');
- $stmt->execute([$code,(int)$user['id'],(string)$user['username'],$amount,$currency,$units]);
+ $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,?,"creating")');
+ $stmt->execute([$code,(int)$user['id'],$charId,(string)$user['username'],$amount,$currency,$units]);
  $description='KPAH'.$code;
  $base='https://nghienkpah.io.vn/nap-ngan-hang';
  $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
@@ -63,38 +67,60 @@ function kp_bank_create($user,$amount,$currency,$csrf){
   throw new RuntimeException('Chưa tạo được link, hãy kiểm tra đơn trước khi tạo lại.');
  }
 }
+/**
+ * Direct MyISAM grant: permanently mark the InnoDB order as crediting before the
+ * nontransactional UPDATE. Never auto-repeat after uncertain outcomes.
+ */
+function kp_bank_direct_grant(array $order) {
+ $db=kp_db();
+ $charId=(int)($order['char_id']??0);
+ if($charId<1)throw new RuntimeException('Đơn không có nhân vật nhận.');
+ $currency=(string)$order['currency'];
+ if(!in_array($currency,['luong','luonglock'],true))throw new RuntimeException('Tài nguyên không hợp lệ.');
+ $units=(int)$order['units'];
+ if($units<1||$units>1000000000)throw new RuntimeException('Số Lượng không hợp lệ.');
+ $st=$db->prepare('SELECT id FROM team_user WHERE id=? AND username=? AND ban=0');
+ $st->execute([(int)$order['user_id'],(string)$order['username']]);
+ if(!$st->fetchColumn())throw new RuntimeException('Tài khoản không khả dụng.');
+ $st=$db->prepare('SELECT id,luong,luonglock FROM tob_char WHERE id=? AND userId=? AND del=1 AND ban=0 LIMIT 1');
+ $st->execute([$charId,(int)$order['user_id']]);$char=$st->fetch(PDO::FETCH_ASSOC);
+ if(!$char)throw new RuntimeException('Nhân vật không khả dụng.');
+ $before=(string)$char[$currency];
+ if(!ctype_digit($before)||strlen($before)>12||(float)$before>4294967295-$units)
+  throw new RuntimeException('Số dư game cần đối soát.');
+ // The currency identifier is selected exclusively from the fixed whitelist.
+ $sql='UPDATE tob_char SET '.$currency.'='.$currency.'+? WHERE id=? AND userId=? AND '.$currency.'=? AND del=1 AND ban=0';
+ $st=$db->prepare($sql);$st->execute([$units,$charId,(int)$order['user_id'],$before]);
+ if($st->rowCount()!==1)throw new RuntimeException('Số dư đã thay đổi, cần đối soát.');
+}
 function kp_bank_reconcile($code){
  $db=kp_db();$cfg=kp_bank_cfg();
  $db->beginTransaction();
  try {
   $stmt=$db->prepare('SELECT * FROM kp_bank_orders WHERE order_code=? FOR UPDATE');$stmt->execute([$code]);$order=$stmt->fetch(PDO::FETCH_ASSOC);
   if(!$order){$db->rollBack();return 'unknown';}
-  if(in_array($order['status'],['queued','crediting','needs_review'],true)){$db->commit();return $order['status'];}
+  if(in_array($order['status'],['completed','queued','crediting','needs_review'],true)){$db->commit();return $order['status'];}
   $response=kp_bank_api('GET','/'.rawurlencode((string)$code));
   if((string)($response['orderCode']??'')!==(string)$code || (int)($response['amount']??-1)!==(int)$order['amount'] || ($response['status']??'')!=='PAID'){
    $db->commit();return 'pending';
   }
   if((int)($response['amountPaid']??0)<(int)$order['amount']){$db->commit();return 'pending';}
   $ref=substr((string)($response['id']??''),0,100);
-  // svID=-1 is the existing board_naptien SQL default; do not reject it blindly.
-  // Explicit game_queue_verified opt-in remains mandatory.
-  if(!$cfg['queue_verified']){
-   $db->prepare('UPDATE kp_bank_orders SET status="paid_waiting_delivery",provider_reference=?,paid_at=COALESCE(paid_at,NOW()) WHERE order_code=?')->execute([$ref,$code]);
-   $db->commit();return 'paid_waiting_delivery';
+  // Existing queue-based orders are never replayed as direct credits.
+  // All NEW orders bind a selected character at creation time.
+  if((int)($order['char_id']??0)<1){
+   $db->prepare('UPDATE kp_bank_orders SET status="needs_review",provider_reference=?,paid_at=COALESCE(paid_at,NOW()) WHERE order_code=?')->execute([$ref,$code]);
+   $db->commit();return 'needs_review';
   }
-  $valid=$db->prepare('SELECT 1 FROM team_user WHERE id=? AND username=? AND ban=0');
-  $valid->execute([(int)$order['user_id'],(string)$order['username']]);
-  if(!$valid->fetchColumn()){$db->prepare('UPDATE kp_bank_orders SET status="needs_review" WHERE order_code=?')->execute([$code]);$db->commit();return 'needs_review';}
-  // MyISAM queue insert is not transactional. Mark crediting durably first.
+  // This transition is DURABLE before touching the game's MyISAM character table.
   $db->prepare('UPDATE kp_bank_orders SET status="crediting",provider_reference=?,paid_at=COALESCE(paid_at,NOW()) WHERE order_code=?')->execute([$ref,$code]);
   $db->commit();
-  try {
-   kp_topup_queue_existing_board(['user_id'=>$order['user_id'],'username'=>$order['username'],
-    'currency'=>$order['currency'],'units'=>$order['units']]);
-   $db->prepare('UPDATE kp_bank_orders SET status="queued" WHERE order_code=? AND status="crediting"')->execute([$code]);
-   return 'queued';
+  try{
+   kp_bank_direct_grant($order);
+   $db->prepare('UPDATE kp_bank_orders SET status="completed" WHERE order_code=? AND status="crediting"')->execute([$code]);
+   return 'completed';
   }catch(Throwable $e){
-   kp_log('bank queue needs manual verification',$e);
+   kp_log('payOS direct credit requires manual reconciliation',$e);
    $db->prepare('UPDATE kp_bank_orders SET status="needs_review" WHERE order_code=? AND status="crediting"')->execute([$code]);
    return 'needs_review';
   }
