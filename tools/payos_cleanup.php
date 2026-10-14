@@ -8,7 +8,7 @@ try{
  $n=kp_bank_cleanup(100);
  echo "payOS cleaned ".$n." cancelled unpaid orders\n";
  // Retry new wallet payments independently of the legacy game queue.
- $st=kp_db()->query("SELECT order_code FROM kp_bank_orders WHERE delivery_mode='wallet' AND status='wallet_crediting' ORDER BY id ASC LIMIT 40");
+ $st=kp_db()->query("SELECT order_code FROM kp_bank_orders WHERE status='wallet_crediting' ORDER BY id ASC LIMIT 40");
  $retried=0;
  foreach($st->fetchAll(PDO::FETCH_COLUMN) as $code){
   try{kp_bank_reconcile((string)$code);$retried++;}
