@@ -15,7 +15,7 @@ Dữ liệu tài chính mới được ghi trong thư mục riêng tư `storage/
 - Mỗi webhook/card có một nhật ký nguồn duy nhất và ghi **prepared trước khi chạm MyISAM**, thành công mới chuyển **completed**.
 - Nếu server tắt giữa chừng và kết quả không rõ, giao dịch không được cộng lại tự động; **cần đối soát** bằng nhật ký với số dư và đơn payOS.
 - Các đơn cũ `completed` (Lượng) có `units > 0` không tự chuyển sang ví VNĐ, tránh nhận trùng.
-- Đơn mới dùng trạng thái `wallet_creating`, `wallet_pending`, `wallet_crediting`, `wallet_credited`. Bonus được chốt tại thời điểm tạo QR vào `provider_reference` theo mẫu `VND_BONUS:10`. payOS vẫn được kiểm tra qua API bằng `order_code`.
+- Đơn mới dùng trạng thái `wallet_creating`, `wallet_pending`, `wallet_crediting` và cuối cùng là **`completed`** sau khi nhật ký ví xác nhận cộng tiền. Các đơn cũ `wallet_credited` được đồng bộ sang `completed` nếu đối chiếu đúng nhật ký, không cộng VNĐ hay tổng nạp lần hai. Bonus được chốt tại thời điểm tạo QR vào `provider_reference` theo mẫu `VND_BONUS:10`. payOS vẫn được kiểm tra qua API bằng `order_code`.
 - Thưởng mặc định **+10% ngân hàng**. Admin chỉnh tại `/quan-tri/ty-le`; mức % được giữ tại `storage/topup/bank-bonus.json`.
 - Nạp thẻ hợp lệ chỉ cộng **VNĐ thực nhận sau chiết khấu**; không thưởng ngân hàng.
 - Đổi mốc qua `/vi-vnd` trừ VNĐ một lần; cấp Lượng trực tiếp vào nhân vật đã thoát game. Nếu MyISAM trả kết quả chưa rõ, không tự hoàn hoặc cộng lại.
