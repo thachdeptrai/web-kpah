@@ -21,7 +21,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     <div class="portal-hero-copy">
         <span class="portal-kicker"><i></i> ĐẠI SẢNH VINH DANH · KPAH</span>
         <h1>Bảng <em>xếp hạng.</em></h1>
-        <p>Ai đang dẫn đầu? Chọn một hạng mục để xem thành tích của nhân vật và bang hội.</p>
+        <p>Ai đang dẫn đầu? Khám phá bảng vinh danh về nhân vật, chiến đấu, bang hội, nạp Lượng và các hoạt động trong game.</p>
     </div>
     <div class="lb-hero-mark" aria-hidden="true">
         <span class="lb-orbit lb-orbit-1"></span><span class="lb-orbit lb-orbit-2"></span>
@@ -30,14 +30,21 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     </div>
 </section>
 
-<nav class="rank-categories" aria-label="Chọn hạng mục xếp hạng">
-    <?php foreach($categories as $key=>$cat): ?>
-    <a class="rank-category<?= $type===$key?' is-selected':'' ?>"
-       href="/bang-xep-hang?type=<?= kp_e($key) ?>"<?= $type===$key?' aria-current="page"':'' ?>>
-        <span class="rank-category-glint" aria-hidden="true">✧</span><?= kp_e($cat['label']) ?>
-    </a>
-    <?php endforeach; ?>
-</nav>
+<?php
+$rankGroups=[
+ 'Nhân vật & phát triển'=>['level','honor','strength','playtime','contribution','vip','toppoints'],
+ 'Chiến đấu & tranh tài'=>['pk','kills','duel','arena','battle','siege','supply'],
+ 'Bang hội'=>['clan','clanxp','clanwealth'],
+ 'Nạp & hoạt động'=>['nap','spending','event','wc','farm']
+];
+?>
+<nav class="rank-group-directory" aria-label="Chọn bảng xếp hạng">
+<?php foreach($rankGroups as $groupName=>$keys): ?>
+<div class="rank-group"><h2><?=kp_e($groupName)?></h2><div class="rank-categories">
+<?php foreach($keys as $key): if(!isset($categories[$key]))continue;$cat=$categories[$key]; ?>
+<a class="rank-category<?= $type===$key?' is-selected':'' ?>" href="/bang-xep-hang?type=<?=kp_e($key)?>"<?= $type===$key?' aria-current="page"':'' ?>><span class="rank-category-glint" aria-hidden="true">✧</span><?=kp_e($cat['label'])?></a>
+<?php endforeach; ?></div></div>
+<?php endforeach; ?></nav>
 
 <section class="rankings-board" aria-labelledby="ranking-heading">
     <div class="rankings-board-heading">
