@@ -9,14 +9,14 @@ $cfg = kp_topup_cfg();
 $cardLive = $cfg['card_ready'];
 if($cardLive){
  try{kp_vnd_bonus_percent();kp_vnd_balance((int)$user['id']);}
- catch(Throwable $e){$cardLive=false;kp_log('card wallet migration missing',$e);}
+ catch(Throwable $e){$cardLive=false;kp_log('card wallet initialization failed',$e);}
 }
 $rates = kp_topup_rates();
 $csrf = kp_csrf_token();
 $error = ''; $notice = ''; $createdId = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     try {
-        if (!$cardLive) throw new RuntimeException('Nạp thẻ tạm đóng: kiểm tra API thẻ và migration ví VNĐ.');
+        if (!$cardLive) throw new RuntimeException('Nạp thẻ đang tạm đóng. Kiểm tra API thẻ, cột team_user.vnd và quyền ghi nhật ký.');
         if (!kp_csrf_check($_POST['csrf'] ?? null)) throw new RuntimeException('Phiên đã hết hạn. Tải lại trang.');
         list($allow,$retry) = kp_rate_limit('kp_card', (string)$user['id'].'|'.kp_client_ip(), 5, 3600, true);
         if (!$allow) throw new RuntimeException('Bạn đã gửi nhiều yêu cầu. Thử lại sau '.(int)ceil($retry/60).' phút.');
@@ -93,7 +93,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <?php if($error!==''): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="/lich-su-nap">Xem lịch sử →</a></div><?php endif; ?>
 <?php if(!$cardLive): ?>
-<div class="tp-alert warning"><strong>Chưa mở gửi thẻ thật.</strong> Chỉ mở khi cấu hình API thẻ và bảng ví VNĐ đã sẵn sàng.</div>
+<div class="tp-alert warning"><strong>Chưa mở gửi thẻ thật.</strong> Chỉ mở khi API thẻ và cột team_user.vnd hoạt động, đồng thời thư mục lưu lịch sử cho phép ghi.</div>
 <?php endif; ?>
 <section class="tp-section"><div class="tp-grid two">
 <div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cardLive ? 'SẴN SÀNG NẠP' : 'CHƯA MỞ' ?></span></div>
