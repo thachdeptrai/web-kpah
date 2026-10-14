@@ -24,6 +24,6 @@ Bộ dọn đơn chỉ xóa khi payOS **xác nhận `CANCELLED` hoặc `EXPIRED`
 C:\xampp\php\php.exe C:\xampp\htdocs\tools\payos_cleanup.php
 ```
 
-Chỉ chọn `Run whether user is logged on or not` khi tài khoản chạy có quyền truy cập cấu hình riêng, database và internet. Có thể chạy thử lệnh trên CMD trước để đọc số đơn đã dọn. Khi người chơi vào trang nạp, ứng dụng cũng thử dọn tối đa 3 đơn cũ. Không chạy lệnh này qua web.
+Chỉ chọn `Run whether user is logged on or not` khi tài khoản chạy có quyền truy cập cấu hình riêng, database và internet. Có thể chạy thử lệnh trên CMD trước để đọc số đơn đã dọn. Trang nạp không gọi API dọn đơn nhằm tránh chậm khi nhà cung cấp phản hồi lâu; Task Scheduler đảm nhiệm việc dọn tự động. Không chạy lệnh này qua web.
 
 **Quan trọng:** `creating` nhưng chưa chắc tạo link thành công sẽ không xóa tự ý khi payOS không xác nhận trạng thái. Đây là lựa chọn an toàn để tránh xóa đơn người chơi đã trả tiền.
