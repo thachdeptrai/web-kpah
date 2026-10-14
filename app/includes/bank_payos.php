@@ -93,6 +93,56 @@ function kp_bank_direct_grant(array $order) {
  $st=$db->prepare($sql);$st->execute([$units,$charId,(int)$order['user_id'],$before]);
  if($st->rowCount()!==1)throw new RuntimeException('Số dư đã thay đổi, cần đối soát.');
 }
+/**
+ * Legacy recovery is deliberately admin-only and never scheduled.
+ * The operator must confirm the game server no longer consumes the legacy queue.
+ * One exact queue row is removed before attempting the direct MyISAM grant.
+ */
+function kp_bank_recover_queued($code,$charId,$queueId,$confirmation) {
+ if($confirmation!=='TOI DA KIEM TRA CHUA NHAN LUONG')
+  throw new RuntimeException('Chưa xác nhận đã kiểm tra nhân vật chưa nhận Lượng.');
+ if(!is_int($code)||$code<1||!is_int($charId)||$charId<1||!is_int($queueId)||$queueId<1)
+  throw new RuntimeException('Mã đơn, nhân vật hoặc dòng queue không hợp lệ.');
+ $db=kp_db();
+ $db->beginTransaction();
+ try {
+  $st=$db->prepare('SELECT * FROM kp_bank_orders WHERE order_code=? FOR UPDATE');
+  $st->execute([$code]);$order=$st->fetch(PDO::FETCH_ASSOC);
+  if(!$order || $order['status']!=='queued' || (int)($order['char_id']??0)!==0)
+   throw new RuntimeException('Chỉ có thể xử lý đơn queued cũ chưa từng cộng trực tiếp.');
+  $remote=kp_bank_api('GET','/'.rawurlencode((string)$code));
+  if((string)($remote['orderCode']??'')!==(string)$code ||
+     (int)($remote['amount']??0)!==(int)$order['amount'] ||
+     ($remote['status']??'')!=='PAID' ||
+     (int)($remote['amountPaid']??0)<(int)$order['amount'])
+   throw new RuntimeException('payOS chưa xác minh thanh toán đầy đủ.');
+  $st=$db->prepare('SELECT id FROM tob_char WHERE id=? AND userId=? AND del=1 AND ban=0');
+  $st->execute([$charId,(int)$order['user_id']]);
+  if(!$st->fetchColumn())throw new RuntimeException('Nhân vật nhận không thuộc tài khoản hoặc không khả dụng.');
+  $col=$order['currency']==='luong'?'luong':($order['currency']==='luonglock'?'luongKhoa':null);
+  if($col===null)throw new RuntimeException('Loại Lượng không hợp lệ.');
+  $st=$db->prepare('SELECT id FROM board_naptien WHERE id=? AND username=? AND '.$col.'=? AND xu=0 AND ve=0');
+  $st->execute([$queueId,(string)$order['username'],(int)$order['units']]);
+  if(!$st->fetchColumn())throw new RuntimeException('Không tìm thấy dòng queue khớp đơn, kiểm tra thủ công.');
+  // Commit durable intent prior to MyISAM removal; never retry automatically.
+  $db->prepare('UPDATE kp_bank_orders SET status="crediting",char_id=? WHERE order_code=? AND status="queued"')->execute([$charId,$code]);
+  $db->commit();
+ }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
+ try {
+  // Delete exactly one pending old instruction to prevent later queue consumption.
+  $st=$db->prepare('DELETE FROM board_naptien WHERE id=? AND username=? AND '.$col.'=? AND xu=0 AND ve=0 LIMIT 1');
+  $st->execute([$queueId,(string)$order['username'],(int)$order['units']]);
+  if($st->rowCount()!==1)throw new RuntimeException('Không xác nhận được việc loại bỏ queue cũ.');
+  $order['char_id']=$charId;
+  kp_bank_direct_grant($order);
+  $db->prepare('UPDATE kp_bank_orders SET status="completed" WHERE order_code=? AND status="crediting"')->execute([$code]);
+  return 'completed';
+ }catch(Throwable $e){
+  kp_log('legacy queue recovery needs manual investigation',$e);
+  $db->prepare('UPDATE kp_bank_orders SET status="needs_review" WHERE order_code=? AND status="crediting"')->execute([$code]);
+  return 'needs_review';
+ }
+}
 function kp_bank_reconcile($code){
  $db=kp_db();$cfg=kp_bank_cfg();
  $db->beginTransaction();
