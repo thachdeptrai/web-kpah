@@ -7,6 +7,7 @@ kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 $admin = kp_admin_require('/quan-tri/dang-nhap', ['admin']);
 $error = '';
+$isAjax = strtolower((string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
 $notice = (string)($_SESSION['kp_download_notice'] ?? '');
 unset($_SESSION['kp_download_notice']);
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -21,6 +22,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (!$allowed) throw new RuntimeException('Đã thao tác quá nhiều lần. Thử lại sau.');
         kp_game_download_save($_POST, $_FILES);
         kp_admin_log_event('game_downloads_updated', (int)$admin['id']);
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['ok' => true, 'message' => 'Đã lưu cấu hình tải game.']);
+            exit;
+        }
         $_SESSION['kp_download_notice'] = 'Đã lưu cấu hình tải game. Trang chủ cập nhật ngay.';
         header('Location: /quan-tri/tai-game', true, 303);
         exit;
@@ -30,6 +36,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         kp_log('game downloads admin save failed', $e);
         $error = 'Không lưu được. Kiểm tra quyền ghi storage/game-downloads và giới hạn PHP.';
     }
+}
+if ($isAjax && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    http_response_code(400);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['ok' => false, 'message' => $error ?: 'Không thể lưu cấu hình.'], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 $rows = kp_game_download_catalog();
 $csrf = kp_csrf_token();
@@ -51,7 +63,7 @@ $platforms = kp_game_platforms();
 <section class="hero dl-hero"><div><div class="eyebrow">GAME DISTRIBUTION / QUẢN TRỊ</div><h2>Phát hành game <em>chủ động.</em></h2><p>Bật hoặc tắt nút tải từng nền tảng, dán link HTTPS hoặc upload bản cài lên VPS. Không cần sửa code hay database.</p></div><a class="dl-preview" href="/#tai-game" target="_blank" rel="noopener noreferrer">Xem khu tải game ↗</a></section>
 <?php if ($notice): ?><div class="notice" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
 <?php if ($error): ?><div class="error" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
-<form method="post" enctype="multipart/form-data" action="/quan-tri/tai-game" class="dl-form">
+<form id="dl-form" method="post" enctype="multipart/form-data" action="/quan-tri/tai-game" class="dl-form">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <input type="hidden" name="MAX_FILE_SIZE" value="536870912">
 <div class="dl-grid">
@@ -73,10 +85,11 @@ $platforms = kp_game_platforms();
 </section>
 <?php endforeach; ?>
 </div>
+<div class="dl-progress" id="dl-progress" hidden role="status" aria-live="polite"><div class="dl-progress-row"><strong id="dl-progress-label">Đang tải file lên...</strong><span id="dl-progress-value">0%</span></div><progress id="dl-progress-bar" max="100" value="0"></progress><p id="dl-progress-message"></p></div>
 <div class="dl-savebar"><div><strong>Thay đổi sẽ áp dụng ngay sau khi lưu</strong><small>Checkbox đã tắt sẽ chặn tải, kể cả khi người chơi còn giữ đường dẫn cũ.</small></div><button class="dl-save" type="submit">Lưu cấu hình tải game ↗</button></div>
 </form>
 <section class="card dl-guide"><h2>Lưu ý khi upload trực tiếp lên VPS</h2>
 <p>Giới hạn ứng dụng: <strong>512 MB / file</strong>. PHP và Apache có thể đặt giới hạn thấp hơn. Với XAMPP, tăng <code>upload_max_filesize</code>, <code>post_max_size</code>, <code>max_execution_time</code> trong <code>php.ini</code> rồi khởi động lại Apache. Dung lượng thực tế PHP hiện tại: upload <strong><?= kp_e(ini_get('upload_max_filesize')) ?></strong>, POST <strong><?= kp_e(ini_get('post_max_size')) ?></strong>.</p>
 <p>File được lưu trong <code>storage/game-downloads</code> và chỉ phát qua route tải riêng, không thực thi file trên máy chủ. Nếu nhiều người tải hoặc file lớn, dùng GitHub Releases/CDN sẽ tiết kiệm băng thông và tài nguyên VPS hơn. IPA trên iPhone còn cần phương thức cài đặt/ký ứng dụng phù hợp; tải IPA không đồng nghĩa cài trực tiếp được.</p>
 </section>
-</main></body></html>
+</main><script src="/assets/js/admin-downloads.js?v=1" defer></script></body></html>
