@@ -13,5 +13,8 @@ kp_topup_page_start('Tổng quan','index',(string)$user['username']);?>
 <a class="tp-card" href="/lich-su-nap"><span class="tp-icon green">◷</span><h3>Lịch sử nạp</h3><p>Xem lại thẻ cào, chuyển khoản payOS và tình trạng cấp Lượng.</p><span class="tp-card-cta">Lịch sử của tôi <strong>↗</strong></span></a>
 <?php if($hasTopNap): ?><a class="tp-card" href="/top-nap"><span class="tp-icon">♛</span><h3>Top nạp Lượng</h3><p>Xem ai đang đứng đầu Top nạp Lượng.</p><span class="tp-card-cta">Xem xếp hạng <strong>↗</strong></span></a><?php endif; ?>
 </div></section>
-<div class="tp-panel"><span class="tp-eyebrow">TỶ LỆ QUY ĐỔI</span><h2>Nạp theo mệnh giá thẻ</h2><div class="tp-summary tp-summary--two tp-mt-17"><div><small>Mỗi 10.000 VNĐ · Lượng thường</small><strong><?= number_format((int)$rates['luong'],0,',','.') ?></strong></div><div><small>Mỗi 10.000 VNĐ · Lượng khóa</small><strong><?= number_format((int)$rates['luonglock'],0,',','.') ?></strong></div></div><p class="tp-muted tp-mt-15">Tỷ lệ có thể được quản trị viên điều chỉnh. Giao dịch thẻ được tính theo tỷ lệ tại thời điểm gửi.</p></div>
+<div class="tp-panel"><span class="tp-eyebrow">BẢNG NẠP THỰC TẾ</span><h2>Mệnh giá và Lượng nhận</h2>
+<div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mệnh giá</th><th>Lượng mở</th><th>Lượng khóa</th></tr></thead><tbody>
+<?php foreach(kp_card_packages() as $vnd=>$pack): ?><tr><td><?=number_format($vnd,0,',','.')?>đ</td><td><?=number_format($pack['luong'],0,',','.')?></td><td><?=number_format($pack['luonglock'],0,',','.')?></td></tr><?php endforeach; ?>
+</tbody></table></div><p class="tp-muted tp-mt-15">Chuyển khoản ngân hàng nhận theo mốc trên; thẻ cào được điều chỉnh theo phí của nhà cung cấp.</p></div>
 <?php kp_topup_page_end(); ?>
