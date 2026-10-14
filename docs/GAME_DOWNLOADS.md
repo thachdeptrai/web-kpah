@@ -10,7 +10,7 @@
    - Nếu upload: chọn tệp `.zip/.exe/.msi` (PC), `.apk` (Android), `.ipa` (iOS). Không chọn tệp mới nếu muốn giữ bản cũ.
    - Tích **Cho phép người chơi tải** khi bản phát hành sẵn sàng.
 4. Bấm **Lưu cấu hình tải game**, sau đó mở `/#tai-game` kiểm tra nút tải.
-5. Muốn đóng phát hành, **bỏ tích** rồi lưu. Đường dẫn tải file qua website sẽ trả HTTP 404 ngay khi đã tắt.
+5. Muốn đóng phát hành, **bỏ tích** rồi lưu. Nếu muốn giải phóng dung lượng, tích **Xóa file cũ khỏi VPS khi lưu** (không được bật tải từ file vừa xóa). Đường dẫn tải file qua website sẽ trả HTTP 404 ngay khi đã tắt.
 
 Role `key` không được phép mở trang quản lý tải game.
 
