@@ -43,3 +43,15 @@ Chỉ chọn `Run whether user is logged on or not` khi tài khoản chạy có 
 - Trên VPS, sau khi xác minh game server xử lý queue, đặt `'game_queue_verified'=>true` trong `config/topup.local.php`. Nếu có biến môi trường `KPAH_TOPUP_GAME_QUEUE_VERIFIED`, nó sẽ ghi đè file local.
 - Task Scheduler chạy `tools/payos_cleanup.php` mỗi phút sẽ kiểm tra lại tối đa 20 đơn `paid_waiting_delivery` mỗi lượt. Có thể chủ động vào `/quan-tri/doi-soat` và bấm Kiểm tra. Không tự tạo đơn mới hoặc nạp lại.
 - Trạng thái `queued` chỉ có nghĩa là đã thêm vào hàng chờ game, chưa khẳng định nhân vật đã nhận. Nếu `needs_review` hoặc `crediting`, đối chiếu thủ công trước khi ghi bổ sung để tránh cấp hai lần.
+
+## Thay queue bằng cộng trực tiếp (phiên bản mới)
+
+**Bắt buộc chạy migration bổ sung** `database/payos_direct_credit_upgrade.sql` trên database `kpah` nếu đã tạo `kp_bank_orders` trước đó. Bổ sung cột `char_id` (không xóa dữ liệu); nếu đang cài mới, schema `database/payos_bank.sql` đã có cột này.
+
+Các đơn **mới** phải chọn nhân vật thuộc tài khoản và xác nhận nhân vật đã THOÁT GAME. Sau khi payOS báo PAID, web ghi trạng thái `crediting` vào InnoDB, rồi cộng **trực tiếp** vào `tob_char.luong` hoặc `tob_char.luonglock` bằng UPDATE có kiểm tra số dư. Thành công ghi `completed`. Không INSERT `board_naptien` cho những đơn mới.
+
+Do bảng game là MyISAM và nhân vật online có thể lưu đè dữ liệu, **không bảo đảm cộng trực tiếp khi nhân vật còn online**. Không tự lặp UPDATE khi trả về `crediting`/`needs_review`, phải so sánh số dư và log để xử lý thủ công.
+
+**Hai đơn cũ đã `queued` trước khi nâng cấp không được tự động cộng lần nữa.** Cần đối soát và xử lý riêng số Lượng của chúng trước khi mở nạp thật. Các đơn cũ thiếu `char_id` phải vào `needs_review`, không đoán nhân vật để cộng.
+
+Trang /quan-tri/doi-soat liệt kê trạng thái. Worker dọn đơn quá hạn tiếp tục làm việc, không sửa các đơn `queued` cũ.
