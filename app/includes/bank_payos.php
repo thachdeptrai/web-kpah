@@ -49,7 +49,7 @@ function kp_bank_create($user,$amount,$currency,$csrf){
  $description='KPAH'.$code;
  $base='https://nghienkpah.io.vn/nap-ngan-hang';
  $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
- 'returnUrl'=>$base.'?result=return','cancelUrl'=>$base.'?result=cancel','expiredAt'=>time()+900];
+ 'returnUrl'=>$base.'?result=return','cancelUrl'=>$base.'?result=cancel','expiredAt'=>time()+600];
  $payload['signature']=kp_bank_sign(['amount'=>$amount,'cancelUrl'=>$payload['cancelUrl'],'description'=>$description,'orderCode'=>$code,'returnUrl'=>$payload['returnUrl']],$cfg['checksum_key']);
  try {
   $link=kp_bank_api('POST','',$payload);
@@ -97,4 +97,45 @@ function kp_bank_reconcile($code){
    return 'needs_review';
   }
  }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
+}
+
+/**
+ * Safe cleanup. Never delete records until payOS explicitly confirms cancellation,
+ * and never remove a paid / possibly-paid order.
+ * Run from Windows Task Scheduler every minute, and opportunistically on bank page.
+ */
+function kp_bank_cleanup($limit=20) {
+ $db=kp_db();
+ $st=$db->prepare("SELECT order_code FROM kp_bank_orders WHERE status IN ('creating','pending') AND created_at < (NOW() - INTERVAL 10 MINUTE) ORDER BY id ASC LIMIT ".max(1,min(100,(int)$limit)));
+ $st->execute();
+ $deleted=0;
+ foreach($st->fetchAll(PDO::FETCH_COLUMN) as $code) {
+  $code=(string)$code;
+  try {
+   $state=kp_bank_reconcile($code);
+   if($state!=='pending')continue;
+   $remote=kp_bank_api('GET','/'.rawurlencode($code));
+   $status=strtoupper((string)($remote['status']??''));
+   if($status==='PENDING'){
+    $remote=kp_bank_api('POST','/'.rawurlencode($code).'/cancel',['cancellationReason'=>'Expired after 10 minutes']);
+    $status=strtoupper((string)($remote['status']??''));
+   }
+   if(!in_array($status,['CANCELLED','EXPIRED'],true))continue;
+   if((int)($remote['amountPaid']??0)!==0)continue;
+   $db->beginTransaction();
+   $lock=$db->prepare('SELECT status FROM kp_bank_orders WHERE order_code=? FOR UPDATE');
+   $lock->execute([$code]);
+   $local=$lock->fetchColumn();
+   if(in_array($local,['creating','pending'],true)){
+    $db->prepare('DELETE FROM kp_bank_webhook_events WHERE order_code=?')->execute([$code]);
+    $db->prepare('DELETE FROM kp_bank_orders WHERE order_code=?')->execute([$code]);
+    $deleted++;
+   }
+   $db->commit();
+  }catch(Throwable $e){
+   if($db->inTransaction())$db->rollBack();
+   kp_log('payOS cleanup deferred pending confirmation',$e);
+  }
+ }
+ return $deleted;
 }
