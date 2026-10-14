@@ -16,6 +16,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <title><?= kp_e($title) ?> · KPAH</title>
 <link rel="stylesheet" href="/assets/css/topup.css?v=<?= (int) @filemtime(KP_ROOT . '/assets/css/topup.css') ?>">
 <?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>"><?php endif;?>
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body class="tp-page<?= $admin ? ' tp-admin' : '' ?>">
 <div class="tp-shell">
