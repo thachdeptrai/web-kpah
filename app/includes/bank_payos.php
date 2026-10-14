@@ -35,6 +35,16 @@ function kp_bank_rewards($amount,$currency){
  // Bank payments do not suffer card-processing commission.
  return kp_card_package_units($amount,$amount,$currency);
 }
+function kp_bank_is_wallet_order(array $order): bool {
+ return strpos((string)($order['status']??''),'wallet_')===0
+    || (($order['delivery_mode']??'')==='wallet');
+}
+function kp_bank_order_bonus(array $order): int {
+ $ref=(string)($order['provider_reference']??'');
+ if(preg_match('/^VND_BONUS:([0-9]{1,3})$/D',$ref,$m))return min(100,(int)$m[1]);
+ if(isset($order['bonus_percent']) && is_numeric($order['bonus_percent']))return max(0,min(100,(int)$order['bonus_percent']));
+ return 0;
+}
 function kp_bank_create($user,$amount,$csrf){
  if(!kp_csrf_check($csrf))throw new RuntimeException('Phiên bảo mật hết hạn.');
  $cfg=kp_bank_cfg();
@@ -50,13 +60,13 @@ function kp_bank_create($user,$amount,$csrf){
  try {
   $db=kp_db();
   // Reuse a single existing checkout. No second invoice while the first is pending.
-  $st=$db->prepare("SELECT order_code,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? AND status IN ('creating','pending') ORDER BY id DESC LIMIT 1");
+  $st=$db->prepare("SELECT order_code,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? AND status IN ('creating','pending','wallet_creating','wallet_pending') ORDER BY id DESC LIMIT 1");
   $st->execute([(int)$user['id']]);$active=$st->fetch(PDO::FETCH_ASSOC);
   if($active){
    $created=strtotime((string)$active['created_at']);
    if($created!==false && $created>time()-600){
     $url=(string)($active['checkout_url']??'');
-    if($active['status']==='pending' && filter_var($url,FILTER_VALIDATE_URL)
+    if(in_array($active['status'],['pending','wallet_pending'],true) && filter_var($url,FILTER_VALIDATE_URL)
        && parse_url($url,PHP_URL_HOST)==='pay.payos.vn')return $url;
     throw new RuntimeException('Đơn thanh toán trước đang được tạo hoặc chờ đối soát. Không tạo QR khác, hãy kiểm tra lịch sử nạp.');
    }
@@ -78,8 +88,8 @@ function kp_bank_create($user,$amount,$csrf){
   if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
   $code=random_int(100000000,999999999);
   $units=0;
-  $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,delivery_mode,bonus_percent,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,?,?,?,"creating")');
-  $stmt->execute([$code,(int)$user['id'],0,'wallet',$bonusPercent,(string)$user['username'],$amount,'luong',$units]);
+  $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status,provider_reference) VALUES (?,?,?,?,?,?,?,"wallet_creating",?)');
+  $stmt->execute([$code,(int)$user['id'],0,(string)$user['username'],$amount,'luong',$units,'VND_BONUS:'.$bonusPercent]);
   $description='KPAH'.$code;
   $base='https://nghienkpah.io.vn/nap-ngan-hang';
   $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
@@ -88,7 +98,7 @@ function kp_bank_create($user,$amount,$csrf){
   try {
    $link=kp_bank_api('POST','',$payload);
    if(!isset($link['checkoutUrl'])||!filter_var($link['checkoutUrl'],FILTER_VALIDATE_URL)||parse_url($link['checkoutUrl'],PHP_URL_HOST)!=='pay.payos.vn')throw new RuntimeException('Link thanh toán không hợp lệ.');
-   $update=$db->prepare('UPDATE kp_bank_orders SET status="pending",checkout_url=?,payment_link_id=? WHERE order_code=? AND status="creating"');
+   $update=$db->prepare('UPDATE kp_bank_orders SET status="wallet_pending",checkout_url=?,payment_link_id=? WHERE order_code=? AND status="wallet_creating"');
    $update->execute([$link['checkoutUrl'],(string)($link['paymentLinkId']??''),$code]);
    if($update->rowCount()!==1)throw new RuntimeException('Trạng thái đơn thay đổi, cần đối soát.');
    return $link['checkoutUrl'];
@@ -192,10 +202,10 @@ function kp_bank_reconcile_wallet($code,array $order){
  if((string)($remote['orderCode']??'')!==(string)$code || (int)($remote['amount']??-1)!==(int)$order['amount']
     || ($remote['status']??'')!=='PAID'||(int)($remote['amountPaid']??0)<(int)$order['amount'])return 'pending';
  $ref=substr((string)($remote['id']??''),0,100);
- $db->prepare('UPDATE kp_bank_orders SET status="wallet_crediting",paid_at=COALESCE(paid_at,NOW()),provider_reference=? WHERE order_code=? AND status IN ("creating","pending","wallet_crediting","needs_review")')
-    ->execute([$ref,$code]);
+ $db->prepare('UPDATE kp_bank_orders SET status="wallet_crediting",paid_at=COALESCE(paid_at,NOW()) WHERE order_code=? AND status IN ("wallet_creating","wallet_pending","wallet_crediting")')
+    ->execute([$code]);
  try{
-  kp_vnd_credit((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],(int)$order['bonus_percent']);
+  kp_vnd_credit((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],kp_bank_order_bonus($order));
   $db->prepare('UPDATE kp_bank_orders SET status="wallet_credited" WHERE order_code=? AND status="wallet_crediting"')->execute([$code]);
   try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
   catch(Throwable $e){kp_log('bank Point retry needed',$e);}
@@ -211,7 +221,7 @@ function kp_bank_reconcile($code){
  try {
   $stmt=$db->prepare('SELECT * FROM kp_bank_orders WHERE order_code=? FOR UPDATE');$stmt->execute([$code]);$order=$stmt->fetch(PDO::FETCH_ASSOC);
   if(!$order){$db->rollBack();return 'unknown';}
-  if(($order['delivery_mode']??'game')==='wallet'){
+  if(kp_bank_is_wallet_order($order)){
    $db->commit();
    return kp_bank_reconcile_wallet($code,$order);
   }
@@ -258,7 +268,7 @@ function kp_bank_reconcile($code){
  */
 function kp_bank_cleanup($limit=20) {
  $db=kp_db();
- $st=$db->prepare("SELECT order_code FROM kp_bank_orders WHERE status IN ('creating','pending') AND created_at < (NOW() - INTERVAL 10 MINUTE) ORDER BY id ASC LIMIT ".max(1,min(100,(int)$limit)));
+ $st=$db->prepare("SELECT order_code FROM kp_bank_orders WHERE status IN ('creating','pending','wallet_creating','wallet_pending') AND created_at < (NOW() - INTERVAL 10 MINUTE) ORDER BY id ASC LIMIT ".max(1,min(100,(int)$limit)));
  $st->execute();
  $deleted=0;
  foreach($st->fetchAll(PDO::FETCH_COLUMN) as $code) {
@@ -278,7 +288,7 @@ function kp_bank_cleanup($limit=20) {
    $lock=$db->prepare('SELECT status FROM kp_bank_orders WHERE order_code=? FOR UPDATE');
    $lock->execute([$code]);
    $local=$lock->fetchColumn();
-   if(in_array($local,['creating','pending'],true)){
+   if(in_array($local,['creating','pending','wallet_creating','wallet_pending'],true)){
     $db->prepare('DELETE FROM kp_bank_webhook_events WHERE order_code=?')->execute([$code]);
     $db->prepare('DELETE FROM kp_bank_orders WHERE order_code=?')->execute([$code]);
     $deleted++;
