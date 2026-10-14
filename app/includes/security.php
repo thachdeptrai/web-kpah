@@ -97,9 +97,13 @@ function kp_send_security_headers($isPage)
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
     header('Pragma: no-cache');
     if ($isPage) {
-        header("Content-Security-Policy: default-src 'self'; script-src 'self'; "
+        $bankPage = (parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) === '/nap-ngan-hang');
+        $scripts = $bankPage ? "script-src 'self' https://cdn.payos.vn; " : "script-src 'self'; ";
+        $frames = $bankPage ? "frame-src https://pay.payos.vn https://next.pay.payos.vn; " : "frame-src 'none'; ";
+        $connect = $bankPage ? "connect-src 'self' https://payos.vn; " : "connect-src 'self'; ";
+        header("Content-Security-Policy: default-src 'self'; ".$scripts
             . "style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; "
-            . "img-src 'self' data:; connect-src 'self'; object-src 'none'; "
+            . "img-src 'self' data:; ".$connect.$frames."object-src 'none'; "
             . "base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
     }
 }
