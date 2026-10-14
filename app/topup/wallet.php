@@ -45,6 +45,6 @@ kp_topup_page_start('Ví VNĐ & đổi mốc','wallet',(string)$user['username']
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><tr><td><?=number_format($vnd,0,',','.')?></td><td><?=number_format($pkg['luong'],0,',','.')?></td><td><?=number_format($pkg['luonglock'],0,',','.')?></td></tr><?php endforeach;?></tbody></table></div></div></div></section>
 <section class="tp-section"><div class="tp-panel"><h2>Lịch sử đổi mốc</h2><?php if(!$history):?><p class="tp-muted">Chưa có giao dịch đổi mốc.</p><?php else:?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Thời gian</th><th>VNĐ trừ</th><th>Lượng nhận</th><th>Trạng thái</th></tr></thead><tbody>
-<?php foreach($history as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['created_at'])?></td><td><?=number_format((int)$x['amount_vnd'],0,',','.')?>đ</td><td><?=number_format((int)$x['units'],0,',','.')?> <?= $x['currency']==='luong'?'Lượng':'Lượng khóa' ?></td><td><?=kp_e($x['status'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
+<?php foreach($history as $x):?><tr><td>#<?=kp_e(substr((string)$x['id'],0,10))?></td><td><?=kp_e($x['created_at'])?></td><td><?=number_format((int)$x['amount_vnd'],0,',','.')?>đ</td><td><?=number_format((int)$x['units'],0,',','.')?> <?= $x['currency']==='luong'?'Lượng':'Lượng khóa' ?></td><td><?=kp_e($x['status'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <script src="/assets/js/vnd-exchange-guard.js" defer></script>
 <?php kp_topup_page_end();?>
