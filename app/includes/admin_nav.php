@@ -7,6 +7,7 @@ function kp_admin_nav($active='home',$role=null){
     $all=[
       ['home','/quan-tri','Tổng quan'],
       ['referrals','/quan-tri/ma-gioi-thieu','Mã giới thiệu'],
+      ['key-users','/quan-tri/tai-khoan-key','Tài khoản key'],
       ['index','/quan-tri/nap','Quản lý nạp'],
       ['orders','/quan-tri/doi-soat','Đối soát'],
       ['rates','/quan-tri/ty-le','Tỷ lệ & thưởng'],
