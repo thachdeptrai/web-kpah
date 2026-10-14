@@ -63,3 +63,41 @@ check_layout(strpos($dashboardCss,'grid-template-columns:repeat(4,minmax(0,1fr))
              'desktop and mobile dashboard columns adapt');
 check_layout(strpos($layout,'url(http')===false,
              'responsive styles do not load external media');
+
+$navTemplate=read_layout('app/includes/admin_nav.php');
+$navStyles=read_layout('assets/css/admin-nav.css');
+$navScript=read_layout('assets/js/admin-nav.js');
+check_layout(strpos($navTemplate,'kp-admin-nav-desktop')!==false &&
+             strpos($navTemplate,'kp-admin-nav-mobile')!==false,
+             'admin has separate compact desktop and mobile navigation');
+check_layout(strpos($navStyles,'max-width:900px')!==false &&
+             strpos($navStyles,'max-width:480px')!==false &&
+             strpos($navStyles,'max-width:360px')!==false,
+             'admin navigation adapts to tablet and small phone screens');
+check_layout(strpos($navStyles,'max-height:min(75vh,690px)')!==false &&
+             strpos($navStyles,'overflow-y:auto')!==false,
+             'mobile admin menu scrolls instead of overflowing viewport');
+check_layout(strpos($navScript,'Escape')!==false &&
+             strpos($navScript,'pointerdown')!==false,
+             'admin dropdowns support keyboard dismissal and outside clicks');
+if (!defined('KP_ROOT')) define('KP_ROOT',$root);
+if (!function_exists('kp_e')) {
+    function kp_e($value) { return htmlspecialchars((string)$value,ENT_QUOTES,'UTF-8'); }
+}
+require_once $root.'/app/includes/admin_nav.php';
+ob_start();
+kp_admin_nav('rates','admin');
+$adminMenu=ob_get_clean();
+check_layout(strpos($adminMenu,'/quan-tri/tai-game')!==false &&
+             strpos($adminMenu,'/quan-tri/ty-le')!==false &&
+             strpos($adminMenu,'aria-current="page"')!==false,
+             'admin links and active page retained in new navigation');
+check_layout(strpos($adminMenu,'/assets/js/admin-nav.js')!==false,
+             'all admin pages load shared menu interaction script');
+ob_start();
+kp_admin_nav('referrals','key');
+$keyMenu=ob_get_clean();
+check_layout(strpos($keyMenu,'/quan-tri/ma-gioi-thieu')!==false &&
+             strpos($keyMenu,'/quan-tri/tai-game')===false &&
+             strpos($keyMenu,'/quan-tri/cong-vnd')===false,
+             'key role only sees its permitted referral page');
