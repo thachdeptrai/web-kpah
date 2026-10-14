@@ -14,15 +14,12 @@ function kp_topup_cfg() {
     $id = kp_topup_env('KPAH_CARD_PARTNER_ID');
     $key = kp_topup_env('KPAH_CARD_PARTNER_KEY');
     $secret = kp_topup_env('KPAH_TOPUP_SIGNING_SECRET');
-    $discount = kp_topup_env('KPAH_CARD_DISCOUNT_PERCENT', '');
-    $discountValid = preg_match('/^(?:[0-9]|[1-9][0-9])$/D', $discount) === 1;
     return [
-        'discount_percent' => $discountValid ? (int)$discount : null,
         'partner_id' => $id,
         'partner_key' => $key,
         'secret' => $secret,
-        'api_url' => 'https://napthesieure.vn/chargingws/v2',
-        'card_ready' => $id !== '' && $key !== '' && strlen($secret) >= 32 && $discountValid && function_exists('curl_init'),
+        'api_url' => 'https://thecaosieutoc.vn/chargingws/v2',
+        'card_ready' => $id !== '' && $key !== '' && strlen($secret) >= 32 && function_exists('curl_init') && function_exists('openssl_encrypt'),
         // Off until game-server code confirms the semantics of board_naptien.
         'game_queue_verified' => kp_topup_env('KPAH_TOPUP_GAME_QUEUE_VERIFIED') === '1',
         'server_id' => (int) kp_topup_env('KPAH_TOPUP_SERVER_ID', '-1'),
@@ -125,6 +122,39 @@ function kp_topup_after_discount($faceValue, $discountPercent) {
     }
     return intdiv($faceValue * (100 - $discountPercent), 100);
 }
+function kp_topup_secretbox($raw, $secret) {
+    if (strlen($secret) < 32) throw new RuntimeException('Chưa cấu hình khóa lưu thẻ.');
+    $nonce=random_bytes(12); $tag='';
+    $cipher=openssl_encrypt($raw,'aes-256-gcm',hash('sha256',$secret,true),OPENSSL_RAW_DATA,$nonce,$tag);
+    if ($cipher===false) throw new RuntimeException('Không mã hóa được dữ liệu thẻ.');
+    return base64_encode($nonce.$tag.$cipher);
+}
+function kp_topup_openbox($encoded,$secret) {
+    $bytes=base64_decode((string)$encoded,true);
+    if ($bytes===false || strlen($bytes)<29) throw new RuntimeException('Dữ liệu đối soát không hợp lệ.');
+    $raw=openssl_decrypt(substr($bytes,28),'aes-256-gcm',hash('sha256',$secret,true),OPENSSL_RAW_DATA,substr($bytes,0,12),substr($bytes,12,16));
+    if (!is_string($raw)) throw new RuntimeException('Không giải mã được dữ liệu đối soát.');
+    return $raw;
+}
+function kp_topup_provider_fee($telco,$faceValue) {
+    $cfg=kp_topup_cfg();
+    if (!$cfg['card_ready']) throw new RuntimeException('Chưa cấu hình merchant.');
+    $url='https://thecaosieutoc.vn/chargingws/v2/getfee?'.http_build_query(['partner_id'=>$cfg['partner_id']]);
+    $h=curl_init($url);
+    curl_setopt_array($h,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_CONNECTTIMEOUT=>5,CURLOPT_TIMEOUT=>10,CURLOPT_SSL_VERIFYPEER=>true,CURLOPT_SSL_VERIFYHOST=>2,CURLOPT_FOLLOWLOCATION=>false]);
+    $body=curl_exec($h); $http=(int)curl_getinfo($h,CURLINFO_HTTP_CODE);curl_close($h);
+    if (!is_string($body)||$http!==200||strlen($body)>100000) throw new RuntimeException('Không lấy được bảng phí của đối tác.');
+    $rows=json_decode($body,true);
+    if (!is_array($rows)) throw new RuntimeException('Bảng phí đối tác chưa hợp lệ.');
+    foreach($rows as $row) {
+        if (!is_array($row) || strtoupper((string)($row['telco']??''))!==$telco || (int)($row['value']??0)!==$faceValue) continue;
+        $fee=$row['fees']??null;
+        if (!is_numeric($fee)||(float)$fee<0||(float)$fee>=100) throw new RuntimeException('Phí thẻ ngoài giới hạn.');
+        $basisPoints=(int)round((float)$fee*100);
+        return ['fee'=>$fee,'net'=>intdiv($faceValue*(10000-$basisPoints),10000)];
+    }
+    throw new RuntimeException('Đối tác chưa hỗ trợ nhà mạng hoặc mệnh giá đã chọn.');
+}
 function kp_topup_user() {
     $id = (int)($_SESSION['kp_user_id'] ?? 0);
     if ($id <= 0) { header('Location: /dang-nhap'); exit; }
@@ -151,7 +181,7 @@ function kp_topup_recent($kind, $userId = null, $limit = 50) {
     if (!is_dir($dir)) return [];
     $paths = glob($dir . '/*.json') ?: [];
     $out = [];
-    // Never deserialize card codes (they are not stored at all).
+    // Sensitive card data is encrypted at rest and must never be displayed.
     foreach ($paths as $p) {
         $d = json_decode((string)@file_get_contents($p), true);
         if (!is_array($d)) continue;
@@ -197,13 +227,21 @@ function kp_topup_provider_charge(array $order, $code, $serial) {
         'amount' => $order['amount'], 'request_id' => $order['id'],
         'partner_id' => $cfg['partner_id'], 'command' => 'charging',
     ];
-    $p['sign'] = md5($cfg['partner_key'] . $code . 'charging' . $cfg['partner_id'] . $order['id'] . $serial . $order['telco']);
+    $p['sign'] = md5($cfg['partner_key'] . $code . $serial);
     return kp_topup_provider_request($p);
 }
 function kp_topup_provider_check($id) {
-    $cfg = kp_topup_cfg();
-    $p = ['command' => 'check','partner_id' => $cfg['partner_id'],'request_id' => $id];
-    $p['sign'] = md5($cfg['partner_key'] . 'check' . $cfg['partner_id'] . $id);
+    $cfg=kp_topup_cfg();
+    $order=kp_topup_read_file(kp_topup_path('orders',$id));
+    if (!$order || empty($order['sealed_card'])) throw new RuntimeException('Giao dịch thiếu dữ liệu đối soát, cần kiểm tra thủ công.');
+    $card=json_decode(kp_topup_openbox($order['sealed_card'],$cfg['secret']),true);
+    if (!is_array($card)||empty($card['code'])||empty($card['serial'])) throw new RuntimeException('Thông tin thẻ không hợp lệ.');
+    $p=[
+        'command'=>'check','partner_id'=>$cfg['partner_id'],'request_id'=>$id,
+        'telco'=>$order['telco'],'code'=>$card['code'],'serial'=>$card['serial'],
+        'amount'=>$order['amount'],
+        'sign'=>md5($cfg['partner_key'].$card['code'].$card['serial'])
+    ];
     return kp_topup_provider_request($p);
 }
 function kp_topup_status_label($status) {
@@ -263,6 +301,15 @@ function kp_topup_reconcile($id, $callback = null) {
                 kp_topup_write_file($path,$order);
                 return $order;
             }
+            $net=filter_var($response['amount']??null,FILTER_VALIDATE_INT);
+            if ($net===false || $net<=0 || $net>(int)$order['amount']) {
+                $order['status']='needs_review';$order['updated_at']=time();kp_topup_write_file($path,$order);return $order;
+            }
+            try { $units=kp_topup_units($net,(int)$order['rate']); }
+            catch (Throwable $e) { $order['status']='needs_review';kp_topup_write_file($path,$order);return $order; }
+            $order['net_amount']=$net;
+            $order['units']=$units;
+            $order['discount_percent']=round((1-$net/(int)$order['amount'])*100,2);
             $order['status']='verified_pending_delivery';
             $order['updated_at']=time();
             kp_topup_write_file($path,$order);
