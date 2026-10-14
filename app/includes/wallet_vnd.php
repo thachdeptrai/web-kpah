@@ -39,10 +39,12 @@ function kp_vnd_with_lock(int $userId,callable $fn) {
     }
 }
 function kp_vnd_current(PDO $db,int $id): int {
-    $st=$db->prepare('SELECT vnd FROM team_user WHERE id=? AND ban=0 LIMIT 1');
-    $st->execute([$id]);$value=$st->fetchColumn();
-    if($value===false || !preg_match('/^(0|[1-9][0-9]*)$/D',(string)$value) || (float)$value>2000000000)
-        throw new RuntimeException('Không đọc được team_user.vnd: kiểm tra cột hoặc tài khoản.');
+    $st=$db->prepare('SELECT id,vnd FROM team_user WHERE id=? AND ban=0 LIMIT 1');
+    $st->execute([$id]);$row=$st->fetch(PDO::FETCH_ASSOC);
+    if(!$row)throw new RuntimeException('Tài khoản không tồn tại hoặc bị khóa.');
+    $value=$row['vnd']===null?'0':(string)$row['vnd'];
+    if(!preg_match('/^(0|[1-9][0-9]*)(?:\\.0+)?$/D',$value) || (float)$value>2000000000)
+        throw new RuntimeException('Cột team_user.vnd phải là số nguyên không âm.');
     return (int)$value;
 }
 function kp_vnd_balance(int $userId): int {
@@ -85,7 +87,7 @@ function kp_vnd_credit(int $userId,string $kind,string $ref,int $base,int $bonus
             'status'=>'prepared','created_at'=>time()];
         kp_topup_write_file($path,$record); // Durable BEFORE MyISAM mutation
         try{
-            $st=$db->prepare('UPDATE team_user SET vnd=? WHERE id=? AND vnd=? AND ban=0');
+            $st=$db->prepare('UPDATE team_user SET vnd=? WHERE id=? AND COALESCE(vnd,0)=? AND ban=0');
             $st->execute([$after,$userId,$before]);
             if($st->rowCount()!==1)throw new RuntimeException('Số dư VNĐ đã thay đổi, không được cộng lại.');
             $record['status']='completed';$record['completed_at']=time();
