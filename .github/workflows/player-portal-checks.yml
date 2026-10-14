@@ -11,6 +11,7 @@ on:
       - 'app/includes/rankings.php'
       - 'assets/css/player-portal.css'
       - 'assets/img/rank-*.svg'
+      - 'tests/rankings_smoke.php'
       - '.github/workflows/player-portal-checks.yml'
   pull_request:
     paths:
@@ -22,6 +23,7 @@ on:
       - 'app/includes/rankings.php'
       - 'assets/css/player-portal.css'
       - 'assets/img/rank-*.svg'
+      - 'tests/rankings_smoke.php'
   workflow_dispatch:
 
 permissions:
@@ -41,9 +43,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in app/pages/home.php app/pages/profile.php app/pages/characters.php app/pages/rankings.php app/includes/player_portal.php app/includes/rankings.php; do
+          for path in app/pages/home.php app/pages/profile.php app/pages/characters.php app/pages/rankings.php app/includes/player_portal.php app/includes/rankings.php tests/rankings_smoke.php; do
             php -l "$path"
           done
+      - name: Test static leaderboard queries and category whitelist
+        run: php tests/rankings_smoke.php
       - name: Parse podium SVG images
         shell: bash
         run: |
