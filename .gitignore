@@ -35,3 +35,5 @@ config/register.local.php
 
 # TheCaoSieuToc private Merchant credentials
 config/topup.local.php
+
+config/payos.local.php
