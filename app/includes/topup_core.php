@@ -402,3 +402,47 @@ function kp_topup_reconcile($id, $callback = null) {
         return $order;
     });
 }
+
+/**
+ * Best-effort automatic reconciliation of normal pending card deposits.
+ *
+ * It NEVER touches failed, needs_review, wallet_crediting or completed orders:
+ * those states may represent ambiguous MyISAM writes and require human review.
+ * A persistent per-order cooldown prevents history refreshes or scheduled
+ * workers from spamming the card provider. The normal card provider check
+ * still authorizes every successful credit.
+ */
+function kp_topup_auto_recheck_cards($userId = null, $limit = 3): int {
+    if (!kp_topup_cfg()['card_ready']) return 0;
+    $limit=max(1,min(10,(int)$limit));
+    $now=time();
+    $checked=0;
+    foreach(kp_topup_recent('orders',$userId,$userId===null?160:35) as $order){
+        if($checked >= $limit)break;
+        if(($order['delivery_mode']??'game')!=='wallet')continue;
+        if(!in_array(($order['status']??''),['submitting','pending'],true))continue;
+        if($now-(int)($order['created_at']??0)<35)continue;
+        if($now-(int)($order['auto_check_at']??0)<120)continue;
+        $id=(string)($order['id']??'');
+        if(!preg_match('/^[a-f0-9]{32}$/D',$id))continue;
+        try {
+            $reserved=false;
+            kp_topup_with_record('orders',$id,function($fresh,$path)use($now,&$reserved){
+                if(!is_array($fresh) || ($fresh['delivery_mode']??'game')!=='wallet'
+                    || !in_array(($fresh['status']??''),['submitting','pending'],true)
+                    || $now-(int)($fresh['created_at']??0)<35
+                    || $now-(int)($fresh['auto_check_at']??0)<120)return;
+                $fresh['auto_check_at']=$now;
+                kp_topup_write_file($path,$fresh);
+                $reserved=true;
+            });
+            if(!$reserved)continue;
+            $checked++;
+            kp_topup_reconcile($id);
+        } catch(Throwable $e) {
+            // Never log PIN/serial or re-submit the card.
+            kp_log('automatic card provider check deferred '.substr($id,0,10),$e);
+        }
+    }
+    return $checked;
+}
