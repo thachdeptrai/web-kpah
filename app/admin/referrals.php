@@ -6,7 +6,7 @@ kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 
 // One central admin guard: role, active status, MFA, session age and browser binding.
-kp_admin_require();
+$admin=kp_admin_require('/quan-tri/dang-nhap',['admin','key']);
 
 $notice = '';
 $error = '';
@@ -44,6 +44,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $st->execute([$rawCode, (int) $limit, $expiry, (int) $_SESSION['kp_admin_id']]);
                 $notice = 'Đã tạo mã ' . $rawCode . '.';
             } elseif ($action === 'toggle') {
+                if ($admin['role'] !== 'admin') throw new RuntimeException('Role key chỉ được tạo mã, không thể thay đổi mã đã có.');
                 $id = (int) ($_POST['id'] ?? 0);
                 $st = kp_db()->prepare('UPDATE kpah_referral_codes SET is_active = IF(is_active = 1, 0, 1) WHERE id = ?');
                 $st->execute([$id]);
@@ -73,7 +74,7 @@ $codes = kp_db()->query(
 $uses = kp_db()->query('SELECT code, username, used_at FROM kpah_referral_code_uses ORDER BY id DESC LIMIT 100')->fetchAll();
 ?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quản lý mã giới thiệu KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin.css?v=1"></head><body><header><div class="brand"><div class="brand-mark">✦</div><div class="brand-copy"><span class="eyebrow">KPAH • CONTROL CENTER</span><h1>Quản trị hệ thống</h1></div></div><div class="head-right"><a class="logout" href="/quan-tri">⌂ Trang chủ</a><span><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div></header>
+<link rel="stylesheet" href="/assets/css/admin.css?v=1"></head><body><header><div class="brand"><div class="brand-mark">✦</div><div class="brand-copy"><span class="eyebrow">KPAH • CONTROL CENTER</span><h1>Quản trị hệ thống</h1></div></div><div class="head-right"><?php if($admin['role']==='admin'):?><a class="logout" href="/quan-tri">⌂ Trang chủ</a><?php endif;?><span><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div></header>
 <main class="wrap">
 <div class="hero"><div><div class="eyebrow">REFERRAL MANAGEMENT / 01</div><h2>Trung tâm mã giới thiệu</h2><p>Quản lý lượt đăng ký, hạn sử dụng và lịch sử kích hoạt trong một bảng điều khiển duy nhất.</p></div><div class="live">Phiên quản trị được bảo vệ</div></div>
 <section class="stats">
