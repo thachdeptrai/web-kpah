@@ -72,9 +72,11 @@ for path in ['/api/register','/api/register.php']:
     check(status==403 and json.loads(b)['code']=='csrf','registration CSRF '+path)
     check(guest.request(path,b'x'*9000,method='POST')[0]==413,'registration request limit '+path)
 for path in ['/api/card-callback','/topup/card-callback.php']:
-    check(guest.request(path)[0]==405,'callback method '+path)
+    # Card provider callback legitimately accepts signed GET as well as POST.
+    status,h,b=guest.request(path)
+    check(status==503 and b=='UNAVAILABLE','disabled provider callback GET '+path)
     status,h,b=guest.request(path,{'request_id':'invalid'})
-    check(status==503 and b=='UNAVAILABLE' and 'Location' not in h,'disabled callback POST unchanged '+path)
+    check(status==503 and b=='UNAVAILABLE' and 'Location' not in h,'disabled provider callback POST unchanged '+path)
 status,h,b=guest.request('/captcha')
 check(status==200 and h.get('Content-Type','').startswith(('image/png','image/svg+xml')),'captcha generates image')
 # Open admin form first; player login must not invalidate its CSRF/session.
