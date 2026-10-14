@@ -6,6 +6,7 @@ function kp_admin_nav($active='home',$role=null){
     if(!in_array($role,['admin','key'],true))return;
     $all=[
       ['home','/quan-tri','Tổng quan'],
+      ['downloads','/quan-tri/tai-game','Tải game'],
       ['referrals','/quan-tri/ma-gioi-thieu','Mã giới thiệu'],
       ['key-users','/quan-tri/tai-khoan-key','Tài khoản key'],
       ['index','/quan-tri/nap','Quản lý nạp'],
@@ -15,7 +16,7 @@ function kp_admin_nav($active='home',$role=null){
       ['wallet-credit','/quan-tri/cong-vnd','Cộng VNĐ & tổng nạp'],
       ['points','/quan-tri/diem-tich-luy','Point & quà'],
     ];
-    $links=$role==='key'?[$all[1]]:$all;
+    $links=$role==='key'?[$all[2]]:$all;
     ?>
 <nav class="kp-admin-nav" aria-label="Điều hướng quản trị">
   <div class="kp-admin-nav-links">
