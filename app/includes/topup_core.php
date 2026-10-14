@@ -120,6 +120,21 @@ function kp_topup_units($vnd, $per10k) {
     if ($units < 1 || $units > 1000000000) throw new RuntimeException('Giá trị quy đổi vượt giới hạn.');
     return $units;
 }
+function kp_card_packages() {
+    return [
+        10000=>['luong'=>250,'luonglock'=>500],
+        50000=>['luong'=>1500,'luonglock'=>3000],
+        100000=>['luong'=>3500,'luonglock'=>7000],
+        500000=>['luong'=>20000,'luonglock'=>40000],
+        1000000=>['luong'=>45000,'luonglock'=>90000],
+    ];
+}
+function kp_card_package_units($face,$net,$currency) {
+    $packages=kp_card_packages();
+    if (!is_int($face) || !isset($packages[$face][$currency]) || !is_int($net) || $net<1 || $net>$face)
+        throw new RuntimeException('Mệnh giá hoặc số tiền thực nhận không hợp lệ.');
+    return intdiv($packages[$face][$currency]*$net,$face);
+}
 function kp_topup_after_discount($faceValue, $discountPercent) {
     if (!is_int($faceValue) || $faceValue < 1 || $faceValue > 1000000000 || !is_int($discountPercent) || $discountPercent < 0 || $discountPercent > 99) {
         throw new RuntimeException('Mệnh giá hoặc chiết khấu không hợp lệ.');
@@ -309,7 +324,7 @@ function kp_topup_reconcile($id, $callback = null) {
             if ($net===false || $net<=0 || $net>(int)$order['amount']) {
                 $order['status']='needs_review';$order['updated_at']=time();kp_topup_write_file($path,$order);return $order;
             }
-            try { $units=kp_topup_units($net,(int)$order['rate']); }
+            try { $units=($order['pricing']??'')==='card_packages_v1' ? kp_card_package_units((int)$order['amount'],$net,(string)$order['currency']) : kp_topup_units($net,(int)$order['rate']); }
             catch (Throwable $e) { $order['status']='needs_review';kp_topup_write_file($path,$order);return $order; }
             $order['net_amount']=$net;
             $order['units']=$units;
