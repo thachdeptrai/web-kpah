@@ -1,1 +1,0 @@
-(function(){'use strict';var f=document.getElementById('admin-tongnap-form');var b=document.getElementById('admin-tongnap-button');if(!f||!b)return;var sent=false;f.addEventListener('submit',function(e){if(sent){e.preventDefault();return;}if(!f.checkValidity())return;sent=true;b.disabled=true;b.setAttribute('aria-busy','true');b.textContent='Đang cập nhật tổng nạp…';});})();
