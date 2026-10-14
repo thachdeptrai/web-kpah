@@ -14,6 +14,18 @@ $loginUrl = '/dang-nhap';
 $registerUrl = '/dang-ky';
 $accountUrl = '/tai-khoan';
 $downloadUrl = kp_safe_url(kp_config('links.download', ''));
+$downloadPlatforms = [
+    ['key' => 'android', 'name' => 'Android', 'icon' => '▣', 'detail' => 'Điện thoại Android · APK'],
+    ['key' => 'windows', 'name' => 'Windows', 'icon' => '▦', 'detail' => 'Máy tính · Windows'],
+    ['key' => 'ios', 'name' => 'iPhone / iPad', 'icon' => '◈', 'detail' => 'Thiết bị iOS · IPA'],
+];
+$downloadAvailable = false;
+foreach ($downloadPlatforms as &$platform) {
+    $platform['url'] = kp_safe_url(kp_config('links.download_' . $platform['key'], ''));
+    if ($platform['url'] !== '') $downloadAvailable = true;
+}
+unset($platform);
+if ($downloadUrl !== '') $downloadAvailable = true;
 $supportUrl = kp_safe_url(kp_config('links.support', ''));
 $accountCount = null;
 
@@ -47,6 +59,7 @@ try {
             <span class="lp-brand-copy"><strong>NGHIỆN KPAH</strong><small>CỘNG ĐỒNG NGƯỜI CHƠI</small></span>
         </a>
         <nav class="lp-links" aria-label="Điều hướng chính">
+            <a class="lp-download-nav" href="#tai-game">Tải game</a>
             <a href="#gioi-thieu">Giới thiệu</a>
             <a href="#thong-tin">Thông tin</a>
             <a href="#dien-dan">Diễn đàn</a>
@@ -73,11 +86,44 @@ try {
                 <a class="lp-button" href="<?= kp_e($registerUrl) ?>">TẠO TÀI KHOẢN <span aria-hidden="true">↗</span></a>
                 <a class="lp-button lp-button-secondary" href="<?= kp_e($loginUrl) ?>">ĐĂNG NHẬP</a>
             <?php endif; ?>
-            <?php if ($downloadUrl !== ''): ?>
-                <a class="lp-button lp-button-secondary" href="<?= kp_e($downloadUrl) ?>" target="_blank" rel="noopener noreferrer">TẢI GAME</a>
-            <?php endif; ?>
+            <a class="lp-button lp-button-download" href="#tai-game">TẢI GAME <span aria-hidden="true">↓</span></a>
         </div>
         <p class="lp-hero-note">Đã có tài khoản? Đăng nhập và gặp lại nhân vật của bạn.</p>
+    </section>
+
+    <section class="lp-wrap lp-section lp-download-section" id="tai-game" aria-labelledby="download-title">
+        <div class="lp-section-head">
+            <div><span class="lp-index">TẢI GAME · NGHIỆN KPAH</span><h2 id="download-title">Sẵn sàng <em>vào game?</em></h2></div>
+            <p>Chọn thiết bị của bạn, tải game và gặp anh em trong thế giới KPAH.</p>
+        </div>
+        <div class="lp-download-grid">
+            <?php foreach ($downloadPlatforms as $platform): ?>
+            <article class="lp-download-card<?= $platform['url'] !== '' ? ' is-ready' : '' ?>">
+                <span class="lp-download-icon" aria-hidden="true"><?= kp_e($platform['icon']) ?></span>
+                <div class="lp-download-card-copy">
+                    <h3><?= kp_e($platform['name']) ?></h3>
+                    <p><?= kp_e($platform['detail']) ?></p>
+                </div>
+                <?php if ($platform['url'] !== ''): ?>
+                    <a class="lp-download-action" href="<?= kp_e($platform['url']) ?>" target="_blank" rel="noopener noreferrer" aria-label="Tải NGHIỆN KPAH cho <?= kp_e($platform['name']) ?>">Tải xuống <span aria-hidden="true">↗</span></a>
+                <?php else: ?>
+                    <span class="lp-download-soon">Đang cập nhật</span>
+                <?php endif; ?>
+            </article>
+            <?php endforeach; ?>
+        </div>
+        <?php if ($downloadUrl !== ''): ?>
+            <div class="lp-download-extra">
+                <span>Muốn xem các phiên bản khác?</span>
+                <a href="<?= kp_e($downloadUrl) ?>" target="_blank" rel="noopener noreferrer">Xem tất cả bản tải <span aria-hidden="true">↗</span></a>
+            </div>
+        <?php elseif (!$downloadAvailable): ?>
+            <p class="lp-download-note">Link tải đang được chuẩn bị. Ghé lại sớm nhé!</p>
+        <?php endif; ?>
+        <div class="lp-download-footer">
+            <span>Chưa có tài khoản? Đăng ký miễn phí để bắt đầu hành trình.</span>
+            <a href="<?= kp_e($registerUrl) ?>">Tạo tài khoản <span aria-hidden="true">↗</span></a>
+        </div>
     </section>
 
     <section class="lp-wrap lp-section" id="gioi-thieu" aria-labelledby="intro-title">
