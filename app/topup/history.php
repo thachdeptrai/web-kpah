@@ -3,7 +3,12 @@ require __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/topup_core.php';
 require_once __DIR__ . '/../includes/bank_payos.php';
 require_once __DIR__ . '/_layout.php';
-$user=kp_topup_user();$orders=kp_topup_recent('orders',(int)$user['id'],100);
+$user=kp_topup_user();
+// The user's history can confirm stale pending cards without visiting admin.
+// Provider check is throttled (120s/order) and never re-submits PIN/serial.
+try{kp_topup_auto_recheck_cards((int)$user['id'],1);}
+catch(Throwable $e){kp_log('player card status refresh deferred',$e);}
+$orders=kp_topup_recent('orders',(int)$user['id'],100);
 $bankOrders=[];$bankError=false;
 try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,created_at,paid_at,provider_reference FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 100');$st->execute([(int)$user['id']]);$bankOrders=$st->fetchAll(PDO::FETCH_ASSOC);}catch(Throwable $e){kp_log('player payment history bank lookup failed',$e);$bankError=true;}
 kp_topup_page_start('Lịch sử nạp','history',(string)$user['username']);?>
@@ -13,7 +18,7 @@ kp_topup_page_start('Lịch sử nạp','history',(string)$user['username']);?>
 <?php endif; ?>
 <?php if($orders): ?><div class="tp-panel-head tp-mt-19"><div><span class="tp-eyebrow">NẠP THẺ CÀO</span><h2>Lịch sử thẻ cào</h2></div></div><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Thời gian</th><th>Nhà mạng</th><th>Mệnh giá</th><th>Sau chiết khấu</th><th>Nhận</th><th>Trạng thái</th></tr></thead><tbody>
 <?php foreach($orders as $order): ?>
-<tr><td><b>#<?= kp_e(strtoupper(substr((string)$order['id'],0,10))) ?></b></td><td><?= date('d/m/Y H:i',(int)$order['created_at']) ?></td><td><?= kp_e($order['telco']) ?></td><td><?= number_format((int)$order['amount'],0,',','.') ?>đ</td><td><?= number_format((int)($order['net_amount'] ?? $order['amount']),0,',','.') ?>đ<?php if(isset($order['discount_percent'])): ?> <small>(-<?= (int)$order['discount_percent'] ?>%)</small><?php endif; ?></td><td><?php if(($order['delivery_mode']??'game')==='wallet'):?><?=number_format((int)($order['net_amount']??0),0,',','.')?>đ ví<?php else:?><?= number_format((int)$order['units'],0,',','.') ?> <?= ($order['currency']??'')==='luonglock'?'Lượng khóa':'Lượng thường' ?><?php endif;?></td><td><span class="tp-pill <?= kp_e($order['status']) ?>"><?= kp_e(kp_topup_status_label($order['status'])) ?></span></td></tr>
+<tr><td><b>#<?= kp_e(strtoupper(substr((string)$order['id'],0,10))) ?></b></td><td><?= date('d/m/Y H:i',(int)$order['created_at']) ?></td><td><?= kp_e($order['telco']) ?></td><td><?= number_format((int)$order['amount'],0,',','.') ?>đ</td><td><?= number_format((int)($order['net_amount'] ?? $order['amount']),0,',','.') ?>đ<?php if(isset($order['discount_percent'])): ?> <small>(-<?= (int)$order['discount_percent'] ?>%)</small><?php endif; ?></td><td><?php if(($order['delivery_mode']??'game')==='wallet'):?><?php if(($order['status']??'')==='wallet_credited'):?><?=number_format((int)($order['net_amount']??0),0,',','.')?>đ ví<?php else:?>Chưa cộng<?php endif;?><?php else:?><?= number_format((int)$order['units'],0,',','.') ?> <?= ($order['currency']??'')==='luonglock'?'Lượng khóa':'Lượng thường' ?><?php endif;?></td><td><span class="tp-pill <?= kp_e($order['status']) ?>"><?= kp_e(kp_topup_status_label($order['status'])) ?></span></td></tr>
 <?php endforeach; ?></tbody></table></div><?php endif; ?>
 
 <?php if($bankOrders): ?>
@@ -24,5 +29,5 @@ kp_topup_page_start('Lịch sử nạp','history',(string)$user['username']);?>
 <?php endforeach; ?></tbody></table></div>
 <?php endif; ?>
 <?php if($bankError):?><div class="tp-alert warning">Chưa đọc được lịch sử chuyển khoản. Vui lòng thử lại sau hoặc liên hệ quản trị.</div><?php endif;?>
-<p class="tp-muted tp-mt-16">Nếu thẻ đã được gửi nhưng trạng thái chưa cập nhật, đừng gửi thẻ lại. Hãy liên hệ quản trị viên bằng mã giao dịch để đối soát.</p>
+<p class="tp-muted tp-mt-16">Trạng thái thẻ đang chờ sẽ được hệ thống kiểm tra lại tự động khi nhà cung cấp trả kết quả. Không gửi lại cùng mã thẻ. Chỉ liên hệ quản trị với mã giao dịch nếu trạng thái cần đối soát hoặc bị chờ quá lâu.</p>
 </div></section><?php kp_topup_page_end(); ?>
