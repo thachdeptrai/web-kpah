@@ -22,7 +22,7 @@ function kp_vnd_with_lock(int $userId, callable $callback) {
 }
 function kp_vnd_ensure(PDO $db,int $userId): void {
     // Preserve balances already manually entered in team_user.vnd on first migration use.
-    $st=$db->prepare('INSERT IGNORE INTO kp_vnd_wallets(user_id,balance) SELECT id,GREATEST(vnd,0) FROM team_user WHERE id=? AND ban=0');
+    $st=$db->prepare('INSERT IGNORE INTO kp_vnd_wallets(user_id,balance) SELECT id,GREATEST(COALESCE(vnd,0),0) FROM team_user WHERE id=? AND ban=0');
     $st->execute([$userId]);
     $st=$db->prepare('SELECT balance FROM kp_vnd_wallets WHERE user_id=?');
     $st->execute([$userId]);
