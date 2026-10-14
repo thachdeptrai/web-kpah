@@ -68,6 +68,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
         </a>
     </div>
     <div class="portal-quick-links">
+        <a href="/diem-tich-luy"><span aria-hidden="true">✧</span> Point tích lũy & đổi quà <span aria-hidden="true">↗</span></a>
         <a href="/ho-so#security"><span aria-hidden="true">◇</span> Đổi mật khẩu <span aria-hidden="true">↗</span></a>
         <?php if($hasTopNap): ?><a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp Lượng <span aria-hidden="true">↗</span></a><?php endif; ?>
         <a href="/#dien-dan"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
