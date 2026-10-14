@@ -16,6 +16,8 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   $find->execute([(int)$user['id'],$url]);$activeCode=(int)$find->fetchColumn();
  }catch(Throwable $e){$error=$e instanceof RuntimeException?$e->getMessage():'Chưa tạo được yêu cầu. Thử lại sau.';}
 }
+// Update legacy wallet_credited records only when a completed wallet journal exists.
+try{kp_bank_finalize_legacy_wallet_statuses(30,(int)$user['id']);}catch(Throwable $e){kp_log('bank status sync deferred',$e);}
 $recent=[];
 try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,checkout_url,created_at,provider_reference FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 15');$st->execute([(int)$user['id']]);$recent=$st->fetchAll(PDO::FETCH_ASSOC);}
 catch(Throwable $e){$error=$error?:'Không tải được giao dịch ngân hàng. Đã ghi nhật ký lỗi máy chủ; kiểm tra kết nối hoặc SQL.';}
@@ -48,6 +50,6 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <script src="/assets/js/payos-embed.js?v=2" defer></script>
 <?php endif;?>
 <section class="tp-section"><div class="tp-panel"><h2>Giao dịch của tôi</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>VNĐ</th><th>Nhận</th><th>Trạng thái</th><th>Thanh toán</th></tr></thead><tbody>
-<?php foreach($recent as $o):?><tr><td><?=kp_e($o['order_code'])?></td><td><?=kp_e($o['created_at'])?></td><td><?=number_format((int)$o['amount'],0,',','.')?></td><td><?php if(kp_bank_is_wallet_order($o)):?><?=number_format((int)$o['amount']+intdiv((int)$o['amount']*kp_bank_order_bonus($o),100),0,',','.')?>đ ví<?php else:?><?=number_format((int)$o['units'],0,',','.')?> <?= $o['currency']==='luong'?'L':'LK' ?><?php endif;?></td><td><?=kp_e($o['status'])?></td><td><?php if(in_array($o['status'],['pending','wallet_pending'],true)&&filter_var($o['checkout_url'],FILTER_VALIDATE_URL)):?><a href="<?=kp_e($o['checkout_url'])?>" target="_blank" rel="noopener">Mở QR ↗</a><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div></div></section>
+<?php foreach($recent as $o):?><tr><td><?=kp_e($o['order_code'])?></td><td><?=kp_e($o['created_at'])?></td><td><?=number_format((int)$o['amount'],0,',','.')?></td><td><?php if(kp_bank_is_wallet_order($o)):?><?=number_format((int)$o['amount']+intdiv((int)$o['amount']*kp_bank_order_bonus($o),100),0,',','.')?>đ ví<?php else:?><?=number_format((int)$o['units'],0,',','.')?> <?= $o['currency']==='luong'?'L':'LK' ?><?php endif;?></td><td><?=kp_e($o['status'])?><?php if($o['status']==='completed' && kp_bank_is_wallet_order($o)):?><small> · Đã cộng VNĐ</small><?php endif;?></td><td><?php if(in_array($o['status'],['pending','wallet_pending'],true)&&filter_var($o['checkout_url'],FILTER_VALIDATE_URL)):?><a href="<?=kp_e($o['checkout_url'])?>" target="_blank" rel="noopener">Mở QR ↗</a><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div></div></section>
 <script src="/assets/js/payos-create-guard.js?v=1" defer></script>
 <?php kp_topup_page_end();?>
