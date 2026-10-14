@@ -60,11 +60,11 @@ kp_topup_page_start('Lịch sử & đối soát','orders',(string)$admin['userna
 </div></section>
 
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">NGÂN HÀNG / PAYOS</span><h2>Đơn chuyển khoản</h2></div></div>
-<?php try { $bankOrders=kp_db()->query('SELECT order_code,user_id,char_id,username,amount,currency,units,status,created_at,delivery_mode,bonus_percent FROM kp_bank_orders ORDER BY id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC); ?>
+<?php try { $bankOrders=kp_db()->query('SELECT order_code,user_id,char_id,username,amount,currency,units,status,created_at,provider_reference FROM kp_bank_orders ORDER BY id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC); ?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Thời gian</th><th>Tài khoản</th><th>VNĐ</th><th>Lượng</th><th>Trạng thái</th><th>Đối soát</th></tr></thead><tbody>
-<?php foreach($bankOrders as $b):?><tr><td><?=kp_e($b['order_code'])?></td><td><?=kp_e($b['created_at'])?></td><td><?=kp_e($b['username'])?></td><td><?=number_format((int)$b['amount'],0,',','.')?></td><td><?php if(($b['delivery_mode']??'game')==='wallet'):?><?=number_format((int)$b['amount']+intdiv((int)$b['amount']*(int)$b['bonus_percent'],100),0,',','.')?>đ ví<?php else:?><?=number_format((int)$b['units'],0,',','.')?> <?= $b['currency']==='luong'?'L':'LK' ?><?php endif;?></td><td><?=kp_e($b['status'])?></td><td><?php if(!in_array($b['status'],['wallet_credited','completed','queued','crediting','needs_review'],true)&&kp_bank_cfg()['ready']):?><form method="post"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="check_bank"><input type="hidden" name="code" value="<?=kp_e($b['order_code'])?>"><button class="tp-button-secondary tp-btn--small" type="submit">Kiểm tra ↻</button></form><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div>
+<?php foreach($bankOrders as $b):?><tr><td><?=kp_e($b['order_code'])?></td><td><?=kp_e($b['created_at'])?></td><td><?=kp_e($b['username'])?></td><td><?=number_format((int)$b['amount'],0,',','.')?></td><td><?php if(kp_bank_is_wallet_order($b)):?><?=number_format((int)$b['amount']+intdiv((int)$b['amount']*kp_bank_order_bonus($b),100),0,',','.')?>đ ví<?php else:?><?=number_format((int)$b['units'],0,',','.')?> <?= $b['currency']==='luong'?'L':'LK' ?><?php endif;?></td><td><?=kp_e($b['status'])?></td><td><?php if(!in_array($b['status'],['wallet_credited','completed','queued','crediting','needs_review'],true)&&kp_bank_cfg()['ready']):?><form method="post"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="check_bank"><input type="hidden" name="code" value="<?=kp_e($b['order_code'])?>"><button class="tp-button-secondary tp-btn--small" type="submit">Kiểm tra ↻</button></form><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div>
 <div class="tp-alert warning">Phục hồi đơn queued cũ: phải xác minh nhân vật CHƯA nhận Lượng, đã thoát game và game server KHÔNG còn đọc queue. Mỗi lần chọn đúng một dòng <code>board_naptien.id</code>. Nếu thất bại / needs_review thì dừng, không thao tác lại.</div>
-<?php foreach($bankOrders as $b):if($b['status']!=='queued'||(int)$b['char_id']!==0||($b['delivery_mode']??'game')!=='game')continue;
+<?php foreach($bankOrders as $b):if($b['status']!=='queued'||(int)$b['char_id']!==0||kp_bank_is_wallet_order($b))continue;
 $charSt=kp_db()->prepare('SELECT id,charname FROM tob_char WHERE userId=? AND del=1 AND ban=0 ORDER BY id DESC LIMIT 25');
 $charSt->execute([(int)$b['user_id']]);$options=$charSt->fetchAll(PDO::FETCH_ASSOC);
 $queueCol=$b['currency']==='luong'?'luong':'luongKhoa';
@@ -85,11 +85,11 @@ $qSt->execute([(string)$b['username'],(int)$b['units']]);$queues=$qSt->fetchAll(
 </div></section>
 <?php
 $vndExchanges=[];$vndError=false;
-try{$vndExchanges=kp_db()->query('SELECT x.id,x.user_id,x.char_id,x.amount_vnd,x.currency,x.units,x.status,x.created_at,u.username FROM kp_vnd_exchanges x LEFT JOIN team_user u ON u.id=x.user_id ORDER BY x.id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);}
+try{$vndExchanges=kp_vnd_recent_exchanges(null,100);}
 catch(Throwable $e){kp_log('admin VNĐ exchange history failed',$e);$vndError=true;}
 ?>
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">VÍ VNĐ / ĐỔI MỐC</span><h2>Nhật ký đổi VNĐ lấy Lượng</h2></div><span class="tp-chip"><?=count($vndExchanges)?> giao dịch</span></div>
-<?php if($vndError):?><div class="tp-alert warning">Chưa tải được dữ liệu đổi mốc. Kiểm tra migration database/vnd_wallet_upgrade.sql.</div>
+<?php if($vndError):?><div class="tp-alert warning">Chưa tải được dữ liệu đổi mốc. Kiểm tra migration storage/topup/vnd-journal.</div>
 <?php elseif(!$vndExchanges):?><p class="tp-muted">Chưa có lệnh đổi mốc.</p>
 <?php else:?><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Ngày</th><th>Tài khoản</th><th>Nhân vật ID</th><th>Trừ VNĐ</th><th>Lượng nhận</th><th>Trạng thái</th></tr></thead><tbody>
 <?php foreach($vndExchanges as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['created_at'])?></td><td><?=kp_e($x['username']??('ID '.$x['user_id']))?></td><td>#<?=(int)$x['char_id']?></td><td><?=number_format((int)$x['amount_vnd'],0,',','.')?>đ</td><td><?=number_format((int)$x['units'],0,',','.')?> <?= $x['currency']==='luong'?'Lượng':'Lượng khóa' ?></td><td><?=kp_e($x['status'])?></td></tr><?php endforeach;?></tbody></table></div>
