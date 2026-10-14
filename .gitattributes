@@ -1,0 +1,8 @@
+# GitHub Linguist: PHP source is PHP, not Hack.
+*.php linguist-language=PHP
+*.phtml linguist-language=PHP
+*.inc linguist-language=PHP
+
+# Preserve standard classifications for web assets.
+*.css linguist-language=CSS
+*.js linguist-language=JavaScript
