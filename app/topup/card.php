@@ -8,7 +8,7 @@ $cfg = kp_topup_cfg();
 // Cards now top up the site's VNĐ wallet; no game queue required.
 $cardLive = $cfg['card_ready'];
 if($cardLive){
- try{kp_vnd_bonus_percent();kp_vnd_balance((int)$user['id']);}
+ try{kp_vnd_bonus_percent();kp_vnd_balance((int)$user['id']);kp_vnd_require_tongnap(kp_db());}
  catch(Throwable $e){$cardLive=false;kp_log('card wallet initialization failed',$e);}
 }
 $rates = kp_topup_rates();
