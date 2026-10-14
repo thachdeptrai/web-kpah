@@ -108,12 +108,34 @@ function kp_rankings_catalog()
                     ORDER BY COALESCE(lvClan,0) DESC,COALESCE(xp,0) DESC,id_clan ASC LIMIT 10"
         ],
         'nap' => [
-            'label'=>'Nạp Lượng','short'=>'Nạp Lượng','metric'=>'Lượng đã nạp','secondary'=>'Điểm Top',
-            'description'=>'Thống kê Lượng đã nạp của nhân vật, không bao gồm dữ liệu giao dịch riêng tư.',
-            'source'=>'tob_event_top.luongnap',
+            'label'=>'Top nạp','short'=>'Top nạp','metric'=>'Lượng nạp','secondary'=>'Số lượt nạp',
+            'description'=>'Xếp hạng tài khoản theo tổng Lượng của các giao dịch ngân hàng đã xác nhận thanh toán. Không tính đơn đang chờ.',
+            'sql'=>"SELECT username AS name,SUM(units) AS score,COUNT(*) AS secondary
+                    FROM kp_bank_orders
+                    WHERE username<>'' AND status IN ('completed','queued','needs_review','crediting','paid_waiting_delivery')
+                    GROUP BY username HAVING SUM(units)>0
+                    ORDER BY score DESC,secondary DESC,username ASC LIMIT 10"
+        ],
+        'napgame' => [
+            'label'=>'Nạp trong game','short'=>'Nạp game','metric'=>'Lượng đã nạp','secondary'=>'Điểm Top',
+            'description'=>'Thành tích nạp Lượng do game ghi nhận cho nhân vật.',
             'sql'=>"SELECT charname AS name,luongnap AS score,toppoint AS secondary
-                    FROM tob_event_top WHERE charname <> '' AND luongnap > 0
+                    FROM tob_event_top WHERE charname<>'' AND luongnap>0
                     ORDER BY luongnap DESC,toppoint DESC,id ASC LIMIT 10"
+        ],
+        'rich' => [
+            'label'=>'Top đại gia','short'=>'Đại gia','metric'=>'Xu sở hữu','secondary'=>'Lượng sở hữu',
+            'description'=>'Những nhân vật giàu Xu nhất trên bảng tổng hợp nhân vật của game.',
+            'sql'=>"SELECT charname AS name,gold AS score,luong AS secondary
+                    FROM tob_char_luong WHERE charname<>'' AND gold>0
+                    ORDER BY gold DESC,luong DESC,id ASC LIMIT 10"
+        ],
+        'richluong' => [
+            'label'=>'Đại gia Lượng','short'=>'Giàu Lượng','metric'=>'Lượng sở hữu','secondary'=>'Xu sở hữu',
+            'description'=>'Những nhân vật đang có nhiều Lượng nhất theo bảng tổng hợp game.',
+            'sql'=>"SELECT charname AS name,luong AS score,gold AS secondary
+                    FROM tob_char_luong WHERE charname<>'' AND luong>0
+                    ORDER BY luong DESC,gold DESC,id ASC LIMIT 10"
         ],
         'event' => [
             'label'=>'Điểm sự kiện','short'=>'Sự kiện','metric'=>'Điểm sự kiện','secondary'=>'Lượng sự kiện',
