@@ -28,9 +28,9 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <label class="tp-field"><span>Mệnh giá</span><select class="tp-select" name="amount" required <?=(!$cfg['ready']||!$walletReady)?'disabled':''?>>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><option value="<?=$vnd?>"><?=number_format($vnd,0,',','.')?>đ</option><?php endforeach;?></select></label>
 <p class="tp-muted">Thưởng nạp ngân hàng hiện tại: <strong>+<?= (int)$bonusPercent ?>%</strong>. Nạp 10.000đ được cộng <?=number_format(10000+intdiv(10000*$bonusPercent,100),0,',','.')?>đ vào ví.</p>
-<button type="submit" class="tp-button" id="bank-create-button" <?=!$cfg['ready']?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
+<button type="submit" class="tp-button" id="bank-create-button" <?=(!$cfg['ready']||!$walletReady)?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
 <div class="tp-panel"><h2>Bảng tiền về ví VNĐ</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Nạp</th><th>Thưởng</th><th>Ví nhận</th></tr></thead><tbody>
-<?php foreach(kp_card_packages() as $vnd=>$pkg):$bonus=intdiv($vnd*$bonusPercent,100);?><tr><td><?=number_format($vnd,0,',','.')?>đ</td><td>+<?=number_format($bonus,0,',','.')?>đ</td><td><?=number_format($vnd+$bonus,0,',','.')?>đ</td></tr><?php endforeach;?></tbody></table></div></div></div></div></section>
+<?php foreach(kp_card_packages() as $vnd=>$pkg):$bonus=intdiv($vnd*$bonusPercent,100);?><tr><td><?=number_format($vnd,0,',','.')?>đ</td><td>+<?=number_format($bonus,0,',','.')?>đ</td><td><?=number_format($vnd+$bonus,0,',','.')?>đ</td></tr><?php endforeach;?></tbody></table></div></div></div></section>
 <?php if($checkout!==''):?>
 <section class="tp-section tp-payment-section" id="thanh-toan">
  <div class="tp-payment-panel">
