@@ -371,3 +371,10 @@
 .rank-group .rank-categories{display:flex;flex-wrap:wrap;gap:9px;margin:0}
 .rank-group .rank-category{white-space:normal;font-size:12px;text-align:center}
 @media(max-width:800px){.rank-group-directory{grid-template-columns:1fr;gap:12px}.rank-group{padding:14px}.rank-group .rank-categories{gap:8px}}
+
+
+/* Extra amounts on the top-three podium (wealth + verified top-ups). */
+.lb-podium-breakdown{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;justify-content:center}
+.lb-podium-breakdown span{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:0;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.065);border:1px solid rgba(200,188,255,.16);font-size:12px;line-height:1.4}
+.lb-podium-breakdown b{font-weight:800;overflow-wrap:anywhere}
+@media(max-width:620px){.lb-podium-breakdown{gap:5px}.lb-podium-breakdown span{font-size:11px;padding:6px 8px}}
