@@ -80,7 +80,7 @@ $qSt->execute([(string)$b['username'],(int)$b['units']]);$queues=$qSt->fetchAll(
 <button type="submit" class="tp-button" <?= (!$options||!$queues)?'disabled':'' ?>>Xác minh payOS và cộng một lần ↗</button></form></div>
 <?php endforeach;?>
 <?php }catch(Throwable $e) { kp_log('bank admin orders query failed',$e); ?>
-<div class="tp-alert bad">Không tải được dữ liệu đối soát ngân hàng. Hãy kiểm tra bảng <code>kp_bank_orders</code> và cột <code>char_id</code> (migration <code>database/payos_direct_credit_upgrade.sql</code>). Nếu đã có cột này, kiểm tra PHP error log để biết câu SQL gây lỗi. Không import lại database/payos_bank.sql hoặc xóa bảng cũ.</div>
+<div class="tp-alert bad">Không tải được danh sách đối soát. Các bảng cũ vẫn được giữ nguyên; kiểm tra nhật ký PHP để tìm lỗi truy vấn. Không import hay xóa bảng.</div>
 <?php } ?>
 </div></section>
 <?php
@@ -89,9 +89,9 @@ try{$vndExchanges=kp_vnd_recent_exchanges(null,100);}
 catch(Throwable $e){kp_log('admin VNĐ exchange history failed',$e);$vndError=true;}
 ?>
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">VÍ VNĐ / ĐỔI MỐC</span><h2>Nhật ký đổi VNĐ lấy Lượng</h2></div><span class="tp-chip"><?=count($vndExchanges)?> giao dịch</span></div>
-<?php if($vndError):?><div class="tp-alert warning">Chưa tải được dữ liệu đổi mốc. Kiểm tra migration storage/topup/vnd-journal.</div>
+<?php if($vndError):?><div class="tp-alert warning">Không đọc được nhật ký đổi mốc trong storage/topup/vnd-journal. Kiểm tra quyền đọc/ghi.</div>
 <?php elseif(!$vndExchanges):?><p class="tp-muted">Chưa có lệnh đổi mốc.</p>
 <?php else:?><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Ngày</th><th>Tài khoản</th><th>Nhân vật ID</th><th>Trừ VNĐ</th><th>Lượng nhận</th><th>Trạng thái</th></tr></thead><tbody>
-<?php foreach($vndExchanges as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['created_at'])?></td><td><?=kp_e($x['username']??('ID '.$x['user_id']))?></td><td>#<?=(int)$x['char_id']?></td><td><?=number_format((int)$x['amount_vnd'],0,',','.')?>đ</td><td><?=number_format((int)$x['units'],0,',','.')?> <?= $x['currency']==='luong'?'Lượng':'Lượng khóa' ?></td><td><?=kp_e($x['status'])?></td></tr><?php endforeach;?></tbody></table></div>
+<?php foreach($vndExchanges as $x):?><tr><td>#<?=kp_e(substr((string)$x['id'],0,10))?></td><td><?=kp_e($x['created_at'])?></td><td><?=kp_e($x['username']??('ID '.$x['user_id']))?></td><td>#<?=(int)$x['char_id']?></td><td><?=number_format((int)$x['amount_vnd'],0,',','.')?>đ</td><td><?=number_format((int)$x['units'],0,',','.')?> <?= $x['currency']==='luong'?'Lượng':'Lượng khóa' ?></td><td><?=kp_e($x['status'])?></td></tr><?php endforeach;?></tbody></table></div>
 <?php endif;?></div></section>
 <?php kp_topup_page_end(); ?>
