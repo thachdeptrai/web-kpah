@@ -1,0 +1,189 @@
+/* KPAH site-wide responsive alignment layer.
+ * Loaded last: keeps each page's theme while correcting shared dimensions.
+ * Scoped selectors avoid overriding third-party payOS embeds and widgets.
+ */
+html{max-width:100%;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{min-width:0}
+img,video,svg{max-width:100%}
+button,input,select,textarea{max-width:100%}
+:where(main,section,article,aside,header,footer,form){min-width:0}
+:where(.tp-content,.tp-panel,.tp-card,.portal-main,.portal-pages,.pd-panel,.shell,.wrap,.lp-wrap,.stage,.panel-inner,.auth-shell,.auth-form-wrap){min-width:0}
+:where(.tp-card,.tp-panel,.portal-action-card,.metric,.stat,.card,.character-card,.char-ui-card){overflow-wrap:anywhere}
+
+/* Account and character pages: fixed rail belongs OUTSIDE the content width.
+ * Old width:min(...) + margin-left pinned wide screens to the left.
+ */
+.portal-page .portal-main{
+  box-sizing:border-box;
+  width:calc(100% - 72px);
+  max-width:none;
+  min-height:100vh;
+  margin:0 0 0 72px;
+  padding-left:max(22px,calc((100% - 1370px)/2));
+  padding-right:max(22px,calc((100% - 1370px)/2));
+}
+.portal-page .portal-top{min-width:0;gap:12px}
+.portal-page .portal-top .top-user{min-width:0;flex-wrap:wrap;justify-content:flex-end}
+.portal-page .portal-top .top-user-name{overflow-wrap:anywhere;min-width:0}
+.portal-page .portal-hero,.portal-page .portal-pages,.portal-page .rankings-section,
+.portal-page .characters-section,.portal-page .profile-layout{min-width:0;max-width:100%}
+.portal-page .portal-hero-emblem{max-width:30%}
+.portal-page .portal-action-grid>*,.portal-page .portal-overview>*,.portal-page .rank-group-directory>*{min-width:0}
+.portal-page .portal-quick-links{max-width:100%}
+
+/* Top-up and admin dashboards share a centered content grid. */
+.tp-page .tp-content{box-sizing:border-box;max-width:1320px;width:100%;margin-inline:auto}
+.tp-page .tp-shell{min-width:0}
+.tp-page .tp-grid>*,.tp-page .tp-row>*,.tp-page .tp-summary>*,.tp-page .tp-payment-panel{min-width:0}
+.tp-page .tp-table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tp-page .tp-table{white-space:normal}
+.tp-page .tp-field :where(input,select,textarea){width:100%;min-width:0;max-width:100%}
+.tp-page .tp-actions{min-width:0;flex-wrap:wrap;gap:10px}
+.tp-page .tp-payment-stage{overflow-x:auto;max-width:100%}
+.tp-page .tp-payment-embed{max-width:100%}
+.tp-page.tp-admin .kp-admin-nav{width:100%;max-width:100%;margin:14px 0 23px}
+.kp-admin-nav-links{flex:1;min-width:0}
+.kp-admin-nav-link{min-width:0}
+
+/* Independent admin dashboards — same widths as their shared navigation. */
+body .shell,body .wrap{box-sizing:border-box;width:min(100% - 40px,1280px);max-width:1280px;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0}
+body .kp-admin-nav{width:min(100% - 40px,1280px);max-width:1280px}
+body .topbar,body>header{min-width:0}
+body .metrics>*,body .stats>*,body .actions>*,body .grid>*{min-width:0}
+body .table-scroll,body .table-wrap,body .tp-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+body .table-scroll table,body .table-wrap table{min-width:620px}
+body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
+
+/* Landing and auth pages: preserve their layouts without horizontal clipping. */
+.landing-page .lp-wrap{max-width:100%}
+.landing-page .lp-links{min-width:0;flex-wrap:wrap}
+.landing-page .lp-hero,.landing-page .lp-section,.landing-page .lp-community{min-width:0}
+.landing-page .lp-hero h1,.landing-page .lp-brand strong{overflow-wrap:anywhere}
+.stage,.login-stage,.recovery-stage{min-width:0}
+.panel-inner,.panel,.auth-shell,.auth-form-wrap{max-width:100%}
+.panel-inner input,.panel-inner select,.panel-inner textarea{min-width:0;max-width:100%}
+.auth-page .auth-shell{max-width:100%;min-width:0}
+
+@media(min-width:1400px){
+ .tp-page:not(.tp-admin) .tp-content{max-width:1430px}
+ .portal-page .portal-main{padding-left:max(30px,calc((100% - 1370px)/2));padding-right:max(30px,calc((100% - 1370px)/2))}
+}
+@media(max-width:1040px){
+ .portal-page .portal-main{padding-inline:22px}
+ .portal-page .portal-hero-emblem{width:190px;margin-block:-15px}
+ .tp-page .tp-content{padding-inline:20px}
+ body .shell,body .wrap,body .kp-admin-nav{width:calc(100% - 32px)}
+ body .metrics,body .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:800px){
+ .tp-page:not(.tp-admin) .tp-shell{display:block}
+ .tp-page:not(.tp-admin) .tp-sidebar{
+    position:relative;top:auto;min-height:0;height:auto;
+    padding:12px 18px 11px;border-right:0;border-bottom:1px solid var(--border);
+ }
+ .tp-page:not(.tp-admin) .tp-sidebar .tp-brand{margin-right:86px;padding-bottom:12px}
+ .tp-page:not(.tp-admin) .tp-sidebar .tp-nav{
+    display:flex;flex-wrap:nowrap;gap:7px;overflow-x:auto;scroll-snap-type:x proximity;
+    padding-bottom:5px;scrollbar-width:thin
+ }
+ .tp-page:not(.tp-admin) .tp-sidebar .tp-nav-link{flex:none;scroll-snap-align:start}
+ .tp-page:not(.tp-admin) .tp-content{padding:0 19px 26px}
+ .tp-page .tp-grid,.tp-page .tp-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tp-page .tp-header{flex-wrap:wrap;padding-block:11px}
+ .tp-page .tp-user{max-width:100%}
+ .kp-admin-nav-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+ .kp-admin-nav a{white-space:normal}
+}
+@media(max-width:760px){
+ .portal-page .portal-main{width:calc(100% - 54px);margin-left:54px;padding-inline:16px}
+ .portal-page .portal-hero{padding:26px 23px}
+ .portal-page .portal-hero-emblem{width:140px;max-width:25%}
+ .portal-page .portal-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-page .portal-top .top-logout{font-size:11px;white-space:nowrap}
+ .portal-page .portal-top .top-user-name{max-width:130px}
+ body .shell,body .wrap{margin-top:20px}
+ body .topbar,body>header{flex-wrap:wrap;gap:10px}
+ body .metrics,body .stats{gap:10px}
+}
+@media(max-width:680px){
+ /* Five-icon bottom bar: reclaim all 320–430px viewport width for content. */
+ .portal-page .side-rail,.portal-page .portal-rail{
+    position:fixed;inset:auto 0 0 0!important;
+    display:flex;flex-direction:row;justify-content:space-evenly;align-items:center;
+    width:100%;height:auto;min-height:calc(63px + env(safe-area-inset-bottom,0px));
+    padding:7px 7px calc(7px + env(safe-area-inset-bottom,0px));
+    border-right:0;border-top:1px solid rgba(224,201,153,.25);
+    background:rgba(12,17,27,.97);backdrop-filter:blur(18px);z-index:60
+ }
+ .portal-page .side-rail .rail-logo,.portal-page .side-rail .rail-line,
+ .portal-page .side-rail .rail-bottom{display:none}
+ .portal-page .side-rail .rail-icon{
+    display:grid;place-items:center;flex:1;max-width:58px;width:auto;height:45px;
+    border-radius:13px;margin:0;font-size:20px
+ }
+ .portal-page .portal-main,.portal-page .home-main{
+    width:100%;max-width:none;margin:0;padding:0 15px calc(98px + env(safe-area-inset-bottom,0px))
+ }
+ .portal-page .portal-top{min-height:64px;gap:8px;padding-block:11px}
+ .portal-page .portal-top .top-user-name{max-width:100px}
+ .portal-page .portal-top .top-logout{font-size:10px}
+ .portal-page .portal-hero{margin-top:19px;min-height:0;padding:24px 19px}
+ .portal-page .portal-hero-copy{max-width:100%}
+ .portal-page .portal-hero-emblem{display:none}
+ .portal-page .portal-hero h1{font-size:clamp(27px,7.5vw,40px)}
+ .portal-page .portal-hero p{font-size:12px;line-height:1.8}
+ .portal-page .portal-primary,.portal-page .portal-secondary{flex:1 1 160px;justify-content:center;text-align:center;padding:11px}
+ .portal-page .portal-overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-page .portal-action-grid{grid-template-columns:minmax(0,1fr)}
+ .portal-page .portal-action-card{padding:17px}
+ .portal-page .characters-grid{grid-template-columns:minmax(0,1fr)}
+ .portal-page .rank-group-directory{grid-template-columns:minmax(0,1fr)}
+ .portal-page .rank-podium{max-width:100%}
+ .tp-page .tp-grid,.tp-page .tp-grid.two,.tp-page .tp-row{grid-template-columns:minmax(0,1fr)}
+ .tp-page .tp-content{padding-inline:15px}
+ .tp-page.tp-admin .tp-content{padding-inline:15px}
+ .kp-admin-nav{flex-direction:column;align-items:stretch;gap:8px;padding:11px}
+ .kp-admin-nav-links{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+ .kp-admin-nav .kp-admin-nav-logout{width:100%}
+ body .shell,body .wrap,body .kp-admin-nav{width:calc(100% - 24px)}
+ body .metrics,body .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body .actions,body .grid{grid-template-columns:1fr}
+ body .topbar,body>header{padding-inline:15px}
+ .auth-page{padding:14px}
+ .stage,.login-stage,.recovery-stage{width:100%;max-width:540px}
+ .landing-page .lp-links{column-gap:12px;row-gap:8px}
+}
+@media(max-width:440px){
+ .portal-page .portal-main,.portal-page .home-main{padding-inline:13px}
+ .portal-page .top-user-name{max-width:70px!important}
+ .portal-page .portal-top .top-logout{padding:5px 7px}
+ .portal-page .portal-hero-buttons{gap:8px}
+ .portal-page .portal-primary,.portal-page .portal-secondary{flex-basis:100%}
+ .portal-page .portal-overview-cell{padding:12px;gap:8px}
+ .portal-page .portal-overview-cell>.portal-stat-icon{width:31px;height:31px}
+ .tp-page .tp-content,.tp-page.tp-admin .tp-content{padding-inline:12px}
+ .tp-page .tp-panel{padding:14px}
+ .tp-page .tp-card{padding:16px}
+ .tp-page .tp-summary{grid-template-columns:minmax(0,1fr)}
+ body .metrics,body .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body .stat,body .metric{padding:13px}
+ body .stat-value{font-size:23px}
+ .auth-form-wrap,.login-panel{max-width:100%}
+ .landing-page .lp-links{gap:9px}
+ .landing-page .lp-footer{align-items:flex-start;gap:10px}
+}
+@media(max-width:350px){
+ .portal-page .portal-top .top-user-name{display:none}
+ .portal-page .portal-breadcrumb,.portal-page .home-breadcrumb{font-size:9px}
+ body .metrics,body .stats{grid-template-columns:minmax(0,1fr)}
+ .kp-admin-nav-links{grid-template-columns:minmax(0,1fr)}
+}
+@media(hover:none){
+ .portal-page .portal-action-card:hover,
+ .portal-page .pd-stat-card:hover,
+ .tp-page .tp-card:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ :where(.portal-page,.tp-page) *{scroll-behavior:auto}
+}
