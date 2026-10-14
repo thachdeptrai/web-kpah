@@ -17,6 +17,7 @@ return [
         '/lich-su-nap' => ['file' => 'app/topup/history.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/top-nap' => ['file' => 'app/topup/top.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/diem-tich-luy' => ['file' => 'app/topup/points.php', 'scope' => 'player', 'redirect_legacy' => true],
+        '/vi-vnd' => ['file' => 'app/topup/wallet.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/api/card-fees' => ['file' => 'app/topup/card-fees.php', 'scope' => 'player', 'redirect_legacy' => false],
         '/api/payos-status' => ['file' => 'app/topup/bank-status.php', 'scope' => 'player', 'redirect_legacy' => false],
         '/api/payos-webhook' => ['file' => 'app/topup/bank-webhook.php', 'scope' => 'player', 'redirect_legacy' => false],
