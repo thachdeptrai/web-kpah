@@ -89,7 +89,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 // Avoid accidentally echoing submitted card PIN/serial anywhere below.
 kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 ?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>VNĐ.</em></h1><p class="tp-lead">Thẻ hợp lệ cộng số VNĐ thực nhận sau phí API vào ví. Dùng số dư ví để đổi mốc Lượng sau.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>VNĐ.</em></h1><p class="tp-lead">Thẻ hợp lệ cộng số VNĐ thực nhận sau phí API vào ví, nhưng tổng nạp (tongnap) vẫn tính đủ mệnh giá thẻ. Dùng số dư ví để đổi mốc Lượng sau.</p></section>
 <?php if($error!==''): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="/lich-su-nap">Xem lịch sử →</a></div><?php endif; ?>
 <?php if(!$cardLive): ?>
