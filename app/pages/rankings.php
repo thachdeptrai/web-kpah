@@ -77,14 +77,14 @@ $rankGroups=[
             <div class="podium-info">
                 <span class="podium-caption"><?= $rank===1?'QUÁN QUÂN':($rank===2?'Á QUÂN':'HẠNG BA') ?></span>
                 <h3 title="<?= kp_e($name) ?>"><?= kp_e($name) ?></h3>
-                <div class="podium-value"><span><?= kp_e($current['metric']) ?></span><strong><?= kp_player_format($person['score']) ?></strong></div>
+                <div class="podium-value"><span><?= kp_e($current['metric']) ?></span><strong><?= $type==='nap'?number_format((int)$person['score'],0,',','.').'đ':kp_player_format($person['score']) ?></strong></div>
                 <?php if(in_array($type,['rich','richluong'],true)): ?>
                 <div class="lb-podium-breakdown">
                     <span>Xu <b><?= kp_player_format($type==='rich'?$person['score']:$person['secondary']) ?></b></span>
                     <span>Lượng <b><?= kp_player_format($type==='rich'?$person['secondary']:$person['score']) ?></b></span>
                 </div>
                 <?php elseif($type==='nap'): ?>
-                <div class="lb-podium-breakdown"><span>Đã nạp <b><?= number_format((int)$person['secondary'],0,',','.') ?>đ</b></span></div>
+                <div class="lb-podium-breakdown"><span>Lượng cũ đã cấp <b><?= kp_player_format($person['secondary']) ?></b></span></div>
                 <?php endif; ?>
             </div>
             <div class="podium-base"><span><?= sprintf('%02d',$rank) ?></span><i aria-hidden="true">✦</i></div>
@@ -110,7 +110,7 @@ $rankGroups=[
                 <span class="lb-list-avatar" aria-hidden="true"><?= kp_e($initial) ?></span>
                 <span class="lb-list-name"><?= kp_e($name) ?></span>
                 <?php if($current['secondary']!==null): ?>
-                    <span class="lb-list-secondary"><?= kp_e($current['secondary']) ?> <b><?= $type==='nap'?number_format((int)$person['secondary'],0,',','.').'đ':kp_player_format($person['secondary']) ?></b></span>
+                    <span class="lb-list-secondary"><?= kp_e($current['secondary']) ?> <b><?= kp_player_format($person['secondary']) ?></b></span>
                 <?php endif; ?>
                 <span class="lb-list-score"><small><?= kp_e($current['metric']) ?></small><strong><?= kp_player_format($person['score']) ?></strong></span>
             </div>
