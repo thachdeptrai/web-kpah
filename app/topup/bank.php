@@ -11,8 +11,6 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   header('Location: '.$url,true,303);exit;
  }catch(Throwable $e){$error=$e instanceof RuntimeException?$e->getMessage():'Chưa tạo được yêu cầu. Thử lại sau.';}
 }
-// Keep the page responsive; the scheduled CLI worker handles bulk cleanup.
-if($cfg['ready']){try{kp_bank_cleanup(3);}catch(Throwable $e){kp_log('bank page cleanup deferred',$e);}}
 $recent=[];
 try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 15');$st->execute([(int)$user['id']]);$recent=$st->fetchAll(PDO::FETCH_ASSOC);}
 catch(Throwable $e){$error=$error?:'Chưa có bảng nạp ngân hàng. Chạy migration database/payos_bank.sql.';}
