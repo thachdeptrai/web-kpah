@@ -38,7 +38,7 @@ function kp_vnd_sync(PDO $db,int $userId): void {
     $st=$db->prepare('SELECT vnd FROM team_user WHERE id=? AND ban=0');
     $st->execute([$userId]);
     $actual=$st->fetchColumn();
-    if($actual===false||(string)$actual!==(string)$balance)
+    if($actual===false||(int)$actual!==(int)$balance)
         throw new RuntimeException('Ví đã ghi sổ nhưng chưa đồng bộ về game. Cần kiểm tra log.');
 }
 function kp_vnd_balance(int $userId): int {
