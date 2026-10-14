@@ -1,8 +1,31 @@
 <?php
-require __DIR__ . '/../includes/bootstrap.php';
-require_once __DIR__ . '/../includes/topup_core.php';
-require_once __DIR__ . '/_layout.php';
-$user=kp_topup_user();kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP CHUYỂN KHOẢN</span><h1>Ngân hàng <em>sẽ mở sau.</em></h1><p class="tp-lead">Khu nạp ngân hàng đang được chuẩn bị. Hiện trang này không tạo mã chuyển khoản, không hiện số tài khoản nhận và không ghi nhận tiền tự động.</p></section>
-<div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">CHƯA KÍCH HOẠT</span><h2>Chuyển sang nạp thẻ</h2></div><span class="tp-chip">COMING SOON</span></div><p class="tp-muted">Trong lúc chờ kết nối ngân hàng, bạn có thể mở trang nạp thẻ hoặc xem lịch sử của mình.</p><div class="tp-actions" style="margin-top:20px"><a class="tp-button" href="/nap-the">Đến nạp thẻ ↗</a><a class="tp-button-secondary" href="/lich-su-nap">Xem lịch sử</a></div></div>
-<?php kp_topup_page_end(); ?>
+require __DIR__.'/../includes/bootstrap.php';
+require_once __DIR__.'/../includes/bank_payos.php';
+require_once __DIR__.'/_layout.php';
+$user=kp_topup_user();$cfg=kp_bank_cfg();$csrf=kp_csrf_token();$error='';
+if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
+ try{
+  $amount=filter_var($_POST['amount']??null,FILTER_VALIDATE_INT);
+  if($amount===false)throw new RuntimeException('Mệnh giá không hợp lệ.');
+  $url=kp_bank_create($user,(int)$amount,(string)($_POST['currency']??''),(string)($_POST['csrf']??''));
+  header('Location: '.$url,true,303);exit;
+ }catch(Throwable $e){$error=$e instanceof RuntimeException?$e->getMessage():'Chưa tạo được yêu cầu. Thử lại sau.';}
+}
+$recent=[];
+try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 15');$st->execute([(int)$user['id']]);$recent=$st->fetchAll(PDO::FETCH_ASSOC);}
+catch(Throwable $e){$error=$error?:'Chưa có bảng nạp ngân hàng. Chạy migration database/payos_bank.sql.';}
+kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Tạo đơn riêng qua payOS, thanh toán chính xác mệnh giá. Không chuyển khoản trực tiếp ngoài đơn.</p></section>
+<?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
+<?php if(isset($_GET['result'])):?><div class="tp-alert warning">Trang thanh toán đã chuyển về website. Chỉ kết quả tra cứu từ payOS mới xác nhận tiền về.</div><?php endif;?>
+<section class="tp-section"><div class="tp-grid two"><div class="tp-panel"><h2>Tạo đơn nạp</h2><?php if(!$cfg['ready']):?><div class="tp-alert warning">Chưa có thông tin kết nối payOS.</div><?php endif;?>
+<form method="post" class="tp-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>">
+<label class="tp-field"><span>Mệnh giá</span><select class="tp-select" name="amount" required <?=!$cfg['ready']?'disabled':''?>>
+<?php foreach(kp_card_packages() as $vnd=>$pkg):?><option value="<?=$vnd?>"><?=number_format($vnd,0,',','.')?>đ</option><?php endforeach;?></select></label>
+<label class="tp-field"><span>Nhận loại Lượng</span><select class="tp-select" name="currency" required <?=!$cfg['ready']?'disabled':''?>><option value="luong">Lượng mở</option><option value="luonglock">Lượng khóa</option></select></label>
+<button type="submit" class="tp-button" <?=!$cfg['ready']?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
+<div class="tp-panel"><h2>Bảng thưởng chuyển khoản</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>VNĐ</th><th>Lượng mở</th><th>Lượng khóa</th></tr></thead><tbody>
+<?php foreach(kp_card_packages() as $vnd=>$pkg):?><tr><td><?=number_format($vnd,0,',','.')?></td><td><?=number_format($pkg['luong'],0,',','.')?></td><td><?=number_format($pkg['luonglock'],0,',','.')?></td></tr><?php endforeach;?></tbody></table></div></div></div></section>
+<section class="tp-section"><div class="tp-panel"><h2>Giao dịch của tôi</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>VNĐ</th><th>Nhận</th><th>Trạng thái</th><th>Thanh toán</th></tr></thead><tbody>
+<?php foreach($recent as $o):?><tr><td><?=kp_e($o['order_code'])?></td><td><?=kp_e($o['created_at'])?></td><td><?=number_format((int)$o['amount'],0,',','.')?></td><td><?=number_format((int)$o['units'],0,',','.')?> <?= $o['currency']==='luong'?'L':'LK' ?></td><td><?=kp_e($o['status'])?></td><td><?php if($o['status']==='pending'&&filter_var($o['checkout_url'],FILTER_VALIDATE_URL)):?><a href="<?=kp_e($o['checkout_url'])?>" target="_blank" rel="noopener">Mở QR ↗</a><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div></div></section>
+<?php kp_topup_page_end();?>
