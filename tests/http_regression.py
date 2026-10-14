@@ -89,7 +89,7 @@ check(c.cookies._cookies is not None,'session cookie jar populated')
 status,h,b=c.request('/admin/login.php',{'csrf':admin_token,'username':'routeadmin','password':'FixtureAdmin123'})
 check(status==302 and h.get('Location')=='/quan-tri','admin form survives player login')
 check({'KPAHREG','KPAHADMIN'}.issubset({cookie.name for cookie in c.cookies}),'distinct admin/player cookies')
-for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/nap-game']:
+for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     body=clean_page(c,path)
     if path=='/nhan-vat':check('FixtureHero' in body and 'OtherHero' not in body,'character ownership never crosses accounts')
     if path=='/tai-khoan':
@@ -99,7 +99,7 @@ for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the
         check('/assets/css/dashboard.css' in body and '/assets/css/site-responsive.css' in body,
               'account dashboard and responsive CSS are loaded')
     if path=='/quan-tri':
-        check('/quan-tri/nap-game' not in body and '/quan-tri/cong-tong-nap' not in body,
+        check('/quan-tri/tai-khoan-key' not in body and '/quan-tri/cong-tong-nap' not in body,
               'retired admin routes not shown')
 
 for category in ['level','honor','pk','clan','nap','event','duel','siege','wc']:
