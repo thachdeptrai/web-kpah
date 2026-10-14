@@ -3,11 +3,16 @@ require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/bank_payos.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$cfg=kp_bank_cfg();$csrf=kp_csrf_token();$error='';$checkout='';$activeCode=0;
+$chars=[];
+try{$st=kp_db()->prepare('SELECT id,charname FROM tob_char WHERE userId=? AND del=1 AND ban=0 ORDER BY id DESC LIMIT 40');$st->execute([(int)$user['id']]);$chars=$st->fetchAll(PDO::FETCH_ASSOC);}catch(Throwable $e){kp_log('bank character listing failed',$e);}
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
  try{
   $amount=filter_var($_POST['amount']??null,FILTER_VALIDATE_INT);
   if($amount===false)throw new RuntimeException('Mệnh giá không hợp lệ.');
-  $url=kp_bank_create($user,(int)$amount,(string)($_POST['currency']??''),(string)($_POST['csrf']??''));
+  if(($_POST['offline']??'')!=='1')throw new RuntimeException('Bạn cần xác nhận nhân vật đã thoát game trước khi nạp.');
+  $charId=filter_var($_POST['char_id']??null,FILTER_VALIDATE_INT);
+  if($charId===false)throw new RuntimeException('Chưa chọn nhân vật nhận Lượng.');
+  $url=kp_bank_create($user,(int)$amount,(string)($_POST['currency']??''),(string)($_POST['csrf']??''),(int)$charId);
   $checkout=$url;
   $find=kp_db()->prepare('SELECT order_code FROM kp_bank_orders WHERE user_id=? AND checkout_url=? ORDER BY id DESC LIMIT 1');
   $find->execute([(int)$user['id'],$url]);$activeCode=(int)$find->fetchColumn();
@@ -17,7 +22,7 @@ $recent=[];
 try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 15');$st->execute([(int)$user['id']]);$recent=$st->fetchAll(PDO::FETCH_ASSOC);}
 catch(Throwable $e){$error=$error?:'Chưa có bảng nạp ngân hàng. Chạy migration database/payos_bank.sql.';}
 kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Chỉ hiện khu vực QR sau khi bạn bấm Tạo QR thành công. Đơn chưa thanh toán hết hạn sau 10 phút; chỉ đơn được xác nhận mới giữ lại trong lịch sử.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Chỉ hiện khu vực QR sau khi bạn bấm Tạo QR thành công. Đơn chưa thanh toán hết hạn sau 10 phút. Sau khi payOS xác nhận, website cộng trực tiếp vào nhân vật đã chọn (cần thoát game).</p></section>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
 <?php if(isset($_GET['result'])):?><div class="tp-alert warning">Trang thanh toán đã chuyển về website. Chỉ kết quả tra cứu từ payOS mới xác nhận tiền về.</div><?php endif;?>
 <section class="tp-section"><div class="tp-grid two"><div class="tp-panel"><h2>Tạo đơn nạp</h2><?php if(!$cfg['ready']):?><div class="tp-alert warning">Chưa có thông tin kết nối payOS.</div><?php endif;?>
@@ -25,6 +30,10 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <label class="tp-field"><span>Mệnh giá</span><select class="tp-select" name="amount" required <?=!$cfg['ready']?'disabled':''?>>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><option value="<?=$vnd?>"><?=number_format($vnd,0,',','.')?>đ</option><?php endforeach;?></select></label>
 <label class="tp-field"><span>Nhận loại Lượng</span><select class="tp-select" name="currency" required <?=!$cfg['ready']?'disabled':''?>><option value="luong">Lượng mở</option><option value="luonglock">Lượng khóa</option></select></label>
+<label class="tp-field"><span>Nhân vật nhận Lượng</span><select class="tp-select" name="char_id" required <?=!$cfg['ready']?'disabled':''?>>
+<option value="">Chọn nhân vật</option>
+<?php foreach($chars as $c):?><option value="<?= (int)$c['id'] ?>"><?=kp_e($c['charname'])?></option><?php endforeach;?></select></label>
+<label class="tp-check"><input type="checkbox" name="offline" value="1" required><span>Tôi xác nhận nhân vật đã thoát game trước khi chuyển khoản. Game server có thể ghi đè Lượng nếu nhân vật vẫn online.</span></label>
 <button type="submit" class="tp-button" <?=!$cfg['ready']?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
 <div class="tp-panel"><h2>Bảng thưởng chuyển khoản</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>VNĐ</th><th>Lượng mở</th><th>Lượng khóa</th></tr></thead><tbody>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><tr><td><?=number_format($vnd,0,',','.')?></td><td><?=number_format($pkg['luong'],0,',','.')?></td><td><?=number_format($pkg['luonglock'],0,',','.')?></td></tr><?php endforeach;?></tbody></table></div></div></div></section>
