@@ -76,7 +76,9 @@ function kp_bank_reconcile($code){
   }
   if((int)($response['amountPaid']??0)<(int)$order['amount']){$db->commit();return 'pending';}
   $ref=substr((string)($response['id']??''),0,100);
-  if(!$cfg['queue_verified']||$cfg['server_id']<0){
+  // svID=-1 is the existing board_naptien SQL default; do not reject it blindly.
+  // Explicit game_queue_verified opt-in remains mandatory.
+  if(!$cfg['queue_verified']){
    $db->prepare('UPDATE kp_bank_orders SET status="paid_waiting_delivery",provider_reference=?,paid_at=COALESCE(paid_at,NOW()) WHERE order_code=?')->execute([$ref,$code]);
    $db->commit();return 'paid_waiting_delivery';
   }
