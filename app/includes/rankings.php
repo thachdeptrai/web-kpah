@@ -108,15 +108,8 @@ function kp_rankings_catalog()
                     ORDER BY COALESCE(lvClan,0) DESC,COALESCE(xp,0) DESC,id_clan ASC LIMIT 10"
         ],
         'nap' => [
-            'label'=>'Top nạp','short'=>'Top nạp','metric'=>'VNĐ đã nạp','secondary'=>'Lượng cũ đã nhận',
-            'description'=>'Xếp theo tổng VNĐ thanh toán ngân hàng được xác nhận. Lượng ở cột phụ chỉ tính đơn cấp trực tiếp trước khi chuyển qua ví.',
-            'sql'=>"SELECT username AS name,SUM(amount) AS score,
-                    SUM(CASE WHEN units>0 THEN units ELSE 0 END) AS secondary
-                    FROM kp_bank_orders
-                    WHERE username<>'' AND status IN ('completed','queued','needs_review','crediting','paid_waiting_delivery','wallet_crediting','wallet_credited')
-                      AND (paid_at IS NOT NULL OR status IN ('completed','queued','wallet_credited'))
-                    GROUP BY username HAVING SUM(amount)>0
-                    ORDER BY score DESC,secondary DESC,username ASC LIMIT 10"
+            'label'=>'Top nạp','short'=>'Top nạp','metric'=>'Tổng nạp VNĐ','secondary'=>'Thẻ cào',
+            'description'=>'Tổng nạp theo tài khoản, gồm giao dịch payOS và thẻ cào hợp lệ; đối chiếu cùng team_user.tongnap, không cộng lặp các nguồn.',
         ],
         'napgame' => [
             'label'=>'Nạp trong game','short'=>'Nạp game','metric'=>'Lượng đã nạp','secondary'=>'Điểm Top',
@@ -174,10 +167,94 @@ function kp_rankings_catalog()
     ];
 }
 
+/**
+ * Approved card topups are stored in protected storage/topup/orders/*.json,
+ * not in kp_bank_orders. Never load sealed PIN/serial to the public response.
+ */
+function kp_rankings_paid_card_totals(): array {
+    require_once __DIR__.'/topup_core.php';
+    $root=kp_topup_root();
+    $cache=$root.'/topnap-card-cache.json';
+    try{
+        if(is_file($cache) && (int)@filemtime($cache)>time()-60){
+            $record=kp_topup_read_file($cache);
+            if(is_array($record) && is_array($record['totals']??null))return $record['totals'];
+        }
+    }catch(Throwable $e){kp_log('Top nạp thẻ cache unreadable',$e);}
+    $dir=$root.'/orders';
+    $totals=[];
+    if(is_dir($dir)){
+        foreach(glob($dir.'/*.json')?:[] as $path){
+            $raw=@file_get_contents($path);
+            if(!is_string($raw)||strlen($raw)>30000)continue;
+            $order=json_decode($raw,true);
+            if(!is_array($order))continue;
+            $status=(string)($order['status']??'');
+            // Provider-verified, never pending/failed/ambiguous bad-value cards.
+            if(!in_array($status,['wallet_credited','wallet_crediting','verified_pending_delivery','queued','completed'],true))continue;
+            $userId=(int)($order['user_id']??0);
+            $amount=(int)($order['amount']??0);
+            if($userId<1||$amount<1||$amount>1000000000)continue;
+            $key=(string)$userId;
+            $totals[$key]=($totals[$key]??0)+$amount;
+        }
+    }
+    try{kp_topup_write_file($cache,['at'=>time(),'totals'=>$totals]);}
+    catch(Throwable $e){kp_log('Top nạp thẻ cache not writable',$e);}
+    return $totals;
+}
+
+/**
+ * tongnap might already include old payOS/card payments on the live game
+ * database. Using MAX(tongnap, verifiedPayOS+verifiedCards) rather than SUM
+ * avoids double counting unknown historical sources.
+ */
+function kp_rankings_topnap(): array {
+    static $cached=null;
+    if($cached!==null)return $cached;
+    $db=kp_db();
+    $storedColumn=(bool)$db->query("SHOW COLUMNS FROM team_user LIKE 'tongnap'")->fetch(PDO::FETCH_ASSOC);
+    $sql=$storedColumn
+       ? "SELECT id,username,COALESCE(tongnap,0) AS stored_vnd FROM team_user WHERE ban=0 AND username IS NOT NULL AND username<>''"
+       : "SELECT id,username,0 AS stored_vnd FROM team_user WHERE ban=0 AND username IS NOT NULL AND username<>''";
+    $users=$db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    $bank=[];
+    try{
+        $sql="SELECT user_id,SUM(amount) AS paid_vnd FROM kp_bank_orders
+              WHERE amount>0 AND
+                (status IN ('completed','queued','wallet_credited')
+                 OR (status IN ('crediting','paid_waiting_delivery','wallet_crediting','needs_review')
+                     AND paid_at IS NOT NULL))
+              GROUP BY user_id";
+        foreach($db->query($sql)->fetchAll(PDO::FETCH_ASSOC) as $r)
+            $bank[(string)(int)$r['user_id']]=(int)$r['paid_vnd'];
+    }catch(Throwable $e){kp_log('Top nạp payOS source unavailable',$e);}
+    try{$cards=kp_rankings_paid_card_totals();}
+    catch(Throwable $e){kp_log('Top nạp thẻ source unavailable',$e);$cards=[];}
+    $rows=[];
+    foreach($users as $u){
+        $id=(string)(int)$u['id'];
+        $payos=max(0,(int)($bank[$id]??0));
+        $card=max(0,(int)($cards[$id]??0));
+        $stored=max(0,(int)($u['stored_vnd']??0));
+        $verified=$payos+$card;
+        $total=max($stored,$verified);
+        if($total<=0)continue;
+        $rows[]=['name'=>(string)$u['username'],'score'=>$total,'secondary'=>$card,
+          'bank_vnd'=>$payos,'card_vnd'=>$card,'stored_vnd'=>$stored];
+    }
+    usort($rows,function($a,$b){
+        $cmp=$b['score']<=>$a['score'];
+        return $cmp!==0?$cmp:strcmp($a['name'],$b['name']);
+    });
+    return $cached=array_slice($rows,0,10);
+}
+
 function kp_rankings_fetch($type)
 {
     $catalog=kp_rankings_catalog();
     if (!isset($catalog[$type])) throw new InvalidArgumentException('Loại bảng xếp hạng không hợp lệ.');
+    if($type==='nap')return kp_rankings_topnap();
     $st=kp_db()->query($catalog[$type]['sql']);
     return $st->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -191,6 +268,10 @@ function kp_rankings_available()
     $available=[];
     foreach(kp_rankings_catalog() as $key=>$category){
         try {
+            if($key==='nap'){
+                if(kp_rankings_topnap())$available[$key]=$category;
+                continue;
+            }
             $st=kp_db()->query($category['sql']);
             if($st && $st->fetch(PDO::FETCH_ASSOC)!==false)$available[$key]=$category;
         } catch(Throwable $e) {
