@@ -104,6 +104,8 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <link rel="stylesheet" href="/assets/css/home-theme.css?v=7">
 <?php if($withCharacters): ?><link rel="stylesheet" href="/assets/css/characters.css?v=2"><?php endif; ?>
 <link rel="stylesheet" href="/assets/css/player-portal.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-portal.css') ?>">
+<?php if($active==='home'):?><link rel="stylesheet" href="/assets/css/dashboard.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/dashboard.css') ?>"><?php endif;?>
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body class="home-page portal-page">
 <a class="home-skip-link" href="#portal-content">Đến nội dung chính</a>
