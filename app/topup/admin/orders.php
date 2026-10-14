@@ -79,6 +79,8 @@ $qSt->execute([(string)$b['username'],(int)$b['units']]);$queues=$qSt->fetchAll(
 <label class="tp-field"><span>Nhập nguyên văn để xác nhận</span><input class="tp-input" name="confirmation" required autocomplete="off" placeholder="TOI DA KIEM TRA CHUA NHAN LUONG"></label>
 <button type="submit" class="tp-button" <?= (!$options||!$queues)?'disabled':'' ?>>Xác minh payOS và cộng một lần ↗</button></form></div>
 <?php endforeach;?>
-<?php }catch(Throwable $e) { ?><p class="tp-muted">Chưa có bảng ngân hàng. Chạy database/payos_bank.sql trước.</p><?php } ?>
+<?php }catch(Throwable $e) { kp_log('bank admin orders query failed',$e); ?>
+<div class="tp-alert bad">Không tải được dữ liệu đối soát ngân hàng. Hãy kiểm tra bảng <code>kp_bank_orders</code> và cột <code>char_id</code> (migration <code>database/payos_direct_credit_upgrade.sql</code>). Nếu đã có cột này, kiểm tra PHP error log để biết câu SQL gây lỗi. Không import lại database/payos_bank.sql hoặc xóa bảng cũ.</div>
+<?php } ?>
 </div></section>
 <?php kp_topup_page_end(); ?>
