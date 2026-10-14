@@ -36,7 +36,7 @@ function kp_admin_nav($active = 'home', $role = null)
     ?>
 <nav class="kp-admin-nav kp-admin-nav-v2" aria-label="Điều hướng quản trị">
   <a class="kp-admin-nav-brand" href="<?= kp_e($base) ?>" aria-label="KPAH - <?= $role === 'key' ? 'Mã giới thiệu' : 'Tổng quan quản trị' ?>">
-    <span class="kp-admin-nav-brand-mark" aria-hidden="true">K<span>.</span></span>
+    <span class="kp-admin-nav-brand-mark" aria-hidden="true">K.</span>
     <span class="kp-admin-nav-brand-copy"><strong>KPAH</strong><small><?= $role === 'key' ? 'KEY PANEL' : 'ADMIN PANEL' ?></small></span>
   </a>
 
