@@ -8,9 +8,9 @@ if (!kp_admin_allowed_ip()) {
     http_response_code(403);
     exit('Truy cập quản trị bị giới hạn.');
 }
-if (!empty($_SESSION['kp_admin_id']) && ($_SESSION['kp_admin_role'] ?? '') === 'admin') {
-    kp_admin_require();
-    header('Location: /quan-tri');
+if (!empty($_SESSION['kp_admin_id']) && in_array(($_SESSION['kp_admin_role'] ?? ''), ['admin','key'],true)) {
+    kp_admin_require('/quan-tri/dang-nhap',['admin','key']);
+    header('Location: '.(($_SESSION['kp_admin_role']??'')==='key'?'/quan-tri/ma-gioi-thieu':'/quan-tri'));
     exit;
 }
 $error = '';
@@ -48,7 +48,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     $st->execute([$username]);
                     $admin = $st->fetch(PDO::FETCH_ASSOC);
                     $valid = $admin && (int)$admin['is_active'] === 1
-                        && $admin['role'] === 'admin'
+                        && in_array($admin['role'],['admin','key'],true)
                         && password_verify($password, (string)$admin['password_hash']);
                     $totpOk = !kp_admin_totp_enabled();
                     if ($valid && kp_admin_totp_enabled()) {
@@ -59,7 +59,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     }
                     if ($valid && $totpOk) {
                         kp_admin_create_session($admin, $totpOk);
-                        header('Location: /quan-tri');
+                        header('Location: '.($admin['role']==='key'?'/quan-tri/ma-gioi-thieu':'/quan-tri'));
                         exit;
                     }
                     kp_admin_log_event('login_failed', $admin ? (int)$admin['id'] : 0);
