@@ -307,6 +307,40 @@ function kp_topup_reconcile($id, $callback = null) {
     $response = kp_topup_provider_check($id);
     return kp_topup_with_record('orders',$id,function($order,$path) use ($response,$cfg,$callback) {
         if (!$order) throw new RuntimeException('Không tìm thấy yêu cầu nạp.');
+        if (($order['delivery_mode']??'game')==='wallet') {
+            if(in_array($order['status'],['wallet_credited','failed','needs_review'],true))return $order;
+            if(isset($response['request_id']) && (string)$response['request_id']!==(string)$order['id'])
+                throw new RuntimeException('Mã thẻ đối soát không trùng.');
+            $cardStatus=(int)($response['status']??99);
+            if($cardStatus===1){
+                $value=filter_var($response['value']??null,FILTER_VALIDATE_INT);
+                $net=filter_var($response['amount']??null,FILTER_VALIDATE_INT);
+                if($value===false||$value!==(int)$order['amount']||$net===false||$net<1||$net>$value) {
+                    $order['status']='needs_review';$order['updated_at']=time();
+                    kp_topup_write_file($path,$order);return $order;
+                }
+                $order['net_amount']=$net;
+                $order['status']='wallet_crediting';$order['updated_at']=time();
+                kp_topup_write_file($path,$order);
+                try {
+                    require_once __DIR__.'/wallet_vnd.php';
+                    kp_vnd_credit((int)$order['user_id'],'card',(string)$order['id'],$net,0);
+                    $order['status']='wallet_credited';$order['updated_at']=time();
+                    kp_topup_write_file($path,$order);
+                    try{
+                        require_once __DIR__.'/loyalty_points.php';
+                        kp_points_award((int)$order['user_id'],'card',(string)$order['id'],(int)$order['amount'],$order['created_at']);
+                    }catch(Throwable $e){kp_log('card point ledger retry needed',$e);}
+                }catch(Throwable $e){kp_log('verified card wallet credit retry needed',$e);}
+            }elseif($cardStatus===3){
+                $order['status']='failed';$order['updated_at']=time();kp_topup_write_file($path,$order);
+            }elseif($cardStatus===2){
+                $order['status']='needs_review';$order['updated_at']=time();kp_topup_write_file($path,$order);
+            }else{
+                $order['status']='pending';$order['updated_at']=time();kp_topup_write_file($path,$order);
+            }
+            return $order;
+        }
         if (in_array($order['status'],['queued','failed','crediting','needs_review'],true)) return $order;
         if (isset($response['request_id']) && (string)$response['request_id'] !== $order['id']) {
             throw new RuntimeException('Mã giao dịch đối soát không trùng.');
