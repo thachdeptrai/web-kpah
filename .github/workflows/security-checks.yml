@@ -1,4 +1,4 @@
-name: Security source and secret checks
+name: Security regression checks
 
 on:
   push:
@@ -7,6 +7,8 @@ on:
       - 'app/api/**'
       - 'app/includes/**'
       - 'app/topup/**'
+      - 'tests/admin_security_smoke.php'
+      - 'tests/admin_csrf_smoke.php'
       - '.htaccess'
       - '.github/workflows/security-checks.yml'
   pull_request:
@@ -15,6 +17,8 @@ on:
       - 'app/api/**'
       - 'app/includes/**'
       - 'app/topup/**'
+      - 'tests/admin_security_smoke.php'
+      - 'tests/admin_csrf_smoke.php'
       - '.htaccess'
       - '.github/workflows/security-checks.yml'
   workflow_dispatch:
@@ -38,6 +42,12 @@ jobs:
           set -euo pipefail
           find . -path './.git' -prune -o -type f -name '*.php' -print0 |
             xargs -0 -n1 php -l
+      - name: Admin MFA and rate limit regression tests
+        run: php tests/admin_security_smoke.php
+      - name: Admin session and CSRF regression tests
+        run: php tests/admin_csrf_smoke.php
+      - name: Recharge conversion smoke tests
+        run: php tests/topup_smoke.php
       - name: Guard public checkout of secret files
         shell: bash
         run: |
