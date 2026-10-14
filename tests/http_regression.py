@@ -60,12 +60,12 @@ check('lp-download-card' in landing_body,'landing download cards render')
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location','').startswith('/dang-nhap'),'guest login guard '+path)
-for path in ['/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
+for path in ['/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/cong-vnd','/quan-tri/cong-tong-nap','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location')=='/quan-tri/dang-nhap','admin guard '+path)
 for path in ['/app/pages/login.php','/config/routes.php','/tools/check.php','/includes/db.php','/storage/topup/rates.json','/database/referral_codes.sql','/tests/seed_fixture.php','/.git/config','/.env','/config.register.local.php','/check.php','/backup.sql','/dump.zip']:
     check(guest.request(path)[0]==403,'private HTTP boundary '+path)
-for path in ['/missing-route','/madeup.php','/api/missing','/index.php/extra','/quan-tri/nap-game','/quan-tri/cong-tong-nap']:
+for path in ['/missing-route','/madeup.php','/api/missing','/index.php/extra','/quan-tri/nap-game']:
     check(guest.request(path)[0]==404,'unknown route '+path)
 status,h,b=guest.request('/dang-nhap/?x=1')
 check(status==301 and h['Location']=='/dang-nhap?x=1','trailing slash canonical')
