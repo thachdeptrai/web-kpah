@@ -1,13 +1,16 @@
 <?php
 require __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/topup_core.php';
+require_once __DIR__ . '/../includes/wallet_vnd.php';
 require_once __DIR__ . '/_layout.php';
 $user = kp_topup_user();
 $cfg = kp_topup_cfg();
 // Cards now top up the site's VNĐ wallet; no game queue required.
 $cardLive = $cfg['card_ready'];
-try{kp_db()->query('SELECT 1 FROM kp_vnd_settings WHERE id=1')->fetchColumn();}
-catch(Throwable $e){$cardLive=false;kp_log('card wallet migration missing',$e);}
+if($cardLive){
+ try{kp_vnd_bonus_percent();kp_vnd_balance((int)$user['id']);}
+ catch(Throwable $e){$cardLive=false;kp_log('card wallet migration missing',$e);}
+}
 $rates = kp_topup_rates();
 $csrf = kp_csrf_token();
 $error = ''; $notice = ''; $createdId = '';
