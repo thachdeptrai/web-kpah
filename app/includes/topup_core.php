@@ -270,7 +270,7 @@ function kp_topup_status_label($status) {
         'verified_pending_delivery' => 'Thẻ hợp lệ · chờ cấp',
         'crediting' => 'Cần kiểm tra cấp tiền',
         'queued' => 'Đã đưa vào hàng chờ game',
-        'wallet_crediting' => 'Thẻ hợp lệ · đang cộng VNĐ',
+        'wallet_crediting' => 'Đang cộng VNĐ · nếu chờ lâu cần kiểm tra',
         'wallet_credited' => 'Đã cộng VNĐ vào ví',
         'failed' => 'Thẻ không hợp lệ',
         'needs_review' => 'Cần đối soát',
