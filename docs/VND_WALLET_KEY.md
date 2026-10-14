@@ -23,7 +23,7 @@ Dữ liệu tài chính mới được ghi trong thư mục riêng tư `storage/
 
 ## Quyền quản trị
 
-Admin có thanh điều hướng chung trên `/quan-tri`, `/quan-tri/ma-gioi-thieu` và tất cả `/quan-tri/nap`, `/quan-tri/ty-le`, `/quan-tri/doi-soat`, `/quan-tri/nap-game`, `/quan-tri/diem-tich-luy`, `/quan-tri/cong-tai-nguyen`.
+Admin có thanh điều hướng chung trên `/quan-tri`, `/quan-tri/ma-gioi-thieu`, `/quan-tri/nap`, `/quan-tri/ty-le`, `/quan-tri/doi-soat`, `/quan-tri/diem-tich-luy` và `/quan-tri/cong-tai-nguyen`. Các trang thử cộng `tongnap` thủ công và xem trực tiếp bảng queue game đã được gỡ khỏi website; bảng SQL và cơ chế phục hồi đơn cũ không bị xóa.
 
 Tài khoản `key`:
 - Tạo/khóa trong `/quan-tri/tai-khoan-key` (**chỉ admin**).
