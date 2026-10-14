@@ -194,7 +194,6 @@ Chi tiết quy trình, biến môi trường, lưu ý về MyISAM và điều ki
 | `storage/` | Session phụ, giới hạn truy cập và nhật ký nạp |
 | `database/` | SQL hỗ trợ quản trị, giới thiệu |
 | `tools/` | Chẩn đoán nội bộ, bị chặn qua HTTP |
-| `tests/` | Kiểm thử đơn vị, HTTP và schema mẫu |
 | `docs/` | Hướng dẫn triển khai, bảo mật, kiểm thử |
 
 ## Bảo mật admin và database
@@ -217,7 +216,7 @@ C:\xampp\php\php.exe -l app\topup\admin\grant.php
 Nếu có PHP CLI, chạy bộ kiểm tra quy đổi:
 
 ```bat
-C:\xampp\php\php.exe tests\topup_smoke.php
+C:\\xampp\\php\\php.exe -l app\\includes\\topup_core.php
 ```
 
 Sau khi cập nhật, kiểm tra giao diện PC/mobile, đăng nhập, đăng ký, OTP, quyền admin và link CSS/JS. Với giao diện đang được cache qua trình duyệt hoặc Cloudflare, thử tải lại mạnh hoặc xóa cache của file tương ứng.
