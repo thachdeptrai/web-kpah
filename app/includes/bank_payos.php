@@ -42,29 +42,51 @@ function kp_bank_create($user,$amount,$currency,$csrf,$charId){
  $check=kp_db()->prepare('SELECT id FROM tob_char WHERE id=? AND userId=? AND del=1 AND ban=0 LIMIT 1');
  $check->execute([$charId,(int)$user['id']]);
  if(!$check->fetchColumn())throw new RuntimeException('Nhân vật không tồn tại hoặc không thuộc tài khoản này.');
- list($allow,$retry)=kp_rate_limit('bank_create',(string)$user['id'],3,900,true);
- if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
- $db=kp_db();
- // Random positive order code fitting payOS signed 64-bit and MySQL BIGINT.
- $code=random_int(100000000,999999999);
- $units=kp_bank_rewards($amount,$currency);
- $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,?,"creating")');
- $stmt->execute([$code,(int)$user['id'],$charId,(string)$user['username'],$amount,$currency,$units]);
- $description='KPAH'.$code;
- $base='https://nghienkpah.io.vn/nap-ngan-hang';
- $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
- 'returnUrl'=>$base,'cancelUrl'=>$base,'expiredAt'=>time()+600];
- $payload['signature']=kp_bank_sign(['amount'=>$amount,'cancelUrl'=>$payload['cancelUrl'],'description'=>$description,'orderCode'=>$code,'returnUrl'=>$payload['returnUrl']],$cfg['checksum_key']);
+ // Per-user filesystem lock serializes simultaneous POSTs, including across PHP sessions.
+ $lockFile=kp_topup_root().'/bank-create-'.(int)$user['id'].'.lock';
+ $lock=@fopen($lockFile,'c+');
+ if(!$lock||!flock($lock,LOCK_EX))throw new RuntimeException('Chưa thể khóa yêu cầu nạp. Thử lại sau.');
  try {
-  $link=kp_bank_api('POST','',$payload);
-  if(!isset($link['checkoutUrl'])||!filter_var($link['checkoutUrl'],FILTER_VALIDATE_URL)||parse_url($link['checkoutUrl'],PHP_URL_HOST)!=='pay.payos.vn')throw new RuntimeException('Link thanh toán không hợp lệ.');
-  $update=$db->prepare('UPDATE kp_bank_orders SET status="pending",checkout_url=?,payment_link_id=? WHERE order_code=?');
-  $update->execute([$link['checkoutUrl'],(string)($link['paymentLinkId']??''),$code]);
-  return $link['checkoutUrl'];
- }catch(Throwable $e) {
-  // DO NOT retry using another orderCode automatically: API call may have succeeded.
-  kp_log('payOS link creation uncertain',$e);
-  throw new RuntimeException('Chưa tạo được link, hãy kiểm tra đơn trước khi tạo lại.');
+  $db=kp_db();
+  // Reuse a single existing checkout. No second invoice while the first is pending.
+  $st=$db->prepare("SELECT order_code,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? AND status IN ('creating','pending') ORDER BY id DESC LIMIT 1");
+  $st->execute([(int)$user['id']]);$active=$st->fetch(PDO::FETCH_ASSOC);
+  if($active){
+   $created=strtotime((string)$active['created_at']);
+   if($created!==false && $created>time()-600){
+    $url=(string)($active['checkout_url']??'');
+    if($active['status']==='pending' && filter_var($url,FILTER_VALIDATE_URL)
+       && parse_url($url,PHP_URL_HOST)==='pay.payos.vn')return $url;
+    throw new RuntimeException('Đơn thanh toán trước đang được tạo hoặc chờ đối soát. Không tạo QR khác, hãy kiểm tra lịch sử nạp.');
+   }
+   // Old invoices are checked/cancelled by the cleanup worker. Never overwrite them.
+   throw new RuntimeException('Có một đơn cũ đang chờ payOS đối soát hoặc hết hạn. Vui lòng thử lại sau khi hệ thống xử lý.');
+  }
+  list($allow,$retry)=kp_rate_limit('bank_create',(string)$user['id'],3,900,true);
+  if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
+  $code=random_int(100000000,999999999);
+  $units=kp_bank_rewards($amount,$currency);
+  $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,?,"creating")');
+  $stmt->execute([$code,(int)$user['id'],$charId,(string)$user['username'],$amount,$currency,$units]);
+  $description='KPAH'.$code;
+  $base='https://nghienkpah.io.vn/nap-ngan-hang';
+  $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
+   'returnUrl'=>$base,'cancelUrl'=>$base,'expiredAt'=>time()+600];
+  $payload['signature']=kp_bank_sign(['amount'=>$amount,'cancelUrl'=>$payload['cancelUrl'],'description'=>$description,'orderCode'=>$code,'returnUrl'=>$payload['returnUrl']],$cfg['checksum_key']);
+  try {
+   $link=kp_bank_api('POST','',$payload);
+   if(!isset($link['checkoutUrl'])||!filter_var($link['checkoutUrl'],FILTER_VALIDATE_URL)||parse_url($link['checkoutUrl'],PHP_URL_HOST)!=='pay.payos.vn')throw new RuntimeException('Link thanh toán không hợp lệ.');
+   $update=$db->prepare('UPDATE kp_bank_orders SET status="pending",checkout_url=?,payment_link_id=? WHERE order_code=? AND status="creating"');
+   $update->execute([$link['checkoutUrl'],(string)($link['paymentLinkId']??''),$code]);
+   if($update->rowCount()!==1)throw new RuntimeException('Trạng thái đơn thay đổi, cần đối soát.');
+   return $link['checkoutUrl'];
+  }catch(Throwable $e){
+   kp_log('payOS link creation uncertain',$e);
+   throw new RuntimeException('Chưa tạo được link, hãy kiểm tra đơn trước khi tạo lại.');
+  }
+ } finally {
+  flock($lock,LOCK_UN);
+  fclose($lock);
  }
 }
 /**
