@@ -108,9 +108,9 @@ function kp_rankings_catalog()
                     ORDER BY COALESCE(lvClan,0) DESC,COALESCE(xp,0) DESC,id_clan ASC LIMIT 10"
         ],
         'nap' => [
-            'label'=>'Top nạp','short'=>'Top nạp','metric'=>'Lượng nạp','secondary'=>'Số lượt nạp',
-            'description'=>'Xếp hạng tài khoản theo tổng Lượng của các giao dịch ngân hàng đã xác nhận thanh toán. Không tính đơn đang chờ.',
-            'sql'=>"SELECT username AS name,SUM(units) AS score,COUNT(*) AS secondary
+            'label'=>'Top nạp','short'=>'Top nạp','metric'=>'Lượng nạp','secondary'=>'Tổng VNĐ',
+            'description'=>'Xếp hạng các tài khoản theo Lượng nạp qua payOS, kèm tổng số tiền VNĐ đã thanh toán.',
+            'sql'=>"SELECT username AS name,SUM(units) AS score,SUM(amount) AS secondary
                     FROM kp_bank_orders
                     WHERE username<>'' AND status IN ('completed','queued','needs_review','crediting','paid_waiting_delivery')
                     GROUP BY username HAVING SUM(units)>0
