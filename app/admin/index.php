@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/admin_security.php';
+require_once __DIR__ . '/../includes/admin_nav.php';
 require_once __DIR__ . '/../includes/referrals.php';
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
@@ -30,12 +31,14 @@ try {
 <meta name="robots" content="noindex,nofollow">
 <title>Trang chủ quản trị · KPAH</title>
 <link rel="stylesheet" href="/assets/css/admin-home.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 </head>
 <body>
 <header class="topbar">
   <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH · QUẢN TRỊ</small><strong>Control Center</strong></span></a>
   <div class="top-actions"><span class="secure"><i></i> Phiên bảo mật</span><span class="user"><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
+<?php kp_admin_nav('home','admin'); ?>
 <main class="shell">
   <section class="welcome">
     <div><div class="eyebrow">OVERVIEW / TỔNG QUAN</div><h1>Chào mừng trở lại.</h1><p>Tài khoản, mã giới thiệu và nạp tài nguyên — chọn mục bạn cần.</p></div>
