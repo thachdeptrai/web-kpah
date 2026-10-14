@@ -1,55 +1,55 @@
-# Nâng cấp ví VNĐ và role key
+# Ví VNĐ và quyền key — tương thích schema KPAH hiện có
 
-## Thứ tự triển khai XAMPP / MariaDB
+## KHÔNG CẦN CHẠY SQL MỚI
 
-1. **Backup** database kpah, `kp_bank_orders`, `team_user`, và dữ liệu `storage/topup`.
-2. Xác nhận VPS đã có cột số `team_user.vnd` (không cần thêm lại):
-   `SHOW COLUMNS FROM team_user LIKE 'vnd';`
-3. Chạy **một lần** `database/vnd_wallet_upgrade.sql` trên database `kpah`, không import lại dump SQL cũ.
-4. `cd C:\xampp\htdocs` rồi `git pull --ff-only origin main`.
-5. Trang admin: `/quan-tri/ty-le` → thưởng ngân hàng (mặc định +10%).
-6. Người chơi: `/nap-ngan-hang` hoặc `/nap-the` → số dư `/vi-vnd` → đổi mốc.
-7. Cấu hình Windows Task Scheduler tiếp tục chạy `tools/payos_cleanup.php` mỗi phút để retry đơn đã xác minh mà ví chưa hoàn tất.
+Bản vá này dùng **bảng đã có**:
+- `kp_bank_orders`: đơn payOS, không yêu cầu `delivery_mode`, `bonus_percent` hay các cột khác ngoài schema cũ.
+- `team_user.vnd`: **cột do quản trị viên đã thêm**. Nếu trên một máy khác chưa có cột này, dừng nạp thật và kiểm tra cấu hình, không tự thêm bảng.
+- `kpah_web_admins.role`: `VARCHAR(20)`, hỗ trợ giá trị `key` sẵn.
+- Các bảng `kp_points_*` đang có tiếp tục hoạt động như cũ.
 
-### Luồng số dư
+**Không tạo `kp_vnd_wallets`, `kp_vnd_settings`, `kp_vnd_ledger` hoặc `kp_vnd_exchanges`.** Tệp migration ví SQL cũ đã gỡ khỏi repo.
 
-- Nạp ngân hàng 10.000đ, thưởng 10%: **+11.000 VNĐ** vào ví, **+10 Point** nếu đã bật chương trình Point.
-- Nạp thẻ 10.000đ: cộng **số VNĐ thực nhận sau phí của nhà cung cấp**, không cộng thưởng ngân hàng; Point tính theo mệnh giá thẻ hợp lệ.
-- Mỗi thanh toán được xác minh qua nguồn tin cậy và chỉ có **một dòng nguồn** trong `kp_vnd_ledger`.
-- `kp_vnd_wallets` (InnoDB) là số dư chuẩn của web. `team_user.vnd` (MyISAM) được đồng bộ bằng **SET balance**, không `vnd=vnd+N`, tránh cộng nhiều lần từ webhook lặp.
-- Khi bắt đầu sử dụng lần đầu, số `team_user.vnd` đang có sẽ được bảo toàn làm số dư mở ví. Các ứng dụng khác **không nên trực tiếp cập nhật `team_user.vnd`** trong khi website sử dụng ví này, vì web có thể đồng bộ lại.
-- Không có quy trình cộng lại tiền của **đơn cũ**: chúng giữ `delivery_mode='game'`. Chỉ những đơn mới có `delivery_mode='wallet'` nhận VNĐ.
-- Khi đổi mốc, tài khoản bị trừ VNĐ trong sổ InnoDB đúng một lần, sau đó trang web cấp Lượng trực tiếp cho nhân vật đã thoát game. Do bảng nhân vật là MyISAM, kết quả cấp không chắc chắn sẽ thành `needs_review`: **không bấm lại / không tự hoàn hoặc sửa số dư**; quản trị đối soát ở `/quan-tri/doi-soat`.
-- Bảng mốc giữ nguyên các giá trị trong `kp_card_packages()`: 10k, 50k, 100k, 500k, 1M.
-- Không lưu password hoặc API keys vào repo.
+Dữ liệu tài chính mới được ghi trong thư mục riêng tư `storage/topup/vnd-journal/` (bị Apache chặn truy cập bằng .htaccess):
+- Tiền thật trong `team_user.vnd`, thay đổi qua `UPDATE ... WHERE vnd=old_value` dưới khóa MySQL `GET_LOCK`.
+- Mỗi webhook/card có một nhật ký nguồn duy nhất và ghi **prepared trước khi chạm MyISAM**, thành công mới chuyển **completed**.
+- Nếu server tắt giữa chừng và kết quả không rõ, giao dịch không được cộng lại tự động; **cần đối soát** bằng nhật ký với số dư và đơn payOS.
+- Các đơn cũ `completed` (Lượng) có `units > 0` không tự chuyển sang ví VNĐ, tránh nhận trùng.
+- Đơn mới dùng trạng thái `wallet_creating`, `wallet_pending`, `wallet_crediting`, `wallet_credited`. Bonus được chốt tại thời điểm tạo QR vào `provider_reference` theo mẫu `VND_BONUS:10`. payOS vẫn được kiểm tra qua API bằng `order_code`.
+- Thưởng mặc định **+10% ngân hàng**. Admin chỉnh tại `/quan-tri/ty-le`; mức % được giữ tại `storage/topup/bank-bonus.json`.
+- Nạp thẻ hợp lệ chỉ cộng **VNĐ thực nhận sau chiết khấu**; không thưởng ngân hàng.
+- Đổi mốc qua `/vi-vnd` trừ VNĐ một lần; cấp Lượng trực tiếp vào nhân vật đã thoát game. Nếu MyISAM trả kết quả chưa rõ, không tự hoàn hoặc cộng lại.
+- Không xoá `storage/topup/` khi triển khai. Sao lưu nó cùng database.
 
-### Role key
+## Quyền quản trị
 
-Bảng `kpah_web_admins.role` đã là `VARCHAR(20)`, **không cần migration riêng**.
+Admin có thanh điều hướng chung trên `/quan-tri`, `/quan-tri/ma-gioi-thieu` và tất cả `/quan-tri/nap`, `/quan-tri/ty-le`, `/quan-tri/doi-soat`, `/quan-tri/nap-game`, `/quan-tri/diem-tich-luy`, `/quan-tri/cong-tai-nguyen`.
 
-Role `key`:
-- Được phép đăng nhập `/quan-tri/dang-nhap` và sẽ chuyển vào `/quan-tri/ma-gioi-thieu`.
-- Được xem số liệu/mã giới thiệu và tạo mã mới, không được khóa/mở mã.
-- Bị **403 ở backend** tại `/quan-tri`, mọi trang `/quan-tri/nap`, `/quan-tri/ty-le`, `/quan-tri/doi-soat`, API/quản trị không được phân quyền, v.v.
-- Phiên đăng nhập vẫn bị kiểm tra role/is_active trong database trên mỗi request; CSRF, giới hạn đăng nhập và MFA nếu bật vẫn áp dụng.
+Tài khoản `key`:
+- Tạo/khóa trong `/quan-tri/tai-khoan-key` (**chỉ admin**).
+- Đăng nhập tại `/quan-tri/dang-nhap`, chuyển vào `/quan-tri/ma-gioi-thieu`.
+- Chỉ **xem và tạo mã giới thiệu**. Không khóa/mở mã; POST trái quyền trả HTTP 403. Không truy cập các trang admin khác (backend `kp_admin_require` kiểm tra role và trạng thái đang hoạt động mỗi lần).
+- Mật khẩu cho tài khoản mới được băm bcrypt và yêu cầu ít nhất 12 ký tự; không lưu dạng rõ.
 
-Tạo một tài khoản cộng tác viên trên Navicat bằng một username chưa tồn tại, điền bcrypt hash (sinh bằng `php -r "echo password_hash('your-strong-password', PASSWORD_BCRYPT), PHP_EOL;"`) và `role='key'`. **Không dùng lại mật khẩu ngắn cho tài khoản quản trị thực tế.**
+## Triển khai
 
-## Kiểm thử bắt buộc trên database thử nghiệm trước khi mở nạp
+1. Backup database `kpah` và `storage/topup`.
+2. `SHOW COLUMNS FROM team_user LIKE 'vnd';` kiểm tra cột có thật (bạn đã thêm).
+3. `cd C:\xampp\htdocs` và `git pull --ff-only origin main`.
+4. Đảm bảo tài khoản Windows chạy Apache có quyền đọc/ghi `storage/topup`.
+5. Nếu Apache đang bật OPcache, khởi động lại Apache để code mới có hiệu lực.
+6. Truy cập `/nap-ngan-hang`: bảng thưởng +10%, danh sách 2 đơn cũ vẫn hiển thị, không hiện lời nhắc chạy migration SQL.
+7. Thử giao dịch ở môi trường test trước khi nhận nạp thật.
 
-1. Chưa có `vnd` hoặc chưa chạy migration: website phải từ chối tạo QR/gửi thẻ.
-2. Tài khoản đã có 123.000đ trong `team_user.vnd`: lần đầu mở `/vi-vnd` vẫn 123.000đ.
-3. payOS 10.000đ: một invoice, cộng **11.000đ** lúc thưởng 10%, trạng thái `wallet_credited`.
-4. Gọi cùng webhook và poll 100 lần: đúng một dòng `kp_vnd_ledger` / một lần cộng 11.000đ.
-5. Admin thay bonus từ 10 sang 15%: hóa đơn **sau** thay đổi cộng 11.500đ cho 10k; hóa đơn cũ vẫn cộng 11k.
-6. Provider xác minh thẻ 10k với thực nhận 8k: +8k vào ví; gọi lại callback không cộng trùng.
-7. Nạp thất bại/chưa thanh toán: +0 vào ví; trạng thái cũ không thành ghi ví mới.
-8. Đổi 10k từ ví: trừ một lần 10k, cấp 250 Lượng mở hoặc 500 Lượng khóa cho nhân vật offline khi thành công.
-9. Spam/nhấn gửi lại cùng token đổi mốc: không trừ VNĐ thêm, không cộng Lượng thêm.
-10. Không đủ VNĐ hoặc nhân vật sai tài khoản: từ chối trước khi trừ.
-11. Nếu có `needs_review`, kiểm tra `kp_vnd_exchanges` và biến động `tob_char` trước khi xử lý thủ công.
-12. Role `key`: tạo mã giới thiệu được, nhưng POST toggle và truy cập URL admin khác trả 403 (toggle bị từ chối và không thay đổi database).
-13. Role `admin`: trang quà, admin nạp, đối soát và cài đặt bonus hoạt động.
-14. Xác minh `kp_vnd_wallets.balance = team_user.vnd` sau khi ví hoạt động.
+## Checklist kiểm thử
 
-**Chưa kiểm thử live với payOS hoặc game server trên VPS chỉ từ Github; đừng nhận bản code này đã qua E2E production.**
+- Đơn cũ `completed`, `units = 250/500`: vẫn giữ lịch sử Lượng, không tự cộng VNĐ.
+- Nạp payOS **10.000đ** với thưởng 10%: `team_user.vnd` tăng **11.000đ**, Point tăng 10 nếu chương trình Point đã kích hoạt.
+- Webhook gửi lại 10–100 lần: không cộng trùng.
+- Admin đổi thưởng 10 → 15%: chỉ QR mới áp dụng 15%.
+- Thẻ xác minh được 8.000đ net từ mệnh giá 10.000đ: tăng 8.000đ VNĐ.
+- Đổi mốc hai lần cùng request token: chỉ một lần trừ VNĐ, một lần cấp Lượng. Nếu việc ghi game không rõ, phải vào đối soát.
+- Admin có menu chung trên tất cả trang; key chỉ thấy liên kết mã giới thiệu.
+- Người dùng role key truy cập URL `/quan-tri`, `/quan-tri/ty-le`, `/quan-tri/tai-khoan-key` hoặc POST khóa mã → HTTP 403.
+
+Kiểm thử thanh toán thật/game-server phải thực hiện trên VPS. Kiểm tra cú pháp tự động qua `.github/workflows/php-js-syntax.yml` không thay thế được kiểm thử giao dịch.
