@@ -4,5 +4,19 @@ if(PHP_SAPI!=='cli'){http_response_code(403);exit;}
 require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once dirname(__DIR__).'/app/includes/bank_payos.php';
 if(!kp_bank_cfg()['ready']){fwrite(STDERR,"payOS is not configured\n");exit(1);}
-try{$n=kp_bank_cleanup(100);echo "payOS cleaned ".$n." cancelled unpaid orders\n";}
+try{
+ $n=kp_bank_cleanup(100);
+ echo "payOS cleaned ".$n." cancelled unpaid orders\n";
+ // Recover existing paid-but-not-delivered orders only after queue verification.
+ $cfg=kp_bank_cfg();
+ if($cfg['queue_verified']){
+  $st=kp_db()->query("SELECT order_code FROM kp_bank_orders WHERE status='paid_waiting_delivery' ORDER BY id ASC LIMIT 20");
+  $checked=0;
+  foreach($st->fetchAll(PDO::FETCH_COLUMN) as $code){
+   try{kp_bank_reconcile((string)$code);$checked++;}
+   catch(Throwable $e){kp_log('payOS paid-order retry deferred',$e);}
+  }
+  echo "payOS rechecked ".$checked." paid orders awaiting delivery\n";
+ }
+}
 catch(Throwable $e){kp_log('payOS CLI cleanup failed',$e);fwrite(STDERR,"Cleanup failed\n");exit(1);}
