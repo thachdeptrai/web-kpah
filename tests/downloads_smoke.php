@@ -47,6 +47,19 @@ try {
     dl_assert(kp_game_download_filename_valid(str_repeat('a', 32) . '.apk', 'android'), 'Safe Android filename accepted');
     dl_assert(!kp_game_download_filename_valid('../evil.php', 'android'), 'Traversal filename rejected');
     dl_assert(!kp_game_download_filename_valid(str_repeat('a', 32) . '.exe', 'android'), 'Platform extension mismatch rejected');
+    $dir = kp_game_download_dir();
+    $oldName = str_repeat('b', 32) . '.apk';
+    file_put_contents($dir . '/' . $oldName, "PK\\x03\\x04fixture");
+    $catalog = json_decode(file_get_contents($dir . '/catalog.json'), true);
+    $catalog['android']['file'] = $oldName;
+    $catalog['android']['filename'] = 'OldGame.apk';
+    $catalog['android']['size'] = 11;
+    file_put_contents($dir . '/catalog.json', json_encode($catalog));
+    $remove = dl_post([], [], ['android' => 'https://example.com/client.apk']);
+    $remove['remove']['android'] = '1';
+    kp_game_download_save($remove, []);
+    dl_assert(!file_exists($dir . '/' . $oldName), 'Admin removal deletes unreferenced release');
+    dl_assert(kp_game_download_catalog()['android']['file'] === '', 'Catalog no longer references deleted file');
     echo 'PASS: download catalog smoke checks' . PHP_EOL;
 } finally {
     foreach (glob($root . '/storage/game-downloads/*') ?: [] as $file) @unlink($file);
