@@ -111,7 +111,7 @@ function kp_rankings_catalog()
             'label'=>'Top nạp','short'=>'Top nạp','metric'=>'VNĐ đã nạp','secondary'=>'Lượng cũ đã nhận',
             'description'=>'Xếp theo tổng VNĐ thanh toán ngân hàng được xác nhận. Lượng ở cột phụ chỉ tính đơn cấp trực tiếp trước khi chuyển qua ví.',
             'sql'=>"SELECT username AS name,SUM(amount) AS score,
-                    SUM(CASE WHEN delivery_mode='game' THEN units ELSE 0 END) AS secondary
+                    SUM(CASE WHEN units>0 THEN units ELSE 0 END) AS secondary
                     FROM kp_bank_orders
                     WHERE username<>'' AND status IN ('completed','queued','needs_review','crediting','paid_waiting_delivery','wallet_crediting','wallet_credited')
                       AND (paid_at IS NOT NULL OR status IN ('completed','queued','wallet_credited'))
