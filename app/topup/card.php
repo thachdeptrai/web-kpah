@@ -16,7 +16,7 @@ $csrf = kp_csrf_token();
 $error = ''; $notice = ''; $createdId = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     try {
-        if (!$cardLive) throw new RuntimeException('Nạp thẻ đang tạm đóng. Kiểm tra API thẻ, cột team_user.vnd và quyền ghi nhật ký.');
+        if (!$cardLive) throw new RuntimeException('Nạp thẻ đang tạm gián đoạn. Bạn vui lòng quay lại sau.');
         if (!kp_csrf_check($_POST['csrf'] ?? null)) throw new RuntimeException('Phiên đã hết hạn. Tải lại trang.');
         list($allow,$retry) = kp_rate_limit('kp_card', (string)$user['id'].'|'.kp_client_ip(), 5, 3600, true);
         if (!$allow) throw new RuntimeException('Bạn đã gửi nhiều yêu cầu. Thử lại sau '.(int)ceil($retry/60).' phút.');
@@ -89,11 +89,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 // Avoid accidentally echoing submitted card PIN/serial anywhere below.
 kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 ?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>VNĐ.</em></h1><p class="tp-lead">Thẻ hợp lệ cộng số VNĐ thực nhận sau phí API vào ví, nhưng tổng nạp (tongnap) vẫn tính đủ mệnh giá thẻ. Dùng số dư ví để đổi mốc Lượng sau.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP THẺ CÀO</span><h1>Nạp thẻ, nhận <em>VNĐ.</em></h1><p class="tp-lead">Nạp thẻ để nhận VNĐ vào ví sau chiết khấu. Tổng nạp vẫn tính theo mệnh giá gốc của thẻ. Sau đó, bạn có thể dùng VNĐ để đổi Lượng.</p></section>
 <?php if($error!==''): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice!==''): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?> <a class="tp-support" href="/lich-su-nap">Xem lịch sử →</a></div><?php endif; ?>
 <?php if(!$cardLive): ?>
-<div class="tp-alert warning"><strong>Chưa mở gửi thẻ thật.</strong> Chỉ mở khi API thẻ và cột team_user.vnd hoạt động, đồng thời thư mục lưu lịch sử cho phép ghi.</div>
+<div class="tp-alert warning"><strong>Nạp thẻ đang tạm gián đoạn.</strong> Bạn vui lòng thử lại sau hoặc chọn nạp ngân hàng.</div>
 <?php endif; ?>
 <section class="tp-section"><div class="tp-grid two">
 <div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cardLive ? 'SẴN SÀNG NẠP' : 'CHƯA MỞ' ?></span></div>
@@ -104,7 +104,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <label class="tp-field"><span>Mệnh giá ghi trên thẻ (VNĐ)</span><input class="tp-input" name="amount" type="number" inputmode="numeric" min="10000" max="1000000" step="10000" placeholder="VD: 50000" required <?= !$cardLive?'disabled':'' ?>><small>Chỉ hỗ trợ 10k · 50k · 100k · 500k · 1.000k.</small></label>
 </div>
 <div class="tp-row"><label class="tp-field"><span>Mã nạp thẻ</span><input class="tp-input" name="code" type="password" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Mã PIN dưới lớp phủ" required <?= !$cardLive?'disabled':'' ?>></label><label class="tp-field"><span>Số serial</span><input class="tp-input" name="serial" type="text" maxlength="32" minlength="6" spellcheck="false" autocomplete="off" placeholder="Serial in trên thẻ" required <?= !$cardLive?'disabled':'' ?>></label></div>
-<p id="tp-estimate" class="tp-alert warning" aria-live="polite">Số VNĐ thực nhận được xác nhận bởi API thẻ sau chiết khấu.</p>
+<p id="tp-estimate" class="tp-alert warning" aria-live="polite">Số VNĐ nhận được sẽ hiển thị sau khi trừ chiết khấu thẻ.</p>
 <label class="tp-check"><input type="checkbox" required <?= !$cardLive?'disabled':'' ?>><span>Tôi đã kiểm tra số serial, mã thẻ và mệnh giá. Mỗi thẻ chỉ được gửi một lần.</span></label>
 <button class="tp-button" type="submit" <?= !$cardLive?'disabled':'' ?>>Gửi thẻ để kiểm tra <span aria-hidden="true">↗</span></button>
 </form></div>
