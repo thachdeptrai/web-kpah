@@ -10,6 +10,7 @@ kp_topup_page_start('Tổng quan','index',(string)$user['username']);?>
 <div class="tp-grid">
 <a class="tp-card" href="/nap-the"><span class="tp-icon">✦</span><h3>Nạp thẻ cào</h3><p>Chọn loại Lượng, nhập đúng serial và mã thẻ.</p><span class="tp-card-cta"><?= $cfg['card_ready'] ? 'Mở nạp thẻ' : 'Xem trang nạp thẻ' ?> <strong>↗</strong></span></a>
 <a class="tp-card" href="/nap-ngan-hang"><span class="tp-icon purple">◇</span><h3>Nạp ngân hàng</h3><p>Tạo QR payOS và theo dõi đơn thanh toán riêng của bạn.</p><span class="tp-card-cta">Nạp ngân hàng <strong>↗</strong></span></a>
+<a class="tp-card" href="/diem-tich-luy"><span class="tp-icon green">✧</span><h3>Point tích lũy & đổi quà</h3><p>Nạp 10.000đ tích 10 Point. Xem ví Point, quà đang mở đổi và lịch sử sử dụng.</p><span class="tp-card-cta">Đến cửa hàng Point <strong>↗</strong></span></a>
 <a class="tp-card" href="/lich-su-nap"><span class="tp-icon green">◷</span><h3>Lịch sử nạp</h3><p>Xem lại thẻ cào, chuyển khoản payOS và tình trạng cấp Lượng.</p><span class="tp-card-cta">Lịch sử của tôi <strong>↗</strong></span></a>
 <?php if($hasTopNap): ?><a class="tp-card" href="/top-nap"><span class="tp-icon">♛</span><h3>Top nạp Lượng</h3><p>Xem ai đang đứng đầu Top nạp Lượng.</p><span class="tp-card-cta">Xem xếp hạng <strong>↗</strong></span></a><?php endif; ?>
 </div></section>
