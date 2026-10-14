@@ -63,6 +63,8 @@ function kp_bank_create($user,$amount,$csrf){
   $st=$db->prepare("SELECT order_code,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? AND status IN ('creating','pending','wallet_creating','wallet_pending') ORDER BY id DESC LIMIT 1");
   $st->execute([(int)$user['id']]);$active=$st->fetch(PDO::FETCH_ASSOC);
   if($active){
+   if(in_array((string)$active['status'],['creating','pending'],true))
+    throw new RuntimeException('Còn một QR theo cơ chế nạp Lượng cũ. Hãy đối soát/hủy đơn cũ trước khi tạo QR nạp VNĐ.');
    $created=strtotime((string)$active['created_at']);
    if($created!==false && $created>time()-600){
     $url=(string)($active['checkout_url']??'');
@@ -194,7 +196,8 @@ function kp_bank_recover_queued($code,$charId,$queueId,$confirmation) {
 function kp_bank_reconcile_wallet($code,array $order){
  $db=kp_db();
  if($order['status']==='wallet_credited'){
-  try{kp_vnd_balance((int)$order['user_id']);}catch(Throwable $e){kp_log('wallet projection delayed',$e);}
+  try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
+  catch(Throwable $e){kp_log('wallet loyalty retry deferred',$e);}
   return 'wallet_credited';
  }
  if(in_array($order['status'],['failed','cancelled','expired'],true))return $order['status'];
