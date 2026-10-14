@@ -7,6 +7,14 @@ if(!kp_bank_cfg()['ready']){fwrite(STDERR,"payOS is not configured\n");exit(1);}
 try{
  $n=kp_bank_cleanup(100);
  echo "payOS cleaned ".$n." cancelled unpaid orders\n";
+ // Retry new wallet payments independently of the legacy game queue.
+ $st=kp_db()->query("SELECT order_code FROM kp_bank_orders WHERE delivery_mode='wallet' AND status='wallet_crediting' ORDER BY id ASC LIMIT 40");
+ $retried=0;
+ foreach($st->fetchAll(PDO::FETCH_COLUMN) as $code){
+  try{kp_bank_reconcile((string)$code);$retried++;}
+  catch(Throwable $e){kp_log('payOS VNĐ wallet retry deferred',$e);}
+ }
+ echo "payOS rechecked ".$retried." wallet credit attempts\n";
  // Recover existing paid-but-not-delivered orders only after queue verification.
  $cfg=kp_bank_cfg();
  if($cfg['queue_verified']){
