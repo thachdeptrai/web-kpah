@@ -18,6 +18,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         $action = (string) ($_POST['action'] ?? '');
         try {
             if ($action === 'create') {
+                list($allowed,$retry)=kp_admin_limit('referral-create',(string)$admin['id'],30,3600);
+                if(!$allowed)throw new RuntimeException('Đã đạt giới hạn tạo mã trong giờ. Thử lại sau.');
                 $rawCode = strtoupper(trim((string) ($_POST['code'] ?? '')));
                 $limit = filter_var($_POST['count'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
                 $dateRaw = trim((string) ($_POST['date'] ?? ''));
@@ -66,13 +68,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     }
 }
 $csrf = kp_csrf_token();
-$codes = kp_db()->query(
-    'SELECT c.id, c.code, c.`count`, c.used_count, c.`date`, c.is_active, c.created_at,
+$baseCodes='SELECT c.id, c.code, c.`count`, c.used_count, c.`date`, c.is_active, c.created_at,
             GREATEST(c.`count` - c.used_count, 0) AS remaining,
             (SELECT COUNT(*) FROM kpah_referral_code_uses u WHERE u.referral_id = c.id) AS logged_uses
-     FROM kpah_referral_codes c ORDER BY c.id DESC LIMIT 500'
-)->fetchAll();
-$uses = kp_db()->query('SELECT code, username, used_at FROM kpah_referral_code_uses ORDER BY id DESC LIMIT 100')->fetchAll();
+     FROM kpah_referral_codes c';
+if($admin['role']==='key'){
+    $st=kp_db()->prepare($baseCodes.' WHERE c.created_by=? ORDER BY c.id DESC LIMIT 500');
+    $st->execute([(int)$admin['id']]);
+    $codes=$st->fetchAll(PDO::FETCH_ASSOC);
+    $st=kp_db()->prepare('SELECT u.code,u.username,u.used_at FROM kpah_referral_code_uses u
+        INNER JOIN kpah_referral_codes c ON c.id=u.referral_id
+        WHERE c.created_by=? ORDER BY u.id DESC LIMIT 100');
+    $st->execute([(int)$admin['id']]);$uses=$st->fetchAll(PDO::FETCH_ASSOC);
+}else{
+    $codes=kp_db()->query($baseCodes.' ORDER BY c.id DESC LIMIT 500')->fetchAll(PDO::FETCH_ASSOC);
+    $uses=kp_db()->query('SELECT code,username,used_at FROM kpah_referral_code_uses ORDER BY id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
+}
 ?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quản lý mã giới thiệu KPAH</title>
 <link rel="stylesheet" href="/assets/css/admin.css?v=1"><link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>"></head><body><header><div class="brand"><div class="brand-mark">✦</div><div class="brand-copy"><span class="eyebrow">KPAH • CONTROL CENTER</span><h1>Quản trị hệ thống</h1></div></div><div class="head-right"><?php if($admin['role']==='admin'):?><a class="logout" href="/quan-tri">⌂ Trang chủ</a><?php endif;?><span><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div></header>
