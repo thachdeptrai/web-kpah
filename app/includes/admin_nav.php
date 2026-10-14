@@ -12,6 +12,7 @@ function kp_admin_nav($active='home',$role=null){
       ['orders','/quan-tri/doi-soat','Đối soát'],
       ['rates','/quan-tri/ty-le','Tỷ lệ & thưởng'],
       ['grant','/quan-tri/cong-tai-nguyen','Cộng tài nguyên'],
+      ['wallet-credit','/quan-tri/cong-vnd','Cộng VNĐ & tổng nạp'],
       ['points','/quan-tri/diem-tich-luy','Point & quà'],
     ];
     $links=$role==='key'?[$all[1]]:$all;
