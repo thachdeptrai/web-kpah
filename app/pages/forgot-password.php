@@ -27,6 +27,7 @@ $version = trim((string) kp_config('app.version', ''));
     <link rel="stylesheet" href="/assets/css/register.css?v=1">
     <link rel="stylesheet" href="/assets/css/login.css?v=2">
     <link rel="stylesheet" href="/assets/css/recovery.css?v=2">
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body>
 <a class="skip-link" href="#recovery-form">Bỏ qua và đến biểu mẫu khôi phục</a>
