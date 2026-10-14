@@ -53,6 +53,7 @@ function kp_bank_create($user,$amount,$csrf){
  // Fail before requesting payment if migration is missing.
  $bonusPercent=kp_vnd_bonus_percent();
  kp_vnd_balance((int)$user['id']); // Verify wallet and team_user.vnd BEFORE creating a real payOS invoice.
+ kp_vnd_require_tongnap(kp_db()); // Never accept payment if gross recharge cannot be recorded.
  // Per-user filesystem lock serializes simultaneous POSTs, including across PHP sessions.
  $lockFile=kp_topup_root().'/bank-create-'.(int)$user['id'].'.lock';
  $lock=@fopen($lockFile,'c+');
