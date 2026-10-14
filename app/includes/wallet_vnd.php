@@ -62,41 +62,64 @@ function kp_vnd_record_path(string $kind,string $ref): string {
     if(!is_writable($dir))throw new RuntimeException('Không thể ghi nhật ký ví.');
     return $dir.'/'.$kind.'-'.strtolower($ref).'.json';
 }
-function kp_vnd_credit(int $userId,string $kind,string $ref,int $base,int $bonusPercent=0): bool {
+/**
+ * One verified payment updates both account wallet VND and cumulative recharge
+ * in the SAME MyISAM row update, after durable write-ahead journaling.
+ * gross = paid face value (not bank bonus; not card payout after provider fees).
+ */
+function kp_vnd_credit(int $userId,string $kind,string $ref,int $base,int $bonusPercent=0,?int $gross=null): bool {
     if(!in_array($kind,['payos','card'],true)||$base<1||$base>1000000000||$bonusPercent<0||$bonusPercent>100)
         throw new RuntimeException('Yêu cầu cộng tiền không hợp lệ.');
+    $gross=$gross===null?$base:$gross;
+    if($gross<$base||$gross>1000000000||($kind==='payos'&&$gross!==$base))
+        throw new RuntimeException('Giá trị nạp tích lũy không hợp lệ.');
     $add=$base+intdiv($base*$bonusPercent,100);
-    return kp_vnd_with_lock($userId,function(PDO $db)use($userId,$kind,$ref,$base,$bonusPercent,$add){
+    return kp_vnd_with_lock($userId,function(PDO $db)use($userId,$kind,$ref,$base,$bonusPercent,$add,$gross){
         $path=kp_vnd_record_path($kind,$ref);
         $record=kp_topup_read_file($path);
         if($record!==null){
             if((int)($record['user_id']??0)!==$userId||
                (int)($record['base']??-1)!==$base||
-               (int)($record['bonus_percent']??-1)!==$bonusPercent)
+               (int)($record['bonus_percent']??-1)!==$bonusPercent||
+               (isset($record['gross'])&&(int)$record['gross']!==$gross))
                 throw new RuntimeException('Giao dịch đã tồn tại với thông tin khác.');
             if(($record['status']??'')==='completed')return false;
-            // Journal may have been written before an ambiguous MyISAM write.
-            // Never retry the same monetary UPDATE after an interrupted request.
             throw new RuntimeException('Giao dịch đang cần đối soát. Không cộng lại.');
         }
         $before=kp_vnd_current($db,$userId);
         if($before>2000000000-$add)throw new RuntimeException('Số dư ví vượt giới hạn.');
         $after=$before+$add;
+        // The uploaded SQL dump predates the user's custom team_user.tongnap.
+        // If present in the live DB, update it together with VND; no migration.
+        $column=$db->query("SHOW COLUMNS FROM team_user LIKE 'tongnap'")->fetch(PDO::FETCH_ASSOC);
+        $hasTotal=(bool)$column;
+        if($hasTotal){
+            $st=$db->prepare('SELECT tongnap FROM team_user WHERE id=? AND ban=0');
+            $st->execute([$userId]);$previous=$st->fetchColumn();
+            if($previous===false || $previous===null || !is_numeric($previous)
+                || (float)$previous<0 || (float)$previous>2000000000-$gross)
+                throw new RuntimeException('Cột tongnap không hợp lệ, cần kiểm tra trước khi nạp.');
+        }
         $record=['user_id'=>$userId,'source'=>$kind,'ref'=>$ref,
-            'base'=>$base,'bonus_percent'=>$bonusPercent,'before'=>$before,'after'=>$after,
+            'base'=>$base,'gross'=>$gross,'bonus_percent'=>$bonusPercent,
+            'before'=>$before,'after'=>$after,'includes_tongnap'=>$hasTotal,
             'status'=>'prepared','created_at'=>time()];
-        kp_topup_write_file($path,$record); // Durable BEFORE MyISAM mutation
+        kp_topup_write_file($path,$record); // Durable BEFORE touching MyISAM
         try{
-            $st=$db->prepare('UPDATE team_user SET vnd=? WHERE id=? AND COALESCE(vnd,0)=? AND ban=0');
-            $st->execute([$after,$userId,$before]);
+            if($hasTotal){
+                $st=$db->prepare('UPDATE team_user SET vnd=?,tongnap=COALESCE(tongnap,0)+? WHERE id=? AND COALESCE(vnd,0)=? AND ban=0');
+                $st->execute([$after,$gross,$userId,$before]);
+            }else{
+                $st=$db->prepare('UPDATE team_user SET vnd=? WHERE id=? AND COALESCE(vnd,0)=? AND ban=0');
+                $st->execute([$after,$userId,$before]);
+            }
             if($st->rowCount()!==1)throw new RuntimeException('Số dư VNĐ đã thay đổi, không được cộng lại.');
             $record['status']='completed';$record['completed_at']=time();
             kp_topup_write_file($path,$record);
             return true;
         }catch(Throwable $e){
-            kp_log('vnd deposit requires manual reconciliation '.$kind.' '.$ref,$e);
-            // Do NOT replace the earlier prepared journal if the filesystem fails.
-            throw new RuntimeException('Đã ghi nhận tiền nhưng chưa xác định được việc cộng ví. Liên hệ admin đối soát.');
+            kp_log('vnd topup requires manual reconciliation '.$kind.' '.$ref,$e);
+            throw new RuntimeException('Chưa xác định được việc cộng ví và tổng nạp. Hãy đối soát, không gửi lại.');
         }
     });
 }
