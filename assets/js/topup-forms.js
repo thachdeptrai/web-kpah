@@ -30,10 +30,10 @@
     var packages={'10000':{luong:250,luonglock:500},'50000':{luong:1500,luonglock:3000},'100000':{luong:3500,luonglock:7000},'500000':{luong:20000,luonglock:40000},'1000000':{luong:45000,luonglock:90000}};
     var tick=0;
     var recalc=function(){
-      var amount=Number(amountField.value),rate=Number(card.getAttribute('data-rate-'+currencyField.value)||0);
+      var amount=Number(amountField.value);
       var telco=telcoField.value;
       var current=++tick;
-      if(!Number.isSafeInteger(amount)||!packages[String(amount)]||!Number.isSafeInteger(rate)||rate<1){
+      if(!Number.isSafeInteger(amount)||!packages[String(amount)]){
         estimate.textContent='Nhập mệnh giá để xem phí thẻ thực tế.';return;
       }
       estimate.textContent='Đang lấy phí từ TheCaoSieuToc…';
@@ -42,14 +42,13 @@
         .then(function(quote){
           if(current!==tick)return;
           if(!quote.ok||!Number.isSafeInteger(Number(quote.net))){estimate.textContent='Chưa có báo giá cho loại thẻ này.';return;}
-          var units=Math.floor(packages[String(amount)][currencyField.value]*Number(quote.net)/amount);
-          estimate.textContent='Chiết khấu đối tác: '+quote.fee+'% · Thực nhận dự kiến: '+Number(quote.net).toLocaleString('vi-VN')+'đ · Dự kiến '+units.toLocaleString('vi-VN')+' '+(currencyField.value==='luonglock'?'Lượng khóa':'Lượng thường')+'.';
+          estimate.textContent='Chiết khấu đối tác: '+quote.fee+'% · Ví VNĐ nhận dự kiến: '+Number(quote.net).toLocaleString('vi-VN')+'đ. Số thực nhận cuối cùng do đối tác xác nhận.';
         }).catch(function(){if(current===tick)estimate.textContent='Chưa tải được bảng phí từ đối tác.';});
     };
     var timer;
     function scheduled(){clearTimeout(timer);timer=setTimeout(recalc,350);}
     amountField.addEventListener('input',scheduled);
-    currencyField.addEventListener('change',scheduled);
+    if(currencyField)currencyField.addEventListener('change',scheduled);
     telcoField.addEventListener('change',scheduled);
     recalc();
   }
