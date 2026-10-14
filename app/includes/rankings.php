@@ -10,6 +10,61 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 function kp_rankings_catalog()
 {
     return [
+        'spending' => [
+            'label'=>'Tiêu Lượng','short'=>'Tiêu Lượng','metric'=>'Lượng đã tiêu','secondary'=>'Lượng đã nạp',
+            'description'=>'Nhân vật sử dụng nhiều Lượng nhất theo tổng hợp nạp và tiêu.',
+            'sql'=>"SELECT charname AS name,luongxai AS score,luongnap AS secondary FROM tob_nap_xai_luong WHERE charname <> '' AND luongxai > 0 ORDER BY luongxai DESC,luongnap DESC,charname ASC LIMIT 10"
+        ],
+        'vip' => [
+            'label'=>'Cấp VIP','short'=>'VIP','metric'=>'Cấp VIP','secondary'=>null,
+            'description'=>'Những nhân vật đạt bậc VIP cao nhất.',
+            'sql'=>"SELECT charname AS name,vip AS score,0 AS secondary FROM tob_char_vip WHERE charname <> '' AND vip > 0 ORDER BY vip DESC,id ASC LIMIT 10"
+        ],
+        'battle' => [
+            'label'=>'Chiến trường','short'=>'Chiến trường','metric'=>'Điểm liên trảm','secondary'=>'Số trận',
+            'description'=>'Thành tích liên trảm trên chiến trường.',
+            'sql'=>"SELECT charname AS name,lientram AS score,sttru AS secondary FROM tob_chien_truong WHERE charname <> '' AND lientram > 0 ORDER BY lientram DESC,sttru DESC,id ASC LIMIT 10"
+        ],
+        'farm' => [
+            'label'=>'Nông trại','short'=>'Nông trại','metric'=>'Hạng nông trại','secondary'=>'Cấp cây',
+            'description'=>'Những nông trại có thứ hạng cao nhất (hạng càng nhỏ càng cao).',
+            'sql'=>"SELECT c.charname AS name,f.rank AS score,f.lv AS secondary FROM tob_farm f INNER JOIN tob_char c ON c.id=f.owner WHERE f.rank>0 AND c.del=1 AND c.ban=0 AND c.charname <> '' ORDER BY f.rank ASC,f.lv DESC,f.id ASC LIMIT 10"
+        ],
+        'clanxp' => [
+            'label'=>'EXP bang hội','short'=>'EXP bang','metric'=>'EXP bang','secondary'=>'Cấp bang',
+            'description'=>'Các bang hội tích lũy nhiều kinh nghiệm nhất.',
+            'sql'=>"SELECT clanName AS name,COALESCE(xp,0) AS score,COALESCE(lvClan,0) AS secondary FROM tob_clan WHERE isdel=0 AND clanName IS NOT NULL AND clanName<>'' AND xp>0 ORDER BY xp DESC,lvClan DESC,id_clan ASC LIMIT 10"
+        ],
+        'clanmembers' => [
+            'label'=>'Đông thành viên','short'=>'Thành viên','metric'=>'Thành viên','secondary'=>'Cấp bang',
+            'description'=>'Những bang hội đông thành viên nhất.',
+            'sql'=>"SELECT clanName AS name,COALESCE(member,0) AS score,COALESCE(lvClan,0) AS secondary FROM tob_clan WHERE isdel=0 AND clanName IS NOT NULL AND clanName<>'' AND member>0 ORDER BY member DESC,lvClan DESC,id_clan ASC LIMIT 10"
+        ],
+        'clanwealth' => [
+            'label'=>'Quỹ bang hội','short'=>'Quỹ bang','metric'=>'Xu bang','secondary'=>'Cấp bang',
+            'description'=>'Những bang hội có quỹ lớn nhất.',
+            'sql'=>"SELECT clanName AS name,COALESCE(money,0) AS score,COALESCE(lvClan,0) AS secondary FROM tob_clan WHERE isdel=0 AND clanName IS NOT NULL AND clanName<>'' AND money>0 ORDER BY money DESC,lvClan DESC,id_clan ASC LIMIT 10"
+        ],
+        'strength' => [
+            'label'=>'Sức mạnh','short'=>'Sức mạnh','metric'=>'Sức mạnh','secondary'=>'Cấp',
+            'description'=>'Những nhân vật có chỉ số sức mạnh cao nhất.',
+            'sql'=>"SELECT charname AS name,strength AS score,lastLv AS secondary FROM tob_char WHERE charname<>'' AND del=1 AND ban=0 AND strength>0 ORDER BY strength DESC,lastLv DESC,id ASC LIMIT 10"
+        ],
+        'playtime' => [
+            'label'=>'Thời gian chơi','short'=>'Giờ chơi','metric'=>'Phút chơi','secondary'=>'Cấp',
+            'description'=>'Xếp hạng theo tổng thời gian chơi được game ghi nhận.',
+            'sql'=>"SELECT charname AS name,FLOOR(totalTimePlay/60) AS score,lastLv AS secondary FROM tob_char WHERE charname<>'' AND del=1 AND ban=0 AND totalTimePlay>0 ORDER BY totalTimePlay DESC,lastLv DESC,id ASC LIMIT 10"
+        ],
+        'supply' => [
+            'label'=>'Vận tiêu','short'=>'Vận tiêu','metric'=>'Cấp tiêu','secondary'=>null,
+            'description'=>'Nhân vật có cấp tiêu đang nhận cao nhất; không phải xếp hạng lượt vận tiêu tích lũy.',
+            'sql'=>"SELECT namechar AS name,lv AS score,0 AS secondary FROM tob_vantieu WHERE namechar<>'' AND lv>0 ORDER BY lv DESC,idchar ASC LIMIT 10"
+        ],
+        'arena' => [
+            'label'=>'Điểm đấu hạng','short'=>'Đấu hạng','metric'=>'Điểm hạng','secondary'=>'Điểm đấu',
+            'description'=>'Bảng điểm xếp hạng thách đấu.',
+            'sql'=>"SELECT charname AS name,pointrank AS score,point AS secondary FROM tob_char_thach_dau WHERE charname<>'' AND pointrank>0 ORDER BY pointrank DESC,point DESC,id ASC LIMIT 10"
+        ],
         'level' => [
             'label'=>'Cấp độ','short'=>'Cấp độ','metric'=>'Cấp','secondary'=>'EXP',
             'description'=>'Những nhân vật có cấp độ cao nhất; cùng cấp thì so kinh nghiệm.',
