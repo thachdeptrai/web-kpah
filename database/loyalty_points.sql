@@ -54,3 +54,12 @@ CREATE TABLE IF NOT EXISTS kp_points_redemptions (
   KEY idx_points_redemption_user (user_id, created_at),
   KEY idx_points_redemption_status (status, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Activation moment is captured when this migration runs on the real database.
+-- Historical orders are not credited silently.
+CREATE TABLE IF NOT EXISTS kp_points_program (
+  id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+  activated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  points_per_1000 INT UNSIGNED NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT IGNORE INTO kp_points_program (id, points_per_1000) VALUES (1, 1);
