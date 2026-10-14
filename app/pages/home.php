@@ -144,6 +144,18 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     </div>
 </section>
 
+<?php if($dashboard['achievement']):$ach=$dashboard['achievement'];?>
+<section class="pd-section pd-achievements" aria-labelledby="pd-achievements-title">
+    <div class="pd-heading"><div><span class="portal-kicker"><i></i> THÀNH TÍCH CÁ NHÂN</span><h2 id="pd-achievements-title">Dấu ấn <em>nhân vật</em></h2></div><a class="pd-inline-link" href="/nhan-vat">Xem hồ sơ ↗</a></div>
+    <div class="pd-achievement-row">
+        <div class="pd-achievement-identity"><span aria-hidden="true">♛</span><div><small>Nhân vật tiêu biểu</small><strong><?=kp_e($ach['charname'])?></strong></div></div>
+        <div class="pd-achievement-item"><small>Danh vọng</small><strong><?=kp_player_format($ach['honor']??0)?></strong></div>
+        <div class="pd-achievement-item"><small>Điểm PK</small><strong><?=kp_player_format($ach['nPK']??0)?></strong></div>
+        <div class="pd-achievement-item"><small>Cấp VIP</small><strong><?= $ach['vip']!==null?kp_player_format($ach['vip']):'—' ?></strong></div>
+    </div>
+</section>
+<?php endif;?>
+
 <section class="portal-pages" aria-labelledby="portal-pages-title">
     <div class="portal-section-heading"><div><span class="portal-kicker"><i></i> KHÁM PHÁ KPAH</span><h2 id="portal-pages-title">Đi tới <em>chức năng</em></h2></div><p>Truy cập nhanh các trang thường dùng.</p></div>
     <div class="portal-action-grid">
