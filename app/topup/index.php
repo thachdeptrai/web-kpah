@@ -4,11 +4,11 @@ require_once __DIR__ . '/../includes/topup_core.php';
 require_once __DIR__ . '/_layout.php';
 $user=kp_topup_user();$cfg=kp_topup_cfg();$rates=kp_topup_rates();
 kp_topup_page_start('Tổng quan','index',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> TÀI NGUYÊN KPAH</span><h1>Chọn cách nạp <em>của bạn.</em></h1><p class="tp-lead">Chọn Lượng thường hay Lượng khóa, nhập thẻ rồi theo dõi trong lịch sử.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> TÀI NGUYÊN KPAH</span><h1>Chọn cách nạp <em>của bạn.</em></h1><p class="tp-lead">Chọn nạp thẻ cào hoặc chuyển khoản VietQR qua payOS.</p></section>
 <section class="tp-section"><div class="tp-section-heading"><div><span class="tp-eyebrow">DỊCH VỤ</span><h2>Bạn muốn làm gì?</h2></div></div>
 <div class="tp-grid">
 <a class="tp-card" href="/nap-the"><span class="tp-icon">✦</span><h3>Nạp thẻ cào</h3><p>Chọn loại Lượng, nhập đúng serial và mã thẻ.</p><span class="tp-card-cta"><?= $cfg['card_ready'] ? 'Mở nạp thẻ' : 'Xem trang nạp thẻ' ?> <strong>↗</strong></span></a>
-<a class="tp-card is-disabled" href="/nap-ngan-hang"><span class="tp-icon purple">◇</span><h3>Nạp ngân hàng</h3><p>Chuyển khoản chưa mở. Đừng gửi tiền khi chưa có thông báo.</p><span class="tp-card-cta">Xem trạng thái <strong>↗</strong></span></a>
+<a class="tp-card" href="/nap-ngan-hang"><span class="tp-icon purple">◇</span><h3>Nạp ngân hàng</h3><p>Tạo QR payOS và theo dõi đơn thanh toán riêng của bạn.</p><span class="tp-card-cta">Nạp ngân hàng <strong>↗</strong></span></a>
 <a class="tp-card" href="/lich-su-nap"><span class="tp-icon green">◷</span><h3>Lịch sử nạp</h3><p>Thẻ đã gửi đang ở bước nào? Xem lại ở đây.</p><span class="tp-card-cta">Lịch sử của tôi <strong>↗</strong></span></a>
 <a class="tp-card" href="/top-nap"><span class="tp-icon">♛</span><h3>Top nạp Lượng</h3><p>Xem ai đang đứng đầu Top nạp Lượng.</p><span class="tp-card-cta">Xem xếp hạng <strong>↗</strong></span></a>
 </div></section>
