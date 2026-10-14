@@ -47,6 +47,7 @@ header('Content-Type: text/html; charset=utf-8');
 ?><!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Quản lý role key · KPAH</title>
 <link rel="stylesheet" href="/assets/css/topup.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/topup.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head><body class="tp-page tp-admin"><main class="tp-content kp-key-users-content">
 <?php kp_admin_nav('key-users','admin');?>
 <section class="tp-hero"><span class="tp-kicker"><i></i> QUẢN TRỊ / PHÂN QUYỀN</span><h1>Tài khoản <em>role key.</em></h1><p class="tp-lead">Cấp quyền tạo mã giới thiệu nhưng không được xem giao dịch, ví, danh sách admin hoặc thay đổi cấu hình.</p></section>
