@@ -35,10 +35,20 @@ function kp_rankings_catalog()
             'description'=>'Các bang hội tích lũy nhiều kinh nghiệm nhất.',
             'sql'=>"SELECT clanName AS name,COALESCE(xp,0) AS score,COALESCE(lvClan,0) AS secondary FROM tob_clan WHERE isdel=0 AND clanName IS NOT NULL AND clanName<>'' AND xp>0 ORDER BY xp DESC,lvClan DESC,id_clan ASC LIMIT 10"
         ],
-        'clanmembers' => [
-            'label'=>'Đông thành viên','short'=>'Thành viên','metric'=>'Thành viên','secondary'=>'Cấp bang',
-            'description'=>'Những bang hội đông thành viên nhất.',
-            'sql'=>"SELECT clanName AS name,COALESCE(member,0) AS score,COALESCE(lvClan,0) AS secondary FROM tob_clan WHERE isdel=0 AND clanName IS NOT NULL AND clanName<>'' AND member>0 ORDER BY member DESC,lvClan DESC,id_clan ASC LIMIT 10"
+        'contribution' => [
+            'label'=>'Tích lũy','short'=>'Tích lũy','metric'=>'Điểm tích lũy','secondary'=>'Cấp',
+            'description'=>'Những nhân vật có điểm tích lũy cao nhất.',
+            'sql'=>"SELECT charname AS name,tichluy AS score,lastLv AS secondary FROM tob_char WHERE charname<>'' AND del=1 AND ban=0 AND tichluy>0 ORDER BY tichluy DESC,lastLv DESC,id ASC LIMIT 10"
+        ],
+        'kills' => [
+            'label'=>'Hạ gục','short'=>'Hạ gục','metric'=>'Lượt hạ gục','secondary'=>'Điểm PK',
+            'description'=>'Những nhân vật ghi nhận nhiều lượt hạ gục nhất.',
+            'sql'=>"SELECT charname AS name,killer AS score,nPKill AS secondary FROM tob_char WHERE charname<>'' AND del=1 AND ban=0 AND killer>0 ORDER BY killer DESC,nPKill DESC,id ASC LIMIT 10"
+        ],
+        'toppoints' => [
+            'label'=>'Điểm Top nạp','short'=>'Điểm nạp','metric'=>'Điểm Top','secondary'=>'Cấp',
+            'description'=>'Điểm tích lũy Top nạp được game ghi nhận cho nhân vật.',
+            'sql'=>"SELECT charname AS name,topNap AS score,lastLv AS secondary FROM tob_char WHERE charname<>'' AND del=1 AND ban=0 AND topNap>0 ORDER BY topNap DESC,lastLv DESC,id ASC LIMIT 10"
         ],
         'clanwealth' => [
             'label'=>'Quỹ bang hội','short'=>'Quỹ bang','metric'=>'Xu bang','secondary'=>'Cấp bang',
