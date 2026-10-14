@@ -4,8 +4,19 @@ require_once __DIR__.'/../includes/player_portal.php';
 require_once __DIR__.'/../includes/rankings.php';
 
 $user=kp_player_account();
+// Reject unrecognized or malformed categories instead of silently
+// rewriting them to a different leaderboard (and returning HTTP 200).
+$requestedType=$_GET['type']??null;
+if($requestedType!==null &&
+   (!is_string($requestedType) ||
+    !preg_match('/^[a-z_]{1,32}$/D',$requestedType) ||
+    !isset(kp_rankings_catalog()[$requestedType]))){
+    http_response_code(404);
+    require __DIR__.'/not-found.php';
+    exit;
+}
 $categories=kp_rankings_available();
-$type=isset($_GET['type']) && is_string($_GET['type']) ? $_GET['type'] : 'level';
+$type=$requestedType===null?'level':$requestedType;
 if (!isset($categories[$type])) $type=isset($categories['level'])?'level':(array_key_first($categories)??'');
 $current=$type!==''?$categories[$type]:null;
 $rows=[];
