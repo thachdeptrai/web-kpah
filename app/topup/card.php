@@ -28,9 +28,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         if (!preg_match('/^[A-Z0-9]{6,32}$/D',$code) || !preg_match('/^[A-Z0-9]{6,32}$/D',$serial)) {
             throw new RuntimeException('Mã thẻ hoặc serial không hợp lệ.');
         }
-        $discountPercent = (int)$cfg['discount_percent'];
-        $netAmount = kp_topup_after_discount((int)$amount, $discountPercent);
-        $units = kp_topup_units($netAmount, (int)$rates[$currency]);
+        $quote = kp_topup_provider_fee($telco,(int)$amount);
+        $netAmount = $quote['net'];
+        $discountPercent = $quote['fee'];
+        $units = 0; // Only assign after provider check confirms the actual merchant payout.
         $fingerprint = kp_topup_hmac($code,$serial,$cfg['secret']);
         $global = @fopen(kp_topup_root().'/new-card.lock','c+');
         if (!$global || !flock($global,LOCK_EX)) throw new RuntimeException('Không khóa được yêu cầu nạp thẻ.');
@@ -48,6 +49,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 'discount_percent'=>$discountPercent,'net_amount'=>$netAmount,
                 'units'=>$units,'rate'=>(int)$rates[$currency],
                 'fingerprint'=>$fingerprint,'serial_end'=>substr($serial,-4),
+                'sealed_card'=>kp_topup_secretbox(json_encode(['code'=>$code,'serial'=>$serial]),$cfg['secret']),
                 'status'=>'submitting','created_at'=>time(),'updated_at'=>time()
             ];
             kp_topup_with_record('orders',$createdId,function($old,$path) use($order) {
@@ -90,7 +92,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <?php endif; ?>
 <section class="tp-section"><div class="tp-grid two">
 <div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">THÔNG TIN THẺ</span><h2>Gửi thẻ cào</h2></div><span class="tp-chip"><?= $cardLive ? 'SẴN SÀNG NẠP' : 'CHƯA MỞ' ?></span></div>
-<form class="tp-form" id="card-topup-form" data-rate-luong="<?= (int)$rates['luong'] ?>" data-rate-luonglock="<?= (int)$rates['luonglock'] ?>" data-discount-percent="<?= (int)($cfg['discount_percent'] ?? 0) ?>" method="post" autocomplete="off">
+<form class="tp-form" id="card-topup-form" data-rate-luong="<?= (int)$rates['luong'] ?>" data-rate-luonglock="<?= (int)$rates['luonglock'] ?>" data-fee-endpoint="/api/card-fees" method="post" autocomplete="off">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <div class="tp-row">
 <label class="tp-field"><span>Loại thẻ</span><select class="tp-select" name="telco" required <?= !$cardLive?'disabled':'' ?>><option value="VIETTEL">Viettel</option><option value="VINAPHONE">Vinaphone</option><option value="MOBIFONE">Mobifone</option><option value="VNMOBI">Vietnamobile</option><option value="GATE">Gate</option><option value="ZING">Zing</option></select></label>
@@ -103,7 +105,7 @@ kp_topup_page_start('Nạp thẻ cào','card',(string)$user['username']);
 <button class="tp-button" type="submit" <?= !$cardLive?'disabled':'' ?>>Gửi thẻ để kiểm tra <span aria-hidden="true">↗</span></button>
 </form></div>
 <div>
-<div class="tp-panel"><span class="tp-eyebrow">TỶ LỆ HIỆN TẠI</span><h2>Đổi được bao nhiêu?</h2><p class="tp-muted">Chiết khấu <?= $cfg['discount_percent'] === null ? 'chưa cấu hình' : (int)$cfg['discount_percent'].'%' ?>; số Lượng tính trên mệnh giá sau chiết khấu. Mệnh giá thẻ sai cần đối soát.</p><div class="tp-summary tp-summary--two tp-mt-19"><div><small>10.000đ → Lượng thường</small><strong><?= number_format((int)$rates['luong'],0,',','.') ?></strong></div><div><small>10.000đ → Lượng khóa</small><strong><?= number_format((int)$rates['luonglock'],0,',','.') ?></strong></div></div></div>
+<div class="tp-panel"><span class="tp-eyebrow">TỶ LỆ HIỆN TẠI</span><h2>Đổi được bao nhiêu?</h2><p class="tp-muted">Phí dự kiến lấy từ bảng giá TheCaoSieuToc. Lượng cuối cùng được tính từ số VNĐ thực nhận do đối tác xác nhận. Mệnh giá thẻ sai cần đối soát.</p><div class="tp-summary tp-summary--two tp-mt-19"><div><small>10.000đ → Lượng thường</small><strong><?= number_format((int)$rates['luong'],0,',','.') ?></strong></div><div><small>10.000đ → Lượng khóa</small><strong><?= number_format((int)$rates['luonglock'],0,',','.') ?></strong></div></div></div>
 <div class="tp-panel"><span class="tp-eyebrow">QUY TRÌNH</span><h2>3 bước nạp thẻ</h2><div class="tp-steps tp-steps--stack tp-mt-15"><div class="tp-step"><span class="tp-step-number">01</span><b>Gửi đúng thông tin thẻ</b><span>Chỉ gửi khi cổng thẻ đã mở.</span></div><div class="tp-step"><span class="tp-step-number">02</span><b>Đối tác xác minh</b><span>Chỉ thẻ hợp lệ mới được chấp nhận.</span></div><div class="tp-step"><span class="tp-step-number">03</span><b>Kiểm tra trạng thái</b><span>Trạng thái chờ cấp không có nghĩa là đã nhận tài nguyên.</span></div></div></div>
 </div></div></section>
 <script src="/assets/js/topup-forms.js?v=1" defer></script>
