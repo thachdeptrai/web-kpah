@@ -51,15 +51,15 @@ try {
 $balance=(int)($wallet['balance']??0);
 kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 ?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> CHƯƠNG TRÌNH THÀNH VIÊN</span><h1>Point tích lũy <em>đổi quà.</em></h1><p class="tp-lead">Mỗi 1.000đ nạp hợp lệ nhận 1 Point. Số Point thuộc tài khoản website, sử dụng chung cho mọi nhân vật. Các giao dịch trước khi chương trình bắt đầu không tự cộng lại.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> CHƯƠNG TRÌNH THÀNH VIÊN</span><h1>Point tích lũy <em>đổi quà.</em></h1><p class="tp-lead">Cứ nạp 10.000đ, bạn nhận 10 Point để dành đổi quà. Point dùng chung cho tất cả nhân vật trong tài khoản.</p></section>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
 <?php if($notice):?><div class="tp-alert good" role="status"><?=kp_e($notice)?></div><?php endif;?>
-<?php if(!$ready):?><div class="tp-alert warning">Chương trình Point chưa được kích hoạt. Quản trị viên cần chạy <code>database/loyalty_points.sql</code> trên database website.</div>
+<?php if(!$ready):?><div class="tp-alert warning">Cửa hàng đổi quà đang chuẩn bị mở cửa. Bạn ghé lại sau nhé!</div>
 <?php else: ?>
 <section class="tp-section">
 <div class="tp-summary"><div><small>Point hiện có</small><strong><?=number_format($balance,0,',','.')?></strong></div><div><small>Đã tích lũy</small><strong><?=number_format((int)($wallet['total_earned']??0),0,',','.')?></strong></div><div><small>Đã sử dụng</small><strong><?=number_format((int)($wallet['total_spent']??0),0,',','.')?></strong></div></div>
 <div class="tp-panel tp-mt-17"><span class="tp-eyebrow">CỬA HÀNG POINT</span><h2>Chọn phần quà yêu thích</h2>
-<?php if(!$rewards):?><p class="tp-muted">Chưa có quà đang mở đổi. Khi quản trị viên đăng quà, chúng sẽ xuất hiện tại đây.</p><?php else: ?>
+<?php if(!$rewards):?><p class="tp-muted">Quà mới đang được chuẩn bị. Hãy quay lại xem có gì thú vị nhé!</p><?php else: ?>
 <div class="tp-grid">
 <?php foreach($rewards as $reward):$available=($reward['stock']===null||(int)$reward['stock']>0); ?>
 <div class="tp-card"><h3><?=kp_e($reward['title'])?></h3><p><?=kp_e($reward['description']??'')?></p>
