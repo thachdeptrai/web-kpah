@@ -12,6 +12,7 @@ function kp_admin_nav($active='home',$role=null){
       ['orders','/quan-tri/doi-soat','Đối soát'],
       ['rates','/quan-tri/ty-le','Tỷ lệ & thưởng'],
       ['grant','/quan-tri/cong-tai-nguyen','Cộng tài nguyên'],
+      ['tongnap','/quan-tri/cong-tong-nap','Cộng tổng nạp'],
       ['points','/quan-tri/diem-tich-luy','Point & quà'],
       ['legacy','/quan-tri/nap-game','Dữ liệu nạp']
     ];
