@@ -235,7 +235,7 @@ function kp_admin_create_session(array $admin, $totpOk)
     session_regenerate_id(true);
     $_SESSION['kp_admin_id'] = (int)$admin['id'];
     $_SESSION['kp_admin_username'] = (string)$admin['username'];
-    $_SESSION['kp_admin_role'] = 'admin';
+    $_SESSION['kp_admin_role'] = (string)$admin['role'];
     // A password-only session must NOT remain valid when MFA is enabled later.
     $_SESSION['kp_admin_totp_ok'] = kp_admin_totp_enabled() && (bool)$totpOk;
     $_SESSION['kp_admin_last_seen'] = time();
@@ -248,11 +248,11 @@ function kp_admin_create_session(array $admin, $totpOk)
     kp_admin_log_event('login_success', (int)$admin['id']);
 }
 
-function kp_admin_require($redirect = '/quan-tri/dang-nhap')
+function kp_admin_require($redirect = '/quan-tri/dang-nhap', $allowedRoles = ['admin'])
 {
     $id = (int)($_SESSION['kp_admin_id'] ?? 0);
     $now = time();
-    if ($id <= 0 || ($_SESSION['kp_admin_role'] ?? '') !== 'admin'
+    if ($id <= 0 || !in_array(($_SESSION['kp_admin_role'] ?? ''), ['admin','key'], true)
         || empty($_SESSION['kp_admin_last_seen'])
         || $now-(int)$_SESSION['kp_admin_last_seen'] > 1800
         || empty($_SESSION['kp_admin_session_started'])
@@ -271,11 +271,16 @@ function kp_admin_require($redirect = '/quan-tri/dang-nhap')
     }
 
     $st = kp_db()->prepare(
-        "SELECT id, username FROM kpah_web_admins WHERE id = ? AND role = 'admin' AND is_active = 1 LIMIT 1"
+        "SELECT id, username, role FROM kpah_web_admins WHERE id = ? AND role IN ('admin','key') AND is_active = 1 LIMIT 1"
     );
     $st->execute([$id]);
     $admin = $st->fetch(PDO::FETCH_ASSOC);
-    if (!$admin) kp_admin_deny($redirect);
+    if (!$admin || $admin['role'] !== $_SESSION['kp_admin_role']) kp_admin_deny($redirect);
+    if (!in_array((string)$admin['role'], $allowedRoles, true)) {
+        kp_admin_log_event('role_forbidden', $id);
+        http_response_code(403);
+        exit('Bạn không có quyền truy cập chức năng này.');
+    }
     $_SESSION['kp_admin_last_seen'] = $now;
     $_SESSION['kp_admin_username'] = (string)$admin['username'];
     if (empty($_SESSION['kp_admin_session_rotation'])
