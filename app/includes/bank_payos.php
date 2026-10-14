@@ -49,7 +49,7 @@ function kp_bank_create($user,$amount,$currency,$csrf){
  $description='KPAH'.$code;
  $base='https://nghienkpah.io.vn/nap-ngan-hang';
  $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
- 'returnUrl'=>$base.'?result=return','cancelUrl'=>$base.'?result=cancel','expiredAt'=>time()+600];
+ 'returnUrl'=>$base,'cancelUrl'=>$base,'expiredAt'=>time()+600];
  $payload['signature']=kp_bank_sign(['amount'=>$amount,'cancelUrl'=>$payload['cancelUrl'],'description'=>$description,'orderCode'=>$code,'returnUrl'=>$payload['returnUrl']],$cfg['checksum_key']);
  try {
   $link=kp_bank_api('POST','',$payload);
