@@ -109,7 +109,7 @@ function kp_rankings_catalog()
         ],
         'nap' => [
             'label'=>'Top nạp','short'=>'Top nạp','metric'=>'Tổng nạp VNĐ','secondary'=>'Thẻ cào',
-            'description'=>'Tổng nạp theo tài khoản, gồm giao dịch payOS và thẻ cào hợp lệ; đối chiếu cùng team_user.tongnap, không cộng lặp các nguồn.',
+            'description'=>'Xếp theo giá trị lớn hơn giữa tổng nạp đã lưu và tổng giao dịch payOS + thẻ cào đã xác minh, để không cộng trùng các khoản nạp cũ.',
         ],
         'napgame' => [
             'label'=>'Nạp trong game','short'=>'Nạp game','metric'=>'Lượng đã nạp','secondary'=>'Điểm Top',
