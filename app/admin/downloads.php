@@ -87,7 +87,7 @@ $platforms = kp_game_platforms();
 <?php endforeach; ?>
 </div>
 <div class="dl-progress" id="dl-progress" hidden role="status" aria-live="polite"><div class="dl-progress-row"><strong id="dl-progress-label">Đang tải file lên...</strong><span id="dl-progress-value">0%</span></div><progress id="dl-progress-bar" max="100" value="0"></progress><p id="dl-progress-message"></p></div>
-<div class="dl-savebar"><div><strong>Thay đổi sẽ áp dụng ngay sau khi lưu</strong><small>Checkbox đã tắt sẽ chặn tải, kể cả khi người chơi còn giữ đường dẫn cũ.</small></div><button class="dl-save" type="submit">Lưu cấu hình tải game ↗</button></div>
+<div class="dl-savebar"><div><strong>Thay đổi sẽ áp dụng ngay sau khi lưu</strong><small>Bỏ tích sẽ ẩn nút tải và chặn URL file nội bộ; link ngoài do nhà cung cấp quản lý.</small></div><button class="dl-save" type="submit">Lưu cấu hình tải game ↗</button></div>
 </form>
 <section class="card dl-guide"><h2>Lưu ý khi upload trực tiếp lên VPS</h2>
 <p>Giới hạn ứng dụng: <strong>512 MB / file</strong>. PHP và Apache có thể đặt giới hạn thấp hơn. Với XAMPP, tăng <code>upload_max_filesize</code>, <code>post_max_size</code>, <code>max_execution_time</code> trong <code>php.ini</code> rồi khởi động lại Apache. Dung lượng thực tế PHP hiện tại: upload <strong><?= kp_e(ini_get('upload_max_filesize')) ?></strong>, POST <strong><?= kp_e(ini_get('post_max_size')) ?></strong>.</p>
