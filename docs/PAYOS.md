@@ -27,3 +27,11 @@ C:\xampp\php\php.exe C:\xampp\htdocs\tools\payos_cleanup.php
 Chỉ chọn `Run whether user is logged on or not` khi tài khoản chạy có quyền truy cập cấu hình riêng, database và internet. Có thể chạy thử lệnh trên CMD trước để đọc số đơn đã dọn. Trang nạp không gọi API dọn đơn nhằm tránh chậm khi nhà cung cấp phản hồi lâu; Task Scheduler đảm nhiệm việc dọn tự động. Không chạy lệnh này qua web.
 
 **Quan trọng:** `creating` nhưng chưa chắc tạo link thành công sẽ không xóa tự ý khi payOS không xác nhận trạng thái. Đây là lựa chọn an toàn để tránh xóa đơn người chơi đã trả tiền.
+
+## QR nhúng và giới hạn lệnh nạp
+
+- Bấm **Tạo QR** sẽ hiển thị giao diện payOS ngay trên `/nap-ngan-hang` (SDK trực tiếp từ `cdn.payos.vn`). Nếu iframe bị chặn, vẫn có link mở trang payOS.
+- Trang tự đọc trạng thái qua `/api/payos-status` mỗi **5 giây**, chỉ đọc đơn thuộc tài khoản đang đăng nhập; không dựa vào kết quả JS để cấp tiền.
+- Khi người chơi tải lại trang trong 10 phút, QR chưa thanh toán được hiển thị lại, không tạo đơn mới.
+- **Mỗi tài khoản được tạo tối đa 3 lệnh nạp trong cửa sổ 15 phút**, kể cả khi F5 hoặc dùng nhiều thiết bị. Giới hạn lưu tại `storage/ratelimit/`, không tự đặt lại khi hủy đơn. Nếu vượt hạn mức, web thông báo thời gian chờ.
+- Nếu hoàn tất thanh toán nhưng webhook đến chậm, trạng thái có thể chưa cập nhật ngay; đối soát vẫn căn cứ trên API payOS.
