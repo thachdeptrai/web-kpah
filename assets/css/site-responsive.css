@@ -42,8 +42,6 @@ button,input,select,textarea{max-width:100%}
 .tp-page .tp-payment-stage{overflow-x:auto;max-width:100%}
 .tp-page .tp-payment-embed{max-width:100%}
 .tp-page.tp-admin .kp-admin-nav{width:100%;max-width:100%;margin:14px 0 23px}
-.kp-admin-nav-links{flex:1;min-width:0}
-.kp-admin-nav-link{min-width:0}
 
 /* Independent admin dashboards — same widths as their shared navigation. */
 body .shell,body .wrap{box-sizing:border-box;width:min(100% - 40px,1280px);max-width:1280px;margin-left:auto;margin-right:auto;padding-left:0;padding-right:0}
@@ -91,8 +89,6 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
  .tp-page .tp-grid,.tp-page .tp-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
  .tp-page .tp-header{flex-wrap:wrap;padding-block:11px}
  .tp-page .tp-user{max-width:100%}
- .kp-admin-nav-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
- .kp-admin-nav a{white-space:normal}
 }
 @media(max-width:760px){
  .portal-page .portal-main{width:calc(100% - 54px);margin-left:54px;padding-inline:16px}
@@ -142,9 +138,6 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
  .tp-page .tp-grid,.tp-page .tp-grid.two,.tp-page .tp-row{grid-template-columns:minmax(0,1fr)}
  .tp-page .tp-content{padding-inline:15px}
  .tp-page.tp-admin .tp-content{padding-inline:15px}
- .kp-admin-nav{flex-direction:column;align-items:stretch;gap:8px;padding:11px}
- .kp-admin-nav-links{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
- .kp-admin-nav .kp-admin-nav-logout{width:100%}
  body .shell,body .wrap,body .kp-admin-nav{width:calc(100% - 24px)}
  body .metrics,body .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
  body .actions,body .grid{grid-template-columns:1fr}
@@ -176,7 +169,6 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
  .portal-page .portal-top .top-user-name{display:none}
  .portal-page .portal-breadcrumb,.portal-page .home-breadcrumb{font-size:9px}
  body .metrics,body .stats{grid-template-columns:minmax(0,1fr)}
- .kp-admin-nav-links{grid-template-columns:minmax(0,1fr)}
 }
 @media(hover:none){
  .portal-page .portal-action-card:hover,
