@@ -13,7 +13,7 @@ try{kp_bank_finalize_legacy_wallet_statuses(100,(int)$user['id']);}catch(Throwab
 $bankOrders=[];$bankError=false;
 try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,created_at,paid_at,provider_reference FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 100');$st->execute([(int)$user['id']]);$bankOrders=$st->fetchAll(PDO::FETCH_ASSOC);}catch(Throwable $e){kp_log('player payment history bank lookup failed',$e);$bankError=true;}
 kp_topup_page_start('Lịch sử nạp','history',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> LỊCH SỬ GIAO DỊCH</span><h1>Theo dõi <em>đơn nạp.</em></h1><p class="tp-lead">Danh sách chỉ hiển thị giao dịch thuộc tài khoản đang đăng nhập. Bạn có thể xem đầy đủ trạng thái nạp VNĐ, các giao dịch cũ và lệnh cần đối soát.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> LỊCH SỬ GIAO DỊCH</span><h1>Theo dõi <em>đơn nạp.</em></h1><p class="tp-lead">Xem lại các lần nạp thẻ, chuyển khoản và số VNĐ đã nhận vào ví.</p></section>
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">ĐƠN HÀNG</span><h2>Giao dịch gần đây</h2></div><span class="tp-chip"><?= count($orders)+count($bankOrders) ?> giao dịch</span></div>
 <?php if(!$orders && !$bankOrders): ?><div class="tp-alert warning">Bạn chưa có giao dịch nạp tiền. <a class="tp-support" href="/nap-the">Đến trang nạp thẻ →</a></div>
 <?php endif; ?>
@@ -30,5 +30,5 @@ kp_topup_page_start('Lịch sử nạp','history',(string)$user['username']);?>
 <?php endforeach; ?></tbody></table></div>
 <?php endif; ?>
 <?php if($bankError):?><div class="tp-alert warning">Chưa đọc được lịch sử chuyển khoản. Vui lòng thử lại sau hoặc liên hệ quản trị.</div><?php endif;?>
-<p class="tp-muted tp-mt-16">Trạng thái thẻ đang chờ sẽ được hệ thống kiểm tra lại tự động khi nhà cung cấp trả kết quả. Không gửi lại cùng mã thẻ. Chỉ liên hệ quản trị với mã giao dịch nếu trạng thái cần đối soát hoặc bị chờ quá lâu.</p>
+<p class="tp-muted tp-mt-16">Nếu giao dịch chưa hoàn tất, bạn cứ chờ thêm một chút và đừng gửi lại cùng mã thẻ. Cần hỗ trợ? Hãy gửi mã giao dịch cho quản trị viên.</p>
 </div></section><?php kp_topup_page_end(); ?>
