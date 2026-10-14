@@ -347,6 +347,13 @@ function kp_topup_reconcile($id, $callback = null) {
                     kp_topup_write_file($path,$order);
                 }
             }
+            // Card is provider-verified; one ledger reference prevents double Points.
+            if(in_array($order['status'],['verified_pending_delivery','queued'],true)){
+                try{
+                    require_once __DIR__.'/loyalty_points.php';
+                    kp_points_award((int)$order['user_id'],'card',(string)$order['id'],(int)$order['amount'],$order['created_at']);
+                }catch(Throwable $e){kp_log('card Points award will need retry',$e);}
+            }
         } elseif (in_array($status,[2,3],true)) {
             $order['status'] = $status===2 ? 'needs_review' : 'failed';
             $order['updated_at']=time();
