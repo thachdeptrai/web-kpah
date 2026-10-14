@@ -11,18 +11,22 @@ function kp_topup_env($name, $default = '') {
     return is_string($value) && $value !== '' ? $value : $default;
 }
 function kp_topup_cfg() {
-    $id = kp_topup_env('KPAH_CARD_PARTNER_ID');
-    $key = kp_topup_env('KPAH_CARD_PARTNER_KEY');
-    $secret = kp_topup_env('KPAH_TOPUP_SIGNING_SECRET');
+    // Optional private file for Windows/XAMPP installs. Never commit it.
+    $file=KP_ROOT.'/config/topup.local.php';
+    $local=is_file($file)?require $file:[];
+    if (!is_array($local)) $local=[];
+    $id=kp_topup_env('KPAH_CARD_PARTNER_ID',(string)($local['partner_id']??''));
+    $key=kp_topup_env('KPAH_CARD_PARTNER_KEY',(string)($local['partner_key']??''));
+    $secret=kp_topup_env('KPAH_TOPUP_SIGNING_SECRET',(string)($local['signing_secret']??''));
+    // Domain-separated stable key to avoid needing a THIRD credential.
+    if ($secret==='' && $key!=='') $secret=hash_hmac('sha256','kpah-card-data-v1',$key);
+    $verified=kp_topup_env('KPAH_TOPUP_GAME_QUEUE_VERIFIED',!empty($local['game_queue_verified'])?'1':'0')==='1';
+    $server=(int)kp_topup_env('KPAH_TOPUP_SERVER_ID',(string)($local['server_id']??'-1'));
     return [
-        'partner_id' => $id,
-        'partner_key' => $key,
-        'secret' => $secret,
-        'api_url' => 'https://thecaosieutoc.vn/chargingws/v2',
-        'card_ready' => $id !== '' && $key !== '' && strlen($secret) >= 32 && function_exists('curl_init') && function_exists('openssl_encrypt'),
-        // Off until game-server code confirms the semantics of board_naptien.
-        'game_queue_verified' => kp_topup_env('KPAH_TOPUP_GAME_QUEUE_VERIFIED') === '1',
-        'server_id' => (int) kp_topup_env('KPAH_TOPUP_SERVER_ID', '-1'),
+        'partner_id'=>$id,'partner_key'=>$key,'secret'=>$secret,
+        'api_url'=>'https://thecaosieutoc.vn/chargingws/v2',
+        'card_ready'=>$id!=='' && $key!=='' && strlen($secret)>=32 && function_exists('curl_init') && function_exists('openssl_encrypt'),
+        'game_queue_verified'=>$verified,'server_id'=>$server
     ];
 }
 function kp_topup_root() {
