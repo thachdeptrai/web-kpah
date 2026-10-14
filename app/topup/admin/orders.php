@@ -83,4 +83,15 @@ $qSt->execute([(string)$b['username'],(int)$b['units']]);$queues=$qSt->fetchAll(
 <div class="tp-alert bad">Không tải được dữ liệu đối soát ngân hàng. Hãy kiểm tra bảng <code>kp_bank_orders</code> và cột <code>char_id</code> (migration <code>database/payos_direct_credit_upgrade.sql</code>). Nếu đã có cột này, kiểm tra PHP error log để biết câu SQL gây lỗi. Không import lại database/payos_bank.sql hoặc xóa bảng cũ.</div>
 <?php } ?>
 </div></section>
+<?php
+$vndExchanges=[];$vndError=false;
+try{$vndExchanges=kp_db()->query('SELECT x.id,x.user_id,x.char_id,x.amount_vnd,x.currency,x.units,x.status,x.created_at,u.username FROM kp_vnd_exchanges x LEFT JOIN team_user u ON u.id=x.user_id ORDER BY x.id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);}
+catch(Throwable $e){kp_log('admin VNĐ exchange history failed',$e);$vndError=true;}
+?>
+<section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">VÍ VNĐ / ĐỔI MỐC</span><h2>Nhật ký đổi VNĐ lấy Lượng</h2></div><span class="tp-chip"><?=count($vndExchanges)?> giao dịch</span></div>
+<?php if($vndError):?><div class="tp-alert warning">Chưa tải được dữ liệu đổi mốc. Kiểm tra migration database/vnd_wallet_upgrade.sql.</div>
+<?php elseif(!$vndExchanges):?><p class="tp-muted">Chưa có lệnh đổi mốc.</p>
+<?php else:?><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Ngày</th><th>Tài khoản</th><th>Nhân vật ID</th><th>Trừ VNĐ</th><th>Lượng nhận</th><th>Trạng thái</th></tr></thead><tbody>
+<?php foreach($vndExchanges as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['created_at'])?></td><td><?=kp_e($x['username']??('ID '.$x['user_id']))?></td><td>#<?=(int)$x['char_id']?></td><td><?=number_format((int)$x['amount_vnd'],0,',','.')?>đ</td><td><?=number_format((int)$x['units'],0,',','.')?> <?= $x['currency']==='luong'?'Lượng':'Lượng khóa' ?></td><td><?=kp_e($x['status'])?></td></tr><?php endforeach;?></tbody></table></div>
+<?php endif;?></div></section>
 <?php kp_topup_page_end(); ?>
