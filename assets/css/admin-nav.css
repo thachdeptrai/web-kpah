@@ -24,7 +24,7 @@
 .kp-admin-nav-v2 .kp-admin-nav-item{
   display:inline-flex;align-items:center;justify-content:center;gap:9px;
   min-height:40px;padding:9px 13px;border:1px solid transparent;border-radius:11px;
-  color:#c4cde4;background:transparent;font:700 12px/1.35 inherit;
+  color:#c4cde4;background:transparent;font-family:inherit;font-size:12px;font-weight:700;line-height:1.35;
   white-space:nowrap;cursor:pointer;transition:background .16s,color .16s,border-color .16s
 }
 .kp-admin-nav-v2 .kp-admin-nav-item:hover,
