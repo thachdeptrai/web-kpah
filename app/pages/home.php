@@ -22,7 +22,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     <div class="portal-hero-copy">
         <span class="portal-kicker"><i></i> KHÔNG GIAN TÀI KHOẢN KPAH</span>
         <h1>Xin chào, <em><?=kp_e($username)?>.</em></h1>
-        <p>Thông tin tài khoản, tài nguyên, nhân vật và giao dịch gần đây của bạn — tất cả ở một nơi.</p>
+        <p>Xem ví, gặp lại các nhân vật và khám phá những phần quà dành riêng cho bạn.</p>
         <div class="portal-hero-buttons">
             <a href="/vi-vnd" class="portal-primary">Ví VNĐ & đổi mốc <span aria-hidden="true">↗</span></a>
             <a href="/nhan-vat" class="portal-secondary">Xem nhân vật <span aria-hidden="true">↗</span></a>
@@ -69,7 +69,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
         <?php if(!$dashboard['characters_ready']):?>
             <p class="pd-empty">Chưa tải được danh sách nhân vật. Bạn có thể thử lại ở trang nhân vật.</p>
         <?php elseif(!$dashboard['characters']):?>
-            <p class="pd-empty">Tài khoản chưa có nhân vật nào được game ghi nhận.</p>
+            <p class="pd-empty">Bạn chưa có nhân vật nào. Vào game tạo nhân vật đầu tiên nhé!</p>
         <?php else:?>
             <div class="pd-character-list">
             <?php foreach($dashboard['characters'] as $character):
@@ -95,7 +95,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     </div>
     <div class="pd-panel pd-rewards">
         <div class="pd-panel-header"><div><span class="portal-kicker"><i></i> ĐẶC QUYỀN THÀNH VIÊN</span><h2>Đổi quà <em>Point</em></h2></div><span class="pd-panel-symbol" aria-hidden="true">✧</span></div>
-        <div class="pd-reward-balance"><span>Point đang có</span><strong><?= $pointsReady?kp_player_format($pointsValue):'—' ?></strong><small><?= $pointsReady?'Đã tích lũy '.kp_player_format($dashboard['earned']??0).' Point':'Dữ liệu Point chưa sẵn sàng' ?></small></div>
+        <div class="pd-reward-balance"><span>Point đang có</span><strong><?= $pointsReady?kp_player_format($pointsValue):'—' ?></strong><small><?= $pointsReady?'Đã tích lũy '.kp_player_format($dashboard['earned']??0).' Point':'Điểm đang cập nhật' ?></small></div>
         <?php if($dashboard['reward'] && $pointsReady):
             $reward=$dashboard['reward'];$cost=(int)$reward['points_cost'];$missing=max(0,$cost-$pointsValue); ?>
             <div class="pd-reward-preview">
