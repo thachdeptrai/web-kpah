@@ -10,3 +10,20 @@
 Khác API thẻ TheCaoSieuToc (Partner ID/Key), payOS bắt buộc 3 thông tin Client ID, API Key và Checksum Key. Không dán khóa vào GitHub. Mức thưởng ngân hàng đang dùng bảng mệnh giá 10k/50k/100k/500k/1.000k, **không trừ chiết khấu xử lý thẻ**. Trạng thái redirect trình duyệt không chứng minh tiền đã vào ngân hàng; backend kiểm tra trạng thái trực tiếp từ API payOS.
 
 Yêu cầu PHP 8.0+ PDO MySQL, cURL, HTTPS, Apache mod_rewrite và database InnoDB. Chưa test tiền thật, cần kiểm tra webhook, payment pending, trùng callback và game queue trước khi mở chính thức.
+
+
+## Tự hủy đơn chưa thanh toán sau 10 phút
+
+payOS link được đặt `expiredAt = lúc tạo + 600 giây`. Website chuyển trình duyệt trực tiếp bằng HTTP 303 tới `checkoutUrl` của payOS khi nhấn Tạo QR (không cần popup/iframe).
+
+Bộ dọn đơn chỉ xóa khi payOS **xác nhận `CANCELLED` hoặc `EXPIRED`**, với `amountPaid = 0`. Nếu API mất kết nối, trạng thái chưa rõ hoặc có dấu hiệu tiền đã vào, đơn **được giữ lại** để đối soát. Đơn thanh toán thành công và `paid_waiting_delivery` / `needs_review` / `crediting` / `queued` tuyệt đối không bị xóa tự động.
+
+Để chạy ngay cả khi không có ai vào website, mở Windows Task Scheduler, tạo task lặp **mỗi 1 phút**, chạy:
+
+```bat
+C:\xampp\php\php.exe C:\xampp\htdocs\tools\payos_cleanup.php
+```
+
+Chỉ chọn `Run whether user is logged on or not` khi tài khoản chạy có quyền truy cập cấu hình riêng, database và internet. Có thể chạy thử lệnh trên CMD trước để đọc số đơn đã dọn. Khi người chơi vào trang nạp, ứng dụng cũng thử dọn tối đa 3 đơn cũ. Không chạy lệnh này qua web.
+
+**Quan trọng:** `creating` nhưng chưa chắc tạo link thành công sẽ không xóa tự ý khi payOS không xác nhận trạng thái. Đây là lựa chọn an toàn để tránh xóa đơn người chơi đã trả tiền.
