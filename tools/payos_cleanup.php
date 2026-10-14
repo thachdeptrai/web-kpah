@@ -10,6 +10,8 @@ try{
 }catch(Throwable $e){kp_log('automatic card reconciliation job failed',$e);}
 if(!kp_bank_cfg()['ready']){fwrite(STDERR,"payOS is not configured\n");exit(1);}
 try{
+ $synced=kp_bank_finalize_legacy_wallet_statuses(150);
+ echo "payOS synchronized ".$synced." already-credited wallet statuses to completed\n";
  $n=kp_bank_cleanup(100);
  echo "payOS cleaned ".$n." cancelled unpaid orders\n";
  // Retry new wallet payments independently of the legacy game queue.
