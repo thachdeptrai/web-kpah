@@ -44,7 +44,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $st->execute([$rawCode, (int) $limit, $expiry, (int) $_SESSION['kp_admin_id']]);
                 $notice = 'Đã tạo mã ' . $rawCode . '.';
             } elseif ($action === 'toggle') {
-                if ($admin['role'] !== 'admin') throw new RuntimeException('Role key chỉ được tạo mã, không thể thay đổi mã đã có.');
+                if ($admin['role'] !== 'admin') { http_response_code(403); throw new RuntimeException('Role key chỉ được tạo mã, không thể thay đổi mã đã có.'); }
                 $id = (int) ($_POST['id'] ?? 0);
                 $st = kp_db()->prepare('UPDATE kpah_referral_codes SET is_active = IF(is_active = 1, 0, 1) WHERE id = ?');
                 $st->execute([$id]);
