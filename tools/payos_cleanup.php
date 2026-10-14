@@ -3,6 +3,11 @@
 if(PHP_SAPI!=='cli'){http_response_code(403);exit;}
 require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once dirname(__DIR__).'/app/includes/bank_payos.php';
+// Keep card settlement automatic even if payOS is not configured.
+try{
+ $cardChecked=kp_topup_auto_recheck_cards(null,2);
+ echo "card provider rechecked ".$cardChecked." pending deposits\n";
+}catch(Throwable $e){kp_log('automatic card reconciliation job failed',$e);}
 if(!kp_bank_cfg()['ready']){fwrite(STDERR,"payOS is not configured\n");exit(1);}
 try{
  $n=kp_bank_cleanup(100);
