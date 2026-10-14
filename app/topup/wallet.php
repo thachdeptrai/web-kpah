@@ -17,7 +17,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   $currency=(string)($_POST['currency']??'');
   if($amount===false||$char===false)throw new RuntimeException('Mốc đổi hoặc nhân vật không hợp lệ.');
   $result=kp_vnd_exchange($uid,(int)$char,$currency,(int)$amount,(string)($_POST['token']??''));
-  $notice=$result['status']==='completed'?'Đổi mốc thành công. Mã #'.$result['id'].'.':'Lệnh đổi #'.$result['id'].' cần quản trị đối soát. VNĐ đã được giữ, không gửi lại.';
+  $notice=$result['status']==='completed'?'Đổi mốc thành công. Mã #'.$result['id'].'.':'Yêu cầu đổi #'.$result['id'].' đang được kiểm tra. Bạn đừng gửi lại để tránh trùng nhé.';
  }catch(Throwable $e){kp_log('vnd exchange request failed',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không đổi được lúc này.';}
 }
 try{
@@ -25,9 +25,9 @@ try{
  $st=kp_db()->prepare('SELECT id,charname FROM tob_char WHERE userId=? AND del=1 AND ban=0 ORDER BY id DESC LIMIT 40');
  $st->execute([$uid]);$chars=$st->fetchAll(PDO::FETCH_ASSOC);
  $history=kp_vnd_recent_exchanges($uid,30);
-}catch(Throwable $e){kp_log('vnd exchange page wallet failed',$e);$error=$error?:'Chưa sẵn sàng ví VNĐ. Hãy kiểm tra migration và tài khoản.';}
+}catch(Throwable $e){kp_log('vnd exchange page wallet failed',$e);$error=$error?:'Chưa xem được ví VNĐ lúc này. Bạn thử lại sau nhé.';}
 kp_topup_page_start('Ví VNĐ & đổi mốc','wallet',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> VÍ TÀI KHOẢN</span><h1>Số dư <em>VNĐ.</em></h1><p class="tp-lead">Nạp vào ví trước, sau đó chọn mốc Lượng để đổi cho nhân vật đã thoát game. Giao dịch lỗi sẽ chuyển đối soát, không tự hoàn hay trừ lần nữa.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> VÍ TÀI KHOẢN</span><h1>Số dư <em>VNĐ.</em></h1><p class="tp-lead">Dùng VNĐ trong ví để đổi Lượng cho nhân vật yêu thích. Nhớ thoát game trước khi đổi nhé!</p></section>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
 <?php if($notice):?><div class="tp-alert warning" role="status"><?=kp_e($notice)?></div><?php endif;?>
 <section class="tp-section"><div class="tp-summary"><div><small>VNĐ hiện có</small><strong><?= $balance===null?'—':number_format($balance,0,',','.') ?>đ</strong></div><div><small>Nạp thêm</small><a class="tp-button-secondary" href="/nap-ngan-hang">Nạp VietQR ↗</a></div></div></section>
