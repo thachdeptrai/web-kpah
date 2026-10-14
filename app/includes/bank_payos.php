@@ -210,6 +210,10 @@ function kp_bank_reconcile($code){
  try {
   $stmt=$db->prepare('SELECT * FROM kp_bank_orders WHERE order_code=? FOR UPDATE');$stmt->execute([$code]);$order=$stmt->fetch(PDO::FETCH_ASSOC);
   if(!$order){$db->rollBack();return 'unknown';}
+  if(($order['delivery_mode']??'game')==='wallet'){
+   $db->commit();
+   return kp_bank_reconcile_wallet($code,$order);
+  }
   if($order['status']==='completed'){
    $db->commit();
    try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
