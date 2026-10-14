@@ -32,3 +32,6 @@ storage/ratelimit/*
 # Structured local configuration
 config/register.local.php
 !tests/fixtures/schema.sql
+
+# TheCaoSieuToc private Merchant credentials
+config/topup.local.php
