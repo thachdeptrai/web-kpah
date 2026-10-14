@@ -2,6 +2,7 @@
 if (!defined('KP_ROOT')) {http_response_code(403);exit;}
 require_once __DIR__.'/topup_core.php';
 require_once __DIR__.'/loyalty_points.php';
+require_once __DIR__.'/wallet_vnd.php';
 function kp_bank_cfg() {
  $localFile=KP_ROOT.'/config/payos.local.php';
  $v=is_file($localFile)?require $localFile:[];
@@ -34,15 +35,13 @@ function kp_bank_rewards($amount,$currency){
  // Bank payments do not suffer card-processing commission.
  return kp_card_package_units($amount,$amount,$currency);
 }
-function kp_bank_create($user,$amount,$currency,$csrf,$charId){
+function kp_bank_create($user,$amount,$csrf){
  if(!kp_csrf_check($csrf))throw new RuntimeException('Phiên bảo mật hết hạn.');
  $cfg=kp_bank_cfg();
  if(!$cfg['ready'])throw new RuntimeException('Thanh toán ngân hàng chưa mở.');
- if(!in_array($currency,['luong','luonglock'],true)||!isset(kp_card_packages()[$amount]))throw new RuntimeException('Mệnh giá không hợp lệ.');
- if(!is_int($charId)||$charId<1)throw new RuntimeException('Hãy chọn nhân vật nhận Lượng.');
- $check=kp_db()->prepare('SELECT id FROM tob_char WHERE id=? AND userId=? AND del=1 AND ban=0 LIMIT 1');
- $check->execute([$charId,(int)$user['id']]);
- if(!$check->fetchColumn())throw new RuntimeException('Nhân vật không tồn tại hoặc không thuộc tài khoản này.');
+ if(!isset(kp_card_packages()[$amount]))throw new RuntimeException('Mệnh giá không hợp lệ.');
+ // Fail before requesting payment if migration is missing.
+ $bonusPercent=kp_vnd_bonus_percent();
  // Per-user filesystem lock serializes simultaneous POSTs, including across PHP sessions.
  $lockFile=kp_topup_root().'/bank-create-'.(int)$user['id'].'.lock';
  $lock=@fopen($lockFile,'c+');
@@ -77,9 +76,9 @@ function kp_bank_create($user,$amount,$currency,$csrf,$charId){
   list($allow,$retry)=kp_rate_limit('bank_create',(string)$user['id'],3,900,true);
   if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
   $code=random_int(100000000,999999999);
-  $units=kp_bank_rewards($amount,$currency);
-  $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,?,"creating")');
-  $stmt->execute([$code,(int)$user['id'],$charId,(string)$user['username'],$amount,$currency,$units]);
+  $units=0;
+  $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,delivery_mode,bonus_percent,username,amount,currency,units,status) VALUES (?,?,?,?,?,?,?,?,?,"creating")');
+  $stmt->execute([$code,(int)$user['id'],0,'wallet',$bonusPercent,(string)$user['username'],$amount,'luong',$units]);
   $description='KPAH'.$code;
   $base='https://nghienkpah.io.vn/nap-ngan-hang';
   $payload=['orderCode'=>$code,'amount'=>$amount,'description'=>$description,
@@ -175,6 +174,34 @@ function kp_bank_recover_queued($code,$charId,$queueId,$confirmation) {
   kp_log('legacy queue recovery needs manual investigation',$e);
   $db->prepare('UPDATE kp_bank_orders SET status="needs_review" WHERE order_code=? AND status="crediting"')->execute([$code]);
   return 'needs_review';
+ }
+}
+/**
+ * New payment mode: verified payOS => account VNĐ wallet, never game currency.
+ * InnoDB ledger uniquely keyed by payOS code allows safe webhook replay/retry.
+ */
+function kp_bank_reconcile_wallet($code,array $order){
+ $db=kp_db();
+ if($order['status']==='wallet_credited'){
+  try{kp_vnd_balance((int)$order['user_id']);}catch(Throwable $e){kp_log('wallet projection delayed',$e);}
+  return 'wallet_credited';
+ }
+ if(in_array($order['status'],['failed','cancelled','expired'],true))return $order['status'];
+ $remote=kp_bank_api('GET','/'.rawurlencode((string)$code));
+ if((string)($remote['orderCode']??'')!==(string)$code || (int)($remote['amount']??-1)!==(int)$order['amount']
+    || ($remote['status']??'')!=='PAID'||(int)($remote['amountPaid']??0)<(int)$order['amount'])return 'pending';
+ $ref=substr((string)($remote['id']??''),0,100);
+ $db->prepare('UPDATE kp_bank_orders SET status="wallet_crediting",paid_at=COALESCE(paid_at,NOW()),provider_reference=? WHERE order_code=? AND status IN ("creating","pending","wallet_crediting","needs_review")')
+    ->execute([$ref,$code]);
+ try{
+  kp_vnd_credit((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],(int)$order['bonus_percent']);
+  $db->prepare('UPDATE kp_bank_orders SET status="wallet_credited" WHERE order_code=? AND status="wallet_crediting"')->execute([$code]);
+  try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
+  catch(Throwable $e){kp_log('bank Point retry needed',$e);}
+  return 'wallet_credited';
+ }catch(Throwable $e){
+  kp_log('verified payOS wallet credit retry needed '.$code,$e);
+  return 'wallet_crediting';
  }
 }
 function kp_bank_reconcile($code){
