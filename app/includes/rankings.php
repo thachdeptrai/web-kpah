@@ -157,3 +157,21 @@ function kp_rankings_fetch($type)
     $st=kp_db()->query($catalog[$type]['sql']);
     return $st->fetchAll(PDO::FETCH_ASSOC);
 }
+
+/**
+ * Only publish rankings that really have records. A broken or missing game
+ * table is skipped individually; never expose SQL errors to players.
+ */
+function kp_rankings_available()
+{
+    $available=[];
+    foreach(kp_rankings_catalog() as $key=>$category){
+        try {
+            $st=kp_db()->query($category['sql']);
+            if($st && $st->fetch(PDO::FETCH_ASSOC)!==false)$available[$key]=$category;
+        } catch(Throwable $e) {
+            kp_log('rankings hidden (empty or unavailable): '.$key,$e);
+        }
+    }
+    return $available;
+}
