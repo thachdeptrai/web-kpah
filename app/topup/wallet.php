@@ -24,8 +24,7 @@ try{
  $balance=kp_vnd_balance($uid);
  $st=kp_db()->prepare('SELECT id,charname FROM tob_char WHERE userId=? AND del=1 AND ban=0 ORDER BY id DESC LIMIT 40');
  $st->execute([$uid]);$chars=$st->fetchAll(PDO::FETCH_ASSOC);
- $st=kp_db()->prepare('SELECT id,char_id,currency,amount_vnd,units,status,created_at FROM kp_vnd_exchanges WHERE user_id=? ORDER BY id DESC LIMIT 30');
- $st->execute([$uid]);$history=$st->fetchAll(PDO::FETCH_ASSOC);
+ $history=kp_vnd_recent_exchanges($uid,30);
 }catch(Throwable $e){kp_log('vnd exchange page wallet failed',$e);$error=$error?:'Chưa sẵn sàng ví VNĐ. Hãy kiểm tra migration và tài khoản.';}
 kp_topup_page_start('Ví VNĐ & đổi mốc','wallet',(string)$user['username']);?>
 <section class="tp-hero"><span class="tp-kicker"><i></i> VÍ TÀI KHOẢN</span><h1>Số dư <em>VNĐ.</em></h1><p class="tp-lead">Nạp vào ví trước, sau đó chọn mốc Lượng để đổi cho nhân vật đã thoát game. Giao dịch lỗi sẽ chuyển đối soát, không tự hoàn hay trừ lần nữa.</p></section>
