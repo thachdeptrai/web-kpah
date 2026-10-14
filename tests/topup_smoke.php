@@ -22,6 +22,13 @@ check(kp_topup_status_label('queued'),'Đã đưa vào hàng chờ game','queued
 check(kp_topup_status_label('verified_pending_delivery'),'Thẻ hợp lệ · chờ cấp','verified is not delivered');
 $secret='a very long dedicated signing secret for tests';
 check(strlen(kp_topup_hmac('123456789','SERIAL1',$secret)),64,'card fingerprint size');
+if (function_exists('openssl_encrypt')) {
+    $sealed=kp_topup_secretbox(json_encode(['code'=>'TESTCODE123','serial'=>'SERIAL123']),$secret);
+    check(json_decode(kp_topup_openbox($sealed,$secret),true)['code'],'TESTCODE123','TheCaoSieuToc encrypted check payload');
+    try { kp_topup_openbox($sealed,'another unrelated test signing secret');fwrite(STDERR,"FAIL wrong decryption secret accepted\n");exit(1); }
+    catch(RuntimeException $e) {echo "OK wrong secret rejected\n";}
+}
+
 if (kp_topup_hmac('123456789','SERIAL1',$secret)===kp_topup_hmac('123456789','SERIAL2',$secret)) {
     fwrite(STDERR,"FAIL card fingerprint must bind serial\n");exit(1);
 }
