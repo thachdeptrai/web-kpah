@@ -19,8 +19,8 @@ button,input,select,textarea{max-width:100%}
   max-width:none;
   min-height:100vh;
   margin:0 0 0 72px;
-  padding-left:max(22px,calc((100% - 1370px)/2));
-  padding-right:max(22px,calc((100% - 1370px)/2));
+  padding-left:max(22px,calc(50% - 685px));
+  padding-right:max(22px,calc(50% - 685px));
 }
 .portal-page .portal-top{min-width:0;gap:12px}
 .portal-page .portal-top .top-user{min-width:0;flex-wrap:wrap;justify-content:flex-end}
@@ -66,7 +66,7 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
 
 @media(min-width:1400px){
  .tp-page:not(.tp-admin) .tp-content{max-width:1430px}
- .portal-page .portal-main{padding-left:max(30px,calc((100% - 1370px)/2));padding-right:max(30px,calc((100% - 1370px)/2))}
+ .portal-page .portal-main{padding-left:max(30px,calc(50% - 685px));padding-right:max(30px,calc(50% - 685px))}
 }
 @media(max-width:1040px){
  .portal-page .portal-main{padding-inline:22px}
