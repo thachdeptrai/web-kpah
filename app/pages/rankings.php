@@ -29,10 +29,10 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
 
 <?php
 $rankGroups=[
- 'Nhân vật & phát triển'=>['level','honor','strength','playtime','contribution','vip','toppoints'],
+ 'Nhân vật & phát triển'=>['level','honor','rich','richluong','strength','playtime','contribution','vip','toppoints'],
  'Chiến đấu & tranh tài'=>['pk','kills','duel','arena','battle','siege','supply'],
  'Bang hội'=>['clan','clanxp','clanwealth'],
- 'Nạp & hoạt động'=>['nap','spending','event','wc','farm']
+ 'Nạp & hoạt động'=>['nap','napgame','spending','event','wc','farm']
 ];
 ?>
 <nav class="rank-group-directory" aria-label="Chọn bảng xếp hạng">
