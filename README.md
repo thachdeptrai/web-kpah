@@ -12,7 +12,7 @@ Website cộng đồng **NGHIỆN KPAH** — quản lý tài khoản và nhân v
 
 | Khu vực | Nội dung |
 | --- | --- |
-| Trang chủ | Giới thiệu, thông tin cộng đồng, liên kết tới các khu vực của website |
+| Trang chủ | Giới thiệu, khu tải game Android/Windows/iOS, thông tin cộng đồng và các liên kết website |
 | Tài khoản | Đăng ký, đăng nhập, khôi phục mật khẩu, xác minh email và cập nhật hồ sơ |
 | Tổng quan | Ví VNĐ, tổng nạp, Point, nhân vật thuộc tài khoản, giao dịch gần đây, thông tin bảo mật và thành tích khi có dữ liệu |
 | Nhân vật | Cấp độ, kinh nghiệm, Xu, Lượng, Lượng khóa và bang hội từ dữ liệu game |
@@ -61,6 +61,23 @@ Giao diện có stylesheet riêng cho desktop và mobile. Các thông tin riêng
 Route `/quan-tri/nap-game` đã được gỡ. URL cũ `/quan-tri/cong-tong-nap` hiện mở chung trang điều chỉnh `/quan-tri/cong-vnd` để giữ tương thích.
 
 Định tuyến tập trung tại `config/routes.php` qua `.htaccess` và `index.php` ở thư mục gốc. Các alias cũ được xử lý theo cấu hình; API/callback không được tự ý redirect làm thay đổi phương thức HTTP. Xem [docs/ROUTING.md](docs/ROUTING.md).
+
+## Khu tải game trên trang mở đầu
+
+Trang chủ `/` có nút **TẢI GAME** dẫn xuống `/#tai-game` và ba lựa chọn Android, Windows, iPhone/iPad. Mỗi lựa chọn chỉ có nút tải khi đã cấu hình URL hợp lệ; nếu chưa có bản tải, website hiển thị **Đang cập nhật**.
+
+Để bật nút tải, chỉnh phần `links` trong file `config/register.local.php` trên VPS (file local không commit lên Git):
+
+```php
+'links' => [
+    'download_android' => 'https://example.com/game.apk',
+    'download_windows' => 'https://example.com/game.zip',
+    'download_ios' => 'https://example.com/game.ipa',
+    'download' => 'https://example.com/downloads',
+],
+```
+
+Thay các URL ví dụ bằng **đường dẫn phát hành thật của KPAH**. Có thể cấu hình từng nền tảng độc lập; `download` là liên kết bổ sung đến trang tổng hợp, không thay thế các nút tải từng thiết bị. Không dùng liên kết từ game khác.
 
 ## Luồng nạp tiền và Point
 
