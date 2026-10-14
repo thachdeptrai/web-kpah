@@ -8,7 +8,7 @@ if (($_SERVER['REQUEST_METHOD']??'')!=='GET') {http_response_code(405);echo json
 if (empty($_SESSION['kp_user_id'])) {http_response_code(401);echo json_encode(['ok'=>false]);exit;}
 $telco=strtoupper(trim((string)($_GET['telco']??'')));
 $amount=filter_var($_GET['amount']??null,FILTER_VALIDATE_INT);
-if (!in_array($telco,['VIETTEL','VINAPHONE','MOBIFONE','VNMOBI','GATE','ZING'],true) || $amount===false || $amount<1000 || $amount>1000000) {http_response_code(422);echo json_encode(['ok'=>false]);exit;}
+if (!in_array($telco,['VINAPHONE','GARENA','ZING','VCOIN','VIETTEL','MOBIFONE'],true) || $amount===false || $amount<1000 || $amount>1000000) {http_response_code(422);echo json_encode(['ok'=>false]);exit;}
 try {
     list($allowed,$retry)=kp_rate_limit('topup_quote', (string)$_SESSION['kp_user_id'].'|'.kp_client_ip(), 30, 60, true);
     if (!$allowed) {http_response_code(429);echo json_encode(['ok'=>false,'message'=>'Yêu cầu quá nhiều.']);exit;}
