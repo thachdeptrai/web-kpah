@@ -62,6 +62,17 @@ function kp_bank_create($user,$amount,$currency,$csrf,$charId){
    // Old invoices are checked/cancelled by the cleanup worker. Never overwrite them.
    throw new RuntimeException('Có một đơn cũ đang chờ payOS đối soát hoặc hết hạn. Vui lòng thử lại sau khi hệ thống xử lý.');
   }
+  // Even if payOS/webhook completes the previous order instantly, a burst of
+  // 1,000 POSTs must not generate a second invoice. The per-user flock above
+  // makes this check and insertion serial on the same VPS filesystem.
+  $st=$db->prepare('SELECT order_code,status,created_at FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 1');
+  $st->execute([(int)$user['id']]);$last=$st->fetch(PDO::FETCH_ASSOC);
+  if($last){
+   $lastAt=strtotime((string)$last['created_at']);
+   if($lastAt!==false && $lastAt>time()-15){
+    throw new RuntimeException('Bạn vừa tạo một lệnh nạp. Vui lòng xem giao dịch gần đây, không cần bấm Tạo QR thêm.');
+   }
+  }
   list($allow,$retry)=kp_rate_limit('bank_create',(string)$user['id'],3,900,true);
   if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
   $code=random_int(100000000,999999999);
