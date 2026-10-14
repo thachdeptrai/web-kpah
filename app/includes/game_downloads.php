@@ -160,12 +160,17 @@ function kp_game_download_upload($platform, $upload)
         throw new RuntimeException('Không lưu được file vào storage/game-downloads.');
     }
     @chmod($dir . '/' . $stored, 0600);
+    $digest = @hash_file('sha256', $dir . '/' . $stored);
+    if (!is_string($digest) || !preg_match('/^[a-f0-9]{64}$/D', $digest)) {
+        @unlink($dir . '/' . $stored);
+        throw new RuntimeException('Không kiểm tra được checksum của file tải lên.');
+    }
     $safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $name);
     return [
         'file' => $stored,
         'filename' => substr($safeName, 0, 120),
         'size' => $size,
-        'sha256' => hash_file('sha256', $dir . '/' . $stored),
+        'sha256' => $digest,
     ];
 }
 
