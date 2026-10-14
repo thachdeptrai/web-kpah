@@ -79,6 +79,7 @@ $platforms = kp_game_platforms();
 <span class="dl-file-label">File đang lưu</span>
 <strong><?= kp_e($row['filename'] ?: $row['file']) ?></strong>
 <span><?= number_format($row['size'] / 1048576, 1, ',', '.') ?> MB · <?= kp_e($row['updated_at'] ?: 'Đã lưu') ?></span>
+<label class="dl-remove"><input type="checkbox" name="remove[<?= kp_e($key) ?>]" value="1"> Xóa file cũ khỏi VPS khi lưu</label>
 <?php if ($row['source'] === 'file' && $row['enabled']): ?><a href="/tai-game/tep?nen-tang=<?= kp_e($key) ?>" target="_blank" rel="noopener noreferrer">Kiểm tra link tải ↗</a><?php endif; ?>
 <?php else: ?><span class="dl-empty">Chưa upload file cho nền tảng này.</span><?php endif; ?>
 </div>
