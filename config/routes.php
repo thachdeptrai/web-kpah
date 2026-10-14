@@ -30,6 +30,7 @@ return [
         '/quan-tri/nap' => ['file' => 'app/topup/admin/index.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/ty-le' => ['file' => 'app/topup/admin/rates.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/cong-tai-nguyen' => ['file' => 'app/topup/admin/grant.php', 'scope' => 'admin', 'redirect_legacy' => true],
+        '/quan-tri/cong-tong-nap' => ['file' => 'app/topup/admin/tongnap.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/doi-soat' => ['file' => 'app/topup/admin/orders.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/nap-game' => ['file' => 'app/topup/admin/legacy.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/diem-tich-luy' => ['file' => 'app/topup/admin/points.php', 'scope' => 'admin', 'redirect_legacy' => true],
