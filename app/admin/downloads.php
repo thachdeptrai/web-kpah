@@ -1,0 +1,79 @@
+<?php
+require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/admin_security.php';
+require_once __DIR__ . '/../includes/admin_nav.php';
+require_once __DIR__ . '/../includes/game_downloads.php';
+kp_send_security_headers(true);
+header('Content-Type: text/html; charset=utf-8');
+$admin = kp_admin_require('/quan-tri/dang-nhap', ['admin']);
+$error = '';
+$notice = (string)($_SESSION['kp_download_notice'] ?? '');
+unset($_SESSION['kp_download_notice']);
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    try {
+        if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
+            throw new RuntimeException('Phiên quản trị đã hết hạn. Tải lại trang và thử lại.');
+        }
+        list($allowed) = kp_admin_limit('game-download-update', (string)$admin['id'], 30, 3600);
+        if (!$allowed) throw new RuntimeException('Đã thao tác quá nhiều lần. Thử lại sau.');
+        kp_game_download_save($_POST, $_FILES);
+        kp_admin_log_event('game_downloads_updated', (int)$admin['id']);
+        $_SESSION['kp_download_notice'] = 'Đã lưu cấu hình tải game. Trang chủ cập nhật ngay.';
+        header('Location: /quan-tri/tai-game', true, 303);
+        exit;
+    } catch (RuntimeException $e) {
+        $error = $e->getMessage();
+    } catch (Throwable $e) {
+        kp_log('game downloads admin save failed', $e);
+        $error = 'Không lưu được. Kiểm tra quyền ghi storage/game-downloads và giới hạn PHP.';
+    }
+}
+$rows = kp_game_download_catalog();
+$csrf = kp_csrf_token();
+$platforms = kp_game_platforms();
+?><!doctype html>
+<html lang="vi"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Quản lý tải game · NGHIỆN KPAH</title>
+<link rel="stylesheet" href="/assets/css/admin.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-downloads.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-downloads.css') ?>">
+</head><body>
+<header><div class="brand"><div class="brand-mark">↓</div><div class="brand-copy"><span class="eyebrow">NGHIỆN KPAH · CONTROL CENTER</span><h1>Quản lý bản tải game</h1></div></div>
+<div class="head-right"><a class="logout" href="/">Xem trang chủ ↗</a><span><?= kp_e($admin['username']) ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div></header>
+<?php kp_admin_nav('downloads', 'admin'); ?>
+<main class="wrap dl-wrap">
+<section class="hero dl-hero"><div><div class="eyebrow">GAME DISTRIBUTION / QUẢN TRỊ</div><h2>Phát hành game <em>chủ động.</em></h2><p>Bật hoặc tắt nút tải từng nền tảng, dán link HTTPS hoặc upload bản cài lên VPS. Không cần sửa code hay database.</p></div><a class="dl-preview" href="/#tai-game" target="_blank" rel="noopener noreferrer">Xem khu tải game ↗</a></section>
+<?php if ($notice): ?><div class="notice" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
+<?php if ($error): ?><div class="error" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
+<form method="post" enctype="multipart/form-data" action="/quan-tri/tai-game" class="dl-form">
+<input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
+<input type="hidden" name="MAX_FILE_SIZE" value="536870912">
+<div class="dl-grid">
+<?php foreach ($platforms as $key => $platform): $row = $rows[$key]; ?>
+<section class="card dl-card">
+<div class="dl-card-top"><div class="dl-platform"><span class="dl-platform-icon" aria-hidden="true"><?= $key === 'windows' ? '▦' : ($key === 'android' ? '▣' : '◈') ?></span><div><span class="section-kicker">BẢN PHÁT HÀNH</span><h2><?= kp_e($platform['name']) ?></h2></div></div><span class="pill<?= $row['enabled'] ? '' : ' off' ?>"><?= $row['enabled'] ? 'Đang mở' : 'Đang tắt' ?></span></div>
+<label class="dl-toggle"><input type="checkbox" name="enabled[<?= kp_e($key) ?>]" value="1" <?= $row['enabled'] ? 'checked' : '' ?>><span class="dl-switch" aria-hidden="true"></span><span><strong>Cho phép người chơi tải</strong><small>Bỏ tích để ẩn nút tải trên trang chủ.</small></span></label>
+<div class="dl-field"><label for="source-<?= kp_e($key) ?>">Nguồn tải</label><select id="source-<?= kp_e($key) ?>" name="source[<?= kp_e($key) ?>]"><option value="url"<?= $row['source'] === 'url' ? ' selected' : '' ?>>Link tải bên ngoài (khuyên dùng)</option><option value="file"<?= $row['source'] === 'file' ? ' selected' : '' ?>>File upload lên VPS</option></select></div>
+<div class="dl-field"><label for="url-<?= kp_e($key) ?>">Link tải HTTPS</label><input id="url-<?= kp_e($key) ?>" type="url" name="url[<?= kp_e($key) ?>]" value="<?= kp_e($row['url']) ?>" maxlength="2048" placeholder="https://..."><small>Dùng khi chọn nguồn link. Hỗ trợ GitHub Releases, CDN hoặc máy chủ tải file.</small></div>
+<div class="dl-field"><label for="upload-<?= kp_e($key) ?>">Upload file <?= kp_e($platform['hint']) ?></label><input id="upload-<?= kp_e($key) ?>" type="file" name="upload[<?= kp_e($key) ?>]" accept="<?= $key === 'windows' ? '.zip,.exe,.msi' : ($key === 'android' ? '.apk' : '.ipa') ?>"><small>Chọn nguồn "File upload lên VPS" trước khi lưu. Không chọn file mới thì giữ file cũ.</small></div>
+<div class="dl-file-status">
+<?php if ($row['file'] !== ''): ?>
+<span class="dl-file-label">File đang lưu</span>
+<strong><?= kp_e($row['filename'] ?: $row['file']) ?></strong>
+<span><?= number_format($row['size'] / 1048576, 1, ',', '.') ?> MB · <?= kp_e($row['updated_at'] ?: 'Đã lưu') ?></span>
+<?php if ($row['source'] === 'file' && $row['enabled']): ?><a href="/tai-game/tep?nen-tang=<?= kp_e($key) ?>" target="_blank" rel="noopener noreferrer">Kiểm tra link tải ↗</a><?php endif; ?>
+<?php else: ?><span class="dl-empty">Chưa upload file cho nền tảng này.</span><?php endif; ?>
+</div>
+</section>
+<?php endforeach; ?>
+</div>
+<div class="dl-savebar"><div><strong>Thay đổi sẽ áp dụng ngay sau khi lưu</strong><small>Checkbox đã tắt sẽ chặn tải, kể cả khi người chơi còn giữ đường dẫn cũ.</small></div><button class="dl-save" type="submit">Lưu cấu hình tải game ↗</button></div>
+</form>
+<section class="card dl-guide"><h2>Lưu ý khi upload trực tiếp lên VPS</h2>
+<p>Giới hạn ứng dụng: <strong>512 MB / file</strong>. PHP và Apache có thể đặt giới hạn thấp hơn. Với XAMPP, tăng <code>upload_max_filesize</code>, <code>post_max_size</code>, <code>max_execution_time</code> trong <code>php.ini</code> rồi khởi động lại Apache. Dung lượng thực tế PHP hiện tại: upload <strong><?= kp_e(ini_get('upload_max_filesize')) ?></strong>, POST <strong><?= kp_e(ini_get('post_max_size')) ?></strong>.</p>
+<p>File được lưu trong <code>storage/game-downloads</code> và chỉ phát qua route tải riêng, không thực thi file trên máy chủ. Nếu nhiều người tải hoặc file lớn, dùng GitHub Releases/CDN sẽ tiết kiệm băng thông và tài nguyên VPS hơn. IPA trên iPhone còn cần phương thức cài đặt/ký ứng dụng phù hợp; tải IPA không đồng nghĩa cài trực tiếp được.</p>
+</section>
+</main></body></html>
