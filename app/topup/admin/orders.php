@@ -34,7 +34,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
         $notice='Đã kiểm tra #'.strtoupper(substr($id,0,10)).': '.kp_topup_status_label($result['status']).'.';
     }catch(LogicException $e){if($e->getMessage()!=='bank_handled')$error='Lỗi thao tác.';}
     catch(RuntimeException $e){$error=$e->getMessage();}
-    catch(Throwable $e){kp_log('admin card reconciliation failed',$e);$error='Không thể đối soát đơn này. Kiểm tra provider, game server và log.';}
+    catch(Throwable $e){kp_log('admin card reconciliation failed',$e);$error='Không thể đối soát đơn này. Kiểm tra kết quả API thẻ, nhật ký VNĐ và log máy chủ.';}
 }
 $orders=kp_topup_recent('orders',null,150);
 $grants=kp_topup_recent('grants',null,150);
@@ -42,13 +42,13 @@ kp_topup_page_start('Lịch sử & đối soát','orders',(string)$admin['userna
 <section class="tp-hero"><span class="tp-kicker"><i></i> ADMIN / ĐỐI SOÁT</span><h1>Kiểm tra từng <em>giao dịch.</em></h1><p class="tp-lead">Lịch sử thẻ cào và cộng tài nguyên thủ công ở hai mục riêng. Chỉ hiển thị thông tin để đối soát, không lưu hoặc hiện mã PIN/serial đầy đủ.</p></section>
 <?php if($error): ?><div class="tp-alert bad" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <?php if($notice): ?><div class="tp-alert good" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
-<div class="tp-alert warning"><strong>Trạng thái cần chú ý:</strong> <code>needs_review</code> và <code>crediting</code> có thể là giao dịch đã ghi DB nhưng chưa hoàn tất lịch sử. Đối chiếu dữ liệu trước khi tiếp tục, không tự ý gửi lại. Việc kiểm tra trạng thái thẻ chỉ gọi API đối tác, không tạo thêm mã thẻ.</div>
+<div class="tp-alert warning"><strong>Trạng thái cần chú ý:</strong> <code>needs_review</code>, <code>crediting</code> và <code>wallet_crediting</code> có thể là giao dịch đã ghi DB nhưng chưa hoàn tất lịch sử. Đối chiếu dữ liệu trước khi tiếp tục, không tự ý gửi lại. Việc kiểm tra trạng thái thẻ chỉ gọi API đối tác, không tạo thêm mã thẻ.</div>
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">NẠP THẺ CÀO</span><h2>150 đơn gần nhất</h2></div><span class="tp-chip"><?= count($orders) ?> giao dịch</span></div>
 <?php if(!$orders): ?><p class="tp-muted">Chưa có giao dịch thẻ.</p>
 <?php else: ?><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>Tài khoản</th><th>Thẻ</th><th>Giá trị</th><th>Đổi</th><th>Trạng thái</th><th>Kiểm tra</th></tr></thead><tbody>
 <?php foreach($orders as $o): ?>
-<tr><td><b><?= kp_e(strtoupper(substr($o['id'],0,10))) ?></b></td><td><?= date('d/m H:i',(int)$o['created_at']) ?></td><td><?= kp_e($o['username']) ?></td><td><?= kp_e($o['telco']) ?><br><small>Serial ···<?= kp_e($o['serial_end']) ?></small></td><td><?= number_format((int)$o['amount'],0,',','.') ?>đ</td><td><?= number_format((int)$o['units'],0,',','.') ?> <?= ($o['currency']??'')==='luonglock'?'Lượng khóa':'Lượng thường' ?></td><td><span class="tp-pill <?= kp_e($o['status']) ?>"><?= kp_e(kp_topup_status_label($o['status'])) ?></span></td>
-<td><?php if(!in_array($o['status'],['queued','failed','crediting','needs_review'],true) && $cfg['card_ready']): ?><form method="post"><input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>"><input type="hidden" name="action" value="check_card"><input type="hidden" name="id" value="<?= kp_e($o['id']) ?>"><button class="tp-button-secondary tp-btn--small" type="submit">Kiểm tra ↻</button></form><?php else: ?>—<?php endif; ?></td></tr>
+<tr><td><b><?= kp_e(strtoupper(substr($o['id'],0,10))) ?></b></td><td><?= date('d/m H:i',(int)$o['created_at']) ?></td><td><?= kp_e($o['username']) ?></td><td><?= kp_e($o['telco']) ?><br><small>Serial ···<?= kp_e($o['serial_end']) ?></small></td><td><?= number_format((int)$o['amount'],0,',','.') ?>đ</td><td><?php if(($o['delivery_mode']??'game')==='wallet'):?><?= ($o['status']??'')==='wallet_credited'?number_format((int)($o['net_amount']??0),0,',','.').'đ ví':'Chưa cộng VNĐ' ?><?php else:?><?= number_format((int)$o['units'],0,',','.') ?> <?= ($o['currency']??'')==='luonglock'?'Lượng khóa':'Lượng thường' ?><?php endif;?></td><td><span class="tp-pill <?= kp_e($o['status']) ?>"><?= kp_e(kp_topup_status_label($o['status'])) ?></span></td>
+<td><?php if(!in_array($o['status'],['queued','failed','crediting','needs_review','wallet_credited','wallet_crediting'],true) && $cfg['card_ready']): ?><form method="post"><input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>"><input type="hidden" name="action" value="check_card"><input type="hidden" name="id" value="<?= kp_e($o['id']) ?>"><button class="tp-button-secondary tp-btn--small" type="submit">Kiểm tra ↻</button></form><?php else: ?>—<?php endif; ?></td></tr>
 <?php endforeach; ?></tbody></table></div><?php endif; ?>
 </div></section>
 <section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">CỘNG THỦ CÔNG</span><h2>Lịch sử cấp tài nguyên</h2></div><span class="tp-chip"><?= count($grants) ?> thao tác</span></div>
