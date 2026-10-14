@@ -3,7 +3,7 @@ require __DIR__ . '/../../includes/bootstrap.php';
 require_once __DIR__ . '/../../includes/topup_core.php';
 require_once __DIR__ . '/../_layout.php';
 $admin=kp_topup_admin();$orders=kp_topup_recent('orders',null,500);$grants=kp_topup_recent('grants',null,500);
-$pending=0;foreach($orders as $o){if(in_array($o['status'],['needs_review','crediting','verified_pending_delivery','submitting'],true))$pending++;}
+$pending=0;foreach($orders as $o){if(in_array($o['status'],['needs_review','crediting','wallet_crediting','verified_pending_delivery','submitting'],true))$pending++;}
 $bankCount=0;$bankAttention=0;$bankPaid=0;
 try {
  $row=kp_db()->query("SELECT COUNT(*) AS total,COALESCE(SUM(status IN ('needs_review','crediting','paid_waiting_delivery')),0) AS attention,COALESCE(SUM(status IN ('queued','completed','paid_waiting_delivery','needs_review','crediting')),0) AS paid FROM kp_bank_orders")->fetch(PDO::FETCH_ASSOC);
