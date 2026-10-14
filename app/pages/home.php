@@ -1,6 +1,7 @@
 <?php
 require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/player_portal.php';
+require_once __DIR__.'/../includes/rankings.php';
 $user=kp_player_account();
 $username=(string)$user['username'];
 $charCount=null;
@@ -14,6 +15,7 @@ if(!empty($user['regdate'])){
     $ts=is_numeric($user['regdate'])?(int)$user['regdate']:strtotime((string)$user['regdate']);
     if($ts!==false && $ts>0)$registeredAt=date('d/m/Y',$ts);
 }
+$hasTopNap=isset(kp_rankings_available()['nap']);
 $hasEmail=filter_var(trim((string)($user['email']??'')),FILTER_VALIDATE_EMAIL)!==false;
 kp_player_head('Tổng quan tài khoản','home',$user);
 ?>
@@ -67,7 +69,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     </div>
     <div class="portal-quick-links">
         <a href="/ho-so#security"><span aria-hidden="true">◇</span> Đổi mật khẩu <span aria-hidden="true">↗</span></a>
-        <a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp Lượng <span aria-hidden="true">↗</span></a>
+        <?php if($hasTopNap): ?><a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp Lượng <span aria-hidden="true">↗</span></a><?php endif; ?>
         <a href="/#dien-dan"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
     </div>
 </section>
