@@ -12,8 +12,7 @@ try {
         if(($_POST['action']??'')==='bank_bonus'){
             $value=filter_var($_POST['bonus_percent']??null,FILTER_VALIDATE_INT);
             if($value===false||$value<0||$value>100)throw new RuntimeException('Thưởng ngân hàng phải từ 0% đến 100%.');
-            $st=kp_db()->prepare('UPDATE kp_vnd_settings SET bank_bonus_percent=? WHERE id=1');
-            $st->execute([$value]);
+            kp_vnd_bonus_percent((int)$value);
             $bonus=$value;
             kp_log('bank bonus changed by admin #'.(int)$admin['id'].' to '.$value.' percent');
             $notice='Đã lưu thưởng chuyển khoản '.$value.'%. Chỉ đơn tạo sau thay đổi dùng tỷ lệ mới.';
