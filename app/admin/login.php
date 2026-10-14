@@ -77,7 +77,8 @@ $csrf = kp_csrf_token();
 ?><!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Đăng nhập quản trị KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin-login.css?v=1"></head><body><main class="card"><div class="mark" aria-hidden="true">✦</div><div class="eyebrow">KPAH • SECURE ACCESS</div><h1>Chào mừng trở lại.</h1><p>Đăng nhập vào trung tâm điều khiển để quản lý mã giới thiệu và hoạt động đăng ký.</p>
+<link rel="stylesheet" href="/assets/css/admin-login.css?v=1"><link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+</head><body><main class="card"><div class="mark" aria-hidden="true">✦</div><div class="eyebrow">KPAH • SECURE ACCESS</div><h1>Chào mừng trở lại.</h1><p>Đăng nhập vào trung tâm điều khiển để quản lý mã giới thiệu và hoạt động đăng ký.</p>
 <?php if ($error !== ''): ?><p class="error"><?= kp_e($error) ?></p><?php endif; ?>
 <form method="post" autocomplete="on"><input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <label for="username">Tên đăng nhập</label><input id="username" name="username" maxlength="64" required autocomplete="username">
