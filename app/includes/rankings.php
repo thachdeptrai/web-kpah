@@ -21,7 +21,7 @@ function kp_rankings_catalog()
             'sql'=>"SELECT charname AS name,vip AS score,0 AS secondary FROM tob_char_vip WHERE charname <> '' AND vip > 0 ORDER BY vip DESC,id ASC LIMIT 10"
         ],
         'battle' => [
-            'label'=>'Chiến trường','short'=>'Chiến trường','metric'=>'Điểm liên trảm','secondary'=>'Số trận',
+            'label'=>'Chiến trường','short'=>'Chiến trường','metric'=>'Điểm liên trảm','secondary'=>'Chỉ số chiến trường',
             'description'=>'Thành tích liên trảm trên chiến trường.',
             'sql'=>"SELECT charname AS name,lientram AS score,sttru AS secondary FROM tob_chien_truong WHERE charname <> '' AND lientram > 0 ORDER BY lientram DESC,sttru DESC,id ASC LIMIT 10"
         ],
