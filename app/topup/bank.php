@@ -9,7 +9,8 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   if($amount===false)throw new RuntimeException('Mệnh giá không hợp lệ.');
   $url=kp_bank_create($user,(int)$amount,(string)($_POST['currency']??''),(string)($_POST['csrf']??''));
   $checkout=$url;
-  $activeCode=(int)kp_db()->query('SELECT MAX(order_code) FROM kp_bank_orders WHERE user_id='.(int)$user['id'])->fetchColumn();
+  $find=kp_db()->prepare('SELECT order_code FROM kp_bank_orders WHERE user_id=? AND checkout_url=? ORDER BY id DESC LIMIT 1');
+  $find->execute([(int)$user['id'],$url]);$activeCode=(int)$find->fetchColumn();
  }catch(Throwable $e){$error=$e instanceof RuntimeException?$e->getMessage():'Chưa tạo được yêu cầu. Thử lại sau.';}
 }
 $recent=[];
@@ -41,7 +42,7 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
   try{PayOSCheckout.usePayOS({RETURN_URL:window.location.origin+'/nap-ngan-hang',ELEMENT_ID:'payos-embed',CHECKOUT_URL:url,embedded:true,onSuccess:refresh,onCancel:refresh,onExit:refresh}).open();}
   catch(e){note.textContent='Không nhúng được QR. Mở đường dẫn payOS bên dưới.';}
  }else{note.textContent='Chưa tải được thư viện QR. Mở đường dẫn payOS bên dưới.';}
- setInterval(refresh,5000);
+ refresh();setInterval(refresh,5000);
 })();
 </script>
 <?php endif;?>
