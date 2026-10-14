@@ -96,8 +96,8 @@ function kp_vnd_credit(int $userId,string $kind,string $ref,int $base,int $bonus
         if($hasTotal){
             $st=$db->prepare('SELECT tongnap FROM team_user WHERE id=? AND ban=0');
             $st->execute([$userId]);$previous=$st->fetchColumn();
-            if($previous===false || $previous===null || !is_numeric($previous)
-                || (float)$previous<0 || (float)$previous>2000000000-$gross)
+            if($previous===false || ($previous!==null && !is_numeric($previous))
+                || (float)($previous??0)<0 || (float)($previous??0)>2000000000-$gross)
                 throw new RuntimeException('Cột tongnap không hợp lệ, cần kiểm tra trước khi nạp.');
         }
         $record=['user_id'=>$userId,'source'=>$kind,'ref'=>$ref,
