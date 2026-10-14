@@ -42,6 +42,7 @@ function kp_bank_create($user,$amount,$csrf){
  if(!isset(kp_card_packages()[$amount]))throw new RuntimeException('Mệnh giá không hợp lệ.');
  // Fail before requesting payment if migration is missing.
  $bonusPercent=kp_vnd_bonus_percent();
+ kp_vnd_balance((int)$user['id']); // Verify wallet and team_user.vnd BEFORE creating a real payOS invoice.
  // Per-user filesystem lock serializes simultaneous POSTs, including across PHP sessions.
  $lockFile=kp_topup_root().'/bank-create-'.(int)$user['id'].'.lock';
  $lock=@fopen($lockFile,'c+');
