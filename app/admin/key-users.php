@@ -16,8 +16,8 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    $password=(string)($_POST['password']??'');
    if(!preg_match('/^[a-zA-Z0-9_.-]{4,32}$/D',$username))
     throw new RuntimeException('Tên đăng nhập phải dài 4–32 ký tự: chữ, số, _, -, dấu chấm.');
-   if(strlen($password)<12||strlen($password)>128)
-    throw new RuntimeException('Mật khẩu phải có 12–128 ký tự.');
+   if(strlen($password)<8||strlen($password)>128)
+    throw new RuntimeException('Mật khẩu phải có 8–128 ký tự. Nên dùng mật khẩu dài và khó đoán.');
    $hash=password_hash($password,PASSWORD_BCRYPT,['cost'=>12]);
    if(!is_string($hash))throw new RuntimeException('Không tạo được hash mật khẩu.');
    $st=kp_db()->prepare("INSERT INTO kpah_web_admins(username,password_hash,role,is_active) VALUES (?,?,'key',1)");
@@ -55,7 +55,7 @@ header('Content-Type: text/html; charset=utf-8');
 <section class="tp-section"><div class="tp-grid two"><div class="tp-panel"><h2>Tạo tài khoản key</h2>
 <form method="post" class="tp-form" autocomplete="off"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="create">
 <label class="tp-field"><span>Tên đăng nhập</span><input class="tp-input" name="username" minlength="4" maxlength="32" required autocomplete="off"></label>
-<label class="tp-field"><span>Mật khẩu (ít nhất 12 ký tự)</span><input class="tp-input" name="password" type="password" minlength="12" maxlength="128" required autocomplete="new-password"></label>
+<label class="tp-field"><span>Mật khẩu (ít nhất 8 ký tự)</span><input class="tp-input" name="password" type="password" minlength="8" maxlength="128" required autocomplete="new-password"></label>
 <p class="tp-muted">Mật khẩu được băm bằng bcrypt trước khi lưu; không ghi mật khẩu dạng rõ vào database hoặc log.</p>
 <button class="tp-button" type="submit">Tạo role key ↗</button></form></div>
 <div class="tp-panel"><h2>Danh sách role key</h2>
