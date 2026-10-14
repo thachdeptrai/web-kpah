@@ -1,19 +1,29 @@
 <?php
 require __DIR__ . '/../../includes/bootstrap.php';
 require_once __DIR__ . '/../../includes/topup_core.php';
+require_once __DIR__ . '/../../includes/bank_payos.php';
 require_once __DIR__ . '/../_layout.php';
 $admin=kp_topup_admin();$csrf=kp_csrf_token();$cfg=kp_topup_cfg();$error='';$notice='';
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try{
         if(!kp_admin_csrf_valid($_POST['csrf']??null))throw new RuntimeException('Phiên xác nhận đã hết hạn.');
-        if(($_POST['action']??'')!=='check_card')throw new RuntimeException('Thao tác không hợp lệ.');
+        if(($_POST['action']??'')==='check_bank'){
+            $code=filter_var($_POST['code']??null,FILTER_VALIDATE_INT);
+            if($code===false||$code<=0)throw new RuntimeException('Mã đơn ngân hàng không hợp lệ.');
+            list($allow,$retry)=kp_rate_limit('kp_admin_bank_check',(string)$admin['id'],30,3600,true);
+            if(!$allow)throw new RuntimeException('Thao tác quá nhiều lần.');
+            $status=kp_bank_reconcile($code);
+            $notice='Đơn ngân hàng #'.$code.': '.$status;
+        } elseif(($_POST['action']??'')!=='check_card')throw new RuntimeException('Thao tác không hợp lệ.');
+        if(($_POST['action']??'')==='check_bank')throw new LogicException('bank_handled');
         $id=(string)($_POST['id']??'');
         if(!preg_match('/^[a-f0-9]{32}$/D',$id))throw new RuntimeException('Mã giao dịch không hợp lệ.');
         list($allow,$retry)=kp_rate_limit('kp_topup_admin_check',(string)$admin['id'],30,3600,true);
         if(!$allow)throw new RuntimeException('Đã đạt giới hạn kiểm tra trong giờ.');
         $result=kp_topup_reconcile($id);
         $notice='Đã kiểm tra #'.strtoupper(substr($id,0,10)).': '.kp_topup_status_label($result['status']).'.';
-    }catch(RuntimeException $e){$error=$e->getMessage();}
+    }catch(LogicException $e){if($e->getMessage()!=='bank_handled')$error='Lỗi thao tác.';}
+    catch(RuntimeException $e){$error=$e->getMessage();}
     catch(Throwable $e){kp_log('admin card reconciliation failed',$e);$error='Không thể đối soát đơn này. Kiểm tra provider, game server và log.';}
 }
 $orders=kp_topup_recent('orders',null,150);
@@ -37,5 +47,12 @@ kp_topup_page_start('Lịch sử & đối soát','orders',(string)$admin['userna
 <?php foreach($grants as $g): ?>
 <tr><td><?= kp_e(strtoupper(substr($g['id'],0,10))) ?></td><td><?= date('d/m H:i',(int)$g['created_at']) ?></td><td>#<?= (int)$g['admin_id'] ?></td><td><?= kp_e($g['username']) ?></td><td><?= kp_e($g['charname']) ?></td><td><?= kp_e(['gold'=>'Xu','luong'=>'Lượng thường','luonglock'=>'Lượng khóa'][$g['currency']]??$g['currency']) ?></td><td><?= number_format((int)$g['units'],0,',','.') ?></td><td><?= number_format((int)$g['before'],0,',','.') ?> → <?= number_format((int)$g['after'],0,',','.') ?></td><td><span class="tp-pill <?= kp_e($g['status']) ?>"><?= kp_e(kp_topup_status_label($g['status'])) ?></span></td><td><?= kp_e($g['note']) ?></td></tr>
 <?php endforeach; ?></tbody></table></div><?php endif; ?>
+</div></section>
+
+<section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">NGÂN HÀNG / PAYOS</span><h2>Đơn chuyển khoản</h2></div></div>
+<?php try { $bankOrders=kp_db()->query('SELECT order_code,username,amount,currency,units,status,created_at FROM kp_bank_orders ORDER BY id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC); ?>
+<div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Thời gian</th><th>Tài khoản</th><th>VNĐ</th><th>Lượng</th><th>Trạng thái</th><th>Đối soát</th></tr></thead><tbody>
+<?php foreach($bankOrders as $b):?><tr><td><?=kp_e($b['order_code'])?></td><td><?=kp_e($b['created_at'])?></td><td><?=kp_e($b['username'])?></td><td><?=number_format((int)$b['amount'],0,',','.')?></td><td><?=number_format((int)$b['units'],0,',','.')?> <?= $b['currency']==='luong'?'L':'LK' ?></td><td><?=kp_e($b['status'])?></td><td><?php if(!in_array($b['status'],['queued','crediting','needs_review'],true)&&kp_bank_cfg()['ready']):?><form method="post"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="check_bank"><input type="hidden" name="code" value="<?=kp_e($b['order_code'])?>"><button class="tp-button-secondary tp-btn--small" type="submit">Kiểm tra ↻</button></form><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div>
+<?php }catch(Throwable $e) { ?><p class="tp-muted">Chưa có bảng ngân hàng. Chạy database/payos_bank.sql trước.</p><?php } ?>
 </div></section>
 <?php kp_topup_page_end(); ?>
