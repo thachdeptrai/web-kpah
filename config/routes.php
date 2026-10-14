@@ -16,6 +16,7 @@ return [
         '/nap-ngan-hang' => ['file' => 'app/topup/bank.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/lich-su-nap' => ['file' => 'app/topup/history.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/top-nap' => ['file' => 'app/topup/top.php', 'scope' => 'player', 'redirect_legacy' => true],
+        '/api/card-fees' => ['file' => 'app/topup/card-fees.php', 'scope' => 'player', 'redirect_legacy' => false],
         '/api/card-callback' => ['file' => 'app/topup/card-callback.php', 'scope' => 'player', 'redirect_legacy' => false],
         '/quan-tri' => ['file' => 'app/admin/index.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/dang-nhap' => ['file' => 'app/admin/login.php', 'scope' => 'admin', 'redirect_legacy' => true],
