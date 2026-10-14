@@ -6,3 +6,6 @@
 # Preserve standard classifications for web assets.
 *.css linguist-language=CSS
 *.js linguist-language=JavaScript
+
+# Retain Python tests but omit them from repository language statistics.
+tests/*.py linguist-detectable=false
