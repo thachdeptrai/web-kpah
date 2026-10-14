@@ -4,7 +4,7 @@ require_once __DIR__.'/../includes/bank_payos.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$cfg=kp_bank_cfg();$csrf=kp_csrf_token();$error='';$checkout='';$activeCode=0;
 $bonusPercent=0;$walletReady=true;
-try{$bonusPercent=kp_vnd_bonus_percent();}catch(Throwable $e){$walletReady=false;kp_log('bank wallet unavailable',$e);}
+try{$bonusPercent=kp_vnd_bonus_percent();kp_vnd_balance((int)$user['id']);}catch(Throwable $e){$walletReady=false;kp_log('bank wallet unavailable',$e);}
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
  try{
   $amount=filter_var($_POST['amount']??null,FILTER_VALIDATE_INT);
