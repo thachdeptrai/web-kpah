@@ -51,6 +51,12 @@ for old,new in catalog['aliases'].items():
         check(status!=301,'legacy API/callback stays in place '+old)
 for path in ['/','/dang-nhap','/dang-ky','/quen-mat-khau','/quan-tri/dang-nhap']:
     clean_page(guest,path)
+landing_body=clean_page(guest,'/')
+check('id="tai-game"' in landing_body,'landing has download section')
+check('href="#tai-game"' in landing_body,'landing has download CTA')
+for platform in ('Android','Windows','iPhone / iPad'):
+    check(platform in landing_body,'landing download platform '+platform)
+check('lp-download-card' in landing_body,'landing download cards render')
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location','').startswith('/dang-nhap'),'guest login guard '+path)
