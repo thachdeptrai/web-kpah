@@ -4,5 +4,7 @@
 require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/player_portal.php';
 kp_player_account();
-header('Location: /bang-xep-hang?type=nap',true,302);
+require_once __DIR__.'/../includes/rankings.php';
+$hasNap=isset(kp_rankings_available()['nap']);
+header('Location: '.($hasNap?'/bang-xep-hang?type=nap':'/bang-xep-hang'),true,302);
 exit;
