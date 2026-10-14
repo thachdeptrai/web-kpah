@@ -1,17 +1,143 @@
-/* One consistent, mobile-friendly navigation shared by ALL admin pages. */
-.kp-admin-nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;margin:12px auto 22px;max-width:1320px;width:calc(100% - 28px);box-sizing:border-box;border:1px solid rgba(170,189,226,.21);border-radius:15px;background:#141c2b;color:#e9effb;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-.kp-admin-nav-links{display:flex;flex-wrap:wrap;align-items:center;gap:7px;min-width:0}
-.kp-admin-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:35px;padding:8px 12px;box-sizing:border-box;border-radius:9px;font-weight:650;font-size:12px;line-height:1.4;color:#d4e1f4;text-decoration:none;white-space:normal;text-align:center;transition:background .15s,color .15s}
-.kp-admin-nav a:hover,.kp-admin-nav a:focus-visible{color:#fff;background:rgba(255,255,255,.1)}
-.kp-admin-nav a.is-active{background:#d4a96e;color:#111827}
-.kp-admin-nav .kp-admin-nav-logout{border:1px solid rgba(212,169,110,.43);white-space:nowrap}
-@media(max-width:720px){.kp-admin-nav{width:calc(100% - 20px);margin:10px auto 18px;padding:10px;flex-direction:column;align-items:stretch}.kp-admin-nav-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.kp-admin-nav a{font-size:11px;min-height:42px;padding:8px 5px}.kp-admin-nav .kp-admin-nav-logout{width:100%}}
+/* KPAH admin navigation v2. Isolated from individual admin page themes. */
+.kp-admin-nav.kp-admin-nav-v2{
+  --an-bg:#11192b;--an-edge:rgba(164,180,223,.18);
+  --an-text:#e7eaf7;--an-muted:#9ca9c6;--an-accent:#ad9bff;
+  position:relative;z-index:35;box-sizing:border-box;
+  display:flex;flex-direction:row;align-items:center;justify-content:space-between;
+  gap:18px;width:min(calc(100% - 40px),1280px);max-width:1280px;
+  margin:15px auto 26px;padding:10px 13px;
+  border:1px solid var(--an-edge);border-radius:17px;
+  background:linear-gradient(120deg,rgba(22,29,49,.98),rgba(13,20,35,.98));
+  box-shadow:0 12px 36px rgba(0,0,0,.17);
+  color:var(--an-text);font:500 13px/1.45 Inter,"Be Vietnam Pro",system-ui,sans-serif;
+}
+.kp-admin-nav-v2 *, .kp-admin-nav-v2 *::before, .kp-admin-nav-v2 *::after{box-sizing:border-box}
+.kp-admin-nav-v2 a{color:inherit;text-decoration:none}
+.kp-admin-nav-v2 a:focus-visible,.kp-admin-nav-v2 summary:focus-visible{outline:2px solid #c2b7ff;outline-offset:3px}
+.kp-admin-nav-brand{display:flex;align-items:center;gap:10px;flex:none;min-width:0;padding:3px 7px 3px 2px}
+.kp-admin-nav-brand-mark{display:grid;place-items:center;width:40px;height:40px;flex:none;border:1px solid #b7a7ff55;border-radius:12px;background:linear-gradient(145deg,#7868e8,#28375d);box-shadow:0 5px 18px #6e64d33b;font-size:21px;font-weight:900;letter-spacing:-.11em;color:#fff}
+.kp-admin-nav-brand-mark span{color:#83eee0}
+.kp-admin-nav-brand-copy{display:flex;flex-direction:column;gap:1px}
+.kp-admin-nav-brand-copy strong{font-size:14px;letter-spacing:.04em;line-height:1.2}
+.kp-admin-nav-brand-copy small{font-size:9px;letter-spacing:.16em;color:var(--an-muted);font-weight:800}
+.kp-admin-nav-desktop{display:flex;flex:1;align-items:center;justify-content:center;gap:4px;min-width:0}
+.kp-admin-nav-v2 .kp-admin-nav-item{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:40px;padding:9px 13px;border:1px solid transparent;border-radius:11px;
+  color:#c4cde4;background:transparent;font:700 12px/1.35 inherit;
+  white-space:nowrap;cursor:pointer;transition:background .16s,color .16s,border-color .16s
+}
+.kp-admin-nav-v2 .kp-admin-nav-item:hover,
+.kp-admin-nav-v2 .kp-admin-nav-item:focus-visible,
+.kp-admin-nav-v2 .kp-admin-nav-dropdown[open]>.kp-admin-nav-item{background:#ffffff0b;color:#fff;border-color:#ffffff12}
+.kp-admin-nav-v2 .kp-admin-nav-item.is-active{
+  background:#a596ff19;border-color:#a596ff55;color:#ded6ff;
+  box-shadow:inset 0 0 0 1px #a596ff0b
+}
+.kp-admin-nav-dropdown{position:relative;flex:none}
+.kp-admin-nav-v2 summary{list-style:none;cursor:pointer;user-select:none}
+.kp-admin-nav-v2 summary::-webkit-details-marker{display:none}
+.kp-admin-nav-chevron{display:inline-block;width:7px;height:7px;flex:none;border-right:1.7px solid currentColor;border-bottom:1.7px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.65;transition:transform .15s}
+.kp-admin-nav-dropdown[open] .kp-admin-nav-chevron,.kp-admin-nav-mobile[open] .kp-admin-nav-chevron{transform:translateY(2px) rotate(225deg)}
+.kp-admin-nav-popover{
+  position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);
+  z-index:50;display:grid;gap:5px;min-width:230px;padding:11px;
+  border:1px solid #8e91be45;border-radius:14px;background:#171f34;
+  box-shadow:0 22px 55px #0009
+}
+.kp-admin-nav-popover::before{content:"";position:absolute;top:-9px;left:0;right:0;height:10px}
+.kp-admin-nav-popover-heading{padding:5px 10px 9px;color:#9da9c7;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link{
+  display:flex;align-items:center;justify-content:space-between;gap:15px;
+  min-height:40px;padding:10px 11px;border:1px solid transparent;border-radius:9px;
+  font-size:12px;font-weight:650;color:#cbd5ed;white-space:nowrap
+}
+.kp-admin-nav-popover-link>span{opacity:.45;font-size:13px}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link:hover,
+.kp-admin-nav-v2 .kp-admin-nav-popover-link:focus-visible{background:#ffffff0c;color:#fff}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link.is-active{background:#a596ff1d;color:#dcd3ff;border-color:#a596ff45}
+.kp-admin-nav-actions{display:flex;align-items:center;gap:8px;flex:none}
+.kp-admin-nav-v2 .kp-admin-nav-exit{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:39px;padding:8px 13px;border:1px solid #ffffff21;border-radius:10px;
+  color:#b5c2dc;font-size:11px;font-weight:750;white-space:nowrap
+}
+.kp-admin-nav-v2 .kp-admin-nav-exit:hover{color:#fff;border-color:#c5b8ff66;background:#ffffff09}
+.kp-admin-nav-mobile{display:none}
+@media(max-width:1100px){
+  .kp-admin-nav.kp-admin-nav-v2{gap:9px;padding:9px 10px}
+  .kp-admin-nav-desktop{gap:0}
+  .kp-admin-nav-v2 .kp-admin-nav-item{padding-inline:10px}
+  .kp-admin-nav-brand-copy small{letter-spacing:.08em}
+}
+@media(max-width:900px){
+  .kp-admin-nav.kp-admin-nav-v2{
+    width:calc(100% - 32px);max-width:1280px;
+    margin:12px auto 22px;padding:9px 11px;flex-direction:row;align-items:center;gap:12px
+  }
+  .kp-admin-nav-desktop,.kp-admin-nav-v2 .kp-admin-nav-exit{display:none}
+  .kp-admin-nav-actions{margin-left:auto}
+  .kp-admin-nav-mobile{display:block;position:static}
+  .kp-admin-nav-mobile-toggle{
+    display:flex;align-items:center;gap:11px;min-height:43px;
+    padding:7px 12px;border:1px solid #a89bff51;border-radius:11px;
+    background:#a89bff13;color:#eeeaff
+  }
+  .kp-admin-nav-hamburger{display:grid;gap:4px;width:18px;flex:none}
+  .kp-admin-nav-hamburger i{display:block;height:2px;width:18px;border-radius:3px;background:#ddd5ff}
+  .kp-admin-nav-mobile-title{display:flex;flex-direction:column;gap:1px;font-size:12px;font-weight:800;white-space:nowrap}
+  .kp-admin-nav-mobile-title small{font-size:10px;font-weight:500;color:#b8afd8;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  .kp-admin-nav-mobile-toggle>.kp-admin-nav-chevron{margin-left:4px}
+  .kp-admin-nav-mobile[open] .kp-admin-nav-mobile-toggle{border-color:#b4a7ff;background:#a89bff22}
+  .kp-admin-nav-mobile-panel{
+    position:absolute;z-index:60;top:calc(100% + 8px);right:0;
+    width:min(440px,100%);max-height:min(75vh,690px);overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    padding:16px;border:1px solid #8e91be52;border-radius:17px;
+    background:#141c2f;box-shadow:0 24px 70px #000b
+  }
+  .kp-admin-nav-mobile-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 4px 12px;border-bottom:1px solid #ffffff14}
+  .kp-admin-nav-mobile-heading strong{font-size:13px;color:#f2f1ff}
+  .kp-admin-nav-mobile-heading span{max-width:52%;text-align:right;font-size:11px;color:#b7a9ee;overflow-wrap:anywhere}
+  .kp-admin-nav-mobile-group{padding-top:15px}
+  .kp-admin-nav-mobile-group-title{display:block;margin:0 5px 7px;color:#8f9cb8;font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-link{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    min-height:43px;padding:11px 12px;margin-top:4px;
+    border:1px solid transparent;border-radius:10px;
+    background:#ffffff04;color:#d3dbec;font-size:12px;font-weight:650
+  }
+  .kp-admin-nav-mobile-link>span:last-child{font-size:13px;opacity:.4}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-link.is-active{border-color:#a596ff4a;background:#a596ff1b;color:#e3dbff}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-link:hover{background:#ffffff0c;color:#fff}
+  .kp-admin-nav-mobile-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:17px;padding-top:13px;border-top:1px solid #ffffff17}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-bottom a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:10px 8px;border:1px solid #ffffff25;border-radius:10px;color:#c9d2e8;font-size:11px;font-weight:700}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-bottom a:hover{border-color:#a596ff55;color:#fff}
+}
+@media(max-width:480px){
+  .kp-admin-nav.kp-admin-nav-v2{width:calc(100% - 24px);margin:10px auto 19px;padding:8px 9px}
+  .kp-admin-nav-brand-mark{width:36px;height:36px;font-size:19px}
+  .kp-admin-nav-brand-copy strong{font-size:12px}
+  .kp-admin-nav-brand-copy small{font-size:8px}
+  .kp-admin-nav-mobile-toggle{min-height:40px;padding:7px 9px;gap:8px}
+  .kp-admin-nav-mobile-title small{max-width:105px}
+  .kp-admin-nav-mobile-panel{width:100%;padding:13px;max-height:75dvh}
+}
+@media(max-width:360px){
+  .kp-admin-nav-mobile-title small{max-width:80px}
+  .kp-admin-nav-brand{gap:7px}
+  .kp-admin-nav-mobile-toggle{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  .kp-admin-nav-v2 *, .kp-admin-nav-v2 *::before, .kp-admin-nav-v2 *::after{transition:none!important}
+}
 
-.kp-key-users-content{max-width:1280px;margin:0 auto;padding:18px 24px 40px}
-@media(max-width:720px){.kp-key-users-content{padding:10px 12px 28px}}
-
-
-/* Admin pages use the SAME nav; remove the old duplicate, uneven side rail. */
+/* Preserve the unified navigation on top-up admin pages. */
 .tp-page.tp-admin .tp-sidebar{display:none}
 .tp-page.tp-admin .tp-shell{display:block}
 .tp-page.tp-admin .tp-content{max-width:1320px;margin-left:auto;margin-right:auto}
+.tp-page.tp-admin .kp-admin-nav.kp-admin-nav-v2{width:100%;margin:14px 0 23px}
+
+/* Keep role-key administration content aligned. */
+.kp-key-users-content{max-width:1280px;margin:0 auto;padding:18px 24px 40px}
+@media(max-width:720px){.kp-key-users-content{padding:10px 12px 28px}}
