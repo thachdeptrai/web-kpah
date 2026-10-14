@@ -49,6 +49,7 @@ Giao diện có stylesheet riêng cho desktop và mobile. Các thông tin riêng
 | --- | --- |
 | `/quan-tri/dang-nhap` | Đăng nhập admin/key |
 | `/quan-tri` | Tổng quan quản trị (**admin**) |
+| `/quan-tri/tai-game` | Bật/tắt bản tải PC, Android, iOS; quản lý link và file upload (**admin**) |
 | `/quan-tri/ma-gioi-thieu` | Mã giới thiệu (**admin/key**, theo quyền) |
 | `/quan-tri/tai-khoan-key` | Tạo/khóa tài khoản role key (**admin**) |
 | `/quan-tri/nap` | Quản lý nạp (**admin**) |
@@ -62,22 +63,19 @@ Route `/quan-tri/nap-game` đã được gỡ. URL cũ `/quan-tri/cong-tong-nap`
 
 Định tuyến tập trung tại `config/routes.php` qua `.htaccess` và `index.php` ở thư mục gốc. Các alias cũ được xử lý theo cấu hình; API/callback không được tự ý redirect làm thay đổi phương thức HTTP. Xem [docs/ROUTING.md](docs/ROUTING.md).
 
-## Khu tải game trên trang mở đầu
+## Quản lý tải game (Admin)
 
-Trang chủ `/` có nút **TẢI GAME** dẫn xuống `/#tai-game` và ba lựa chọn Android, Windows, iPhone/iPad. Mỗi lựa chọn chỉ có nút tải khi đã cấu hình URL hợp lệ; nếu chưa có bản tải, website hiển thị **Đang cập nhật**.
+Mở **`/quan-tri/tai-game`** bằng tài khoản role `admin` để cấu hình ba nền tảng: **PC/Windows, Android (APK), iOS (IPA)**.
 
-Để bật nút tải, chỉnh phần `links` trong file `config/register.local.php` trên VPS (file local không commit lên Git):
+- Tích **Cho phép người chơi tải** để mở nút tải; bỏ tích sẽ đóng ngay cả đường dẫn tải file cũ.
+- Chọn **Link tải bên ngoài** và dán URL HTTPS (GitHub Releases/CDN) hoặc chọn **File upload lên VPS** rồi chọn file tương ứng. Có thể đổi nguồn và giữ lại file đã tải lên khi tắt.
+- Bấm **Lưu cấu hình tải game**. Trang chủ `/#tai-game` cập nhật tự động, không cần sửa SQL/PHP.
+- File upload nằm tại `storage/game-downloads/` (đã chặn truy cập trực tiếp), được tải qua `/tai-game/tep?nen-tang=android|windows|ios` và hỗ trợ tải tiếp bằng HTTP Range. Chỉ admin được thay đổi.
+- Metadata được lưu ở `storage/game-downloads/catalog.json`, không commit Git. Cấu hình `links.download_*` cũ chỉ làm mặc định **trước lần lưu đầu tiên** trong Admin.
 
-```php
-'links' => [
-    'download_android' => 'https://example.com/game.apk',
-    'download_windows' => 'https://example.com/game.zip',
-    'download_ios' => 'https://example.com/game.ipa',
-    'download' => 'https://example.com/downloads',
-],
-```
+**Giới hạn:** tối đa 512 MB/file ở tầng ứng dụng. Với XAMPP, cần tăng `upload_max_filesize`, `post_max_size` (lớn hơn kích thước file), `max_input_time`, `max_execution_time` và khởi động lại Apache. Cloudflare cũng có thể giới hạn kích thước upload tùy gói. File lớn hoặc lượng tải cao nên đặt ở GitHub Releases/CDN để không nghẽn VPS. IPA cần được ký và có cách cài phù hợp với iOS.
 
-Thay các URL ví dụ bằng **đường dẫn phát hành thật của KPAH**. Có thể cấu hình từng nền tảng độc lập; `download` là liên kết bổ sung đến trang tổng hợp, không thay thế các nút tải từng thiết bị. Không dùng liên kết từ game khác.
+Chi tiết triển khai và cấu hình: [docs/GAME_DOWNLOADS.md](docs/GAME_DOWNLOADS.md).
 
 ## Luồng nạp tiền và Point
 
