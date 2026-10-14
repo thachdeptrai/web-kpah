@@ -88,7 +88,10 @@ return [
     // SMTP: cấu hình qua config/register.local.php hoặc biến môi trường; không commit mật khẩu.
     'links' => [
         'login'    => '',
-        'download' => '',
+        'download' => '',                 // Trang tổng hợp các bản tải (nếu có)
+        'download_android' => '',         // Link APK chính thức
+        'download_windows' => '',         // Link bản Windows chính thức
+        'download_ios' => '',             // Link bản iOS chính thức
         'home'     => '',
         'support'  => '',
     ],
