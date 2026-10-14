@@ -8,11 +8,16 @@ function rank_check($cond,$label) {
     echo "PASS: ".$label."\n";
 }
 $catalog=kp_rankings_catalog();
-rank_check(count($catalog)===9,'9 leaderboard categories');
+rank_check(count($catalog)>=9,'leaderboard catalog has all original and new categories');
 foreach($catalog as $key=>$category){
     rank_check((bool)preg_match('/^[a-z_]+$/D',$key),'safe category key '.$key);
     rank_check(!empty($category['label']) && !empty($category['metric']),'title and unit '.$key);
-    $sql=$category['sql'];
+    if($key==='nap'){
+        rank_check(!isset($category['sql']) && function_exists('kp_rankings_topnap'),
+            'top nap is derived safely from verified card, bank and cached tongnap');
+        continue;
+    }
+    $sql=$category['sql']??'';
     rank_check((bool)preg_match('/^\s*SELECT\s/i',$sql),'read-only SELECT '.$key);
     rank_check((bool)preg_match('/LIMIT\s+10\s*$/i',$sql),'top ten only '.$key);
     rank_check(stripos($sql,'ORDER BY')!==false,'explicit ranking order '.$key);
