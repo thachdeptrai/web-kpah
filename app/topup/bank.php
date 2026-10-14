@@ -26,7 +26,7 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
 <?php if(isset($_GET['result'])):?><div class="tp-alert warning">Trang thanh toán đã chuyển về website. Chỉ kết quả tra cứu từ payOS mới xác nhận tiền về.</div><?php endif;?>
 <section class="tp-section"><div class="tp-grid two"><div class="tp-panel"><h2>Tạo đơn nạp</h2><?php if(!$cfg['ready']):?><div class="tp-alert warning">Chưa có thông tin kết nối payOS.</div><?php endif;?>
-<form method="post" class="tp-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>">
+<form method="post" class="tp-form" id="bank-create-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>">
 <label class="tp-field"><span>Mệnh giá</span><select class="tp-select" name="amount" required <?=!$cfg['ready']?'disabled':''?>>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><option value="<?=$vnd?>"><?=number_format($vnd,0,',','.')?>đ</option><?php endforeach;?></select></label>
 <label class="tp-field"><span>Nhận loại Lượng</span><select class="tp-select" name="currency" required <?=!$cfg['ready']?'disabled':''?>><option value="luong">Lượng mở</option><option value="luonglock">Lượng khóa</option></select></label>
@@ -34,7 +34,7 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <option value="">Chọn nhân vật</option>
 <?php foreach($chars as $c):?><option value="<?= (int)$c['id'] ?>"><?=kp_e($c['charname'])?></option><?php endforeach;?></select></label>
 <label class="tp-check"><input type="checkbox" name="offline" value="1" required><span>Tôi xác nhận nhân vật đã thoát game trước khi chuyển khoản. Game server có thể ghi đè Lượng nếu nhân vật vẫn online.</span></label>
-<button type="submit" class="tp-button" <?=!$cfg['ready']?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
+<button type="submit" class="tp-button" id="bank-create-button" <?=!$cfg['ready']?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
 <div class="tp-panel"><h2>Bảng thưởng chuyển khoản</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>VNĐ</th><th>Lượng mở</th><th>Lượng khóa</th></tr></thead><tbody>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><tr><td><?=number_format($vnd,0,',','.')?></td><td><?=number_format($pkg['luong'],0,',','.')?></td><td><?=number_format($pkg['luonglock'],0,',','.')?></td></tr><?php endforeach;?></tbody></table></div></div></div></section>
 <?php if($checkout!==''):?>
@@ -55,4 +55,5 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <?php endif;?>
 <section class="tp-section"><div class="tp-panel"><h2>Giao dịch của tôi</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>VNĐ</th><th>Nhận</th><th>Trạng thái</th><th>Thanh toán</th></tr></thead><tbody>
 <?php foreach($recent as $o):?><tr><td><?=kp_e($o['order_code'])?></td><td><?=kp_e($o['created_at'])?></td><td><?=number_format((int)$o['amount'],0,',','.')?></td><td><?=number_format((int)$o['units'],0,',','.')?> <?= $o['currency']==='luong'?'L':'LK' ?></td><td><?=kp_e($o['status'])?></td><td><?php if($o['status']==='pending'&&filter_var($o['checkout_url'],FILTER_VALIDATE_URL)):?><a href="<?=kp_e($o['checkout_url'])?>" target="_blank" rel="noopener">Mở QR ↗</a><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div></div></section>
+<script src="/assets/js/payos-create-guard.js?v=1" defer></script>
 <?php kp_topup_page_end();?>
