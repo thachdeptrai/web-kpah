@@ -35,3 +35,11 @@ Chỉ chọn `Run whether user is logged on or not` khi tài khoản chạy có 
 - Khi người chơi tải lại trang trong 10 phút, QR chưa thanh toán được hiển thị lại, không tạo đơn mới.
 - **Mỗi tài khoản được tạo tối đa 3 lệnh nạp trong cửa sổ 15 phút**, kể cả khi F5 hoặc dùng nhiều thiết bị. Giới hạn lưu tại `storage/ratelimit/`, không tự đặt lại khi hủy đơn. Nếu vượt hạn mức, web thông báo thời gian chờ.
 - Nếu hoàn tất thanh toán nhưng webhook đến chậm, trạng thái có thể chưa cập nhật ngay; đối soát vẫn căn cứ trên API payOS.
+
+## Đã trả tiền nhưng đứng ở paid_waiting_delivery
+
+- Đây là đơn payOS đã được xác minh trả tiền nhưng chưa ghi `board_naptien` do cờ `game_queue_verified=false`.
+- Xác nhận trực tiếp mã `svID` mà game server dùng để đọc `board_naptien`. Trong schema SQL gốc, `svID` có **DEFAULT -1**; không được tự coi -1 là lỗi hoặc tự đổi sang 1 nếu chưa kiểm tra consumer.
+- Trên VPS, sau khi xác minh game server xử lý queue, đặt `'game_queue_verified'=>true` trong `config/topup.local.php`. Nếu có biến môi trường `KPAH_TOPUP_GAME_QUEUE_VERIFIED`, nó sẽ ghi đè file local.
+- Task Scheduler chạy `tools/payos_cleanup.php` mỗi phút sẽ kiểm tra lại tối đa 20 đơn `paid_waiting_delivery` mỗi lượt. Có thể chủ động vào `/quan-tri/doi-soat` và bấm Kiểm tra. Không tự tạo đơn mới hoặc nạp lại.
+- Trạng thái `queued` chỉ có nghĩa là đã thêm vào hàng chờ game, chưa khẳng định nhân vật đã nhận. Nếu `needs_review` hoặc `crediting`, đối chiếu thủ công trước khi ghi bổ sung để tránh cấp hai lần.
