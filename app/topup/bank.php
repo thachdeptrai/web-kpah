@@ -24,7 +24,7 @@ if($checkout==='' && !empty($recent)){
  }
 }
 kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Bấm Tạo QR để chuyển ngay sang payOS và quét mã. Đơn chưa thanh toán hết hạn sau 10 phút; chỉ đơn được xác nhận mới giữ lại trong lịch sử.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Bấm Tạo QR để xem mã thanh toán lớn ngay bên dưới. Đơn chưa thanh toán hết hạn sau 10 phút; chỉ đơn được xác nhận mới giữ lại trong lịch sử.</p></section>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
 <?php if(isset($_GET['result'])):?><div class="tp-alert warning">Trang thanh toán đã chuyển về website. Chỉ kết quả tra cứu từ payOS mới xác nhận tiền về.</div><?php endif;?>
 <section class="tp-section"><div class="tp-grid two"><div class="tp-panel"><h2>Tạo đơn nạp</h2><?php if(!$cfg['ready']):?><div class="tp-alert warning">Chưa có thông tin kết nối payOS.</div><?php endif;?>
@@ -35,11 +35,22 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <button type="submit" class="tp-button" <?=!$cfg['ready']?'disabled':''?>>Tạo QR thanh toán ↗</button></form></div>
 <div class="tp-panel"><h2>Bảng thưởng chuyển khoản</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>VNĐ</th><th>Lượng mở</th><th>Lượng khóa</th></tr></thead><tbody>
 <?php foreach(kp_card_packages() as $vnd=>$pkg):?><tr><td><?=number_format($vnd,0,',','.')?></td><td><?=number_format($pkg['luong'],0,',','.')?></td><td><?=number_format($pkg['luonglock'],0,',','.')?></td></tr><?php endforeach;?></tbody></table></div></div></div></section>
+<?php if($checkout!==''):?>
+<section class="tp-section tp-payment-section" id="thanh-toan">
+ <div class="tp-payment-panel">
+  <div class="tp-payment-heading">
+   <div><span class="tp-eyebrow">PAYOS · CHUYỂN KHOẢN VIETQR</span><h2>Quét mã thanh toán</h2><p id="bank-payment-status" class="tp-muted" role="status" aria-live="polite">Đang tải QR. Trạng thái thanh toán được cập nhật tự động.</p></div>
+   <a class="tp-button-secondary tp-payment-external" href="<?=kp_e($checkout)?>" target="_blank" rel="noopener noreferrer">Mở payOS ↗</a>
+  </div>
+  <div class="tp-payment-stage">
+   <div id="payos-embed" data-checkout="<?=kp_e($checkout)?>" data-order="<?= (int)$activeCode ?>" class="tp-payment-embed"></div>
+  </div>
+  <p class="tp-payment-hint">Giữ trang này mở khi chuyển khoản. Nếu QR không tải được, sử dụng nút Mở payOS. Không cần tạo thêm lệnh nạp mới.</p>
+ </div>
+</section>
+<script src="https://cdn.payos.vn/payos-checkout/v1/stable/payos-initialize.js" defer></script>
+<script src="/assets/js/payos-embed.js?v=2" defer></script>
+<?php endif;?>
 <section class="tp-section"><div class="tp-panel"><h2>Giao dịch của tôi</h2><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã đơn</th><th>Ngày</th><th>VNĐ</th><th>Nhận</th><th>Trạng thái</th><th>Thanh toán</th></tr></thead><tbody>
 <?php foreach($recent as $o):?><tr><td><?=kp_e($o['order_code'])?></td><td><?=kp_e($o['created_at'])?></td><td><?=number_format((int)$o['amount'],0,',','.')?></td><td><?=number_format((int)$o['units'],0,',','.')?> <?= $o['currency']==='luong'?'L':'LK' ?></td><td><?=kp_e($o['status'])?></td><td><?php if($o['status']==='pending'&&filter_var($o['checkout_url'],FILTER_VALIDATE_URL)):?><a href="<?=kp_e($o['checkout_url'])?>" target="_blank" rel="noopener">Mở QR ↗</a><?php else:?>—<?php endif;?></td></tr><?php endforeach;?></tbody></table></div></div></section>
-<?php if($checkout!==''):?>
-<section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">VIETQR / PAYOS</span><h2>Quét QR ngay tại đây</h2><p id="bank-payment-status" class="tp-muted" role="status" aria-live="polite">Đang mở QR. Website tự cập nhật trạng thái sau khi ngân hàng xác nhận.</p><div id="payos-embed" data-checkout="<?=kp_e($checkout)?>" data-order="<?= (int)$activeCode ?>" style="width:100%;min-height:650px"></div><p class="tp-muted">Nếu QR không hiển thị, <a href="<?=kp_e($checkout)?>" target="_blank" rel="noopener noreferrer">mở trang thanh toán payOS ↗</a></p></div></section>
-<script src="https://cdn.payos.vn/payos-checkout/v1/stable/payos-initialize.js" defer></script>
-<script src="/assets/js/payos-embed.js?v=1" defer></script>
-<?php endif;?>
 <?php kp_topup_page_end();?>
