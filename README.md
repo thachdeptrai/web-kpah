@@ -53,11 +53,12 @@ Giao diện có stylesheet riêng cho desktop và mobile. Các thông tin riêng
 | `/quan-tri/tai-khoan-key` | Tạo/khóa tài khoản role key (**admin**) |
 | `/quan-tri/nap` | Quản lý nạp (**admin**) |
 | `/quan-tri/ty-le` | Tỷ lệ quy đổi và thưởng ngân hàng (**admin**) |
-| `/quan-tri/cong-tai-nguyen` | Cộng tài nguyên thủ công (**admin**) |
+| `/quan-tri/cong-tai-nguyen` | Cộng tài nguyên game thủ công (**admin**) |
+| `/quan-tri/cong-vnd` | Điều chỉnh ví VNĐ và/hoặc tổng nạp, có nhật ký (**admin**) |
 | `/quan-tri/doi-soat` | Kiểm tra giao dịch (**admin**) |
 | `/quan-tri/diem-tich-luy` | Quản lý Point và quà (**admin**) |
 
-Các route đã gỡ như `/quan-tri/nap-game` và `/quan-tri/cong-tong-nap` **không còn là trang quản trị**.
+Route `/quan-tri/nap-game` đã được gỡ. URL cũ `/quan-tri/cong-tong-nap` hiện mở chung trang điều chỉnh `/quan-tri/cong-vnd` để giữ tương thích.
 
 Định tuyến tập trung tại `config/routes.php` qua `.htaccess` và `index.php` ở thư mục gốc. Các alias cũ được xử lý theo cấu hình; API/callback không được tự ý redirect làm thay đổi phương thức HTTP. Xem [docs/ROUTING.md](docs/ROUTING.md).
 
@@ -91,6 +92,8 @@ Các bảng/cột chính mà code hiện tại sử dụng:
 | `kpah_web_admins` | Tài khoản admin/key |
 | `kpah_referral_codes`, `kpah_referral_code_uses` | Mã giới thiệu |
 | `storage/topup/` | Cấu hình, nhật ký ví VNĐ và trạng thái nghiệp vụ cần bảo toàn |
+
+**Điều chỉnh thủ công** tại `/quan-tri/cong-vnd` không phải giao dịch nạp thật, không tự tạo đơn payOS hay tích Point; admin chọn rõ cộng VNĐ, tổng nạp hoặc cả hai và ghi lý do. Nhật ký lưu tại `storage/topup/manual-wallet/`, cần sao lưu và đối soát nếu trạng thái chưa hoàn tất.
 
 **Không import lại SQL nếu các bảng đã tồn tại.** Các file trong `database/` dành cho kiểm tra schema hoặc thiết lập môi trường còn thiếu, **không phải lệnh phải chạy sau mỗi lần `git pull`**. Đặc biệt, ví VNĐ hiện dùng cột `team_user.vnd` và nhật ký riêng, không cần tự tạo thêm bảng ví VNĐ.
 
