@@ -326,7 +326,7 @@ function kp_topup_reconcile($id, $callback = null) {
                 kp_topup_write_file($path,$order);
                 try {
                     require_once __DIR__.'/wallet_vnd.php';
-                    kp_vnd_credit((int)$order['user_id'],'card',(string)$order['id'],$net,0);
+                    kp_vnd_credit((int)$order['user_id'],'card',(string)$order['id'],$net,0,(int)$order['amount']);
                     $order['status']='wallet_credited';$order['updated_at']=time();
                     kp_topup_write_file($path,$order);
                     try{
