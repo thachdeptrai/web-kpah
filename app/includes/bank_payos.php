@@ -1,6 +1,7 @@
 <?php
 if (!defined('KP_ROOT')) {http_response_code(403);exit;}
 require_once __DIR__.'/topup_core.php';
+require_once __DIR__.'/loyalty_points.php';
 function kp_bank_cfg() {
  $localFile=KP_ROOT.'/config/payos.local.php';
  $v=is_file($localFile)?require $localFile:[];
@@ -182,7 +183,13 @@ function kp_bank_reconcile($code){
  try {
   $stmt=$db->prepare('SELECT * FROM kp_bank_orders WHERE order_code=? FOR UPDATE');$stmt->execute([$code]);$order=$stmt->fetch(PDO::FETCH_ASSOC);
   if(!$order){$db->rollBack();return 'unknown';}
-  if(in_array($order['status'],['completed','queued','crediting','needs_review'],true)){$db->commit();return $order['status'];}
+  if($order['status']==='completed'){
+   $db->commit();
+   try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
+   catch(Throwable $e){kp_log('payOS Points award will need retry',$e);}
+   return 'completed';
+  }
+  if(in_array($order['status'],['queued','crediting','needs_review'],true)){$db->commit();return $order['status'];}
   $response=kp_bank_api('GET','/'.rawurlencode((string)$code));
   if((string)($response['orderCode']??'')!==(string)$code || (int)($response['amount']??-1)!==(int)$order['amount'] || ($response['status']??'')!=='PAID'){
    $db->commit();return 'pending';
@@ -201,6 +208,8 @@ function kp_bank_reconcile($code){
   try{
    kp_bank_direct_grant($order);
    $db->prepare('UPDATE kp_bank_orders SET status="completed" WHERE order_code=? AND status="crediting"')->execute([$code]);
+   try{kp_points_award((int)$order['user_id'],'payos',(string)$code,(int)$order['amount'],$order['created_at']);}
+   catch(Throwable $e){kp_log('payOS Points award will need retry',$e);}
    return 'completed';
   }catch(Throwable $e){
    kp_log('payOS direct credit requires manual reconciliation',$e);
