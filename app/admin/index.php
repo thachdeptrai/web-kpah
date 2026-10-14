@@ -32,6 +32,7 @@ try {
 <title>Trang chủ quản trị · KPAH</title>
 <link rel="stylesheet" href="/assets/css/admin-home.css?v=1">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body>
 <header class="topbar">
