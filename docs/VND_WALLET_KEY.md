@@ -28,8 +28,8 @@ Admin có thanh điều hướng chung trên `/quan-tri`, `/quan-tri/ma-gioi-thi
 Tài khoản `key`:
 - Tạo/khóa trong `/quan-tri/tai-khoan-key` (**chỉ admin**).
 - Đăng nhập tại `/quan-tri/dang-nhap`, chuyển vào `/quan-tri/ma-gioi-thieu`.
-- Chỉ **xem và tạo mã giới thiệu**. Không khóa/mở mã; POST trái quyền trả HTTP 403. Không truy cập các trang admin khác (backend `kp_admin_require` kiểm tra role và trạng thái đang hoạt động mỗi lần).
-- Mật khẩu cho tài khoản mới được băm bcrypt và yêu cầu ít nhất 12 ký tự; không lưu dạng rõ.
+- Chỉ **xem mã mình tạo, theo dõi lượt dùng của những mã đó và tạo mã giới thiệu**. Không khóa/mở mã; POST trái quyền trả HTTP 403. Không truy cập các trang admin khác (backend `kp_admin_require` kiểm tra role và trạng thái đang hoạt động mỗi lần).
+- Mật khẩu cho tài khoản mới được băm bcrypt và yêu cầu ít nhất 8 ký tự (khuyến nghị dài hơn); không lưu dạng rõ.
 
 ## Triển khai
 
