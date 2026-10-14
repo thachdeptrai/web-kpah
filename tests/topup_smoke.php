@@ -9,6 +9,13 @@ function check($actual, $expected, $name) {
     }
     echo "OK {$name}\n";
 }
+foreach ([10000=>[250,500],50000=>[1500,3000],100000=>[3500,7000],500000=>[20000,40000],1000000=>[45000,90000]] as $vnd=>$expected) {
+    check(kp_card_package_units($vnd,$vnd,'luong'),$expected[0],'open package '.$vnd);
+    check(kp_card_package_units($vnd,$vnd,'luonglock'),$expected[1],'locked package '.$vnd);
+}
+check(kp_card_package_units(100000,80000,'luong'),2800,'package after 20 percent fee');
+try { kp_card_package_units(20000,16000,'luong');fwrite(STDERR,"FAIL invalid package accepted\n");exit(1); }
+catch(RuntimeException $e) {echo "OK unsupported denomination rejected\n";}
 check(kp_topup_units(10000,100),100,'default normal Luong');
 check(kp_topup_after_discount(10000,20),8000,'card net value after 20 percent deduction');
 check(kp_topup_units(kp_topup_after_discount(10000,20),100),80,'normal Luong after discount');
