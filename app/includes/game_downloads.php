@@ -26,7 +26,7 @@ function kp_game_download_url($value)
     if ($url === '') return '';
     // Only HTTPS or an absolute local URL; no protocol-relative or userinfo URLs.
     if (strlen($url) > 2048 || preg_match('/[\x00-\x20\x7f]/', $url)) return '';
-    if (substr($url, 0, 1) === '/' && substr($url, 0, 2) !== '/') {
+    if (substr($url, 0, 1) === '/' && substr($url, 0, 2) !== '//') {
         return $url;
     }
     if (!preg_match('~^https://~i', $url) || !filter_var($url, FILTER_VALIDATE_URL)) return '';
