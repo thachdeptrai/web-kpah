@@ -12,7 +12,7 @@ function kp_vnd_bonus_percent(): int {
 function kp_vnd_with_lock(int $userId, callable $callback) {
     if($userId<1)throw new InvalidArgumentException('Tài khoản không hợp lệ.');
     $db=kp_db();
-    $lock='kp_vnd_'.hash('sha256',(string)$userId);
+    $lock='kp_vnd_'.substr(hash('sha256',(string)$userId),0,40);
     $st=$db->prepare('SELECT GET_LOCK(?,8)');$st->execute([$lock]);
     if((int)$st->fetchColumn()!==1)throw new RuntimeException('Ví đang xử lý giao dịch, vui lòng thử lại.');
     try{return $callback($db);}finally{
