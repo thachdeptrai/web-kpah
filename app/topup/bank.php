@@ -16,15 +16,8 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
 $recent=[];
 try{$st=kp_db()->prepare('SELECT order_code,amount,currency,units,status,checkout_url,created_at FROM kp_bank_orders WHERE user_id=? ORDER BY id DESC LIMIT 15');$st->execute([(int)$user['id']]);$recent=$st->fetchAll(PDO::FETCH_ASSOC);}
 catch(Throwable $e){$error=$error?:'Chưa có bảng nạp ngân hàng. Chạy migration database/payos_bank.sql.';}
-if($checkout==='' && !empty($recent)){
- foreach($recent as $order){
-  if($order['status']==='pending' && strtotime((string)$order['created_at'])>time()-600 && is_string($order['checkout_url']) && preg_match('~^https://pay\\.payos\\.vn/~',$order['checkout_url'])){
-   $checkout=$order['checkout_url'];$activeCode=(int)$order['order_code'];break;
-  }
- }
-}
 kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
-<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Bấm Tạo QR để xem mã thanh toán lớn ngay bên dưới. Đơn chưa thanh toán hết hạn sau 10 phút; chỉ đơn được xác nhận mới giữ lại trong lịch sử.</p></section>
+<section class="tp-hero"><span class="tp-kicker"><i></i> NẠP NGÂN HÀNG</span><h1>Thanh toán <em>VietQR.</em></h1><p class="tp-lead">Chỉ hiện khu vực QR sau khi bạn bấm Tạo QR thành công. Đơn chưa thanh toán hết hạn sau 10 phút; chỉ đơn được xác nhận mới giữ lại trong lịch sử.</p></section>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
 <?php if(isset($_GET['result'])):?><div class="tp-alert warning">Trang thanh toán đã chuyển về website. Chỉ kết quả tra cứu từ payOS mới xác nhận tiền về.</div><?php endif;?>
 <section class="tp-section"><div class="tp-grid two"><div class="tp-panel"><h2>Tạo đơn nạp</h2><?php if(!$cfg['ready']):?><div class="tp-alert warning">Chưa có thông tin kết nối payOS.</div><?php endif;?>
