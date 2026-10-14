@@ -4,17 +4,14 @@ require_once __DIR__.'/../includes/player_portal.php';
 require_once __DIR__.'/../includes/rankings.php';
 
 $user=kp_player_account();
-$categories=kp_rankings_catalog();
+$categories=kp_rankings_available();
 $type=isset($_GET['type']) && is_string($_GET['type']) ? $_GET['type'] : 'level';
-if (!array_key_exists($type,$categories)) {
-    http_response_code(404);
-    $type='level';
-}
-$current=$categories[$type];
+if (!isset($categories[$type])) $type=isset($categories['level'])?'level':(array_key_first($categories)??'');
+$current=$type!==''?$categories[$type]:null;
 $rows=[];
 $error=false;
-try { $rows=kp_rankings_fetch($type); }
-catch (Throwable $e) { kp_log('leaderboard unavailable: '.$type,$e); $error=true; }
+if($current!==null){try { $rows=kp_rankings_fetch($type); }
+catch (Throwable $e) { kp_log('leaderboard unavailable: '.$type,$e); $error=true; }}
 kp_player_head('Bảng xếp hạng','rankings',$user);
 ?>
 <section class="portal-hero leaderboard-hero">
@@ -39,7 +36,7 @@ $rankGroups=[
 ];
 ?>
 <nav class="rank-group-directory" aria-label="Chọn bảng xếp hạng">
-<?php foreach($rankGroups as $groupName=>$keys): ?>
+<?php foreach($rankGroups as $groupName=>$keys): if(!array_intersect($keys,array_keys($categories)))continue; ?>
 <div class="rank-group"><h2><?=kp_e($groupName)?></h2><div class="rank-categories">
 <?php foreach($keys as $key): if(!isset($categories[$key]))continue;$cat=$categories[$key]; ?>
 <a class="rank-category<?= $type===$key?' is-selected':'' ?>" href="/bang-xep-hang?type=<?=kp_e($key)?>"<?= $type===$key?' aria-current="page"':'' ?>><span class="rank-category-glint" aria-hidden="true">✧</span><?=kp_e($cat['label'])?></a>
@@ -47,13 +44,14 @@ $rankGroups=[
 <?php endforeach; ?></nav>
 
 <section class="rankings-board" aria-labelledby="ranking-heading">
+    <?php if($current===null): ?><div class="lb-empty" role="status"><h3>Chưa có bảng xếp hạng nào có dữ liệu</h3><p>Các hạng mục sẽ tự hiển thị khi game ghi nhận thành tích.</p></div><?php else: ?>
     <div class="rankings-board-heading">
         <div>
             <span class="portal-kicker"><i></i> BẢNG VINH DANH</span>
             <h2 id="ranking-heading">Top 10 <em><?= kp_e($current['label']) ?></em></h2>
             <p><?= kp_e($current['description']) ?></p>
         </div>
-        <div class="lb-season-stamp"><b>TOP 10</b><small>DỮ LIỆU GAME</small></div>
+        <div class="lb-season-stamp"><b>TOP 10</b><small>VINH DANH</small></div>
     </div>
     <?php if($error): ?>
         <div class="lb-empty" role="status"><span aria-hidden="true">◇</span><h3>Chưa tải được bảng xếp hạng</h3><p>Hãy thử lại sau. Các hạng mục khác vẫn có thể hoạt động.</p></div>
@@ -113,7 +111,8 @@ $rankGroups=[
         <?php endif; ?>
     </div>
     <?php endif; ?>
-    <div class="lb-source">Bảng xếp hạng lấy dữ liệu từ game. Hình chiến binh chỉ là minh họa, không phải ngoại hình thật của nhân vật.</div>
+    <div class="lb-source">Danh sách cập nhật theo thành tích ghi nhận trên hệ thống. Hình chiến binh chỉ mang tính minh họa.</div>
+    <?php endif; ?>
 </section>
 <div class="portal-return"><a href="/tai-khoan">← Về khu tài khoản</a><a href="/nhan-vat">Nhân vật của tôi ↗</a></div>
 <?php kp_player_foot(); ?>
