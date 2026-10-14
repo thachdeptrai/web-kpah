@@ -202,6 +202,16 @@ function kp_game_download_save($post, $files)
             $current['url'] = $url;
             $current['source'] = $source;
             $upload = $files['upload']['error'][$key] ?? UPLOAD_ERR_NO_FILE;
+            $remove = isset($post['remove'][$key]) && $post['remove'][$key] === '1';
+            if ($remove && (int)$upload !== UPLOAD_ERR_NO_FILE) {
+                throw new RuntimeException('Không thể vừa xóa vừa upload file ' . $platform['name'] . '.');
+            }
+            if ($remove) {
+                $current['file'] = '';
+                $current['filename'] = '';
+                $current['size'] = 0;
+                $current['sha256'] = '';
+            }
             if ((int)$upload !== UPLOAD_ERR_NO_FILE) {
                 if ($source !== 'file') throw new RuntimeException('Chọn nguồn "Upload lên VPS" trước khi tải file.');
                 $entry = [];
