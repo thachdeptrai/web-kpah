@@ -78,5 +78,5 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Point</th></tr></thead><tbody>
 <?php foreach($ledger as $x):?><tr><td><?=kp_e($x['created_at'])?></td><td><?=kp_e($x['note'])?></td><td><b><?= (int)$x['points_delta']>0?'+':'' ?><?=number_format((int)$x['points_delta'],0,',','.')?></b></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <?php endif;?>
-<script>(function(){document.querySelectorAll('.point-redeem-form').forEach(function(f){var busy=false;f.addEventListener('submit',function(e){if(busy){e.preventDefault();return;}busy=true;var b=f.querySelector('button');if(b){b.disabled=true;b.textContent='Đang gửi yêu cầu…';}});});})();</script>
+<script src="/assets/js/points-guard.js?v=1" defer></script>
 <?php kp_topup_page_end(); ?>
