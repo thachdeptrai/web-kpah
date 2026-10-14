@@ -1,5 +1,6 @@
 <?php
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/../includes/admin_nav.php';
 function kp_topup_page_start($title, $active, $username = '', $admin = false) {
     kp_send_security_headers(true);
     header('Content-Type: text/html; charset=utf-8');
@@ -14,6 +15,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <meta name="theme-color" content="#10131e"><meta name="robots" content="noindex,nofollow">
 <title><?= kp_e($title) ?> · KPAH</title>
 <link rel="stylesheet" href="/assets/css/topup.css?v=<?= (int) @filemtime(KP_ROOT . '/assets/css/topup.css') ?>">
+<?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>"><?php endif;?>
 </head>
 <body class="tp-page<?= $admin ? ' tp-admin' : '' ?>">
 <div class="tp-shell">
@@ -30,6 +32,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 </aside>
 <main class="tp-content">
 <header class="tp-header"><div class="tp-breadcrumb">KPAH <span>/</span> <?= $admin ? 'QUẢN TRỊ' : 'NẠP TÀI NGUYÊN' ?> <span>/</span> <?= kp_e($title) ?></div><div class="tp-user"><i></i><?= kp_e($username) ?></div></header>
+<?php if($admin) kp_admin_nav($active,'admin'); ?>
 <?php
 }
 function kp_topup_page_end() { ?>
