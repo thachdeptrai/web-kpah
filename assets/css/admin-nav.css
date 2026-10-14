@@ -1,0 +1,8 @@
+/* One consistent, mobile-friendly navigation shared by ALL admin pages. */
+.kp-admin-nav{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;margin:12px auto 22px;max-width:1320px;width:calc(100% - 28px);box-sizing:border-box;border:1px solid rgba(170,189,226,.21);border-radius:15px;background:#141c2b;color:#e9effb;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.kp-admin-nav-links{display:flex;flex-wrap:wrap;align-items:center;gap:7px;min-width:0}
+.kp-admin-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:35px;padding:8px 12px;box-sizing:border-box;border-radius:9px;font-weight:650;font-size:12px;line-height:1.4;color:#d4e1f4;text-decoration:none;white-space:normal;text-align:center;transition:background .15s,color .15s}
+.kp-admin-nav a:hover,.kp-admin-nav a:focus-visible{color:#fff;background:rgba(255,255,255,.1)}
+.kp-admin-nav a.is-active{background:#d4a96e;color:#111827}
+.kp-admin-nav .kp-admin-nav-logout{border:1px solid rgba(212,169,110,.43);white-space:nowrap}
+@media(max-width:720px){.kp-admin-nav{width:calc(100% - 20px);margin:10px auto 18px;padding:10px;flex-direction:column;align-items:stretch}.kp-admin-nav-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.kp-admin-nav a{font-size:11px;min-height:42px;padding:8px 5px}.kp-admin-nav .kp-admin-nav-logout{width:100%}}
