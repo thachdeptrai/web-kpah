@@ -11,6 +11,9 @@ $notice = (string)($_SESSION['kp_download_notice'] ?? '');
 unset($_SESSION['kp_download_notice']);
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     try {
+        if (empty($_POST) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            throw new RuntimeException('Dung lượng gửi lên vượt post_max_size trong php.ini hoặc giới hạn proxy. Hãy tăng giới hạn hoặc dùng link tải ngoài.');
+        }
         if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
             throw new RuntimeException('Phiên quản trị đã hết hạn. Tải lại trang và thử lại.');
         }
