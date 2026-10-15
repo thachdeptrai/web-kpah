@@ -157,7 +157,7 @@ $banClass=function(int $ban): string {return $ban===0?'ok':($ban===1?'banned':'s
 <link rel="stylesheet" href="/assets/css/admin-game-accounts.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-game-accounts.css') ?>">
 </head><body>
 <header class="topbar">
-<a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH · QUẢN TRỊ</small><strong>Tài khoản & nhân vật</strong></span></a>
+<a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.svg" width="50" height="50" alt=""></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Tài khoản & nhân vật</strong></span></a>
 <div class="top-actions"><span class="secure"><i></i> CHỈ ADMIN</span><span class="user"><?= kp_e($admin['username']) ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
 <?php kp_admin_nav('game-accounts','admin'); ?>
