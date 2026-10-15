@@ -10,6 +10,7 @@ function kp_game_platforms()
 {
     return [
         'windows' => ['name' => 'Windows / PC', 'ext' => ['zip', 'exe', 'msi'], 'hint' => 'ZIP, EXE hoặc MSI'],
+        'java' => ['name' => 'Java / JAR', 'ext' => ['jar'], 'hint' => 'JAR'], 
         'android' => ['name' => 'Android', 'ext' => ['apk'], 'hint' => 'APK'],
         'ios' => ['name' => 'iPhone / iPad', 'ext' => ['ipa'], 'hint' => 'IPA'],
     ];
@@ -130,12 +131,12 @@ function kp_game_download_upload($platform, $upload)
     fclose($fh);
     $zip = substr($magic, 0, 4) === "PK\x03\x04";
     $ole = $magic === "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1";
-    if ((in_array($ext, ['apk', 'ipa', 'zip'], true) && !$zip)
+    if ((in_array($ext, ['apk', 'ipa', 'zip', 'jar'], true) && !$zip)
         || ($ext === 'exe' && substr($magic, 0, 2) !== 'MZ')
         || ($ext === 'msi' && !$ole)) {
         throw new RuntimeException('Nội dung file không khớp với định dạng ' . strtoupper($ext) . '.');
     }
-    if (class_exists('ZipArchive') && in_array($ext, ['apk', 'ipa'], true)) {
+    if (class_exists('ZipArchive') && in_array($ext, ['apk', 'ipa', 'jar'], true)) {
         $archive = new ZipArchive();
         if ($archive->open($tmp, ZipArchive::RDONLY) !== true) {
             throw new RuntimeException('Gói APK/IPA không đọc được.');
@@ -143,6 +144,18 @@ function kp_game_download_upload($platform, $upload)
         $valid = $ext === 'apk'
             ? $archive->locateName('AndroidManifest.xml') !== false
             : false;
+        if ($ext === 'jar') {
+            // A JAR must contain Java metadata or compiled bytecode; reject plain ZIPs.
+            $valid = $archive->locateName('META-INF/MANIFEST.MF', ZipArchive::FL_NOCASE) !== false;
+            if (!$valid) {
+                for ($i = 0; $i < $archive->numFiles; $i++) {
+                    $entry = $archive->getNameIndex($i);
+                    if (is_string($entry) && preg_match('~\\.class$~iD', $entry)) {
+                        $valid = true; break;
+                    }
+                }
+            }
+        }
         if ($ext === 'ipa') {
             for ($i = 0; $i < $archive->numFiles; $i++) {
                 $entry = $archive->getNameIndex($i);
@@ -245,7 +258,7 @@ function kp_game_download_save($post, $files)
         foreach ($old as $row) {
             $oldFile = $row['file'];
             if ($oldFile !== '' && !in_array($oldFile, $referenced, true)
-                && preg_match('/^[a-f0-9]{32}\.(?:apk|ipa|zip|exe|msi)$/D', $oldFile)) {
+                && preg_match('/^[a-f0-9]{32}\.(?:apk|ipa|zip|exe|msi|jar)$/D', $oldFile)) {
                 @unlink($dir . '/' . $oldFile);
             }
         }
