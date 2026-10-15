@@ -100,6 +100,8 @@ jobs:
             sleep 1
           done
           python3 tests/http_regression.py
+      - name: Verified bank farmer bonus MyISAM integration (fixture DB only)
+        run: php tests/bank_farmer_integration.php
       - name: Server error log on failure
         if: failure()
         run: |
