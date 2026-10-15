@@ -82,6 +82,27 @@ if($ready){
         $historyError=true;
     }
 }
+$gameActionLogs=[];
+$gameActionLogsAvailable=false;
+// Existing game audit table may contain server-side exchange logs. The server's
+// UserLogger implementation decides whether they are persisted here.
+try{
+    $st=$db->prepare("SELECT timelog,aclog,info FROM tob_log_all_item
+                      WHERE charname=? AND aclog IN
+                      ('nongdan','nongdan_money','nongdan_an_hac_thi','gioto_nongdan')
+                      ORDER BY timelog DESC,id DESC LIMIT 40");
+    $st->execute([(string)$char['charname']]);
+    $gameActionLogs=$st->fetchAll(PDO::FETCH_ASSOC);
+    $gameActionLogsAvailable=true;
+}catch(Throwable $e){
+    kp_log('optional game farmer audit log unavailable',$e);
+}
+$actionLabels=[
+    'nongdan'=>'Đổi nguyên liệu',
+    'nongdan_money'=>'Đổi tài nguyên (Xu/Lượng)',
+    'nongdan_an_hac_thi'=>'Đổi Ấn Hắc Thị',
+    'gioto_nongdan'=>'Đổi dưa nhận điểm',
+];
 $hours=[];
 $maxValue=0;
 for($i=23;$i>=0;$i--){
@@ -159,6 +180,28 @@ $url=function($pageNumber)use($id,$mode,$limit): string {
       </svg>
     </div>
     <p class="farmer-caption">Mỗi cột là tổng phần tăng dương của số dư Lượng giữa các lần quét trong giờ đó. Không thể tách phần đã tiêu hoặc Lượng đã nhận rồi dùng ngay trong cùng một chu kỳ 5 phút.</p>
+  </section>
+  <section class="panel farmer-panel" aria-labelledby="farmer-sources-title">
+    <div class="panel-heading"><div><div class="eyebrow">ĐỐI CHIẾU / GAME LOG</div>
+      <h2 id="farmer-sources-title">Nhật ký thao tác nông dân</h2>
+      <p>Những hành động đã được game ghi log (nếu có). Đây là dữ liệu bổ trợ, không phải toàn bộ lịch sử đánh quái.</p>
+    </div><span class="live"><?= count($gameActionLogs) ?> log gần nhất</span></div>
+    <?php if(!$gameActionLogsAvailable): ?>
+      <p class="farmer-caption">Chưa đọc được bảng log của game. Phần lịch sử số dư vẫn hoạt động độc lập.</p>
+    <?php elseif(!$gameActionLogs): ?>
+      <p class="farmer-caption">Không có log thao tác nông dân trong bảng của game. Source Java hiện gọi UserLogger, nên log có thể nằm ở tệp khác hoặc chưa được lưu vào SQL.</p>
+    <?php else: ?>
+      <div class="table-scroll farmer-table-scroll"><table class="farmer-table">
+        <thead><tr><th>Thời gian</th><th>Loại hành động</th><th>Thông tin do server ghi nhận</th></tr></thead>
+        <tbody>
+        <?php foreach($gameActionLogs as $action): ?>
+          <tr><td><?= kp_e($action['timelog']) ?></td>
+              <td><?= kp_e($actionLabels[$action['aclog']]??$action['aclog']) ?></td>
+              <td class="farmer-action-info"><?= kp_e(function_exists('mb_substr')?mb_substr((string)$action['info'],0,220,'UTF-8'):substr((string)$action['info'],0,220)) ?></td></tr>
+        <?php endforeach; ?>
+        </tbody>
+      </table></div>
+    <?php endif; ?>
   </section>
   <section class="panel farmer-panel" aria-labelledby="farmer-changes-title">
     <div class="panel-heading"><div><div class="eyebrow">LỊCH SỬ / 7 NGÀY</div><h2 id="farmer-changes-title">Số dư trước và sau</h2>
