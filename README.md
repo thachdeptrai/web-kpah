@@ -107,6 +107,8 @@ Chi tiết triển khai và cấu hình: [docs/GAME_DOWNLOADS.md](docs/GAME_DOWN
 
 **Mặc định thưởng ngân hàng: +10%**, admin có thể chỉnh tại `/quan-tri/ty-le`. Cấu hình được lưu ở `storage/topup/bank-bonus.json`.
 
+**Quà Điểm nông dân khi nạp bank:** admin có thể bật/tắt và chỉnh tỷ lệ tại `/quan-tri/ty-le` (mặc định **10.000đ nạp = 10.000 Điểm nông dân**; chức năng mặc định tắt cho tới khi admin bật). Các QR mới được ghi quyền nhận quà riêng theo mã đơn. Sau khi trả tiền và ví VNĐ đã cộng thành công, người chơi chọn nhân vật ở `/nap-ngan-hang` để nhận điểm **sau khi thoát game**. Đây là Điểm nông dân của nhân vật (`tob_char.pInfo[117]`), **không phải Point đổi quà của web**. Không cộng quà trùng khi webhook gửi lại. Xem [quy trình và xử lý sự cố](docs/BANK_FARMER_REWARDS.md).
+
 **Tỷ lệ Point mặc định:** 1 Point / 1.000 VNĐ nạp hợp lệ, tương đương **10.000đ = 10 Point**. Tỷ lệ thực tế lấy từ `kp_points_program.points_per_1000`. Point chỉ tính cho giao dịch đủ điều kiện sau thời điểm kích hoạt chương trình, có sổ cái chống ghi trùng. Quà đổi được tạo thành yêu cầu để admin xử lý, không tự phát vật phẩm game.
 
 Hệ thống có cơ chế chống gửi lặp, nhật ký ví, trạng thái đối soát và xử lý các kết quả chưa chắc chắn. **Không tự ý sửa trạng thái `completed`, cộng lại tiền hoặc xóa nhật ký khi chưa đối chiếu với nhà cung cấp.** Trạng thái thanh toán thành công và việc giao tài nguyên game là hai việc cần phân biệt.
