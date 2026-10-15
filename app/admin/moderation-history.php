@@ -128,14 +128,14 @@ $fmt=function($value): string{return number_format((int)$value,0,',','.');};
          $to=(int)$r['new_ban'];$applied=$r['result']==='applied';
          $name=$r['target_type']==='character'?'Nhân vật':'Tài khoản';
      ?>
-       <tr><td><time datetime="<?= kp_e($r['created_at']) ?>"><?= kp_e($r['created_at']) ?></time></td>
-        <td class="gam-history-admin"><?= kp_e($r['admin_name']) ?></td>
-        <td><span class="gam-history-type"><?= kp_e($name) ?></span></td>
-        <td><strong><?= kp_e($r['target_name']) ?></strong><small>#<?= (int)$r['target_id'] ?></small></td>
-        <td><span class="gam-history-transition"><?= (int)$r['old_ban'] ?> → <?= $to ?></span><span class="gam-pill <?= $to===0?'ok':'banned' ?>"><?= $to===0?'Mở ban':'Ban' ?></span></td>
-        <td class="gam-history-reason"><?= kp_e($r['reason']) ?></td>
-        <td><span class="gam-history-status <?= $applied?'ok':'special' ?>"><?= $applied?'Thành công':($r['result']==='pending'?'Chờ xử lý':'Xung đột') ?></span></td>
-        <td><a class="gam-history-link" href="/quan-tri/tai-khoan-game?id=<?= (int)$r['owner_id'] ?>">Xem hồ sơ ↗</a></td>
+       <tr><td data-label="Thời gian"><time datetime="<?= kp_e($r['created_at']) ?>"><?= kp_e($r['created_at']) ?></time></td>
+        <td data-label="Admin" class="gam-history-admin"><?= kp_e($r['admin_name']) ?></td>
+        <td data-label="Loại" ><span class="gam-history-type"><?= kp_e($name) ?></span></td>
+        <td data-label="Đối tượng"><strong><?= kp_e($r['target_name']) ?></strong><small>#<?= (int)$r['target_id'] ?></small></td>
+        <td data-label="Trước → Sau"><span class="gam-history-transition"><?= (int)$r['old_ban'] ?> → <?= $to ?></span><span class="gam-pill <?= $to===0?'ok':'banned' ?>"><?= $to===0?'Mở ban':'Ban' ?></span></td>
+        <td data-label="Lý do" class="gam-history-reason"><?= kp_e($r['reason']) ?></td>
+        <td data-label="Kết quả"><span class="gam-history-status <?= $applied?'ok':'special' ?>"><?= $applied?'Thành công':($r['result']==='pending'?'Chờ xử lý':'Xung đột') ?></span></td>
+        <td data-label="Hồ sơ"><a class="gam-history-link" href="/quan-tri/tai-khoan-game?id=<?= (int)$r['owner_id'] ?>">Xem hồ sơ ↗</a></td>
        </tr>
      <?php endforeach; ?>
      </tbody></table></div>
