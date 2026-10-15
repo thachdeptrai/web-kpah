@@ -40,8 +40,20 @@ try {
             $targetId=$validId($_POST['target_id']??null);
             $reason=isset($_POST['reason']) && is_string($_POST['reason'])?$_POST['reason']:'';
             $confirm=isset($_POST['confirm_name']) && is_string($_POST['confirm_name'])?$_POST['confirm_name']:'';
-            $notice=kp_game_moderation_change($db,$admin,$type,$targetId,$direction,$reason,$confirm);
-            kp_admin_log_event('game_'.$type.'_'.$direction,(int)$admin['id']);
+            if($direction==='bulk_unban') {
+                $fingerprint=isset($_POST['fingerprint']) && is_string($_POST['fingerprint'])
+                    ?$_POST['fingerprint']:'';
+                $result=kp_game_moderation_bulk_unban($db,$admin,$type,$reason,$confirm,$fingerprint);
+                $label=$type==='account'?'tài khoản':'nhân vật';
+                $notice='Đã mở ban '.(int)$result['changed'].' / '.(int)$result['total'].' '.$label.'.';
+                if($result['failed']>0) {
+                    $notice.=' Có '.(int)$result['failed'].' lỗi chưa xử lý; xem PHP error log, sau đó tải lại.';
+                }
+                kp_admin_log_event('game_bulk_'.$type.'_unban',(int)$admin['id']);
+            } else {
+                $notice=kp_game_moderation_change($db,$admin,$type,$targetId,$direction,$reason,$confirm);
+                kp_admin_log_event('game_'.$type.'_'.$direction,(int)$admin['id']);
+            }
             $_SESSION['kp_game_mod_notice']=$notice;
             $redirectId=$validId($_POST['account_id']??null);
             header('Location: /quan-tri/tai-khoan-game'.($redirectId?'?id='.$redirectId:''),true,303);
@@ -57,11 +69,14 @@ try {
 
 $totals=['accounts'=>0,'banned_accounts'=>0,'banned_chars'=>0];
 $users=[];$account=null;$chars=[];$audit=[];$pages=1;$matchCount=0;$protected=false;
+$bulkTargets=['account'=>[],'character'=>[]];
 if(!$dbError){
     try{
         $totals['accounts']=(int)$db->query('SELECT COUNT(*) FROM team_user')->fetchColumn();
         $totals['banned_accounts']=(int)$db->query('SELECT COUNT(*) FROM team_user WHERE ban=1')->fetchColumn();
         $totals['banned_chars']=(int)$db->query('SELECT COUNT(*) FROM tob_char WHERE ban=1')->fetchColumn();
+        $bulkTargets['account']=kp_game_moderation_bulk_targets($db,'account');
+        $bulkTargets['character']=kp_game_moderation_bulk_targets($db,'character');
         $filters=[];$args=[];
         if($q!==''){
             $term='%'.str_replace(['!','%','_'],['!!','!%','!_'],$q).'%';
@@ -150,6 +165,36 @@ $banClass=function(int $ban): string {return $ban===0?'ok':($ban===1?'banned':'s
   <article class="metric"><div class="metric-top">Tài khoản game <span>♙</span></div><strong><?= $format($totals['accounts']) ?></strong><small>Tổng account trong database</small></article>
   <article class="metric"><div class="metric-top">Account đang ban <span>!</span></div><strong><?= $format($totals['banned_accounts']) ?></strong><small>team_user.ban = 1</small></article>
   <article class="metric"><div class="metric-top">Nhân vật đang ban <span>⚑</span></div><strong><?= $format($totals['banned_chars']) ?></strong><small>tob_char.ban = 1</small></article>
+ </section>
+ <section class="gam-panel gam-bulk-panel" aria-labelledby="gam-bulk-heading">
+   <div class="gam-section-head"><div><span class="eyebrow">MỞ BAN HÀNG LOẠT / TOÀN SERVER</span><h2 id="gam-bulk-heading">Mở ban tất cả</h2></div><span class="gam-bulk-scope">Chỉ đối tượng đang ban = 1</span></div>
+   <p class="gam-hint">Hai thao tác hoàn toàn độc lập. Mở ban tất cả tài khoản <strong>không</strong> mở ban nhân vật; mở ban tất cả nhân vật <strong>không</strong> mở ban tài khoản. Không sửa trạng thái đặc biệt hoặc nhân vật quản trị game. Lệnh áp dụng trên toàn server, không bị giới hạn bởi bộ lọc tìm kiếm.</p>
+   <div class="gam-bulk-grid">
+   <?php foreach(['account'=>['title'=>'Mở ban ALL ACC','label'=>'tài khoản','phrase'=>'MO BAN TAT CA TAI KHOAN'],
+                   'character'=>['title'=>'Mở ban ALL PLAYER','label'=>'nhân vật','phrase'=>'MO BAN TAT CA NHAN VAT']] as $type=>$meta):
+       $count=count($bulkTargets[$type]); ?>
+    <div class="gam-bulk-item">
+      <div class="gam-bulk-overview"><strong><?= kp_e($meta['title']) ?></strong><span><?= number_format($count,0,',','.') ?> <?= kp_e($meta['label']) ?> có thể mở ban</span></div>
+      <?php if($count>0): ?>
+      <details class="gam-action-box gam-unlock">
+        <summary><?= kp_e($meta['title']) ?> <span aria-hidden="true">⌄</span></summary>
+        <form method="post" action="/quan-tri/tai-khoan-game" class="gam-mod-form gam-bulk-form" data-action-label="<?= kp_e($meta['title']) ?>">
+          <input type="hidden" name="csrf" value="<?= kp_e(kp_csrf_token()) ?>">
+          <input type="hidden" name="target_type" value="<?= kp_e($type) ?>">
+          <input type="hidden" name="direction" value="bulk_unban">
+          <input type="hidden" name="fingerprint" value="<?= kp_e(kp_game_moderation_bulk_fingerprint($bulkTargets[$type])) ?>">
+          <label>Lý do mở ban hàng loạt<textarea name="reason" minlength="8" maxlength="250" rows="2" required placeholder="Ghi lý do cho tất cả đối tượng..."></textarea></label>
+          <label>Nhập đúng câu xác nhận <code><?= kp_e($meta['phrase']) ?></code>
+            <input type="text" name="confirm_name" maxlength="64" required autocomplete="off" data-exact-name="<?= kp_e($meta['phrase']) ?>" placeholder="<?= kp_e($meta['phrase']) ?>">
+          </label>
+          <button type="submit" class="safe"><?= kp_e($meta['title']) ?> (<?= $count ?>)</button>
+        </form>
+      </details>
+      <?php else: ?><p class="gam-muted">Không có <?= kp_e($meta['label']) ?> bị ban đủ điều kiện để mở.</p><?php endif; ?>
+    </div>
+   <?php endforeach; ?>
+   </div>
+   <p class="gam-hint">Danh sách ban được kiểm tra lại ngay trước khi thực hiện. Nếu có biến động sau khi mở form, thao tác sẽ dừng và yêu cầu tải lại. Mỗi đối tượng mở ban thành công được ghi nhật ký riêng.</p>
  </section>
  <section class="gam-grid">
   <div class="gam-left">
