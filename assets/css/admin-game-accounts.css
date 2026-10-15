@@ -85,3 +85,17 @@
 @media(max-width:870px){.gam-grid{grid-template-columns:minmax(0,1fr)}.gam-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.gam-left,.gam-right{gap:14px}.gam-account-item{flex-wrap:nowrap}.gam-account-item .gam-pill{margin-left:0}}
 @media(max-width:620px){.gam-shell{padding-left:12px;padding-right:12px}.gam-welcome{align-items:flex-start}.gam-welcome h1{font-size:29px}.gam-readonly{font-size:9px}.gam-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.gam-panel{padding:15px}.gam-account-item{gap:7px}.gam-account-item .gam-pill{font-size:9px}.gam-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.gam-char-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.gam-char-header{align-items:flex-start}.gam-char-header .gam-pill{font-size:9px}}
 @media(max-width:390px){.gam-facts{grid-template-columns:minmax(0,1fr)}.gam-account-item{flex-wrap:wrap}.gam-account-item .gam-pill{margin-left:44px}.gam-arrow{margin-left:auto}.gam-footer{flex-direction:column}}
+
+/* Independent, high-risk global unban controls. */
+.gam-bulk-panel{margin-bottom:18px}
+.gam-bulk-panel .gam-section-head{align-items:center}
+.gam-bulk-scope{font-size:10px;font-weight:750;color:#b1f0d6;white-space:nowrap;border:1px solid #61d8ab44;padding:7px 10px;border-radius:99px;background:#61d8ab09}
+.gam-bulk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.gam-bulk-item{border:1px solid #a292e631;border-radius:14px;background:#0913279c;padding:14px;min-width:0}
+.gam-bulk-overview{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+.gam-bulk-overview strong{font-size:13px;color:#f1edff}
+.gam-bulk-overview span{color:#abf0d0;font-size:11px}
+.gam-bulk-form code{display:block;overflow-wrap:anywhere;color:#d5c7ff;padding:7px 0;font-size:12px;user-select:all}
+.gam-bulk-form>button.safe{background:#217b67}
+.gam-bulk-form>button.safe:hover{background:#288f76}
+@media(max-width:760px){.gam-bulk-grid{grid-template-columns:minmax(0,1fr)}.gam-bulk-scope{white-space:normal}}

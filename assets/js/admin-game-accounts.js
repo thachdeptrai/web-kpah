@@ -15,7 +15,11 @@
       }
       field.setCustomValidity('');
       var label = this.getAttribute('data-action-label') || 'THAY ĐỔI TRẠNG THÁI';
-      if (!window.confirm('Xác nhận ' + label + ' đối với "' + correct + '"?\nThao tác chỉ áp dụng cho đối tượng này và sẽ được lưu trong nhật ký.')) {
+      var global = this.classList && this.classList.contains('gam-bulk-form');
+      var prompt = global
+        ? 'XÁC NHẬN MỞ BAN HÀNG LOẠT TOÀN SERVER: ' + label + '?\\nTất cả đối tượng đủ điều kiện sẽ được mở ban. Không thể hoàn tác hàng loạt tự động. Từng đối tượng sẽ được ghi nhật ký.'
+        : 'Xác nhận ' + label + ' đối với "' + correct + '"?\\nThao tác chỉ áp dụng cho đối tượng này và sẽ được lưu trong nhật ký.';
+      if (!window.confirm(prompt)) {
         event.preventDefault();
       }
     });
