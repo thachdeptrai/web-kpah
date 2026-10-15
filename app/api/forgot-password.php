@@ -12,7 +12,7 @@ if ($action === 'send_code') {
     list($allowed, $retry) = kp_rate_limit('password_recovery', kp_client_ip().'|'.strtolower($identity), 5, 900, true);
     if (!$allowed) kp_recovery_reply(['ok'=>false,'message'=>'Bạn yêu cầu quá nhiều lần. Hãy thử lại sau ít phút.'],429);
     try {
-        $st = kp_db()->prepare('SELECT id, email FROM team_user WHERE username = ? OR LOWER(TRIM(email)) = LOWER(TRIM(?)) LIMIT 1');
+        $st = kp_db()->prepare('SELECT id, email FROM team_user WHERE (username = ? OR LOWER(TRIM(email)) = LOWER(TRIM(?))) AND ban = 0 LIMIT 1');
         $st->execute([$identity, $identity]);
         $user = $st->fetch();
         if ($user && filter_var((string)$user['email'], FILTER_VALIDATE_EMAIL)) {
@@ -48,7 +48,7 @@ if (!$valid) kp_recovery_reply(['ok'=>false,'message'=>'Mã không đúng hoặc
 try {
     // Giữ định dạng hash của tài khoản để không phá đăng nhập game:
     // tài khoản bcrypt vẫn dùng bcrypt; tài khoản legacy vẫn dùng hash game.
-    $st = kp_db()->prepare('SELECT password FROM team_user WHERE id = ? LIMIT 1');
+    $st = kp_db()->prepare('SELECT password FROM team_user WHERE id = ? AND ban = 0 LIMIT 1');
     $st->execute([(int) $_SESSION['kp_recovery_user']]);
     $currentHash = (string) $st->fetchColumn();
     if (preg_match('/^\$2[aby]\$\d{2}\$/', $currentHash) === 1 || strpos($currentHash, '$argon2') === 0) {
@@ -56,8 +56,11 @@ try {
     } else {
         $newHash = kp_game_password_hash($password);
     }
-    $update = kp_db()->prepare('UPDATE team_user SET password = ? WHERE id = ?');
-    $update->execute([$newHash, (int) $_SESSION['kp_recovery_user']]);
+    $update = kp_db()->prepare('UPDATE team_user SET password = ? WHERE id = ? AND password = ? AND ban = 0');
+    $update->execute([$newHash, (int) $_SESSION['kp_recovery_user'], $currentHash]);
+    if ($update->rowCount() !== 1) {
+        kp_recovery_reply(['ok'=>false,'message'=>'Tài khoản đã thay đổi hoặc bị khóa. Hãy yêu cầu mã khôi phục mới.'],409);
+    }
     unset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user']);
     kp_recovery_reply(['ok'=>true,'message'=>'Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.','redirect'=>'/dang-nhap']);
 } catch (Throwable $e) {
