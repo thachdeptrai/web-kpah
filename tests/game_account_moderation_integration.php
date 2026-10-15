@@ -84,8 +84,8 @@ try{
     $events=kp_game_moderation_history($pdo,$accountId);
     mod_expect(count($events)===4,'exactly four successful audit records');
     foreach($events as $event) {
-        mod_expect($event['result']==='applied' && (int)$event['owner_id']===0 ? false : true,
-            'audit contains applied moderation result');
+        mod_expect($event['result']==='applied' && $event['admin_name']==='ci_moderator',
+            'audit contains applied moderation result and moderator');
     }
     $summary=$pdo->query("SELECT target_type,COUNT(*) AS n FROM kp_game_moderation_log
                        WHERE owner_id=$accountId GROUP BY target_type")->fetchAll(PDO::FETCH_KEY_PAIR);
