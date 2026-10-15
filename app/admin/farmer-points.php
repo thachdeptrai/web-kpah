@@ -139,7 +139,7 @@ $format=function($v): string{
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head><body>
 <header class="topbar">
-  <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH · QUẢN TRỊ</small><strong>Điểm nông dân</strong></span></a>
+  <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.svg" width="50" height="50" alt=""></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Điểm nông dân</strong></span></a>
   <div class="top-actions"><span class="secure"><i></i> Chỉ đọc</span><span class="user"><?= kp_e($_SESSION['kp_admin_username']??'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
 <?php kp_admin_nav('farmer','admin'); ?>
