@@ -91,7 +91,7 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <?php if(!$farmerGifts):?><p class="tp-muted">Bạn chưa có phần quà Điểm nông dân đang chờ nhận.</p><?php else:?>
 <div class="tp-grid two">
 <?php foreach($farmerGifts as $gift): ?>
-<article class="tp-panel" style="margin:0">
+<article class="tp-panel tp-farmer-gift-card">
 <span class="tp-eyebrow">MÃ NẠP #<?=(int)$gift['order_code']?></span>
 <h3>+<?=number_format((int)$gift['points'],0,',','.')?> Điểm nông dân</h3>
 <p class="tp-muted">Nạp <?=number_format((int)$gift['amount'],0,',','.')?>đ</p>
@@ -104,8 +104,8 @@ kp_topup_page_start('Nạp ngân hàng','bank',(string)$user['username']);?>
 <?php foreach($farmerChars as $char):?>
 <option value="<?=(int)$char['id']?>"><?=kp_e($char['charname'])?> · <?=number_format((int)(kp_farmer_points($char['pInfo'])??0),0,',','.')?> điểm hiện tại</option>
 <?php endforeach;?></select></label>
-<label class="tp-field" style="display:flex;align-items:center;gap:9px">
-<input type="checkbox" name="offline" value="1" required style="width:19px;height:19px;flex:none;accent-color:#e2b45a">
+<label class="tp-field tp-farmer-offline">
+<input type="checkbox" name="offline" value="1" required class="tp-farmer-checkbox">
 <span>Tôi đã thoát game trên nhân vật nhận điểm.</span></label>
 <button class="tp-button" type="submit">Nhận <?=number_format((int)$gift['points'],0,',','.')?> điểm ↗</button>
 </form>
