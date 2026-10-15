@@ -21,7 +21,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $error = 'Bạn thử quá nhiều lần. Hãy thử lại sau '.max(1, (int)ceil($retry / 60)).' phút.';
         } else {
             try {
-                $st = kp_db()->prepare('SELECT id, userid, username, password, email, phone FROM team_user WHERE username = ? LIMIT 1');
+                $st = kp_db()->prepare('SELECT id, userid, username, password, email, phone FROM team_user WHERE username = ? AND ban = 0 LIMIT 1');
                 $st->execute([$username]);
                 $user = $st->fetch();
                 $stored = $user ? (string)$user['password'] : '';
