@@ -45,7 +45,7 @@ if (hash_equals($currentPassword, $newPassword)) {
 
 try {
     $db = kp_db();
-    $st = $db->prepare('SELECT password FROM team_user WHERE id = ? LIMIT 1');
+    $st = $db->prepare('SELECT password FROM team_user WHERE id = ? AND ban = 0 LIMIT 1');
     $st->execute([$userId]);
     $currentHash = $st->fetchColumn();
     if (!is_string($currentHash) || $currentHash === '') {
@@ -61,8 +61,14 @@ try {
     } else {
         $newHash = kp_game_password_hash($newPassword);
     }
-    $up = $db->prepare('UPDATE team_user SET password = ? WHERE id = ?');
-    $up->execute([$newHash, $userId]);
+    $up = $db->prepare('UPDATE team_user SET password = ? WHERE id = ? AND password = ? AND ban = 0');
+    $up->execute([$newHash, $userId, $currentHash]);
+    // MyISAM cannot roll back; the compare-and-swap prevents stale concurrent requests
+    // from overwriting a password changed after the verification above.
+    if ($up->rowCount() !== 1) {
+        kp_change_password_reply(['ok' => false, 'message' => 'Tài khoản vừa thay đổi hoặc bị khóa. Vui lòng đăng nhập lại.'], 409);
+    }
+    session_regenerate_id(true);
 
     kp_change_password_reply(['ok' => true, 'message' => 'Đổi mật khẩu thành công. Mật khẩu mới đã được lưu.']);
 } catch (Throwable $e) {
