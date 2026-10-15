@@ -51,3 +51,7 @@
 
 .dl-file-status .dl-remove{display:flex;align-items:center;gap:8px;margin:8px 0 0;color:#e9bdc8;font-size:11px;cursor:pointer}
 .dl-remove input{width:16px;height:16px;flex:none;margin:0;accent-color:#ff829e}
+
+/* Explain real PHP upload ceilings without visually hiding the cause. */
+.dl-guide .dl-upload-warning{padding:13px 15px;border:1px solid rgba(245,185,106,.34);border-radius:11px;background:rgba(245,185,106,.09);color:#f4d4a8}
+.dl-progress p{overflow-wrap:anywhere;line-height:1.65}
