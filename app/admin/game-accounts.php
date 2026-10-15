@@ -115,7 +115,7 @@ if(!$dbError){
             $account=$st->fetch(PDO::FETCH_ASSOC)?:null;
             if($account){
                 $st=$db->prepare('SELECT id,charname,userId,lastLv,xp,gold,luong,luonglock,
-                    pInfo,ban,del,isAdmin,lastLog,idserver,totalTimePlay,map
+                    pInfo,ban,del,isAdmin,lastLog,idserver,totalTimePlay,map,`class`
                     FROM tob_char WHERE userId=? ORDER BY id DESC');
                 $st->execute([$selected]);
                 $chars=$st->fetchAll(PDO::FETCH_ASSOC);

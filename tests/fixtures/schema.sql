@@ -15,7 +15,9 @@ CREATE TABLE `team_user` (
   `regdate` datetime DEFAULT NULL,
   `ban` tinyint(1) NOT NULL DEFAULT 0,
   `fromgame` tinyint(4) NOT NULL DEFAULT 0,
-  `email` varchar(100) DEFAULT NULL
+  `email` varchar(100) DEFAULT NULL,
+  `vnd` int(11) NOT NULL DEFAULT 0,
+  `tongnap` int(11) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ROW_FORMAT=DYNAMIC;
 
 ALTER TABLE `team_user`
