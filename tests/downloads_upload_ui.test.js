@@ -69,6 +69,7 @@ function boot(opts = {}) {
   vm.runInNewContext(source, {
     document: { getElementById(id) { return dom[id] || null; } },
     window: windowMock,
+    FormData: windowMock.FormData,
     XMLHttpRequest: FakeXHR
   }, {filename:'admin-downloads.js'});
   return {
