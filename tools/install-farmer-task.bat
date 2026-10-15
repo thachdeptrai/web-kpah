@@ -11,7 +11,7 @@ if not exist "%PHP_EXE%" (
 if errorlevel 1 exit /b 1
 "%PHP_EXE%" "%MONITOR%" collect
 if errorlevel 1 exit /b 1
-schtasks /Create /F /SC MINUTE /MO 5 /TN "KPAH Farmer Monitor" /TR "\"%PHP_EXE%\" \"%MONITOR%\"" /RL LIMITED
+schtasks /Create /F /SC MINUTE /MO 5 /TN "KPAH Farmer Monitor" /TR "\"%PHP_EXE%\" \"%MONITOR%\" collect" /RL LIMITED
 if errorlevel 1 (
   echo ERROR: Cannot create scheduled task. Run as admin.
   exit /b 1
