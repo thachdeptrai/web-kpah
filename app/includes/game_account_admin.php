@@ -179,7 +179,7 @@ function kp_game_moderation_bulk_targets(PDO $db, string $type): array
                 AND NOT EXISTS (SELECT 1 FROM tob_char c WHERE c.userId=u.id AND c.isAdmin<>0)
                 ORDER BY u.id ASC';
     } elseif ($type === 'character') {
-        $sql = 'SELECT c.id,c.charname AS target_name
+        $sql = 'SELECT c.id,c.charname AS target_name,u.username AS owner_name
                 FROM tob_char c
                 INNER JOIN team_user u ON u.id=c.userId
                 WHERE c.ban=1 AND c.isAdmin=0
