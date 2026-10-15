@@ -19,6 +19,13 @@ function dl_post($enabled, $source, $url) {
     return $post;
 }
 try {
+    dl_assert(kp_game_download_ini_bytes('2M') === 2097152, 'Parse PHP default upload_max_filesize 2M');
+    dl_assert(kp_game_download_ini_bytes('8M') === 8388608, 'Parse PHP default post_max_size 8M');
+    dl_assert(kp_game_download_ini_bytes('512M') === 536870912, 'Parse 512 MB upload limit');
+    dl_assert(kp_game_download_ini_bytes('1G') === 1073741824, 'Parse 1GB upload limit');
+    dl_assert(kp_game_download_ini_bytes('1.5M') === 1572864, 'Parse fractional upload limit');
+    dl_assert(kp_game_download_ini_bytes('-1') === 0 && kp_game_download_ini_bytes('0') === 0, 'Unlimited or off limits are not misparsed');
+    dl_assert(kp_game_download_ini_bytes('unexpected') === 0, 'Invalid ini limit handled safely');
     $default = kp_game_download_catalog();
     dl_assert(!$default['android']['enabled'], 'No catalog means disabled by default');
     dl_assert(isset(kp_game_platforms()['java']) && kp_game_platforms()['java']['ext'] === ['jar'], 'Java JAR is a separate download platform');
