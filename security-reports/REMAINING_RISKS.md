@@ -1,6 +1,7 @@
 # Remaining risks / merge gate
 
 1. **Staging validation missing:** No live disposable MariaDB + Java game server, valid test payOS/card provider, or configured Apache staging deployment was available here. End-to-end balance, webhook, replay, concurrent writes and authorization testing remains undone.
+2. **Dump procedures:** The separately uploaded SQL export contains root-definer deletion/drop routines referencing another schema. Never import those routines blindly or grant public/application EXECUTE privileges. The dump was inspected as text only; live stored routines/permissions were not queried.
 2. **MyISAM atomicity:** `team_user`, `tob_char`, `board_naptien` remain MyISAM according to the uploaded SQL. Current lock/journal/CAS strategy depends on game-server behavior, storage durability and MySQL connectivity. Never automatically repeat ambiguous credits.
 3. **Old password hash:** `kp_game_password_hash` uses legacy SHA-1-derived MySQL format due game client/server compatibility. A separate coordinated game/web migration to Argon2id/bcrypt is recommended.
 4. **Java admin payment listener:** The separately uploaded Java source includes an unsafe optional listener (constructor shows it disabled). Confirm it stays disabled, and never expose its port externally. Replace fixed-message authentication with strong authenticated IPC and bound interfaces before enabling it. Java archive wasn't present in website repository, and no server binaries were modified.
