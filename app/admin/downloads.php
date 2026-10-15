@@ -7,19 +7,33 @@ kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 $admin = kp_admin_require('/quan-tri/dang-nhap', ['admin']);
 $error = '';
+$errorStatus = 422;
+$uploadMaxBytes = kp_game_download_ini_bytes(ini_get('upload_max_filesize'));
+$postMaxBytes = kp_game_download_ini_bytes(ini_get('post_max_size'));
+$appMaxBytes = 512 * 1024 * 1024;
 $isAjax = strtolower((string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
 $notice = (string)($_SESSION['kp_download_notice'] ?? '');
 unset($_SESSION['kp_download_notice']);
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     try {
         if (empty($_POST) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
-            throw new RuntimeException('Dung lượng gửi lên vượt post_max_size trong php.ini hoặc giới hạn proxy. Hãy tăng giới hạn hoặc dùng link tải ngoài.');
+            $receivedBytes = (int)$_SERVER['CONTENT_LENGTH'];
+            if ($postMaxBytes > 0 && $receivedBytes > $postMaxBytes) {
+                $errorStatus = 413;
+                throw new RuntimeException('Yêu cầu ' . number_format($receivedBytes / 1048576, 1, ',', '.') . ' MB vượt post_max_size của PHP (' . ini_get('post_max_size') . '). Tăng giới hạn trong php.ini của Apache và khởi động lại Apache, hoặc dùng link HTTPS bên ngoài.');
+            }
+            $errorStatus = 400;
+            throw new RuntimeException('PHP không đọc được form upload. Kiểm tra Content-Type multipart/form-data, cấu hình Apache/PHP và nhật ký lỗi máy chủ.');
         }
         if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
-            throw new RuntimeException('Phiên quản trị đã hết hạn. Tải lại trang và thử lại.');
+            $errorStatus = 403;
+            throw new RuntimeException('Phiên quản trị hoặc mã xác thực CSRF không hợp lệ. Tải lại trang quản trị rồi thử lại.');
         }
         list($allowed) = kp_admin_limit('game-download-update', (string)$admin['id'], 30, 3600);
-        if (!$allowed) throw new RuntimeException('Đã thao tác quá nhiều lần. Thử lại sau.');
+        if (!$allowed) {
+            $errorStatus = 429;
+            throw new RuntimeException('Đã thao tác quá nhiều lần. Thử lại sau.');
+        }
         kp_game_download_save($_POST, $_FILES);
         kp_admin_log_event('game_downloads_updated', (int)$admin['id']);
         if ($isAjax) {
@@ -33,12 +47,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     } catch (RuntimeException $e) {
         $error = $e->getMessage();
     } catch (Throwable $e) {
+        $errorStatus = 500;
         kp_log('game downloads admin save failed', $e);
         $error = 'Không lưu được. Kiểm tra quyền ghi storage/game-downloads và giới hạn PHP.';
     }
 }
 if ($isAjax && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
-    http_response_code(400);
+    http_response_code($errorStatus);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['ok' => false, 'message' => $error ?: 'Không thể lưu cấu hình.'], JSON_UNESCAPED_UNICODE);
     exit;
@@ -63,7 +78,7 @@ $platforms = kp_game_platforms();
 <section class="hero dl-hero"><div><div class="eyebrow">GAME DISTRIBUTION / QUẢN TRỊ</div><h2>Phát hành game <em>chủ động.</em></h2><p>Bật hoặc tắt từng bản tải Windows, Java JAR, Android và iOS; dán link HTTPS hoặc upload file lên VPS. Không cần sửa code hay database.</p></div><a class="dl-preview" href="/#tai-game" target="_blank" rel="noopener noreferrer">Xem khu tải game ↗</a></section>
 <?php if ($notice): ?><div class="notice" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
 <?php if ($error): ?><div class="error" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
-<form id="dl-form" method="post" enctype="multipart/form-data" action="/quan-tri/tai-game" class="dl-form">
+<form id="dl-form" method="post" enctype="multipart/form-data" action="/quan-tri/tai-game" class="dl-form" data-upload-max-bytes="<?= (int)$uploadMaxBytes ?>" data-post-max-bytes="<?= (int)$postMaxBytes ?>" data-app-max-bytes="<?= (int)$appMaxBytes ?>">
 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <input type="hidden" name="MAX_FILE_SIZE" value="536870912">
 <div class="dl-grid">
@@ -91,6 +106,7 @@ $platforms = kp_game_platforms();
 </form>
 <section class="card dl-guide"><h2>Lưu ý khi upload trực tiếp lên VPS</h2>
 <p>Giới hạn ứng dụng: <strong>512 MB / file</strong>. PHP và Apache có thể đặt giới hạn thấp hơn. Với XAMPP, tăng <code>upload_max_filesize</code>, <code>post_max_size</code>, <code>max_execution_time</code> trong <code>php.ini</code> rồi khởi động lại Apache. Dung lượng thực tế PHP hiện tại: upload <strong><?= kp_e(ini_get('upload_max_filesize')) ?></strong>, POST <strong><?= kp_e(ini_get('post_max_size')) ?></strong>.</p>
+<?php if (($uploadMaxBytes > 0 && $uploadMaxBytes < $appMaxBytes) || ($postMaxBytes > 0 && $postMaxBytes < $appMaxBytes)): ?><p class="dl-upload-warning" role="note">Lưu ý: PHP trên máy chủ đang giới hạn dung lượng thấp hơn 512 MB. File lớn hơn giới hạn này sẽ bị từ chối dù website hỗ trợ tối đa 512 MB. Với bản game lớn, ưu tiên GitHub Releases/CDN và chọn nguồn tải <strong>Link tải bên ngoài</strong>.</p><?php endif; ?>
 <p>File được lưu trong <code>storage/game-downloads</code> và chỉ phát qua route tải riêng, không thực thi file trên máy chủ. Nếu nhiều người tải hoặc file lớn, dùng GitHub Releases/CDN sẽ tiết kiệm băng thông và tài nguyên VPS hơn. IPA trên iPhone còn cần phương thức cài đặt/ký ứng dụng phù hợp; tải IPA không đồng nghĩa cài trực tiếp được.</p>
 </section>
-</main><script src="/assets/js/admin-downloads.js?v=1" defer></script></body></html>
+</main><script src="/assets/js/admin-downloads.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/admin-downloads.js') ?>" defer></script></body></html>
