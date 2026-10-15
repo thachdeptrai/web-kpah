@@ -59,9 +59,9 @@ kp_topup_page_start('Tỷ lệ quy đổi','rates',(string)$admin['username'],tr
 <form method="post" class="tp-form">
 <input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="bank_farmer">
 <label class="tp-field"><span>Điểm nông dân / mỗi 10.000đ nạp</span><input class="tp-input" type="number" min="0" max="100000" step="1" name="per_10k" value="<?=(int)$farmer['per_10k']?>" required><small>Ví dụ: 10.000đ → 10.000 điểm; 50.000đ → 50.000 điểm. Không tính % VNĐ thưởng vào điểm.</small></label>
-<label class="tp-field" style="display:flex;align-items:center;gap:10px"><input type="checkbox" name="enabled" value="1" style="width:20px;height:20px;flex:none;accent-color:#e2b45a" <?=$farmer['enabled']?'checked':''?>><span>Bật quà Điểm nông dân cho đơn bank mới</span></label>
+<label class="tp-field tp-farmer-offline"><input type="checkbox" name="enabled" value="1" class="tp-farmer-checkbox" <?=$farmer['enabled']?'checked':''?>><span>Bật quà Điểm nông dân cho đơn bank mới</span></label>
 <div class="tp-actions"><button class="tp-button" type="submit">Lưu thưởng Điểm nông dân ↗</button><span class="tp-chip"><?=$farmer['enabled']?'ĐANG MỞ':'ĐANG TẮT'?></span></div>
 </form>
-<div class="tp-alert warning" style="margin-top:16px">Điểm được ghi vào nhân vật khi người chơi chủ động nhận quà sau khi <strong>thoát game</strong>. Không sửa pInfo khi đang chơi để tránh bị dữ liệu trong game ghi đè. Một đơn chỉ được nhận một lần.</div>
+<div class="tp-alert warning tp-farmer-note">Điểm được ghi vào nhân vật khi người chơi chủ động nhận quà sau khi <strong>thoát game</strong>. Không sửa pInfo khi đang chơi để tránh bị dữ liệu trong game ghi đè. Một đơn chỉ được nhận một lần.</div>
 </div></section>
 <?php kp_topup_page_end(); ?>
