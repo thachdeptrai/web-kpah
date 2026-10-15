@@ -1,8 +1,92 @@
-*{box-sizing:border-box} :root{color-scheme:dark;--line:rgba(172,184,226,.18);--muted:#98a3c0;--violet:#a89aff;--cyan:#72e8e5}
-body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;overflow:hidden;background:radial-gradient(ellipse at 18% 0%,#303365 0,transparent 42%),radial-gradient(ellipse at 95% 90%,#154a54 0,transparent 35%),#080b14;color:#f5f7ff;font:15px/1.6 Inter,"Be Vietnam Pro",system-ui,sans-serif}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000,transparent 80%)}
-.card{position:relative;width:min(100%,450px);padding:clamp(25px,6vw,42px);border:1px solid var(--line);border-radius:25px;background:linear-gradient(145deg,#171d34eF,#101523f2);box-shadow:0 30px 100px #0007,0 0 80px #8b7dff0c;backdrop-filter:blur(24px)}
-.mark{width:54px;height:54px;display:grid;place-items:center;border:1px solid #a89aff70;border-radius:17px;background:linear-gradient(145deg,#8a7bff,#26365f);font-size:25px;box-shadow:0 12px 32px #8a7bff30;margin-bottom:26px}
-.eyebrow{color:var(--cyan);font-size:10px;font-weight:850;letter-spacing:.22em;text-transform:uppercase}
-h1{font-size:30px;line-height:1.15;letter-spacing:-.045em;margin:8px 0 10px}p{color:var(--muted);line-height:1.7;margin:0 0 22px}.secure{display:flex;align-items:center;gap:8px;color:#a5f2d2;font-size:12px;margin:20px 0 0}.secure i{width:7px;height:7px;background:#6fe5b5;border-radius:50%;box-shadow:0 0 12px #6fe5b5}
-label{display:block;margin:18px 0 7px;color:#d5dbee;font-size:12px;font-weight:650}input{width:100%;padding:14px;border:1px solid #3b4562;border-radius:12px;background:#090e1b;color:#fff;font:inherit;outline:none;transition:border .2s,box-shadow .2s}input:focus{border-color:var(--violet);box-shadow:0 0 0 3px #a89aff20}button{width:100%;margin-top:24px;padding:14px;border:0;border-radius:12px;background:linear-gradient(115deg,#b9adff,#77e8e5);color:#0a1020;font:inherit;font-weight:850;cursor:pointer;transition:transform .2s,filter .2s}button:hover{transform:translateY(-1px);filter:brightness(1.08)}.error{padding:12px 14px;border-radius:12px;background:#ff6d8b12;border:1px solid #ff6d8b45;color:#ffc0cd;font-size:13px;margin:18px 0}.hint{font-size:12px;margin:18px 0 0}.footer{margin-top:24px;text-align:center;color:#66718e;font-size:10px;letter-spacing:.1em}
+/* NGHIỆN KPAH · Admin authentication.
+ * Matches the player login identity; selectors are scoped to this page.
+ */
+:root{color-scheme:dark;--admin-void:#0b0a16;--admin-night:#14112b;--admin-gold:#e2b45a;--admin-gold-hi:#f6dc9b;--admin-moon:#cfd6ff;--admin-text:#ece8fb;--admin-muted:#aaa6cd;--admin-line:rgba(207,214,255,.17)}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body.kp-admin-login-page{margin:0;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;overflow-x:hidden;overflow-y:auto;background:var(--admin-void);color:var(--admin-text);font:15px/1.65 "Be Vietnam Pro","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.kp-admin-login-page a{color:inherit;text-decoration:none}
+.kp-admin-login-page a:focus-visible,.kp-admin-login-page button:focus-visible,.kp-admin-login-page input:focus-visible{outline:2px solid var(--admin-gold-hi);outline-offset:3px}
+.kp-admin-login-scene{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(90deg,rgba(11,10,22,.83),rgba(11,10,22,.43) 55%,rgba(11,10,22,.36)),url("../img/scene.svg") center bottom/cover no-repeat,var(--admin-void)}
+.kp-admin-login-scene::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 16% 26%,rgba(116,93,184,.21),transparent 46%),radial-gradient(ellipse at 87% 68%,rgba(226,180,90,.075),transparent 42%)}
+.kp-auth-header,.kp-admin-login-stage,.kp-auth-footer{position:relative;z-index:1}
+.kp-auth-header{width:min(100% - 56px,1220px);margin:0 auto;min-height:91px;display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:1px solid rgba(246,220,155,.16)}
+.kp-auth-brand{display:inline-flex;align-items:center;gap:12px;min-width:0}
+.kp-auth-brand img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(226,180,90,.19))}
+.kp-auth-brand span{display:flex;flex-direction:column;gap:1px}
+.kp-auth-brand strong{font:900 17px/1.2 Cinzel,Georgia,serif;letter-spacing:.07em;color:var(--admin-gold-hi)}
+.kp-auth-brand small{font-size:9px;font-weight:700;letter-spacing:.2em;color:#c2b6d6}
+.kp-auth-return{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border:1px solid rgba(246,220,155,.25);border-radius:10px;color:var(--admin-gold-hi)!important;font-size:12px;font-weight:650;white-space:nowrap;background:rgba(26,20,46,.45);transition:background .2s,border-color .2s}
+.kp-auth-return:hover{background:rgba(226,180,90,.12);border-color:rgba(246,220,155,.52)}
+.kp-admin-login-stage{width:min(100% - 56px,1180px);margin:auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,470px);align-items:center;gap:clamp(32px,6vw,88px);padding:clamp(35px,5vw,75px) 0}
+.kp-admin-login-intro{position:relative;min-width:0;padding:28px 0 32px}
+.kp-admin-login-emblem{position:absolute;z-index:-1;width:clamp(290px,37vw,450px);aspect-ratio:1;top:-115px;left:-90px;opacity:.25;pointer-events:none;animation:kp-admin-orbit 150s linear infinite}
+.kp-admin-login-emblem img{display:block;width:100%;height:100%;object-fit:contain}
+.kp-admin-login-kicker{display:flex;align-items:center;gap:9px;color:var(--admin-gold-hi);font-size:10px;letter-spacing:.2em;font-weight:700}
+.kp-admin-login-kicker i,.kp-admin-login-led i,.kp-admin-login-security i{display:inline-block;flex:none;width:7px;height:7px;border-radius:50%;background:#4fd6a0;box-shadow:0 0 13px rgba(79,214,160,.6)}
+.kp-admin-login-intro h1{max-width:680px;margin:17px 0 17px;font:700 clamp(43px,5.4vw,74px)/1.08 Philosopher,Georgia,serif;letter-spacing:-.02em;color:var(--admin-moon)}
+.kp-admin-login-intro h1 em{display:block;font-style:normal;color:var(--admin-gold-hi);text-shadow:0 8px 30px rgba(226,180,90,.16)}
+.kp-admin-login-intro>p{max-width:43ch;margin:0;color:#c0b9d4;font-size:15px;line-height:1.85}
+.kp-admin-login-points{display:grid;gap:14px;margin-top:34px;max-width:450px}
+.kp-admin-login-points>div{display:grid;grid-template-columns:32px 1fr;column-gap:12px;align-items:center;padding:12px 15px;border-left:2px solid rgba(226,180,90,.48);background:linear-gradient(90deg,rgba(30,24,58,.5),transparent)}
+.kp-admin-login-points>div>span{grid-row:span 2;font-size:24px;line-height:1;color:var(--admin-gold)}
+.kp-admin-login-points strong{font-size:13px;font-weight:700;color:var(--admin-text)}
+.kp-admin-login-points small{font-size:11px;color:var(--admin-muted)}
+.kp-admin-login-card{position:relative;min-width:0;padding:clamp(24px,3vw,38px);border:1px solid var(--admin-line);border-radius:21px;background:linear-gradient(155deg,rgba(31,25,64,.88),rgba(13,11,31,.9));box-shadow:0 30px 90px rgba(0,0,0,.52),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(20px) saturate(1.2)}
+.kp-admin-login-card::before,.kp-admin-login-card::after{content:"";position:absolute;width:26px;height:26px;border:2px solid var(--admin-gold);pointer-events:none}
+.kp-admin-login-card::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:21px}
+.kp-admin-login-card::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:21px}
+.kp-admin-login-card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:21px}
+.kp-admin-login-card .eyebrow{color:var(--admin-gold-hi);font-size:9px;letter-spacing:.12em;font-weight:750}
+.kp-admin-login-led{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.11em;color:#a5efcb;white-space:nowrap}
+.kp-admin-login-card h2{margin:0 0 8px;color:var(--admin-text);font:700 clamp(25px,3vw,33px)/1.18 Philosopher,Georgia,serif}
+.kp-admin-login-card>p{margin:0 0 24px;color:var(--admin-muted);font-size:13px}
+.kp-admin-login-card form{display:grid;min-width:0}
+.kp-admin-login-card label{display:block;margin:0 0 7px;font-size:12px;font-weight:650;color:#e3ddef}
+.kp-admin-login-card input{display:block;width:100%;min-width:0;height:50px;margin:0 0 18px;padding:0 15px;border:1px solid rgba(207,214,255,.22);border-radius:11px;background:rgba(7,6,18,.67);color:#fff;font:inherit;font-size:14px;outline:0;transition:border-color .2s,box-shadow .2s}
+.kp-admin-login-card input::placeholder{color:#827b9e}
+.kp-admin-login-card input:focus{border-color:var(--admin-gold);box-shadow:0 0 0 3px rgba(226,180,90,.15)}
+.kp-admin-login-card button[type=submit]{display:flex;align-items:center;justify-content:center;gap:15px;width:100%;min-height:52px;margin-top:7px;padding:12px 18px;border:1px solid rgba(255,236,176,.3);border-radius:11px;background:linear-gradient(115deg,#f6dc9b,#e2b45a 65%,#c8933d);color:#231709;font:700 14px/1.4 "Be Vietnam Pro",sans-serif;cursor:pointer;transition:transform .2s,filter .2s}
+.kp-admin-login-card button[type=submit] span{font-size:21px}
+.kp-admin-login-card button[type=submit]:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.kp-admin-login-card .error{display:grid;gap:4px;margin:0 0 20px;padding:12px 14px;border:1px solid rgba(255,130,158,.38);border-radius:11px;background:rgba(255,130,158,.1);color:#ffc5d1;font-size:12px;overflow-wrap:anywhere}
+.kp-admin-login-card .error strong{color:#ffdae3}
+.kp-admin-login-security{display:flex;align-items:flex-start;gap:9px;margin:22px 0 0!important;padding-top:17px;border-top:1px solid var(--admin-line);font-size:11px!important;line-height:1.7}
+.kp-admin-login-security i{margin-top:6px}
+.kp-admin-login-foot{margin-top:23px;padding-top:13px;border-top:1px solid rgba(207,214,255,.1);font-size:9px;letter-spacing:.1em;text-align:center;color:#9990b6}
+.kp-auth-footer{width:min(100% - 56px,1220px);margin:0 auto;padding:16px 0 22px;border-top:1px solid rgba(246,220,155,.13);color:#8f85aa;text-align:center;font-size:10px;letter-spacing:.08em}
+@keyframes kp-admin-orbit{to{transform:rotate(360deg)}}
+@media(max-width:900px){
+ .kp-admin-login-stage{grid-template-columns:minmax(0,1fr);max-width:600px;gap:23px;padding:35px 0}
+ .kp-admin-login-intro{padding:18px 0 0;text-align:center}
+ .kp-admin-login-intro h1{font-size:clamp(38px,8vw,56px);margin:10px 0}
+ .kp-admin-login-intro h1 em{display:inline}
+ .kp-admin-login-intro>p{margin-inline:auto}
+ .kp-admin-login-emblem{width:310px;top:-80px;left:50%;transform:translateX(-50%);animation:none}
+ .kp-admin-login-points{display:none}
+}
+@media(max-width:540px){
+ .kp-auth-header,.kp-auth-footer{width:calc(100% - 30px)}
+ .kp-auth-header{min-height:74px;gap:9px}
+ .kp-auth-brand{gap:8px}
+ .kp-auth-brand img{width:38px;height:38px}
+ .kp-auth-brand strong{font-size:12px}
+ .kp-auth-brand small{font-size:8px;letter-spacing:.08em}
+ .kp-auth-return{min-height:36px;padding:7px 9px;font-size:10px}
+ .kp-admin-login-stage{width:calc(100% - 30px);gap:18px;padding:23px 0 27px}
+ .kp-admin-login-intro{padding:4px 0 0}
+ .kp-admin-login-intro h1{font-size:clamp(33px,9vw,44px);margin:9px 0}
+ .kp-admin-login-intro>p{font-size:12px;line-height:1.7}
+ .kp-admin-login-emblem{width:220px;top:-48px;opacity:.2}
+ .kp-admin-login-card{padding:23px 19px}
+ .kp-admin-login-card-head{margin-bottom:15px}
+ .kp-admin-login-card .eyebrow{font-size:8px;letter-spacing:.055em}
+ .kp-admin-login-card>p{margin-bottom:18px}
+ .kp-auth-footer{font-size:9px}
+}
+@media(max-width:360px){
+ .kp-auth-brand small{display:none}
+ .kp-auth-return{font-size:9px}
+ .kp-admin-login-card{padding:20px 15px}
+}
+@media(prefers-reduced-motion:reduce){.kp-admin-login-emblem{animation:none}.kp-admin-login-page *{transition:none!important}}
