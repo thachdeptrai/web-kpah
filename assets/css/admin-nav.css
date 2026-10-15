@@ -198,3 +198,113 @@
   .kp-admin-nav-brand-copy small{display:none}
   .kp-admin-nav-mobile-title small{max-width:70px}
 }
+
+/* v4 · Shared admin chrome. Matches /dang-nhap: original emblem,
+ * midnight scene, moon text and gold accents. Applies only on admin pages.
+ * Admin tools keep their own content styles and authorization logic.
+ */
+body:not(.kp-admin-login-page){
+  --bg:#0b0a16;--panel:rgba(25,20,48,.86);--line:rgba(207,214,255,.16);
+  --text:#ece8fb;--muted:#aaa6cd;--violet:#e2b45a;--cyan:#f6dc9b;
+  --an-gold:#e2b45a;--an-gold-hi:#f6dc9b;--an-moon:#cfd6ff;
+  background:linear-gradient(90deg,rgba(11,10,22,.88),rgba(11,10,22,.55) 60%,rgba(11,10,22,.73)),url("../img/scene.svg") center bottom/cover fixed no-repeat,#0b0a16;
+  color:#ece8fb;
+}
+body:not(.kp-admin-login-page)::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:1;background:radial-gradient(ellipse at 15% 10%,rgba(106,77,170,.16),transparent 46%),radial-gradient(ellipse at 90% 80%,rgba(226,180,90,.075),transparent 40%);
+  mask-image:none;
+}
+body:not(.kp-admin-login-page)>header,
+body:not(.kp-admin-login-page)>header.topbar{
+  position:relative;z-index:40;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;width:100%;max-width:none;min-height:84px;
+  margin:0;padding:13px max(22px,calc((100% - 1280px)/2));
+  border-bottom:1px solid rgba(246,220,155,.17);
+  background:rgba(14,11,30,.82);backdrop-filter:blur(18px);
+}
+body:not(.kp-admin-login-page)>header .brand{
+  display:inline-flex;align-items:center;gap:12px;min-width:0;text-decoration:none;color:#ece8fb;
+}
+body:not(.kp-admin-login-page)>header .brand-icon,
+body:not(.kp-admin-login-page)>header .brand-mark{
+  display:grid;place-items:center;flex:none;width:50px;height:50px;overflow:hidden;
+  border:1px solid rgba(246,220,155,.28);border-radius:14px;
+  background:radial-gradient(circle,#302443,#100d22);
+  box-shadow:0 0 24px rgba(226,180,90,.11);font-size:0;
+}
+body:not(.kp-admin-login-page)>header .brand-icon img,
+body:not(.kp-admin-login-page)>header .brand-mark img{
+  display:block;width:100%;height:100%;object-fit:contain;
+}
+body:not(.kp-admin-login-page)>header .brand small,
+body:not(.kp-admin-login-page)>header .brand .eyebrow{
+  display:block;margin:0 0 3px;color:#d5b975;font-size:10px;letter-spacing:.13em;font-weight:750;
+}
+body:not(.kp-admin-login-page)>header .brand strong,
+body:not(.kp-admin-login-page)>header .brand h1{
+  display:block;margin:0;color:#f6dc9b;font:700 clamp(15px,1.6vw,20px)/1.25 "Philosopher",Georgia,serif;
+  letter-spacing:.01em;overflow-wrap:anywhere;
+}
+body:not(.kp-admin-login-page)>header .top-actions,
+body:not(.kp-admin-login-page)>header .head-right{
+  display:flex;align-items:center;justify-content:flex-end;gap:11px;min-width:0;flex-wrap:wrap;
+  color:#c4bad8;font-size:12px;
+}
+body:not(.kp-admin-login-page)>header .secure{display:inline-flex;align-items:center;gap:7px;color:#a6e7c7}
+body:not(.kp-admin-login-page)>header .secure i{width:7px;height:7px;border-radius:50%;background:#4fd6a0;box-shadow:0 0 10px #4fd6a088}
+body:not(.kp-admin-login-page)>header .user{color:#eee5fa;border-color:rgba(246,220,155,.2)}
+body:not(.kp-admin-login-page)>header .logout{
+  display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;
+  border:1px solid rgba(246,220,155,.23);border-radius:10px;background:rgba(226,180,90,.055);
+  color:#f6dc9b;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;
+}
+body:not(.kp-admin-login-page)>header .logout:hover{border-color:rgba(246,220,155,.6);background:rgba(226,180,90,.13)}
+body:not(.kp-admin-login-page) .kp-admin-nav.kp-admin-nav-v2{
+  position:relative;z-index:35;margin-top:16px;margin-bottom:22px;
+  border-radius:15px;background:linear-gradient(130deg,rgba(29,23,54,.95),rgba(14,11,31,.97));
+}
+body:not(.kp-admin-login-page) :is(.shell,.wrap,.kp-key-users-content){position:relative;z-index:1}
+body:not(.kp-admin-login-page) :is(.metric,.stat,.action-card,.panel,.card){
+  border-color:rgba(207,214,255,.16);
+  background:linear-gradient(145deg,rgba(30,25,58,.88),rgba(14,12,32,.9));
+}
+body:not(.kp-admin-login-page) :is(.welcome,.hero) .eyebrow,
+body:not(.kp-admin-login-page) :is(.section-heading,.section-kicker) .eyebrow{color:#e2b45a}
+body:not(.kp-admin-login-page) :is(.welcome,.hero) :is(h1,h2){color:#f3e6c4}
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap){border-color:rgba(207,214,255,.16)}
+body:not(.kp-admin-login-page) :is(input,select,textarea):focus-visible{outline:2px solid #e2b45a;outline-offset:2px}
+body:not(.kp-admin-login-page) .kp-admin-nav-v2 a:focus-visible,
+body:not(.kp-admin-login-page)>header a:focus-visible{outline:2px solid #f6dc9b;outline-offset:3px}
+.tp-page.tp-admin{background:linear-gradient(90deg,rgba(11,10,22,.9),rgba(11,10,22,.65)),url("../img/scene.svg") center bottom/cover fixed no-repeat,#0b0a16}
+.tp-page.tp-admin .tp-header{border-bottom:1px solid rgba(246,220,155,.18)}
+.tp-page.tp-admin .tp-breadcrumb{color:#e7c989}
+.tp-page.tp-admin .tp-user{color:#ece8fb}
+@media(max-width:760px){
+  body:not(.kp-admin-login-page)>header,
+  body:not(.kp-admin-login-page)>header.topbar{
+    min-height:74px;padding:11px 16px;gap:10px;flex-wrap:nowrap;align-items:center
+  }
+  body:not(.kp-admin-login-page)>header .brand-icon,
+  body:not(.kp-admin-login-page)>header .brand-mark{width:42px;height:42px;border-radius:11px}
+  body:not(.kp-admin-login-page)>header .brand{gap:9px;flex:1 1 auto}
+  body:not(.kp-admin-login-page)>header .brand small,
+  body:not(.kp-admin-login-page)>header .brand .eyebrow{font-size:8px;letter-spacing:.04em}
+  body:not(.kp-admin-login-page)>header .brand strong,
+  body:not(.kp-admin-login-page)>header .brand h1{font-size:15px}
+  body:not(.kp-admin-login-page)>header .secure{display:none}
+  body:not(.kp-admin-login-page)>header .top-actions,
+  body:not(.kp-admin-login-page)>header .head-right{flex:0 1 auto;gap:7px}
+  body:not(.kp-admin-login-page)>header .user,
+  body:not(.kp-admin-login-page)>header .head-right>span{display:none}
+  body:not(.kp-admin-login-page)>header .logout{padding:7px 9px;font-size:10px;min-height:34px}
+}
+@media(max-width:400px){
+  body:not(.kp-admin-login-page)>header .brand-icon,
+  body:not(.kp-admin-login-page)>header .brand-mark{width:36px;height:36px}
+  body:not(.kp-admin-login-page)>header .brand strong,
+  body:not(.kp-admin-login-page)>header .brand h1{font-size:13px}
+  body:not(.kp-admin-login-page)>header .brand small,
+  body:not(.kp-admin-login-page)>header .brand .eyebrow{font-size:7px}
+  body:not(.kp-admin-login-page)>header .logout{font-size:9px;padding:7px}
+}
