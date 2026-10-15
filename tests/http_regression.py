@@ -132,6 +132,7 @@ with zipfile.ZipFile(buf,'w',compression=zipfile.ZIP_DEFLATED) as jarzip:
     jarzip.writestr('META-INF/MANIFEST.MF','Manifest-Version: 1.0\nMain-Class: kpah.Main\n\n')
 jar_bytes=buf.getvalue()
 form=clean_page(c,'/quan-tri/tai-game')
+check('data-upload-max-bytes=' in form and 'data-post-max-bytes=' in form, 'admin exposes PHP upload limits')
 jar_fields={
     'csrf':csrf(form),
     'MAX_FILE_SIZE':'536870912',
