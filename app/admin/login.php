@@ -75,15 +75,57 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 $csrf = kp_csrf_token();
 ?><!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Đăng nhập quản trị KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin-login.css?v=1"><link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
-</head><body><main class="card"><div class="mark" aria-hidden="true">✦</div><div class="eyebrow">KPAH • SECURE ACCESS</div><h1>Chào mừng trở lại.</h1><p>Đăng nhập vào trung tâm điều khiển để quản lý mã giới thiệu và hoạt động đăng ký.</p>
-<?php if ($error !== ''): ?><p class="error"><?= kp_e($error) ?></p><?php endif; ?>
-<form method="post" autocomplete="on"><input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
-<label for="username">Tên đăng nhập</label><input id="username" name="username" maxlength="64" required autocomplete="username">
-<label for="password">Mật khẩu</label><input id="password" name="password" type="password" required autocomplete="current-password">
-<?php if (kp_admin_totp_enabled()): ?>
-<label for="otp">Mã xác thực 2 bước (6 số)</label><input id="otp" name="otp" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" minlength="6" autocomplete="one-time-code" required placeholder="Mã trên ứng dụng Authenticator">
-<?php endif; ?>
-<button type="submit">Đăng nhập an toàn <span aria-hidden="true">↗</span></button></form><div class="secure"><i></i> Kết nối quản trị · Phiên tự hết hạn nếu không hoạt động 30 phút</div><div class="footer">KPAH CONTROL CENTER · AUTHORIZED PERSONNEL ONLY</div></main></body></html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b0a16">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<title>Đăng nhập quản trị · NGHIỆN KPAH</title>
+<link rel="stylesheet" href="/assets/css/admin-login.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-login.css') ?>">
+<link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+</head>
+<body class="kp-admin-login-page">
+<div class="kp-admin-login-scene" aria-hidden="true"></div>
+<header class="kp-auth-header">
+  <a class="kp-auth-brand" href="/" aria-label="NGHIỆN KPAH - Trang chủ">
+    <img src="/assets/img/emblem.svg" width="46" height="46" alt="">
+    <span><strong>NGHIỆN KPAH</strong><small>CỔNG QUẢN TRỊ</small></span>
+  </a>
+  <a href="/" class="kp-auth-return">← Trở về trang chủ</a>
+</header>
+<main class="kp-admin-login-stage">
+ <section class="kp-admin-login-intro" aria-labelledby="admin-login-title">
+  <div class="kp-admin-login-emblem" aria-hidden="true"><img src="/assets/img/emblem.svg" width="360" height="360" alt=""></div>
+  <div class="kp-admin-login-kicker"><i></i> NGHIỆN KPAH / ADMIN ACCESS</div>
+  <h1 id="admin-login-title">Trung tâm <em>quản trị.</em></h1>
+  <p>Đăng nhập an toàn để quản lý người chơi, nhân vật và các hoạt động vận hành game.</p>
+  <div class="kp-admin-login-points">
+    <div><span aria-hidden="true">◇</span><strong>Đúng quyền truy cập</strong><small>Tài khoản admin được cấp phép</small></div>
+    <div><span aria-hidden="true">✧</span><strong>Phiên đăng nhập bảo vệ</strong><small>Hỗ trợ xác thực hai bước</small></div>
+    <div><span aria-hidden="true">◷</span><strong>Lịch sử xử lý</strong><small>Thao tác quản trị được ghi nhật ký</small></div>
+  </div>
+ </section>
+ <section class="kp-admin-login-card" aria-labelledby="form-title">
+  <div class="kp-admin-login-card-head"><span class="eyebrow">BẢO MẬT / XÁC MINH DANH TÍNH</span><span class="kp-admin-login-led"><i></i> SECURE</span></div>
+  <h2 id="form-title">Đăng nhập Admin</h2>
+  <p>Vui lòng sử dụng thông tin quản trị đã được cấp để tiếp tục.</p>
+  <?php if($error!==''): ?><div class="error" role="alert"><strong>Không thể đăng nhập</strong><span><?= kp_e($error) ?></span></div><?php endif; ?>
+  <form method="post" action="/quan-tri/dang-nhap" autocomplete="on">
+    <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
+    <label for="username">Tên đăng nhập</label>
+    <input id="username" name="username" maxlength="64" autocomplete="username" required placeholder="Tài khoản quản trị">
+    <label for="password">Mật khẩu</label>
+    <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Nhập mật khẩu bảo mật">
+    <?php if(kp_admin_totp_enabled()): ?>
+    <label for="otp">Mã xác thực 2 bước (6 số)</label>
+    <input id="otp" name="otp" type="text" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="one-time-code" required placeholder="Mã trên ứng dụng Authenticator">
+    <?php endif; ?>
+    <button type="submit">Đăng nhập an toàn <span aria-hidden="true">↗</span></button>
+  </form>
+  <p class="kp-admin-login-security"><i aria-hidden="true"></i> Phiên đăng nhập tự hết hạn sau 30 phút không hoạt động.</p>
+  <div class="kp-admin-login-foot">NGHIỆN KPAH · AUTHORIZED ADMINISTRATORS ONLY</div>
+ </section>
+</main>
+<footer class="kp-auth-footer">© NGHIỆN KPAH · BẢO MẬT DÀNH CHO QUẢN TRỊ VIÊN</footer>
+</body></html>
