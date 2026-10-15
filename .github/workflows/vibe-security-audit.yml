@@ -40,7 +40,43 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git ls-files | grep -Ei '(^|/)(\.env(\..*)?|[^/]*\.sql|[^/]*\.(pem|p12|pfx)|config\.register\.local\.php)$'; then
+          if git ls-files | grep -Ei '(^|/)(\.env(\..*)?|kpah\.sql|[^/]*(?:backup|dump)[^/]*\.sql|[^/]*\.(pem|p12|pfx)|config\.register\.local\.php)
+            echo "::error::Potential secret/dump file tracked in Git"
+            exit 1
+          fi
+      # Upstream is pinned. This checked-in workflow intentionally runs only a
+      # reviewed, read-only subset against a local test fixture, NOT production.
+      - name: Checkout Vibe Check (pinned upstream)
+        uses: actions/checkout@v4
+        with:
+          repository: benavlabs/vibe-check
+          ref: 3afad9906096a4b236b0427ce407f599d93f690d
+          path: .security-tools/vibe-check
+          persist-credentials: false
+      - name: Vibe Check local headers and CORS smoke scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -S 127.0.0.1:8765 -t tests/vibe_fixture >"$RUNNER_TEMP/vibe-php.log" 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in 1 2 3 4 5; do
+            if curl --fail --silent http://127.0.0.1:8765/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8765/ > /dev/null
+          python3 .security-tools/vibe-check/skills/vibe-check/scripts/check.py \
+            http://127.0.0.1:8765/ --local --only headers,cors --json > "$RUNNER_TEMP/vibe-report.json"
+          python3 -m json.tool "$RUNNER_TEMP/vibe-report.json" > /dev/null
+      - name: Upload local scan report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vibe-check-local-headers-cors
+          path: ${{ runner.temp }}/vibe-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+; then
             echo "::error::Potential secret/dump file tracked in Git"
             exit 1
           fi
