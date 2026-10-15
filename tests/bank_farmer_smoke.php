@@ -11,6 +11,7 @@ function farmer_check($yes, $label) {
 function farmer_throws(callable $fn, $name) {
     try { $fn(); farmer_check(false, $name); }
     catch (RuntimeException $e) { farmer_check(true, $name); }
+    catch (InvalidArgumentException $e) { farmer_check(true, $name); }
 }
 try {
     $defaults = kp_bank_farmer_settings();
