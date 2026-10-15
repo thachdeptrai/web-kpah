@@ -26,6 +26,7 @@ $amount = 10000;
 $giftFile = kp_bank_farmer_path($code);
 $walletFile = kp_vnd_record_path('payos', (string)$code);
 $before = $db->query('SELECT pInfo FROM tob_char WHERE id=101')->fetchColumn();
+$otherBefore = $db->query('SELECT pInfo FROM tob_char WHERE id=202')->fetchColumn();
 gift_assert(kp_farmer_points((string)$before) === 777,'test character begins with 777 farmer points');
 try {
     $db->prepare("INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status,provider_reference)
@@ -50,7 +51,7 @@ try {
     $after = $db->query('SELECT pInfo FROM tob_char WHERE id=101')->fetchColumn();
     gift_assert(kp_farmer_points((string)$after)===10777, 'only selected character receives exactly 10000 points');
     gift_refused(function()use($code){kp_bank_farmer_claim(101,$code,101);},'replayed claim is rejected');
-    gift_assert(kp_farmer_points((string)$db->query('SELECT pInfo FROM tob_char WHERE id=202')->fetchColumn())===0,
+    gift_assert($db->query('SELECT pInfo FROM tob_char WHERE id=202')->fetchColumn() === $otherBefore,
       'other player receives no points');
     gift_assert(kp_farmer_points((string)$db->query('SELECT pInfo FROM tob_char WHERE id=101')->fetchColumn())===10777,
       'replayed claim cannot increase points again');
