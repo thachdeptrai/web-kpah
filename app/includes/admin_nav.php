@@ -16,6 +16,7 @@ function kp_admin_nav($active = 'home', $role = null)
         'referrals' => ['/quan-tri/ma-gioi-thieu', 'Mã giới thiệu'],
         'key-users' => ['/quan-tri/tai-khoan-key', 'Tài khoản key'],
         'game-accounts' => ['/quan-tri/tai-khoan-game', 'Tài khoản game'],
+        'mod-history' => ['/quan-tri/lich-su-thao-tac', 'Lịch sử thao tác'],
         'index' => ['/quan-tri/nap', 'Quản lý nạp'],
         'orders' => ['/quan-tri/doi-soat', 'Đối soát'],
         'rates' => ['/quan-tri/ty-le', 'Tỷ lệ & thưởng'],
@@ -28,7 +29,7 @@ function kp_admin_nav($active = 'home', $role = null)
         ? ['Tài khoản' => ['referrals']]
         : [
             'Truy cập nhanh' => ['home', 'downloads'],
-            'Tài khoản' => ['game-accounts', 'referrals', 'key-users'],
+            'Tài khoản' => ['game-accounts', 'mod-history', 'referrals', 'key-users'],
             'Thanh toán' => ['index', 'orders', 'rates', 'wallet-credit'],
             'Vận hành' => ['grant', 'points', 'farmer'],
         ];
@@ -38,8 +39,8 @@ function kp_admin_nav($active = 'home', $role = null)
     ?>
 <nav class="kp-admin-nav kp-admin-nav-v2" aria-label="Điều hướng quản trị">
   <a class="kp-admin-nav-brand" href="<?= kp_e($base) ?>" aria-label="KPAH - <?= $role === 'key' ? 'Mã giới thiệu' : 'Tổng quan quản trị' ?>">
-    <span class="kp-admin-nav-brand-mark" aria-hidden="true">K.</span>
-    <span class="kp-admin-nav-brand-copy"><strong>KPAH</strong><small><?= $role === 'key' ? 'KEY PANEL' : 'ADMIN PANEL' ?></small></span>
+    <span class="kp-admin-nav-brand-mark" aria-hidden="true"><img src="/assets/img/emblem.svg" width="40" height="40" alt=""></span>
+    <span class="kp-admin-nav-brand-copy"><strong>NGHIỆN KPAH</strong><small><?= $role === 'key' ? 'QUẢN LÝ MÃ · KEY' : 'TRUNG TÂM QUẢN TRỊ' ?></small></span>
   </a>
 
   <div class="kp-admin-nav-desktop">
