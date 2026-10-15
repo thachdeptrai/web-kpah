@@ -3,6 +3,7 @@ if (!defined('KP_ROOT')) {http_response_code(403);exit;}
 require_once __DIR__.'/topup_core.php';
 require_once __DIR__.'/loyalty_points.php';
 require_once __DIR__.'/wallet_vnd.php';
+require_once __DIR__.'/bank_farmer_reward.php';
 function kp_bank_cfg() {
  $localFile=KP_ROOT.'/config/payos.local.php';
  $v=is_file($localFile)?require $localFile:[];
@@ -95,6 +96,9 @@ function kp_bank_create($user,$amount,$csrf){
   if(!$allow)throw new RuntimeException('Mỗi tài khoản chỉ được tạo tối đa 3 lệnh nạp trong 15 phút. Thử lại sau '.(int)ceil($retry/60).' phút.');
   $code=random_int(100000000,999999999);
   $units=0;
+  // Snapshot the optional farmer gift BEFORE creating the live payOS invoice.
+  // No backdating: existing paid/pending orders never gain a gift retroactively.
+  kp_bank_farmer_reserve($code,(int)$user['id'],(int)$amount,kp_bank_farmer_settings());
   $stmt=$db->prepare('INSERT INTO kp_bank_orders(order_code,user_id,char_id,username,amount,currency,units,status,provider_reference) VALUES (?,?,?,?,?,?,?,"wallet_creating",?)');
   $stmt->execute([$code,(int)$user['id'],0,(string)$user['username'],$amount,'luong',$units,'VND_BONUS:'.$bonusPercent]);
   $description='KPAH'.$code;
