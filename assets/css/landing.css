@@ -101,7 +101,7 @@ body.landing-page:after{position:fixed;inset:0;z-index:1;pointer-events:none;con
 .lp-download-section{position:relative}
 .lp-download-section:before{content:"";position:absolute;inset:10px -12px 5px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 20%,rgba(147,116,247,.11),transparent 72%)}
 .lp-download-section .lp-section-head h2 em{font-style:normal;color:var(--lp-gold)}
-.lp-download-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.lp-download-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
 .lp-download-card{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:13px;padding:24px 20px 20px;background:linear-gradient(155deg,rgba(44,34,82,.82),rgba(16,13,39,.94));border:1px solid rgba(211,197,255,.16);border-radius:16px;box-shadow:0 12px 34px rgba(0,0,0,.15)}
 .lp-download-card.is-ready{border-color:rgba(241,206,131,.4)}
 .lp-download-icon{width:49px;height:49px;display:grid;place-items:center;border-radius:13px;background:rgba(167,155,255,.12);color:#f8dc99;border:1px solid rgba(241,206,131,.25);font-size:25px}
@@ -117,7 +117,7 @@ body.landing-page:after{position:fixed;inset:0;z-index:1;pointer-events:none;con
 .lp-download-extra a,.lp-download-footer a{color:#f1ce83;font-weight:700;text-decoration:none}
 .lp-download-extra a:hover,.lp-download-footer a:hover{text-decoration:underline}
 .lp-download-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:22px;padding:17px 0 0;border-top:1px solid var(--lp-line);color:#c0b7d8;font-size:11px}
-@media(max-width:760px){.lp-download-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1000px){.lp-download-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){
  .lp-download-grid{grid-template-columns:minmax(0,1fr);gap:10px}
  .lp-download-card{display:grid;grid-template-columns:45px minmax(0,1fr);gap:10px 13px;align-items:center;padding:17px}
