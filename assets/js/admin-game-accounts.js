@@ -9,6 +9,12 @@
   function refresh(form) {
     var all = form.querySelectorAll('[data-bulk-checkbox]');
     var count = checked(form);
+    var selected = [];
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].checked) selected.push(all[i].value);
+    }
+    var compact = form.querySelector('[data-selected-csv]');
+    if (compact) compact.value = selected.join(',');
     var label = form.querySelector('[data-bulk-count]');
     if (label) label.textContent = 'Đã chọn ' + count + ' / ' + all.length + ' · Giữ ban ' + (all.length - count);
     var button = form.querySelector('button[type="submit"]');
@@ -20,6 +26,14 @@
 
   for (var j = 0; j < pickers.length; j++) {
     (function (form) {
+      // With JS active, submit IDs via one field rather than >1000 checkbox
+      // fields (PHP max_input_vars defaults to 1000). Without JS, checkbox
+      // names stay intact as the native form fallback.
+      var fields = form.querySelectorAll('[data-bulk-checkbox]');
+      var compact = form.querySelector('[data-selected-csv]');
+      if (compact) {
+        for (var j = 0; j < fields.length; j++) fields[j].removeAttribute('name');
+      }
       var filter = form.querySelector('[data-bulk-search]');
       var all = form.querySelectorAll('[data-bulk-item]');
       if (filter) {
