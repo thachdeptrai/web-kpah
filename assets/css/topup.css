@@ -47,3 +47,11 @@
 .tp-payment-hint{font-size:13px;line-height:1.65;opacity:.78;margin:19px 0 0}
 @media(max-width:760px){.tp-payment-panel{padding:14px;border-radius:16px}.tp-payment-heading{gap:13px;margin-bottom:16px}.tp-payment-external{width:100%}.tp-payment-stage{min-height:560px;padding:8px;border-radius:13px}.tp-payment-embed,.tp-payment-embed iframe{min-height:550px!important}.tp-payment-hint{font-size:12px}}
 @media(max-width:410px){.tp-payment-stage{padding:4px}.tp-payment-panel{padding:10px}.tp-payment-embed{min-height:540px}}
+
+/* Bank recharge farmer point gifts: reusable accessible controls. */
+.tp-farmer-gift-card{margin:0}
+.tp-farmer-offline{display:flex!important;align-items:center;gap:10px;cursor:pointer;line-height:1.6}
+.tp-farmer-offline>span{min-width:0}
+.tp-farmer-checkbox{width:20px!important;height:20px!important;min-width:20px;flex:none;accent-color:#e2b45a}
+.tp-farmer-note{margin-top:16px}
+@media(max-width:650px){.tp-farmer-gift-card{padding:16px}.tp-farmer-offline{align-items:flex-start}}
