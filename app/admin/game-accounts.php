@@ -43,8 +43,14 @@ try {
             if($direction==='bulk_unban') {
                 $fingerprint=isset($_POST['fingerprint']) && is_string($_POST['fingerprint'])
                     ?$_POST['fingerprint']:'';
-                $selectedIds=isset($_POST['selected_ids']) && is_array($_POST['selected_ids'])
-                    ? $_POST['selected_ids'] : [];
+                $selectedCsv=isset($_POST['selected_ids_csv']) && is_string($_POST['selected_ids_csv'])
+                    ? $_POST['selected_ids_csv'] : '';
+                // One compact CSV field avoids PHP max_input_vars truncating large lists.
+                if(strlen($selectedCsv)>1048576)throw new RuntimeException('Danh sách chọn quá lớn.');
+                $selectedIds=trim($selectedCsv)!==''
+                    ? explode(',', $selectedCsv)
+                    : (isset($_POST['selected_ids']) && is_array($_POST['selected_ids'])
+                        ? $_POST['selected_ids'] : []);
                 $result=kp_game_moderation_bulk_unban($db,$admin,$type,$reason,$confirm,$fingerprint,$selectedIds);
                 $label=$type==='account'?'tài khoản':'nhân vật';
                 $notice='Đã mở ban '.(int)$result['changed'].' / '.(int)$result['total'].' '.$label.' được chọn; giữ nguyên ban '.(int)$result['excluded'].' '.$label.' không chọn.';
@@ -185,6 +191,7 @@ $banClass=function(int $ban): string {return $ban===0?'ok':($ban===1?'banned':'s
           <input type="hidden" name="target_type" value="<?= kp_e($type) ?>">
           <input type="hidden" name="direction" value="bulk_unban">
           <input type="hidden" name="fingerprint" value="<?= kp_e(kp_game_moderation_bulk_fingerprint($bulkTargets[$type])) ?>">
+          <input type="hidden" name="selected_ids_csv" value="" data-selected-csv>
           <fieldset class="gam-bulk-pick">
             <legend>Chọn <?= kp_e($meta['label']) ?> để mở ban</legend>
             <p class="gam-hint">Chỉ các mục được tích mới mở ban. Bỏ tích để <strong>giữ nguyên ban</strong> cho trường hợp đặc biệt. Mặc định chưa chọn ai.</p>
