@@ -3,10 +3,10 @@
 ## Tests implemented
 | Check | Command / mechanism | Scope | Status |
 |---|---|---|---|
-| Syntax across PHP files | `find . -name '*.php' ... php -l` | Parse errors, PHP 8.0 compatibility | CI configured; review CI logs |
-| Account ban + password CAS guards | `php tests/auth_security_smoke.php` | Source-level invariants; live CSRF and legacy hash helper calls | CI configured; review CI logs |
-| Existing admin auth/CSRF | `php tests/admin_security_smoke.php`, `php tests/admin_csrf_smoke.php` | Regression checks provided by project | CI configured; review CI logs |
-| Existing topup checks | `php tests/topup_smoke.php` | Existing offline topup invariants | CI configured; review CI logs |
+| Syntax across PHP files | `find . -name '*.php' ... php -l` | Parse errors, PHP 8.0 compatibility | PASS in GitHub Actions run 38755466198 |
+| Account ban + password CAS guards | `php tests/auth_security_smoke.php` | Source-level invariants; live CSRF and legacy hash helper calls | PASS in GitHub Actions run 38755466198 |
+| Existing admin auth/CSRF | `php tests/admin_security_smoke.php`, `php tests/admin_csrf_smoke.php` | Regression checks provided by project | PASS in GitHub Actions run 38755466198 |
+| Existing topup checks | `php tests/topup_smoke.php` | Existing offline topup invariants | PASS in GitHub Actions run 38755466198 |
 | Vibe Check pinned local subset | `check.py http://127.0.0.1:8765/ --local --only headers,cors --json` | Local fixture only; no DB, checkout, wallet or production endpoint | CI configured; JSON artifact generated at runtime |
 | Sensitive-file tracking | Git tracked-name denylist | Guard newly committed secret/dump-like filenames | CI configured |
 
@@ -24,3 +24,12 @@ The local fixture scanner is **not** a scan of the live KPAH site and does not v
 
 ## Reporting rules
 Do not count scanner 'PASS' on a mock fixture as application end-to-end PASS. Do not claim zero vulnerabilities from this limited audit. Record GitHub Action run URL/status and staging logs before merge.
+
+
+## Executed CI evidence (2026-10-15)
+- **PASS** — [Vibe Check + account security audit, run 38755466198](https://github.com/thachdeptrai/web-kpah/actions/runs/38755466198): PHP 8.0 lint; account guard and CSRF/hash smoke; existing admin and topup security tests; private-artifact guard; pinned Vibe Check local fixture scan; JSON artifact uploaded.
+- **PASS** — [Security regression checks, run 38755466586](https://github.com/thachdeptrai/web-kpah/actions/runs/38755466586).
+- **PASS** — [PHP and JS syntax checks, run 38755466575](https://github.com/thachdeptrai/web-kpah/actions/runs/38755466575).
+- **NOT EXECUTED** — genuine database-backed webhook replay, multi-request concurrency, cross-account authorization, Java game-server integration and public Apache staging scans.
+
+These results validate the listed **offline**/local checks only; they do **not** certify the production environment.
