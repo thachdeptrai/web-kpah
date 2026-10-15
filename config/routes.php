@@ -27,6 +27,7 @@ return [
         '/quan-tri/dang-nhap' => ['file' => 'app/admin/login.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/dang-xuat' => ['file' => 'app/admin/logout.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/diem-nong-dan' => ['file' => 'app/admin/farmer-points.php', 'scope' => 'admin', 'redirect_legacy' => true],
+        '/quan-tri/diem-nong-dan/lich-su' => ['file' => 'app/admin/farmer-history.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/tai-game' => ['file' => 'app/admin/downloads.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/ma-gioi-thieu' => ['file' => 'app/admin/referrals.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/tai-khoan-key' => ['file' => 'app/admin/key-users.php', 'scope' => 'admin', 'redirect_legacy' => true],
