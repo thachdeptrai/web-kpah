@@ -12,6 +12,8 @@
 
 The local fixture scanner is **not** a scan of the live KPAH site and does not validate Apache `.htaccess`. Running the full Vibe Check secrets/headers/CORS scan requires an authorized Apache staging URL with realistic reverse proxy/TLS settings. Only GET/HEAD/OPTIONS read-only scanning is authorized.
 
+- **PASS** — local Java review patch applies cleanly with `patch --dry-run -p1`; no game build or runtime test was executed, so Java patch is **not yet deployable**.
+
 ## Staging tests still required (NOT PASS)
 - Test standard, banned and freshly banned user sessions across registration, login, profile, password and payment routes. Expect blocked account operations.
 - Send concurrent password changes/reset requests against disposable MySQL/MariaDB users. Expect a single successful compare-and-swap; subsequent stale updates conflict.
