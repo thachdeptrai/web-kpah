@@ -32,6 +32,7 @@ return [
         '/quan-tri/ma-gioi-thieu' => ['file' => 'app/admin/referrals.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/tai-khoan-key' => ['file' => 'app/admin/key-users.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/tai-khoan-game' => ['file' => 'app/admin/game-accounts.php', 'scope' => 'admin', 'redirect_legacy' => true],
+        '/quan-tri/lich-su-thao-tac' => ['file' => 'app/admin/moderation-history.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/nap' => ['file' => 'app/topup/admin/index.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/ty-le' => ['file' => 'app/topup/admin/rates.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/quan-tri/cong-tai-nguyen' => ['file' => 'app/topup/admin/grant.php', 'scope' => 'admin', 'redirect_legacy' => true],
