@@ -36,7 +36,7 @@ try {
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="/quan-tri"><span class="brand-icon">✦</span><span><small>KPAH · QUẢN TRỊ</small><strong>Control Center</strong></span></a>
+  <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.svg" width="50" height="50" alt=""></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Control Center</strong></span></a>
   <div class="top-actions"><span class="secure"><i></i> Phiên bảo mật</span><span class="user"><?= kp_e($_SESSION['kp_admin_username'] ?? 'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
 <?php kp_admin_nav('home','admin'); ?>
