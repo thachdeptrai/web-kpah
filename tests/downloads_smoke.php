@@ -21,11 +21,26 @@ function dl_post($enabled, $source, $url) {
 try {
     $default = kp_game_download_catalog();
     dl_assert(!$default['android']['enabled'], 'No catalog means disabled by default');
+    dl_assert(isset(kp_game_platforms()['java']) && kp_game_platforms()['java']['ext'] === ['jar'], 'Java JAR is a separate download platform');
+    dl_assert(!$default['java']['enabled'], 'Java JAR starts disabled without a real release');
     kp_game_download_save(dl_post(['android' => true], [], ['android' => 'https://example.com/client.apk']), []);
     $saved = kp_game_download_catalog();
     dl_assert($saved['android']['enabled'] && $saved['android']['source'] === 'url'
         && $saved['android']['url'] === 'https://example.com/client.apk', 'Admin enables Android URL');
-    dl_assert(!$saved['windows']['enabled'] && !$saved['ios']['enabled'], 'Other platforms stay disabled');
+    dl_assert(!$saved['windows']['enabled'] && !$saved['ios']['enabled'] && !$saved['java']['enabled'], 'Other platforms stay disabled');
+    // Simulate a catalog created before Java/JAR was added; existing releases must survive.
+    $legacy = json_decode(file_get_contents(kp_game_download_dir() . '/catalog.json'), true);
+    unset($legacy['java']);
+    file_put_contents(kp_game_download_dir() . '/catalog.json', json_encode($legacy));
+    $oldCatalog = kp_game_download_catalog();
+    dl_assert($oldCatalog['android']['enabled'] && !$oldCatalog['java']['enabled'], 'Legacy three-platform catalog loads without losing existing downloads');
+    kp_game_download_save(dl_post(['android' => true, 'java' => true], [], [
+        'android' => 'https://example.com/client.apk', 'java' => 'https://example.com/client.jar'
+    ]), []);
+    $jarEnabled = kp_game_download_catalog();
+    dl_assert($jarEnabled['java']['enabled'] && $jarEnabled['java']['source'] === 'url'
+        && $jarEnabled['java']['url'] === 'https://example.com/client.jar', 'Admin can enable external Java JAR without modifying Android');
+    dl_assert($jarEnabled['android']['enabled'] && $jarEnabled['android']['url'] === 'https://example.com/client.apk', 'Existing Android link preserved after JAR enable');
     try {
         kp_game_download_save(dl_post(['android' => true], [], ['android' => 'javascript:alert(1)']), []);
         dl_assert(false, 'Unsafe URL must fail');
@@ -38,6 +53,12 @@ try {
         dl_assert(false, 'Missing file must fail');
     } catch (RuntimeException $e) {
         dl_assert(!kp_game_download_catalog()['windows']['enabled'], 'Cannot enable missing binary');
+    try {
+        kp_game_download_save(dl_post(['java' => true], ['java' => 'file'], []), []);
+        dl_assert(false, 'Java upload source without actual JAR must fail');
+    } catch (RuntimeException $e) {
+        dl_assert(kp_game_download_catalog()['java']['source'] === 'url', 'Failed Java file enable does not change saved catalog');
+    }
     }
     kp_game_download_save(dl_post([], [], ['android' => 'https://example.com/client.apk']), []);
     dl_assert(!kp_game_download_catalog()['android']['enabled'], 'Admin can disable a previously active link');
@@ -45,6 +66,9 @@ try {
     dl_assert(kp_game_download_url('//evil.example') === '', 'Protocol-relative URL rejected');
     dl_assert(kp_game_download_url('https://user:pass@example.com') === '', 'URL credentials rejected');
     dl_assert(kp_game_download_filename_valid(str_repeat('a', 32) . '.apk', 'android'), 'Safe Android filename accepted');
+    dl_assert(kp_game_download_filename_valid(str_repeat('c', 32) . '.jar', 'java'), 'Valid stored Java JAR filename accepted');
+    dl_assert(!kp_game_download_filename_valid(str_repeat('c', 32) . '.apk', 'java'), 'Java slot rejects APK extension');
+    dl_assert(!kp_game_download_filename_valid(str_repeat('c', 32) . '.jar', 'android'), 'Android slot rejects JAR extension');
     dl_assert(!kp_game_download_filename_valid('../evil.php', 'android'), 'Traversal filename rejected');
     dl_assert(!kp_game_download_filename_valid(str_repeat('a', 32) . '.exe', 'android'), 'Platform extension mismatch rejected');
     $dir = kp_game_download_dir();

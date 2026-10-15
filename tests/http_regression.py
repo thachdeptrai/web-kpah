@@ -54,7 +54,7 @@ for path in ['/','/dang-nhap','/dang-ky','/quen-mat-khau','/quan-tri/dang-nhap']
 landing_body=clean_page(guest,'/')
 check('id="tai-game"' in landing_body,'landing has download section')
 check('href="#tai-game"' in landing_body,'landing has download CTA')
-for platform in ('Android','Windows','iPhone / iPad'):
+for platform in ('Android','Windows','Java / JAR','iPhone / iPad'):
     check(platform in landing_body,'landing download platform '+platform)
 check('lp-download-card' in landing_body,'landing download cards render')
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
@@ -64,6 +64,7 @@ for path in ['/quan-tri','/quan-tri/diem-nong-dan/lich-su?id=202','/quan-tri/tai
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location')=='/quan-tri/dang-nhap','admin guard '+path)
 check(guest.request('/tai-game/tep?nen-tang=android')[0]==404,'disabled download returns 404')
+check(guest.request('/tai-game/tep?nen-tang=java')[0]==404,'disabled Java JAR download returns 404')
 check(guest.request('/tai-game/tep?nen-tang=invalid')[0]==404,'invalid platform rejected')
 check(guest.request('/tai-game/tep?nen-tang=android',method='POST')[0]==405,'download accepts GET and HEAD only')
 check(guest.request('/storage/game-downloads/catalog.json')[0]==403,'private release catalog blocked')
@@ -99,7 +100,7 @@ check(c.cookies._cookies is not None,'session cookie jar populated')
 status,h,b=c.request('/admin/login.php',{'csrf':admin_token,'username':'routeadmin','password':'FixtureAdmin123'})
 check(status==302 and h.get('Location')=='/quan-tri','admin form survives player login')
 check({'KPAHREG','KPAHADMIN'}.issubset({cookie.name for cookie in c.cookies}),'distinct admin/player cookies')
-for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/diem-nong-dan','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
+for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri/tai-game','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/diem-nong-dan','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     body=clean_page(c,path)
     if path=='/nhan-vat':
         check('FixtureHero' in body and 'OtherHero' not in body,'character ownership never crosses accounts')
@@ -111,6 +112,9 @@ for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the
         check('Điểm nông dân' in body and '777' in body,'private dashboard farmer points')
         check('/assets/css/dashboard.css' in body and '/assets/css/site-responsive.css' in body,
               'account dashboard and responsive CSS are loaded')
+    if path=='/quan-tri/tai-game':
+        check('Java / JAR' in body and 'accept=".jar"' in body, 'Admin has dedicated Java JAR upload control')
+        check('name="enabled[java]"' in body and 'name="url[java]"' in body, 'Admin has Java URL and enable settings')
     if path=='/quan-tri/diem-nong-dan':
         check('Lượng up TB/giờ' in body,'admin hourly Luong column')
         check('/quan-tri/diem-nong-dan/lich-su?id=' in body,'admin character history links')
