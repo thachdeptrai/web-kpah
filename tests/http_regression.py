@@ -124,6 +124,46 @@ for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the
         check('/quan-tri/nap-game' not in body and '/quan-tri/cong-tong-nap' not in body,
               'retired admin routes not shown')
 
+# End-to-end JAR lifecycle: privileged multipart upload, public binary download,
+# range support and revocation. Uses only disposable fixture storage and accounts.
+import io, zipfile
+buf=io.BytesIO()
+with zipfile.ZipFile(buf,'w',compression=zipfile.ZIP_DEFLATED) as jarzip:
+    jarzip.writestr('META-INF/MANIFEST.MF','Manifest-Version: 1.0\nMain-Class: kpah.Main\n\n')
+jar_bytes=buf.getvalue()
+form=clean_page(c,'/quan-tri/tai-game')
+jar_fields={
+    'csrf':csrf(form),
+    'MAX_FILE_SIZE':'536870912',
+    'enabled[java]':'1',
+    'source[windows]':'url','source[android]':'url','source[ios]':'url','source[java]':'file',
+    'url[windows]':'','url[android]':'','url[ios]':'','url[java]':''
+}
+boundary='----KPAHJarIntegrationTest'
+part=[]
+for name,value in jar_fields.items():
+    part.append(('--'+boundary+'\r\nContent-Disposition: form-data; name="'+name+'"\r\n\r\n'+value+'\r\n').encode('utf-8'))
+part.append(('--'+boundary+'\r\nContent-Disposition: form-data; name="upload[java]"; filename="Nghien_KPAH.jar"\r\nContent-Type: application/java-archive\r\n\r\n').encode('utf-8'))
+part.append(jar_bytes+b'\r\n')
+part.append(('--'+boundary+'--\r\n').encode('ascii'))
+status,head,body=c.request('/quan-tri/tai-game',b''.join(part),headers={
+    'Content-Type':'multipart/form-data; boundary='+boundary,
+    'X-Requested-With':'XMLHttpRequest'
+})
+check(status==200 and json.loads(body)['ok'],'admin multipart JAR upload and enable')
+status,head,body=guest.request('/tai-game/tep?nen-tang=java',method='HEAD')
+check(status==200 and int(head.get('Content-Length','0'))==len(jar_bytes),'public JAR HEAD and file size')
+check('Nghien_KPAH.jar' in head.get('Content-Disposition',''),'JAR download retains filename')
+status,head,body=guest.request('/tai-game/tep?nen-tang=java',headers={'Range':'bytes=0-3'})
+check(status==206 and head.get('Content-Range')=='bytes 0-3/'+str(len(jar_bytes)) and body=='PK\x03\x04','JAR download supports range resume')
+check('/tai-game/tep?nen-tang=java' in guest.request('/')[2],'JAR link visible on homepage after publish')
+remove_fields={**jar_fields,'remove[java]':'1'}
+remove_fields.pop('enabled[java]')
+remove_fields['csrf']=csrf(c.request('/quan-tri/tai-game')[2])
+status,head,body=c.request('/quan-tri/tai-game',remove_fields,headers={'X-Requested-With':'XMLHttpRequest'})
+check(status==200 and json.loads(body)['ok'],'admin disables and removes uploaded JAR')
+check(guest.request('/tai-game/tep?nen-tang=java')[0]==404,'revoked JAR is not publicly accessible')
+
 history=clean_page(c,'/quan-tri/diem-nong-dan/lich-su?id=202')
 check('OtherHero' in history and 'FixtureHero' not in history,'admin single-character farmer history')
 check('Lượng up TB/1 giờ' in history and 'Biến động Lượng theo từng giờ' in history,'historical Luong metrics and graph')
