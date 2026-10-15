@@ -99,3 +99,29 @@
 .gam-bulk-form>button.safe{background:#217b67}
 .gam-bulk-form>button.safe:hover{background:#288f76}
 @media(max-width:760px){.gam-bulk-grid{grid-template-columns:minmax(0,1fr)}.gam-bulk-scope{white-space:normal}}
+
+
+/* Select exactly which banned accounts or characters to release. */
+.gam-bulk-pick{border:1px solid rgba(160,149,229,.33);border-radius:12px;padding:13px;min-width:0}
+.gam-bulk-pick legend{color:#e8e1ff;font-size:12px;font-weight:850;padding:0 6px}
+.gam-bulk-pick .gam-hint{margin:2px 0 11px;color:#c0c9df}
+.gam-bulk-tools{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:11px}
+.gam-bulk-tools input.gam-bulk-search{flex:1 1 180px;min-width:0;min-height:38px;font-size:12px;padding:9px 11px}
+.gam-bulk-tools button{border:1px solid rgba(165,150,240,.36);background:rgba(165,150,240,.11);color:#ded7ff;border-radius:9px;min-height:36px;padding:7px 10px;font-size:11px;font-weight:750;cursor:pointer}
+.gam-bulk-tools button:hover{background:rgba(165,150,240,.23);border-color:#a899ec}
+.gam-bulk-count{display:block;width:100%;font-size:11px;color:#ade6c6;font-weight:850}
+.gam-bulk-target-list{max-height:285px;overflow:auto;border:1px solid rgba(148,166,209,.19);border-radius:10px;background:rgba(6,13,29,.6)}
+.gam-bulk-target{display:flex!important;flex-direction:row!important;gap:10px!important;align-items:center;padding:10px 11px;cursor:pointer;border-bottom:1px solid rgba(148,166,209,.12);min-width:0}
+.gam-bulk-target:last-child{border-bottom:0}
+.gam-bulk-target:hover{background:rgba(162,147,246,.09)}
+.gam-bulk-target:has(input:checked){background:rgba(91,215,161,.1)}
+.gam-bulk-target[hidden]{display:none!important}
+.gam-bulk-target input[type=checkbox]{width:17px;height:17px;min-width:17px;min-height:17px;margin:0;padding:0;flex:none;accent-color:#69d8af;box-shadow:none}
+.gam-bulk-target>span{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.gam-bulk-target strong{font-size:12px;color:#ece8ff;overflow-wrap:anywhere}
+.gam-bulk-target small{font-size:10px;color:#9dadd0;overflow-wrap:anywhere}
+.gam-bulk-target em{font-size:10px;color:#e4b5bd;font-style:normal;white-space:nowrap}
+.gam-bulk-target:has(input:checked) em{color:#9debc2}
+.gam-bulk-target:has(input:checked) em::after{content:" · Mở ban"}
+.gam-bulk-form>button[disabled]{opacity:.45;cursor:not-allowed}
+@media(max-width:650px){.gam-bulk-item{padding:11px}.gam-bulk-pick{padding:10px}.gam-bulk-target em{display:none}.gam-bulk-target-list{max-height:320px}}
