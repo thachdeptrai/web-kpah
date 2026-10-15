@@ -206,7 +206,7 @@ function kp_game_moderation_bulk_fingerprint(array $targets): string
  * The game tables are MyISAM: if a target fails halfway, earlier successful
  * operations cannot be rolled back. Report partial results accurately.
  */
-function kp_game_moderation_bulk_unban(PDO $db, array $admin, string $type, string $reason, string $confirmation, string $fingerprint): array
+function kp_game_moderation_bulk_unban(PDO $db, array $admin, string $type, string $reason, string $confirmation, string $fingerprint, array $selectedIds): array
 {
     $phrases = [
         'account' => 'MO BAN TAT CA TAI KHOAN',
@@ -239,10 +239,30 @@ function kp_game_moderation_bulk_unban(PDO $db, array $admin, string $type, stri
         if (!$targets) {
             throw new RuntimeException('Không còn đối tượng bị ban hợp lệ để mở.');
         }
+
+        // Fail closed: only the explicitly selected subset is actionable.
+        // Checkbox values are untrusted; never use their order or names to write SQL.
+        if (!$selectedIds || count($selectedIds) > count($targets)) {
+            throw new RuntimeException('Chưa chọn tài khoản/nhân vật hợp lệ để mở ban.');
+        }
+        $allowedIds = [];
+        foreach ($targets as $target) $allowedIds[(int)$target['id']] = $target;
+        $chosen = [];
+        foreach ($selectedIds as $rawId) {
+            if ((!is_string($rawId) && !is_int($rawId))
+                || !preg_match('/^[1-9][0-9]{0,9}$/D',(string)$rawId)) {
+                throw new RuntimeException('Danh sách chọn có ID không hợp lệ.');
+            }
+            $id=(int)$rawId;
+            if (!isset($allowedIds[$id]) || isset($chosen[$id])) {
+                throw new RuntimeException('Có đối tượng không đủ điều kiện hoặc bị chọn trùng. Tải lại trang.');
+            }
+            $chosen[$id] = $allowedIds[$id];
+        }
         // Fail closed if the audit log cannot be created before mutating MyISAM.
         kp_game_moderation_ensure_log($db);
         $ok=0;$failed=0;
-        foreach ($targets as $target) {
+        foreach ($chosen as $target) {
             try {
                 kp_game_moderation_change(
                     $db,$admin,$type,(int)$target['id'],'unban',$reason,(string)$target['target_name']
@@ -255,8 +275,10 @@ function kp_game_moderation_bulk_unban(PDO $db, array $admin, string $type, stri
             }
         }
         kp_log('bulk game unban kind='.$type.' admin_id='.(int)$admin['id']
-            .' attempted='.count($targets).' changed='.$ok.' failed='.$failed);
-        return ['type'=>$type,'total'=>count($targets),'changed'=>$ok,'failed'=>$failed];
+            .' selected='.count($chosen).' skipped='.(count($targets)-count($chosen))
+            .' changed='.$ok.' failed='.$failed);
+        return ['type'=>$type,'total'=>count($chosen),'eligible'=>count($targets),
+            'excluded'=>count($targets)-count($chosen),'changed'=>$ok,'failed'=>$failed];
     } finally {
         $stmt=$db->prepare('SELECT RELEASE_LOCK(?)');
         $stmt->execute([$lockName]);
