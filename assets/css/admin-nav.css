@@ -308,3 +308,14 @@ body:not(.kp-admin-login-page)>header a:focus-visible{outline:2px solid #f6dc9b;
   body:not(.kp-admin-login-page)>header .brand .eyebrow{font-size:7px}
   body:not(.kp-admin-login-page)>header .logout{font-size:9px;padding:7px}
 }
+
+/* Admin payment masthead: the public wallet breadcrumb stays untouched. */
+.tp-page.tp-admin .tp-header{min-height:72px;gap:12px;align-items:center}
+.tp-page.tp-admin .tp-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;font-weight:700;line-height:1.5}
+.tp-page.tp-admin .kp-topup-admin-emblem{display:inline-block;flex:none;width:38px;height:38px;object-fit:contain;margin-right:3px;filter:drop-shadow(0 0 10px rgba(226,180,90,.2))}
+.tp-page.tp-admin .tp-breadcrumb>span{color:#aa9bbd}
+@media(max-width:550px){
+ .tp-page.tp-admin .tp-header{min-height:64px;padding:12px 2px;flex-wrap:wrap}
+ .tp-page.tp-admin .tp-breadcrumb{font-size:10px;gap:6px}
+ .tp-page.tp-admin .kp-topup-admin-emblem{width:30px;height:30px}
+}
