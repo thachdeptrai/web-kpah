@@ -106,16 +106,26 @@ function kp_bank_farmer_list(int $userId, int $limit = 30): array
     if (!is_dir($dir)) return [];
     $db = kp_db();
     $out = [];
-    foreach (glob($dir . '/*.json') ?: [] as $path) {
+    // Query only the signed-in account; do not scan every player's gift files.
+    // Examine a bounded window of recent completed bank wallet payments.
+    $st = $db->prepare("SELECT order_code FROM kp_bank_orders
+         WHERE user_id=? AND status='completed' AND provider_reference LIKE 'VND_BONUS:%'
+         ORDER BY id DESC LIMIT 500");
+    $st->execute([$userId]);
+    foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $rawCode) {
+        $code = filter_var($rawCode, FILTER_VALIDATE_INT);
+        if ($code === false || $code < 100000000 || $code > 999999999) continue;
+        $path = $dir . '/' . $code . '.json';
+        if (!is_file($path)) continue;
         $row = kp_topup_read_file($path);
         if (!is_array($row) || (int)($row['user_id'] ?? 0) !== $userId
+            || (int)($row['order_code'] ?? 0) !== $code
             || (int)($row['points'] ?? 0) < 1) continue;
-        if (!preg_match('/^[0-9]{9}\.json$/D', basename($path))) continue;
         if (!kp_bank_farmer_paid($db, $row)) continue;
         $out[] = $row;
+        if (count($out) >= max(1, min(100, $limit))) break;
     }
-    usort($out, static function ($a,$b) { return (int)$b['created_at'] <=> (int)$a['created_at']; });
-    return array_slice($out, 0, max(1, min(100, $limit)));
+    return $out;
 }
 
 /** Pure helper: preserve EVERY other serialized pInfo field unchanged. */
