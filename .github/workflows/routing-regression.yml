@@ -50,6 +50,8 @@ jobs:
           for test in tests/*_smoke.php; do php "$test"; done
       - name: Load schema-only fixture and validate game queries
         run: php tests/seed_fixture.php
+      - name: Game account ban and character moderation integration
+        run: php tests/game_account_moderation_integration.php
       - name: Farmer monitoring DB integration
         run: php tests/farmer_monitor_integration.php
       - name: Start PHP CLI server
