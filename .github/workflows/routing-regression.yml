@@ -56,6 +56,8 @@ jobs:
         run: php tests/game_bulk_unban_integration.php
       - name: Farmer monitoring DB integration
         run: php tests/farmer_monitor_integration.php
+      - name: Verified bank farmer bonus MyISAM integration (fixture DB only)
+        run: php tests/bank_farmer_integration.php
       - name: Start PHP CLI server
         if: matrix.server == 'cli'
         run: php -S 127.0.0.1:8089 -t . tests/dev_router.php > /tmp/kpah-http.log 2>&1 &
@@ -100,8 +102,6 @@ jobs:
             sleep 1
           done
           python3 tests/http_regression.py
-      - name: Verified bank farmer bonus MyISAM integration (fixture DB only)
-        run: php tests/bank_farmer_integration.php
       - name: Server error log on failure
         if: failure()
         run: |
