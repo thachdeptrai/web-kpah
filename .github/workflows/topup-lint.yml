@@ -4,6 +4,10 @@ on:
     paths:
       - 'app/topup/**'
       - 'app/includes/topup_core.php'
+      - 'app/includes/bank_payos.php'
+      - 'app/includes/bank_farmer_reward.php'
+      - 'app/includes/farmer_points.php'
+      - 'tests/bank_farmer_smoke.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
       - 'app/includes/admin_security.php'
@@ -16,6 +20,10 @@ on:
     paths:
       - 'app/topup/**'
       - 'app/includes/topup_core.php'
+      - 'app/includes/bank_payos.php'
+      - 'app/includes/bank_farmer_reward.php'
+      - 'app/includes/farmer_points.php'
+      - 'tests/bank_farmer_smoke.php'
       - 'tests/topup_smoke.php'
       - 'tests/security_smoke.php'
       - 'app/includes/admin_security.php'
@@ -43,12 +51,17 @@ jobs:
         run: |
           set -euo pipefail
           php -l app/includes/topup_core.php
+          php -l app/includes/bank_payos.php
+          php -l app/includes/bank_farmer_reward.php
+          php -l tests/bank_farmer_smoke.php
           find app/topup -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           php -l tests/topup_smoke.php
           php -l tests/security_smoke.php
           php -l app/includes/admin_security.php
       - name: Test topup conversions and idempotency status labels
         run: php tests/topup_smoke.php
+      - name: Test bank farmer reward allocation and idempotency
+        run: php tests/bank_farmer_smoke.php
       - name: Verify admin guard, TOTP and dump protection
         run: php tests/security_smoke.php
       - name: Reject SQL migrations in payment module
