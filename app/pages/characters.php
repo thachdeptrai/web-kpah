@@ -108,6 +108,10 @@ kp_player_head('Nhân vật của tôi','characters',$user,true);
                                         <dt><span class="char-ui-stat-icon" aria-hidden="true">◇</span> Lượng khóa</dt>
                                         <dd><?= $numberFormat($character['luonglock'] ?? 0) ?></dd>
                                     </div>
+                                    <div class="char-ui-stat char-ui-stat--farmer">
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">✧</span> Điểm nông dân</dt>
+                                        <dd><?= ($character['diemNongDan'] ?? null) === null ? '—' : $numberFormat($character['diemNongDan']) ?></dd>
+                                    </div>
                                 </dl>
                                 <div class="char-ui-card-bottom">
                                     <span class="char-ui-last">

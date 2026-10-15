@@ -86,6 +86,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
                         <div class="pd-character-resources">
                             <span>Xu <b><?=kp_player_format($character['gold']??0)?></b></span>
                             <span>Lượng <b><?=kp_player_format($character['luong']??0)?></b></span>
+                            <span>Điểm nông dân <b><?= ($character['diemNongDan']??null)===null?'—':kp_player_format($character['diemNongDan']) ?></b></span>
                         </div>
                     </div>
                 </article>

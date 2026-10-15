@@ -1,0 +1,30 @@
+/* Điểm nông dân – admin-only, responsive; không tác động giao diện người chơi. */
+.farmer-shell{max-width:1350px}.farmer-hero{align-items:flex-end}
+.farmer-hero h1 span{color:var(--violet)}
+.farmer-readonly{display:inline-block;flex:none;border:1px solid #72e5b548;background:#72e5b50c;color:#a5f5ce;padding:9px 13px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.09em}
+.farmer-metrics{margin:18px 0}.farmer-metrics .metric strong{font-size:clamp(23px,3vw,32px);overflow-wrap:anywhere}
+.farmer-panel{margin-top:17px}.farmer-reset{border:1px solid var(--line);border-radius:11px;padding:9px 12px;font-size:12px;color:#c8c0ff}
+.farmer-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:end}
+.farmer-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.farmer-field span{font-size:11px;color:#aab6d2;font-weight:700}
+.farmer-field input,.farmer-field select{width:100%;min-height:44px;border:1px solid #aeb5e533;background:#0b1223;color:#f4f6ff;border-radius:10px;padding:10px 12px;font:inherit;font-size:12px;outline:none}
+.farmer-field input:focus,.farmer-field select:focus{border-color:#aa9bff;box-shadow:0 0 0 3px #a89aff18}
+.farmer-field input::placeholder{color:#66728e}.farmer-search{grid-column:span 2}
+.farmer-apply{border:0;border-radius:10px;min-height:44px;background:#8977e8;color:#fff;padding:11px 16px;font-weight:700;font-size:12px;line-height:1.3;font-family:inherit;cursor:pointer}
+.farmer-apply:hover{background:#a294fd}.farmer-table-scroll{max-width:100%;overflow-x:auto}
+.farmer-table{min-width:1030px}.farmer-table td,.farmer-table th{padding:13px 11px}
+.farmer-table th{font-size:10px;letter-spacing:.08em}.farmer-score{color:#c9beff;font-weight:850;font-size:15px;font-variant-numeric:tabular-nums}
+.farmer-pill{display:inline-flex;white-space:nowrap;border:1px solid #ffffff21;padding:5px 9px;border-radius:30px;font-size:10px;font-weight:750}
+.farmer-pill.farmer-ok{background:#72e5b510;border-color:#72e5b533;color:#a3f3ce}
+.farmer-pill.farmer-warning{background:#ffc27714;border-color:#ffc27744;color:#ffd39e}
+.farmer-pill.farmer-bad{background:#ff818114;border-color:#ff818144;color:#ffaaa9}
+.farmer-pill.farmer-neutral{background:#ffffff09;border-color:#ffffff20;color:#b0bdd6}
+.farmer-raw{display:block;margin-top:4px;color:#f9adad;max-width:200px;overflow-wrap:anywhere;white-space:normal}
+.farmer-pagination{display:flex;justify-content:center;align-items:center;gap:15px;margin:19px 0 8px;font-size:12px;color:#bac3d9}
+.farmer-pagination a{padding:9px 13px;border:1px solid #a89aff39;border-radius:10px;color:#d1c7ff}
+.farmer-pagination a:hover{background:#a89aff20}
+.farmer-caption{margin:18px 0 0;color:#8e9cb8;font-size:11px;line-height:1.8}
+.farmer-caption code{overflow-wrap:anywhere}
+@media(max-width:1000px){.farmer-form{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:670px){.farmer-hero{display:block}.farmer-readonly{margin-top:16px}.farmer-form{grid-template-columns:repeat(2,minmax(0,1fr))}.farmer-search{grid-column:1/-1}.farmer-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.farmer-panel{padding:14px}}
+@media(max-width:390px){.farmer-form{grid-template-columns:1fr}.farmer-search{grid-column:auto}.farmer-metrics .metric strong{font-size:23px}}

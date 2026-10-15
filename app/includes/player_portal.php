@@ -4,6 +4,7 @@
  * User-owned character details never leak into public leaderboards.
  */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/farmer_points.php';
 
 function kp_player_account()
 {
@@ -42,6 +43,7 @@ function kp_player_characters($accountId,$limit=8)
                  COALESCE(c.gold,l.gold,0) AS gold,
                  COALESCE(c.luong,l.luong,0) AS luong,
                  COALESCE(c.luonglock,0) AS luonglock,
+                 c.pInfo AS farmer_pinfo,
                  c.lastLog, clan.clanName
           FROM tob_web_info_char AS w
           LEFT JOIN tob_char AS c ON c.charname=w.charname AND c.userId=w.userid
@@ -52,7 +54,13 @@ function kp_player_characters($accountId,$limit=8)
           LIMIT '.max(1,min(30,(int)$limit));
     $st=kp_db()->prepare($sql);
     $st->execute([(int)$accountId]);
-    return $st->fetchAll(PDO::FETCH_ASSOC);
+    $rows=$st->fetchAll(PDO::FETCH_ASSOC);
+    foreach($rows as &$row){
+        $row['diemNongDan']=kp_farmer_points($row['farmer_pinfo']??null);
+        unset($row['farmer_pinfo']); // Không đưa chuỗi pInfo nhạy cảm lên template.
+    }
+    unset($row);
+    return $rows;
 }
 
 function kp_player_format($value)

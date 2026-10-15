@@ -25,7 +25,8 @@ function seed_row($table,array $values) {
 foreach([101=>'routeplayer',202=>'otherplayer'] as $id=>$name) {
     seed_row('team_user',['id'=>$id,'userid'=>$id+9000,'username'=>$name,'password'=>password_hash('FixturePass123',PASSWORD_DEFAULT),'email'=>$name.'@example.test','phone'=>'0900000000','regdate'=>'2026-01-01 00:00:00']);
     $character=$id===101?'FixtureHero':'OtherHero';
-    seed_row('tob_char',['id'=>$id,'charname'=>$character,'userId'=>$id,'lastLv'=>50,'xp'=>1000,'gold'=>1200,'luong'=>100,'luonglock'=>200]);
+    $farmerInfo=implode(',',array_fill(0,117,'0')).','.($id===101?'777':'0').',50,0,0,0,3600000';
+    seed_row('tob_char',['id'=>$id,'charname'=>$character,'userId'=>$id,'lastLv'=>50,'xp'=>1000,'gold'=>1200,'luong'=>100,'luonglock'=>200,'pInfo'=>$farmerInfo]);
     seed_row('tob_web_info_char',['charname'=>$character,'userid'=>$id,'lv'=>50,'acountname'=>$name]);
     seed_row('tob_char_luong',['id'=>$id,'charname'=>$character,'lv'=>50,'exp'=>1000,'honor'=>10,'nPK'=>2]);
 }
@@ -47,4 +48,5 @@ foreach(kp_rankings_catalog() as $key=>$category) {
 }
 $chars=kp_player_characters(101);
 if(count($chars)!==1 || $chars[0]['charname']!=='FixtureHero') throw new RuntimeException('Character ownership mismatch');
+if($chars[0]['diemNongDan']!==777) throw new RuntimeException('Farmer points from pInfo mismatch');
 echo "PASS: character ownership joins on supplied schema\n";

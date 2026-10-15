@@ -60,7 +60,7 @@ check('lp-download-card' in landing_body,'landing download cards render')
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location','').startswith('/dang-nhap'),'guest login guard '+path)
-for path in ['/quan-tri','/quan-tri/tai-game','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/cong-vnd','/quan-tri/cong-tong-nap','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
+for path in ['/quan-tri','/quan-tri/tai-game','/quan-tri/diem-nong-dan','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/cong-vnd','/quan-tri/cong-tong-nap','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location')=='/quan-tri/dang-nhap','admin guard '+path)
 check(guest.request('/tai-game/tep?nen-tang=android')[0]==404,'disabled download returns 404')
@@ -99,19 +99,29 @@ check(c.cookies._cookies is not None,'session cookie jar populated')
 status,h,b=c.request('/admin/login.php',{'csrf':admin_token,'username':'routeadmin','password':'FixtureAdmin123'})
 check(status==302 and h.get('Location')=='/quan-tri','admin form survives player login')
 check({'KPAHREG','KPAHADMIN'}.issubset({cookie.name for cookie in c.cookies}),'distinct admin/player cookies')
-for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
+for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/diem-nong-dan','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     body=clean_page(c,path)
-    if path=='/nhan-vat':check('FixtureHero' in body and 'OtherHero' not in body,'character ownership never crosses accounts')
+    if path=='/nhan-vat':
+        check('FixtureHero' in body and 'OtherHero' not in body,'character ownership never crosses accounts')
+        check('Điểm nông dân' in body and '777' in body,'character farmer points are visible')
     if path=='/tai-khoan':
         for feature in ('Ví VNĐ hiện có','Tổng đã nạp','Point tích lũy','Nhân vật của tôi','Giao dịch','Bảo mật tài khoản'):
             check(feature.lower() in body.lower(),'dashboard widget '+feature)
         check('FixtureHero' in body and 'OtherHero' not in body,'private dashboard character preview')
+        check('Điểm nông dân' in body and '777' in body,'private dashboard farmer points')
         check('/assets/css/dashboard.css' in body and '/assets/css/site-responsive.css' in body,
               'account dashboard and responsive CSS are loaded')
+    if path=='/quan-tri/diem-nong-dan':
+        check('FixtureHero' in body and '777' in body,'admin farmer points from stored pInfo')
+        check('Online farm/ngày' in body and 'Hộp/ngày' in body,'admin farmer diagnostic fields')
     if path=='/quan-tri':
         check('/quan-tri/nap-game' not in body and '/quan-tri/cong-tong-nap' not in body,
               'retired admin routes not shown')
 
+farmer_filtered=clean_page(c,'/quan-tri/diem-nong-dan?q=FixtureHero&state=high&alert=500')
+check('FixtureHero' in farmer_filtered and 'OtherHero' not in farmer_filtered,'admin farmer search and threshold')
+farmer_empty=clean_page(c,'/quan-tri/diem-nong-dan?state=high&alert=100000')
+check('Không có nhân vật phù hợp' in farmer_empty,'farmer high-point filter excludes low values')
 for category in ['level','honor','pk','clan','nap','event','duel','siege','wc']:
     status,h,b=c.request('/bang-xep-hang?type='+category)
     check(status==200 and 'Chưa tải được bảng xếp hạng' not in b,'schema-backed leaderboard '+category)
