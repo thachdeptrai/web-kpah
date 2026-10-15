@@ -141,3 +141,60 @@
 /* Keep role-key administration content aligned. */
 .kp-key-users-content{max-width:1280px;margin:0 auto;padding:18px 24px 40px}
 @media(max-width:720px){.kp-key-users-content{padding:10px 12px 28px}}
+
+
+/* v3 · Original KPAH emblem + login's moon / arcane / gold palette.
+ * Shared between ALL admin tools; does not alter their underlying routes.
+ */
+.kp-admin-nav.kp-admin-nav-v2{
+  --an-bg:#16132a;
+  --an-edge:rgba(246,220,155,.19);
+  --an-text:#ece8fb;
+  --an-muted:#b4accd;
+  --an-accent:#e2b45a;
+  border:1px solid var(--an-edge);
+  background:linear-gradient(130deg,rgba(30,24,57,.97),rgba(13,11,30,.97));
+  box-shadow:0 14px 42px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.035);
+}
+.kp-admin-nav-brand{gap:12px}
+.kp-admin-nav-brand-mark{
+  width:48px;height:48px;overflow:hidden;border:1px solid rgba(246,220,155,.29);
+  border-radius:14px;background:radial-gradient(circle,#34274b,#100d22);
+  box-shadow:0 0 23px rgba(226,180,90,.12)
+}
+.kp-admin-nav-brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
+.kp-admin-nav-brand-copy strong{
+  color:#f6dc9b;font-family:"Cinzel",Georgia,serif;font-weight:850;
+  font-size:14px;letter-spacing:.04em;white-space:nowrap
+}
+.kp-admin-nav-brand-copy small{color:#c6b8d1;font-size:9px;letter-spacing:.12em}
+.kp-admin-nav-v2 .kp-admin-nav-item.is-active{
+  color:#f6dc9b;background:rgba(226,180,90,.09);
+  border-color:rgba(226,180,90,.34)
+}
+.kp-admin-nav-v2 .kp-admin-nav-item:hover,
+.kp-admin-nav-v2 .kp-admin-nav-dropdown[open]>.kp-admin-nav-item{
+  border-color:rgba(246,220,155,.2);color:#fdf4dc;background:rgba(246,220,155,.075)
+}
+.kp-admin-nav-popover{background:#1b1730;border:1px solid rgba(246,220,155,.18);max-height:70vh;overflow-y:auto}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link.is-active{background:rgba(226,180,90,.13);color:#f6dc9b;border-color:rgba(226,180,90,.25)}
+.kp-admin-nav-popover-heading{color:#e2b45a}
+.kp-admin-nav-v2 .kp-admin-nav-exit:hover{border-color:#e2b45a;color:#f6dc9b}
+.kp-admin-nav-mobile-toggle{border-color:rgba(226,180,90,.33);background:rgba(226,180,90,.07);color:#f6dc9b}
+.kp-admin-nav-mobile-panel{background:#19152e;border-color:rgba(246,220,155,.2)}
+.kp-admin-nav-v2 .kp-admin-nav-mobile-link.is-active{
+  border-color:rgba(226,180,90,.36);background:rgba(226,180,90,.1);color:#f6dc9b
+}
+@media(max-width:550px){
+  .kp-admin-nav-brand-mark{width:40px;height:40px;border-radius:11px}
+  .kp-admin-nav-brand-copy strong{font-size:11px;letter-spacing:0}
+  .kp-admin-nav-brand-copy small{font-size:8px;letter-spacing:.025em}
+  .kp-admin-nav.kp-admin-nav-v2{gap:4px}
+  .kp-admin-nav-brand{gap:7px;padding:2px}
+  .kp-admin-nav-mobile-toggle{gap:6px;padding:7px 8px}
+  .kp-admin-nav-mobile-title{font-size:11px}
+}
+@media(max-width:375px){
+  .kp-admin-nav-brand-copy small{display:none}
+  .kp-admin-nav-mobile-title small{max-width:70px}
+}
