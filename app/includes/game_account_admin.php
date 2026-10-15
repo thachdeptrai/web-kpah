@@ -164,3 +164,101 @@ function kp_game_moderation_change(PDO $db, array $admin, string $type, int $id,
         $release->execute([$lockName]);
     }
 }
+
+
+/**
+ * Return only targets whose normal ban flag is exactly 1. A character with
+ * isAdmin != 0, or an account owning any GM character, is excluded. Orphan
+ * characters are excluded to match single-entity moderation behavior.
+ */
+function kp_game_moderation_bulk_targets(PDO $db, string $type): array
+{
+    if ($type === 'account') {
+        $sql = 'SELECT u.id,u.username AS target_name
+                FROM team_user u WHERE u.ban=1
+                AND NOT EXISTS (SELECT 1 FROM tob_char c WHERE c.userId=u.id AND c.isAdmin<>0)
+                ORDER BY u.id ASC';
+    } elseif ($type === 'character') {
+        $sql = 'SELECT c.id,c.charname AS target_name
+                FROM tob_char c
+                INNER JOIN team_user u ON u.id=c.userId
+                WHERE c.ban=1 AND c.isAdmin=0
+                ORDER BY c.id ASC';
+    } else {
+        throw new RuntimeException('Loại mở ban hàng loạt không hợp lệ.');
+    }
+    return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function kp_game_moderation_bulk_fingerprint(array $targets): string
+{
+    // Fingerprint freezes the exact set displayed in the confirmation UI.
+    $ids = [];
+    foreach ($targets as $row) $ids[] = (int)$row['id'];
+    return hash('sha256', implode(',', $ids));
+}
+
+/**
+ * Explicitly admin-confirmed bulk UNBAN, using the SAME audited per-target
+ * compare-and-set path as the single-target controls. Never unban accounts
+ * and characters in the same action. No changes to special ban states.
+ *
+ * The game tables are MyISAM: if a target fails halfway, earlier successful
+ * operations cannot be rolled back. Report partial results accurately.
+ */
+function kp_game_moderation_bulk_unban(PDO $db, array $admin, string $type, string $reason, string $confirmation, string $fingerprint): array
+{
+    $phrases = [
+        'account' => 'MO BAN TAT CA TAI KHOAN',
+        'character' => 'MO BAN TAT CA NHAN VAT',
+    ];
+    if (!isset($phrases[$type])) {
+        throw new RuntimeException('Chỉ hỗ trợ mở ban tài khoản hoặc nhân vật.');
+    }
+    if (!hash_equals($phrases[$type], trim($confirmation))) {
+        throw new RuntimeException('Câu xác nhận hàng loạt không chính xác.');
+    }
+    $reason=trim($reason);
+    if (strlen($reason)<8 || strlen($reason)>250 || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$reason)) {
+        throw new RuntimeException('Lý do phải dài 8–250 ký tự và không chứa ký tự điều khiển.');
+    }
+    if (!preg_match('/^[a-f0-9]{64}$/D',$fingerprint)) {
+        throw new RuntimeException('Danh sách xác nhận không hợp lệ. Tải lại trang.');
+    }
+    $lockName='kpah_mod_bulk_'.$type;
+    $stmt=$db->prepare('SELECT GET_LOCK(?,3)');
+    $stmt->execute([$lockName]);
+    if ((int)$stmt->fetchColumn()!==1) {
+        throw new RuntimeException('Đang có đợt mở ban hàng loạt khác. Thử lại sau.');
+    }
+    try {
+        $targets=kp_game_moderation_bulk_targets($db,$type);
+        if (!hash_equals(kp_game_moderation_bulk_fingerprint($targets),$fingerprint)) {
+            throw new RuntimeException('Danh sách bị ban đã thay đổi. Tải lại trang rồi xác nhận lại.');
+        }
+        if (!$targets) {
+            throw new RuntimeException('Không còn đối tượng bị ban hợp lệ để mở.');
+        }
+        // Fail closed if the audit log cannot be created before mutating MyISAM.
+        kp_game_moderation_ensure_log($db);
+        $ok=0;$failed=0;
+        foreach ($targets as $target) {
+            try {
+                kp_game_moderation_change(
+                    $db,$admin,$type,(int)$target['id'],'unban',$reason,(string)$target['target_name']
+                );
+                $ok++;
+            } catch (Throwable $e) {
+                $failed++;
+                // No credentials, email, phone or request payload in logs.
+                kp_log('bulk game unban failed kind='.$type.' id='.(int)$target['id'],$e);
+            }
+        }
+        kp_log('bulk game unban kind='.$type.' admin_id='.(int)$admin['id']
+            .' attempted='.count($targets).' changed='.$ok.' failed='.$failed);
+        return ['type'=>$type,'total'=>count($targets),'changed'=>$ok,'failed'=>$failed];
+    } finally {
+        $stmt=$db->prepare('SELECT RELEASE_LOCK(?)');
+        $stmt->execute([$lockName]);
+    }
+}
