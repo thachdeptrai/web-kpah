@@ -18,6 +18,7 @@ $downloadCatalog = kp_game_download_catalog();
 $downloadPlatforms = [
     ['key' => 'android', 'name' => 'Android', 'icon' => '▣', 'detail' => 'Điện thoại Android · APK'],
     ['key' => 'windows', 'name' => 'Windows', 'icon' => '▦', 'detail' => 'Máy tính · Windows'],
+    ['key' => 'java', 'name' => 'Java / JAR', 'icon' => '☕', 'detail' => 'Máy tính có Java · File .jar'],
     ['key' => 'ios', 'name' => 'iPhone / iPad', 'icon' => '◈', 'detail' => 'Thiết bị iOS · IPA'],
 ];
 $downloadAvailable = false;
