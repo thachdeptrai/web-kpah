@@ -50,6 +50,8 @@ jobs:
           for test in tests/*_smoke.php; do php "$test"; done
       - name: Load schema-only fixture and validate game queries
         run: php tests/seed_fixture.php
+      - name: Farmer monitoring DB integration
+        run: php tests/farmer_monitor_integration.php
       - name: Start PHP CLI server
         if: matrix.server == 'cli'
         run: php -S 127.0.0.1:8089 -t . tests/dev_router.php > /tmp/kpah-http.log 2>&1 &

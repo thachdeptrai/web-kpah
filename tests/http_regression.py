@@ -60,7 +60,7 @@ check('lp-download-card' in landing_body,'landing download cards render')
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location','').startswith('/dang-nhap'),'guest login guard '+path)
-for path in ['/quan-tri','/quan-tri/tai-game','/quan-tri/diem-nong-dan','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/cong-vnd','/quan-tri/cong-tong-nap','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
+for path in ['/quan-tri','/quan-tri/diem-nong-dan/lich-su?id=202','/quan-tri/tai-game','/quan-tri/diem-nong-dan','/quan-tri/ma-gioi-thieu','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/cong-vnd','/quan-tri/cong-tong-nap','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location')=='/quan-tri/dang-nhap','admin guard '+path)
 check(guest.request('/tai-game/tep?nen-tang=android')[0]==404,'disabled download returns 404')
@@ -112,12 +112,20 @@ for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the
         check('/assets/css/dashboard.css' in body and '/assets/css/site-responsive.css' in body,
               'account dashboard and responsive CSS are loaded')
     if path=='/quan-tri/diem-nong-dan':
+        check('Lượng up TB/giờ' in body,'admin hourly Luong column')
+        check('/quan-tri/diem-nong-dan/lich-su?id=' in body,'admin character history links')
         check('FixtureHero' in body and '777' in body,'admin farmer points from stored pInfo')
         check('Online farm/ngày' in body and 'Hộp/ngày' in body,'admin farmer diagnostic fields')
     if path=='/quan-tri':
         check('/quan-tri/nap-game' not in body and '/quan-tri/cong-tong-nap' not in body,
               'retired admin routes not shown')
 
+history=clean_page(c,'/quan-tri/diem-nong-dan/lich-su?id=202')
+check('OtherHero' in history and 'FixtureHero' not in history,'admin single-character farmer history')
+check('Lượng up TB/1 giờ' in history and 'Biến động Lượng theo từng giờ' in history,'historical Luong metrics and graph')
+check('Điểm trước' in history and 'Lượng trước' in history,'history before/after values')
+check('Mất mẫu / lưu chậm' in history or 'Biến động quan sát' in history,'history event annotations')
+check(c.request('/quan-tri/diem-nong-dan/lich-su?id=nope')[0]==404,'history rejects invalid character IDs')
 farmer_filtered=clean_page(c,'/quan-tri/diem-nong-dan?q=FixtureHero&state=high&alert=500')
 check('FixtureHero' in farmer_filtered and 'OtherHero' not in farmer_filtered,'admin farmer search and threshold')
 farmer_empty=clean_page(c,'/quan-tri/diem-nong-dan?state=high&alert=100000')
