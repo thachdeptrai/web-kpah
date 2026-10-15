@@ -1,0 +1,53 @@
+/* Moderation audit timeline · same KPAH gold/arcane tone as player login. */
+.gam-history-back{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 15px;border-radius:12px;border:1px solid rgba(226,180,90,.38);background:rgba(226,180,90,.08);color:#f6dc9b;font-size:12px;font-weight:800;white-space:nowrap}
+.gam-history-back:hover{background:rgba(226,180,90,.15)}
+.gam-history-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+.gam-history-metrics .metric strong{color:#f6dc9b}
+.gam-history-filter{margin:20px 0}
+.gam-history-form{display:grid;grid-template-columns:minmax(210px,2fr) repeat(3,minmax(130px,1fr)) auto auto;gap:11px;align-items:end}
+.gam-history-form label{display:flex;flex-direction:column;gap:8px;font-size:11px;color:#bdafce;font-weight:650;min-width:0}
+.gam-history-form :where(input,select){display:block;width:100%;height:44px;padding:9px 12px;color:#f6f0ff;background:#0b0a18;border:1px solid rgba(207,214,255,.19);border-radius:10px;font-family:inherit;font-size:12px;outline:none}
+.gam-history-form :where(input,select):focus{border-color:#e2b45a;box-shadow:0 0 0 3px rgba(226,180,90,.12)}
+.gam-history-form button{height:44px;background:linear-gradient(130deg,#eac77d,#b88232);color:#171020;padding:10px 15px;border:0;border-radius:10px;font-weight:900;font-size:12px;white-space:nowrap;cursor:pointer}
+.gam-history-form button:hover{filter:brightness(1.1)}
+.gam-history-clear{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:1px solid rgba(207,214,255,.19);border-radius:10px;color:#d1c4e6;font-size:12px;white-space:nowrap}
+.gam-history-clear:hover{border-color:#f6dc9b;color:#f6dc9b}
+.gam-history-panel{margin-bottom:30px}
+.gam-history-table{min-width:1050px;width:100%;table-layout:auto}
+.gam-history-table th{white-space:nowrap}
+.gam-history-table td{overflow-wrap:anywhere;vertical-align:middle;max-width:300px}
+.gam-history-table td strong,.gam-history-table td small{display:block}
+.gam-history-table td strong{font-size:12px;color:#eae3ff;font-weight:800}
+.gam-history-table td small{margin-top:3px;font-size:10px;color:#aaa0c2}
+.gam-history-admin{color:#f6dc9b;font-weight:750}
+.gam-history-type{display:inline-block;padding:5px 8px;border:1px solid rgba(127,140,255,.3);border-radius:8px;background:rgba(127,140,255,.09);color:#c7cbff;white-space:nowrap;font-size:10px}
+.gam-history-transition{white-space:nowrap;display:block;margin-bottom:6px;color:#ddd1e9;font-variant-numeric:tabular-nums}
+.gam-history-reason{min-width:150px;line-height:1.7;color:#c7c1d6}
+.gam-history-status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:800;white-space:nowrap}
+.gam-history-status.ok{color:#9aefd0;background:rgba(79,214,160,.1);border:1px solid rgba(79,214,160,.24)}
+.gam-history-status.special{color:#ffd3a2;background:rgba(246,180,90,.1);border:1px solid rgba(246,180,90,.24)}
+.gam-history-link{display:inline-flex;white-space:nowrap;color:#f6dc9b;font-weight:750;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+.gam-history-link:hover{color:#fff3d5}
+@media(max-width:1230px){.gam-history-form{grid-template-columns:repeat(4,minmax(0,1fr))}.gam-history-form label:first-child{grid-column:span 2}.gam-history-form button,.gam-history-clear{grid-column:auto}}
+@media(max-width:860px){.gam-history-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.gam-history-form{grid-template-columns:repeat(2,minmax(0,1fr))}.gam-history-form label:first-child{grid-column:span 2}}
+@media(max-width:680px){
+  .gam-history-back{width:100%;white-space:normal}
+  .gam-history-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .gam-history-form label:first-child{grid-column:1/-1}
+  .gam-history-form button,.gam-history-clear{width:100%}
+  .gam-history-panel .gam-audit-scroll{border:0;overflow:visible}
+  .gam-history-table{display:block;min-width:0;width:100%;border:0}
+  .gam-history-table thead{display:none}
+  .gam-history-table tbody{display:grid;gap:12px}
+  .gam-history-table tr{display:block;border:1px solid rgba(226,180,90,.18);padding:12px 14px;border-radius:13px;background:rgba(12,10,30,.85)}
+  .gam-history-table tr:hover td{background:transparent}
+  .gam-history-table td{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;max-width:none;padding:7px 0;border:0;font-size:11px;text-align:right;overflow-wrap:anywhere}
+  .gam-history-table td::before{content:attr(data-label);flex:0 0 100px;color:#9387b0;font-weight:800;text-align:left;font-size:10px}
+  .gam-history-table td>strong{font-size:11px}
+  .gam-history-table td .gam-history-transition{margin:0}
+  .gam-history-table td .gam-pill{margin-left:6px}
+  .gam-history-table td.gam-history-reason{text-align:right}
+  .gam-history-table td.gam-history-reason{min-width:0;display:flex}
+  .gam-history-form label{font-size:10px}
+}
+@media(max-width:400px){.gam-history-form{grid-template-columns:minmax(0,1fr)}.gam-history-form label:first-child{grid-column:auto}.gam-history-table td::before{flex-basis:88px}}
