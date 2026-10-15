@@ -43,9 +43,11 @@ try {
             if($direction==='bulk_unban') {
                 $fingerprint=isset($_POST['fingerprint']) && is_string($_POST['fingerprint'])
                     ?$_POST['fingerprint']:'';
-                $result=kp_game_moderation_bulk_unban($db,$admin,$type,$reason,$confirm,$fingerprint);
+                $selectedIds=isset($_POST['selected_ids']) && is_array($_POST['selected_ids'])
+                    ? $_POST['selected_ids'] : [];
+                $result=kp_game_moderation_bulk_unban($db,$admin,$type,$reason,$confirm,$fingerprint,$selectedIds);
                 $label=$type==='account'?'tài khoản':'nhân vật';
-                $notice='Đã mở ban '.(int)$result['changed'].' / '.(int)$result['total'].' '.$label.'.';
+                $notice='Đã mở ban '.(int)$result['changed'].' / '.(int)$result['total'].' '.$label.' được chọn; giữ nguyên ban '.(int)$result['excluded'].' '.$label.' không chọn.';
                 if($result['failed']>0) {
                     $notice.=' Có '.(int)$result['failed'].' lỗi chưa xử lý; xem PHP error log, sau đó tải lại.';
                 }
@@ -183,6 +185,30 @@ $banClass=function(int $ban): string {return $ban===0?'ok':($ban===1?'banned':'s
           <input type="hidden" name="target_type" value="<?= kp_e($type) ?>">
           <input type="hidden" name="direction" value="bulk_unban">
           <input type="hidden" name="fingerprint" value="<?= kp_e(kp_game_moderation_bulk_fingerprint($bulkTargets[$type])) ?>">
+          <fieldset class="gam-bulk-pick">
+            <legend>Chọn <?= kp_e($meta['label']) ?> để mở ban</legend>
+            <p class="gam-hint">Chỉ các mục được tích mới mở ban. Bỏ tích để <strong>giữ nguyên ban</strong> cho trường hợp đặc biệt. Mặc định chưa chọn ai.</p>
+            <div class="gam-bulk-tools">
+              <input type="search" class="gam-bulk-search" data-bulk-search placeholder="Lọc tên / ID..." aria-label="Lọc danh sách <?= kp_e($meta['label']) ?>">
+              <button type="button" data-bulk-select="all">Chọn tất cả hiển thị</button>
+              <button type="button" data-bulk-select="none">Bỏ chọn tất cả</button>
+              <output class="gam-bulk-count" data-bulk-count>Đã chọn 0 / <?= $count ?></output>
+            </div>
+            <div class="gam-bulk-target-list">
+              <?php foreach($bulkTargets[$type] as $target):
+                $label=(string)$target['target_name'];
+                $owner=(string)($target['owner_name']??'');
+                $searchText=$label.' '.$owner.' '.(int)$target['id'];
+              ?>
+              <label class="gam-bulk-target" data-bulk-item data-search="<?= kp_e(strtolower($searchText)) ?>">
+                <input type="checkbox" name="selected_ids[]" value="<?= (int)$target['id'] ?>" data-bulk-checkbox>
+                <span><strong><?= kp_e($label) ?></strong>
+                  <small>#<?= (int)$target['id'] ?><?= $owner!==''?' · Tài khoản '.kp_e($owner):'' ?></small></span>
+                <em>Giữ ban nếu bỏ chọn</em>
+              </label>
+              <?php endforeach; ?>
+            </div>
+          </fieldset>
           <label>Lý do mở ban hàng loạt<textarea name="reason" minlength="8" maxlength="250" rows="2" required placeholder="Ghi lý do cho tất cả đối tượng..."></textarea></label>
           <label>Nhập đúng câu xác nhận <code><?= kp_e($meta['phrase']) ?></code>
             <input type="text" name="confirm_name" maxlength="64" required autocomplete="off" data-exact-name="<?= kp_e($meta['phrase']) ?>" placeholder="<?= kp_e($meta['phrase']) ?>">
@@ -194,7 +220,7 @@ $banClass=function(int $ban): string {return $ban===0?'ok':($ban===1?'banned':'s
     </div>
    <?php endforeach; ?>
    </div>
-   <p class="gam-hint">Danh sách ban được kiểm tra lại ngay trước khi thực hiện. Nếu có biến động sau khi mở form, thao tác sẽ dừng và yêu cầu tải lại. Mỗi đối tượng mở ban thành công được ghi nhật ký riêng.</p>
+   <p class="gam-hint">Có thể chọn tất cả rồi bỏ tích những tài khoản/nhân vật đặc biệt cần giữ ban. Những trạng thái ban khác 1 và nhân vật GM bị loại khỏi danh sách. Danh sách được đối chiếu lại trước khi thực hiện; mỗi đối tượng được mở ban đều có nhật ký riêng.</p>
  </section>
  <section class="gam-grid">
   <div class="gam-left">
