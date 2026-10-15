@@ -60,7 +60,7 @@ function kp_game_moderation_history(PDO $db, int $accountId, int $limit = 60): a
  * A pending audit row is inserted first, since game tables are MyISAM and cannot
  * participate in an atomic transaction with InnoDB logging.
  */
-function kp_game_moderation_change(PDO $db, array $admin, string $type, int $id, string $direction, string $reason): string
+function kp_game_moderation_change(PDO $db, array $admin, string $type, int $id, string $direction, string $reason, string $confirmation): string
 {
     if (!in_array($type, ['account','character'], true) || $id < 1) {
         throw new RuntimeException('Loại tài khoản hoặc ID nhân vật không hợp lệ.');
@@ -113,6 +113,9 @@ function kp_game_moderation_change(PDO $db, array $admin, string $type, int $id,
             if ((int)$record['isAdmin'] !== 0) {
                 throw new RuntimeException('Không thể khóa/mở khóa nhân vật quản trị game tại đây.');
             }
+        }
+        if (!hash_equals($name, trim($confirmation))) {
+            throw new RuntimeException('Tên xác nhận không trùng với tài khoản/nhân vật được chọn.');
         }
         // Both flags are 0/1 for moderation, but preserve reserved game statuses.
         if (!in_array($currentBan, [0,1], true)) {
