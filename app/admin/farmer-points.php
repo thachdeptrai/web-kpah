@@ -162,7 +162,7 @@ $format=function($v): string{
     <article class="metric"><div class="metric-top">Vượt ngưỡng theo dõi <span>⚑</span></div><strong><?= $format($summary['warnings']??0) ?></strong><small>Từ <?= $format($alert) ?> điểm trở lên · chưa kết luận bug</small></article>
     <article class="metric"><div class="metric-top">Dữ liệu không hợp lệ <span>!</span></div><strong><?= $format($summary['malformed']??0) ?></strong><small>Có trường điểm nhưng sai định dạng</small></article>
   </section>
-  <?php if($monitorReady): ?>
+  <?php if($monitorReady && $q==='' && $state==='all' && $min===null && $max===null): ?>
   <section class="panel farmer-panel" aria-label="Biến động 60 phút">
     <div class="panel-heading"><div><div class="eyebrow">GIÁM SÁT / 60 PHÚT</div><h2>Nhân vật tăng điểm nhanh</h2><p>Theo số dư tăng giữa các lượt quét, không phải kết luận bug.</p></div><span class="live">Lịch sử DB</span></div>
     <?php if($monitorHot): ?><div class="farmer-hot-list">
