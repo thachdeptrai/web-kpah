@@ -58,3 +58,5 @@
 .farmer-filter-mini a.active{background:#a89aff20;border-color:#a89aff;color:#f1ecff}
 @media(max-width:700px){.farmer-hot-list{grid-template-columns:1fr}.farmer-history-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.farmer-history-metrics{grid-template-columns:1fr 1fr}.farmer-hot-card{align-items:flex-start}}
+
+.farmer-history-scroll{margin-top:18px}

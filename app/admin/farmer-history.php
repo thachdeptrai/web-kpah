@@ -63,7 +63,7 @@ if($ready){
                           FROM kp_farmer_monitor_changes WHERE '.$where.'
                           ORDER BY id DESC LIMIT ? OFFSET ?');
         $cursor=1;
-        foreach($params as $v)$st->bindValue($cursor++,$v,PDO::PARAM_INT===gettype($v)?PDO::PARAM_INT:(is_int($v)?PDO::PARAM_INT:PDO::PARAM_STR));
+        foreach($params as $v)$st->bindValue($cursor++,$v,is_int($v)?PDO::PARAM_INT:PDO::PARAM_STR);
         $st->bindValue($cursor++,75,PDO::PARAM_INT);
         $st->bindValue($cursor,($page-1)*75,PDO::PARAM_INT);
         $st->execute();
@@ -174,7 +174,7 @@ $url=function($pageNumber)use($id,$mode,$limit): string {
       <label class="farmer-field"><span>Ngưỡng cảnh báo, điểm/giờ</span><input type="number" min="100" max="1000000" name="alert" value="<?= $limit ?>"></label>
       <button class="farmer-apply" type="submit">Lọc lịch sử ↗</button>
     </form>
-    <div class="table-scroll farmer-table-scroll" style="margin-top:18px">
+    <div class="table-scroll farmer-table-scroll farmer-history-scroll">
       <table class="farmer-table farmer-history-table">
         <thead><tr><th>Thời gian ghi nhận</th><th>Khoảng cách</th><th>Điểm trước → sau</th><th>Điểm +/-</th><th>Lượng trước → sau</th><th>Lượng +/-</th><th>Hộp/ngày</th><th>Nhận định</th></tr></thead>
         <tbody>

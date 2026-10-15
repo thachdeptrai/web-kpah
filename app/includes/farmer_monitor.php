@@ -63,6 +63,7 @@ function kp_farmer_monitor_hot(PDO $db,string $which='points'): array {
         MAX(observed_at) AS last_observed
         FROM kp_farmer_monitor_changes
         WHERE observed_at>=? GROUP BY char_id
+        HAVING points_up>0 OR luong_up>0
         ORDER BY $order DESC,char_id ASC LIMIT 8");
     $st->execute([date('Y-m-d H:i:s',time()-3600)]);
     return $st->fetchAll(PDO::FETCH_ASSOC);

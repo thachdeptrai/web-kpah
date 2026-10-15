@@ -13,3 +13,6 @@ monitor_check(strpos($collector,'FOR UPDATE')!==false,'serial snapshot');
 monitor_check(strpos($collector,'kp_farmer_points')!==false,'game parser');
 monitor_check(strpos($collector,'$luong-$prevLuong')!==false,'currency deltas');
 monitor_check(!preg_match('/(?:UPDATE|DELETE|INSERT INTO)\s+tob_char\b/i',$collector),'game data read-only');
+
+$helper=file_get_contents(KP_ROOT.'/app/includes/farmer_monitor.php');
+monitor_check(strpos($helper,'HAVING points_up>0 OR luong_up>0')!==false,'hot list excludes unchanged balances');
