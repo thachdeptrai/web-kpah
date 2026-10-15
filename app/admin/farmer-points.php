@@ -8,6 +8,7 @@ require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/admin_security.php';
 require_once __DIR__.'/../includes/admin_nav.php';
 require_once __DIR__.'/../includes/farmer_points.php';
+require_once __DIR__.'/../includes/farmer_monitor.php';
 kp_admin_require();
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
@@ -108,6 +109,15 @@ try{
     kp_log('admin farmer points monitoring unavailable',$e);
     $error=true;
 }
+$monitorReady=false;$monitorStats=[];$monitorLast=null;$monitorHot=[];
+try{
+    $monitorReady=kp_farmer_monitor_ready(kp_db());
+    if($monitorReady){
+        $monitorStats=kp_farmer_monitor_hourly(kp_db(),array_column($rows,'id'));
+        $monitorHot=kp_farmer_monitor_hot(kp_db());
+        $monitorLast=kp_db()->query('SELECT MAX(sampled_at) FROM kp_farmer_monitor_state')->fetchColumn();
+    }
+}catch(Throwable $e){kp_log('farmer monitor summary unavailable',$e);$monitorReady=false;}
 $filterQuery=['q'=>$q,'state'=>$state,'sort'=>$sort,'size'=>$perPage,'alert'=>$alert];
 if($min!==null)$filterQuery['min']=$min;
 if($max!==null)$filterQuery['max']=$max;
@@ -139,6 +149,12 @@ $format=function($v): string{
     <p>Theo dõi số dư điểm nông dân của từng nhân vật trong database game. Tìm kiếm, lọc giá trị không hợp lệ và kiểm tra điểm cao bất thường, không ghi thay đổi vào SQL.</p></div>
     <span class="farmer-readonly">● LIVE DATA · READ ONLY</span>
   </section>
+  <?php if($monitorReady): ?>
+  <div class="farmer-monitor-status"><strong><?= $monitorLast && strtotime((string)$monitorLast)>=time()-900?'Đang ghi lịch sử':'Chưa có lượt quét gần đây' ?></strong>
+  <span>Mẫu gần nhất: <?= $monitorLast?kp_e($monitorLast):'Chưa có' ?></span></div>
+  <?php else: ?>
+  <div class="alert" role="status"><strong>Chưa bật lưu lịch sử.</strong> Số dư game vẫn đọc bình thường. Chạy <code>php tools/farmer-monitor.php install</code> và đặt lịch theo <code>docs/FARMER_MONITORING.md</code>.</div>
+  <?php endif; ?>
   <?php if($error): ?><div class="alert" role="alert">Không tải được dữ liệu Điểm nông dân. Kiểm tra kết nối database và log PHP trên máy chủ.</div><?php endif; ?>
   <section class="metrics farmer-metrics" aria-label="Tổng hợp theo bộ lọc">
     <article class="metric"><div class="metric-top">Nhân vật khớp lọc <span>♙</span></div><strong><?= $format($summary['total']??0) ?></strong><small>Tổng bản ghi phù hợp</small></article>
@@ -146,6 +162,15 @@ $format=function($v): string{
     <article class="metric"><div class="metric-top">Vượt ngưỡng theo dõi <span>⚑</span></div><strong><?= $format($summary['warnings']??0) ?></strong><small>Từ <?= $format($alert) ?> điểm trở lên · chưa kết luận bug</small></article>
     <article class="metric"><div class="metric-top">Dữ liệu không hợp lệ <span>!</span></div><strong><?= $format($summary['malformed']??0) ?></strong><small>Có trường điểm nhưng sai định dạng</small></article>
   </section>
+  <?php if($monitorReady): ?>
+  <section class="panel farmer-panel" aria-label="Biến động 60 phút">
+    <div class="panel-heading"><div><div class="eyebrow">GIÁM SÁT / 60 PHÚT</div><h2>Nhân vật tăng điểm nhanh</h2><p>Theo số dư tăng giữa các lượt quét, không phải kết luận bug.</p></div><span class="live">Lịch sử DB</span></div>
+    <?php if($monitorHot): ?><div class="farmer-hot-list">
+    <?php foreach($monitorHot as $hot): ?>
+      <a class="farmer-hot-card" href="/quan-tri/diem-nong-dan/lich-su?id=<?= (int)$hot['char_id'] ?>"><strong><?= kp_e($hot['charname']) ?></strong><span>Điểm +<?= number_format((int)$hot['points_up'],0,',','.') ?></span><span>Lượng +<?= number_format((int)$hot['luong_up'],0,',','.') ?></span>↗</a>
+    <?php endforeach; ?></div><?php else: ?><p class="farmer-caption">Chưa có biến động trong 60 phút.</p><?php endif; ?>
+  </section>
+  <?php endif; ?>
   <section class="panel farmer-panel" aria-labelledby="farmer-filter-heading">
     <div class="panel-heading"><div><div class="eyebrow">BỘ LỌC</div><h2 id="farmer-filter-heading">Truy vấn nhân vật</h2><p>Thay ngưỡng theo dõi để khoanh vùng các tài khoản có điểm cao khác thường.</p></div><a href="/quan-tri/diem-nong-dan" class="farmer-reset">Đặt lại bộ lọc ↺</a></div>
     <form class="farmer-form" method="get" action="/quan-tri/diem-nong-dan">
@@ -175,9 +200,10 @@ $format=function($v): string{
       <span class="live">Database game</span>
     </div>
     <div class="table-scroll farmer-table-scroll"><table class="farmer-table">
-      <thead><tr><th>ID</th><th>Tài khoản</th><th>Nhân vật</th><th>Cấp</th><th>Điểm nông dân</th><th>Hộp/ngày</th><th>Online farm/ngày</th><th>Đăng nhập gần nhất</th><th>Đánh giá dữ liệu</th></tr></thead>
+      <thead><tr><th>ID</th><th>Tài khoản</th><th>Nhân vật</th><th>Cấp</th><th>Điểm nông dân</th><th>Điểm +1h</th><th>Lượng up +1h</th><th>Lượng up TB/giờ (24h)</th><th>Hộp/ngày</th><th>Online farm/ngày</th><th>Đăng nhập gần nhất</th><th>Đánh giá dữ liệu</th><th>Lịch sử</th></tr></thead>
       <tbody>
       <?php foreach($rows as $r):
+         $trend=$monitorStats[(int)$r['id']]??null;
          $point=$r['farmer_points']===null?null:(int)$r['farmer_points'];
          $boxes=kp_farmer_field($r['pInfo']??null,118,2147483647);
          $farmMs=kp_farmer_field($r['pInfo']??null,122);
@@ -197,15 +223,19 @@ $format=function($v): string{
           <td><?= kp_e($r['charname']) ?></td>
           <td><?= (int)$r['lastLv'] ?></td>
           <td class="farmer-score"><?= $format($point) ?></td>
+          <td><?= !$trend?'—':$format($trend['points_1h']) ?></td>
+          <td><?= !$trend?'—':$format($trend['luong_1h']) ?></td>
+          <td><?= !$trend||$trend['avg_luong_hour']===null?'—':number_format($trend['avg_luong_hour'],1,',','.') ?></td>
           <td><?= $format($boxes) ?></td>
           <td><?= kp_e($farmHours) ?></td>
           <td><?= $last==='' || $last==='2010-01-01 00:00:00'?'—':kp_e($last) ?></td>
           <td><span class="farmer-pill <?= $class ?>"><?= kp_e($label) ?></span>
             <?php if($bad): ?><small class="farmer-raw" title="Giá trị tại pInfo[117]"><?= kp_e(substr((string)$r['farmer_raw'],0,32)) ?></small><?php endif; ?>
           </td>
+          <td><?= $monitorReady?'<a class="farmer-history-link" href="/quan-tri/diem-nong-dan/lich-su?id='.(int)$r['id'].'">Xem ↗</a>':'—' ?></td>
         </tr>
       <?php endforeach; ?>
-      <?php if(!$rows): ?><tr><td class="empty" colspan="9"><?= $error?'Không thể tải dữ liệu.':'Không có nhân vật phù hợp với bộ lọc.' ?></td></tr><?php endif; ?>
+      <?php if(!$rows): ?><tr><td class="empty" colspan="13"><?= $error?'Không thể tải dữ liệu.':'Không có nhân vật phù hợp với bộ lọc.' ?></td></tr><?php endif; ?>
       </tbody>
     </table></div>
     <nav class="farmer-pagination" aria-label="Phân trang bảng giám sát">
@@ -213,6 +243,7 @@ $format=function($v): string{
       <span>Trang <?= $page ?> / <?= $pages ?></span>
       <?php if($page<$pages): ?><a href="<?= kp_e($pageUrl($page+1)) ?>">Trang tiếp →</a><?php endif; ?>
     </nav>
+    <p class="farmer-caption">Lượng up là tổng phần tăng dương quan sát được của số dư Lượng trong DB, không khẳng định Lượng kiếm được từ farm. Trung bình/giờ sử dụng thời gian theo dõi thực tế trong tối đa 24 giờ. Nếu game chưa lưu dữ liệu mới, số liệu sẽ chậm.</p>
     <p class="farmer-caption">Điểm được đọc từ <code>tob_char.pInfo[117]</code>; hộp/ngày: <code>[118]</code>; online farm/ngày: <code>[122]</code> (đổi mili-giây sang giờ). Dấu “—” là thiếu hoặc không đọc được dữ liệu. Ngưỡng cảnh báo chỉ phục vụ rà soát, không tự kết luận gian lận; điểm của nhân vật đang online có thể chỉ cập nhật sau khi server lưu.</p>
   </section>
   <footer><span>KPAH · GIÁM SÁT ĐIỂM NÔNG DÂN</span><a href="/quan-tri">← Quay về tổng quan quản trị</a></footer>
