@@ -85,8 +85,8 @@ $csrf = kp_csrf_token();
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
 <title>Đăng nhập quản trị · NGHIỆN KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin-login.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-login.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-login.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-login.css') ?>">
 </head>
 <body class="kp-admin-login-page">
 <div class="kp-admin-login-scene" aria-hidden="true"></div>
