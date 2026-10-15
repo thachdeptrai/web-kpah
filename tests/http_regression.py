@@ -140,6 +140,10 @@ jar_fields={
     'source[windows]':'url','source[android]':'url','source[ios]':'url','source[java]':'file',
     'url[windows]':'','url[android]':'','url[ios]':'','url[java]':''
 }
+status,headers,body=c.request('/quan-tri/tai-game',{'csrf':'bad','source[java]':'url','url[java]':'https://example.com/test.jar'},headers={'Accept':'application/json'})
+check(status==403 and json.loads(body)['ok'] is False and 'CSRF' in json.loads(body)['message'],'AJAX CSRF failure returns JSON 403')
+status,headers,body=c.request('/quan-tri/tai-game',jar_fields,headers={'Accept':'application/json'})
+check(status==422 and json.loads(body)['ok'] is False and 'nguồn tải' in json.loads(body)['message'].lower(),'AJAX missing file returns JSON validation error')
 boundary='----KPAHJarIntegrationTest'
 part=[]
 for name,value in jar_fields.items():
