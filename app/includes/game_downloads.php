@@ -21,6 +21,21 @@ function kp_game_download_dir()
     return KP_ROOT . '/storage/game-downloads';
 }
 
+/**
+ * Parse PHP INI shorthand limits (for example "2M", "512M", "1G").
+ * Returns 0 when unset/unlimited; callers must also account for proxy limits.
+ */
+function kp_game_download_ini_bytes($raw)
+{
+    $value = trim((string)$raw);
+    if ($value === '' || $value === '-1' || $value === '0') return 0;
+    if (!preg_match('/^(\d+(?:\.\d+)?)\s*([KMG]?)B?$/iD', $value, $match)) return 0;
+    $factor = ['' => 1, 'K' => 1024, 'M' => 1048576, 'G' => 1073741824];
+    $unit = strtoupper($match[2]);
+    $bytes = (float)$match[1] * $factor[$unit];
+    return $bytes > PHP_INT_MAX ? PHP_INT_MAX : (int)$bytes;
+}
+
 function kp_game_download_url($value)
 {
     $url = trim((string)$value);
