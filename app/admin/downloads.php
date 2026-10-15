@@ -60,7 +60,7 @@ $platforms = kp_game_platforms();
 <div class="head-right"><a class="logout" href="/">Xem trang chủ ↗</a><span><?= kp_e($admin['username']) ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div></header>
 <?php kp_admin_nav('downloads', 'admin'); ?>
 <main class="wrap dl-wrap">
-<section class="hero dl-hero"><div><div class="eyebrow">GAME DISTRIBUTION / QUẢN TRỊ</div><h2>Phát hành game <em>chủ động.</em></h2><p>Bật hoặc tắt nút tải từng nền tảng, dán link HTTPS hoặc upload bản cài lên VPS. Không cần sửa code hay database.</p></div><a class="dl-preview" href="/#tai-game" target="_blank" rel="noopener noreferrer">Xem khu tải game ↗</a></section>
+<section class="hero dl-hero"><div><div class="eyebrow">GAME DISTRIBUTION / QUẢN TRỊ</div><h2>Phát hành game <em>chủ động.</em></h2><p>Bật hoặc tắt từng bản tải Windows, Java JAR, Android và iOS; dán link HTTPS hoặc upload file lên VPS. Không cần sửa code hay database.</p></div><a class="dl-preview" href="/#tai-game" target="_blank" rel="noopener noreferrer">Xem khu tải game ↗</a></section>
 <?php if ($notice): ?><div class="notice" role="status"><?= kp_e($notice) ?></div><?php endif; ?>
 <?php if ($error): ?><div class="error" role="alert"><?= kp_e($error) ?></div><?php endif; ?>
 <form id="dl-form" method="post" enctype="multipart/form-data" action="/quan-tri/tai-game" class="dl-form">
@@ -69,11 +69,11 @@ $platforms = kp_game_platforms();
 <div class="dl-grid">
 <?php foreach ($platforms as $key => $platform): $row = $rows[$key]; ?>
 <section class="card dl-card">
-<div class="dl-card-top"><div class="dl-platform"><span class="dl-platform-icon" aria-hidden="true"><?= $key === 'windows' ? '▦' : ($key === 'android' ? '▣' : '◈') ?></span><div><span class="section-kicker">BẢN PHÁT HÀNH</span><h2><?= kp_e($platform['name']) ?></h2></div></div><span class="pill<?= $row['enabled'] ? '' : ' off' ?>"><?= $row['enabled'] ? 'Đang mở' : 'Đang tắt' ?></span></div>
+<div class="dl-card-top"><div class="dl-platform"><span class="dl-platform-icon" aria-hidden="true"><?= $key === 'windows' ? '▦' : ($key === 'android' ? '▣' : ($key === 'java' ? '☕' : '◈')) ?></span><div><span class="section-kicker">BẢN PHÁT HÀNH</span><h2><?= kp_e($platform['name']) ?></h2></div></div><span class="pill<?= $row['enabled'] ? '' : ' off' ?>"><?= $row['enabled'] ? 'Đang mở' : 'Đang tắt' ?></span></div>
 <label class="dl-toggle"><input type="checkbox" name="enabled[<?= kp_e($key) ?>]" value="1" <?= $row['enabled'] ? 'checked' : '' ?>><span class="dl-switch" aria-hidden="true"></span><span><strong>Cho phép người chơi tải</strong><small>Bỏ tích để ẩn nút tải trên trang chủ.</small></span></label>
 <div class="dl-field"><label for="source-<?= kp_e($key) ?>">Nguồn tải</label><select id="source-<?= kp_e($key) ?>" name="source[<?= kp_e($key) ?>]"><option value="url"<?= $row['source'] === 'url' ? ' selected' : '' ?>>Link tải bên ngoài (khuyên dùng)</option><option value="file"<?= $row['source'] === 'file' ? ' selected' : '' ?>>File upload lên VPS</option></select></div>
 <div class="dl-field"><label for="url-<?= kp_e($key) ?>">Link tải HTTPS</label><input id="url-<?= kp_e($key) ?>" type="text" inputmode="url" name="url[<?= kp_e($key) ?>]" value="<?= kp_e($row['url']) ?>" maxlength="2048" placeholder="https://..."><small>Dùng khi chọn nguồn link. Hỗ trợ GitHub Releases, CDN hoặc máy chủ tải file.</small></div>
-<div class="dl-field"><label for="upload-<?= kp_e($key) ?>">Upload file <?= kp_e($platform['hint']) ?></label><input id="upload-<?= kp_e($key) ?>" type="file" name="upload[<?= kp_e($key) ?>]" accept="<?= $key === 'windows' ? '.zip,.exe,.msi' : ($key === 'android' ? '.apk' : '.ipa') ?>"><small>Chọn nguồn "File upload lên VPS" trước khi lưu. Không chọn file mới thì giữ file cũ.</small></div>
+<div class="dl-field"><label for="upload-<?= kp_e($key) ?>">Upload file <?= kp_e($platform['hint']) ?></label><input id="upload-<?= kp_e($key) ?>" type="file" name="upload[<?= kp_e($key) ?>]" accept="<?= $key === 'windows' ? '.zip,.exe,.msi' : ($key === 'android' ? '.apk' : ($key === 'java' ? '.jar' : '.ipa')) ?>"><small>Chọn nguồn "File upload lên VPS" trước khi lưu. Không chọn file mới thì giữ file cũ.</small></div>
 <div class="dl-file-status">
 <?php if ($row['file'] !== ''): ?>
 <span class="dl-file-label">File đang lưu</span>
