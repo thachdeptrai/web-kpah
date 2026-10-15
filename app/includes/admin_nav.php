@@ -15,6 +15,7 @@ function kp_admin_nav($active = 'home', $role = null)
         'downloads' => ['/quan-tri/tai-game', 'Tải game'],
         'referrals' => ['/quan-tri/ma-gioi-thieu', 'Mã giới thiệu'],
         'key-users' => ['/quan-tri/tai-khoan-key', 'Tài khoản key'],
+        'game-accounts' => ['/quan-tri/tai-khoan-game', 'Tài khoản game'],
         'index' => ['/quan-tri/nap', 'Quản lý nạp'],
         'orders' => ['/quan-tri/doi-soat', 'Đối soát'],
         'rates' => ['/quan-tri/ty-le', 'Tỷ lệ & thưởng'],
@@ -27,7 +28,7 @@ function kp_admin_nav($active = 'home', $role = null)
         ? ['Tài khoản' => ['referrals']]
         : [
             'Truy cập nhanh' => ['home', 'downloads'],
-            'Tài khoản' => ['referrals', 'key-users'],
+            'Tài khoản' => ['game-accounts', 'referrals', 'key-users'],
             'Thanh toán' => ['index', 'orders', 'rates', 'wallet-credit'],
             'Vận hành' => ['grant', 'points', 'farmer'],
         ];
