@@ -11,7 +11,8 @@ $errorStatus = 422;
 $uploadMaxBytes = kp_game_download_ini_bytes(ini_get('upload_max_filesize'));
 $postMaxBytes = kp_game_download_ini_bytes(ini_get('post_max_size'));
 $appMaxBytes = 512 * 1024 * 1024;
-$isAjax = strtolower((string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
+$isAjax = strtolower((string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest'
+    || stripos((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json') !== false;
 $notice = (string)($_SESSION['kp_download_notice'] ?? '');
 unset($_SESSION['kp_download_notice']);
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
