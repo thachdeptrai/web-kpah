@@ -18,7 +18,7 @@ try{$rows=kp_center_notifications(kp_db(),$user['id']);}catch(Throwable $e){kp_l
 kp_player_head('Thông báo','notifications',$user);
 ?>
 <section class="uc-heading"><span>TÀI KHOẢN</span><h1>Trung tâm thông báo</h1><p>Cập nhật về tài khoản và các thao tác được hệ thống ghi nhận từ khi kích hoạt tính năng.</p></section>
-<?php if($result==='error'):?><div class="uc-alert" data-toast-type="error" data-toast-title="Thất bại" data-toast-message="Không thể đánh dấu đã đọc. Hãy tải lại trang và thử lại.">Không thể đánh dấu đã đọc.</div><?php endif;?>
+<?php if($result==='error'):?><div class="uc-alert">Không thể đánh dấu đã đọc. Hãy tải lại trang và thử lại.</div><div hidden data-toast-type="error" data-toast-title="Thất bại" data-toast-message="Yêu cầu không hợp lệ hoặc máy chủ không thể lưu thay đổi."></div><?php endif;?>
 <?php if($unavailable):?><div class="uc-alert">Chưa bật trung tâm thông báo. Quản trị viên cần cài đặt dữ liệu hệ thống.</div>
 <?php else:?>
 <form method="post" class="uc-actions"><input type="hidden" name="csrf" value="<?=kp_e(kp_csrf_token())?>"><input type="hidden" name="action" value="read_all"><button type="submit">Đánh dấu tất cả đã đọc</button></form>
