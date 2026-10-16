@@ -25,7 +25,7 @@ kp_player_head('Thông báo','notifications',$user);
 <?php if(!$rows):?><div class="uc-empty">Bạn chưa có thông báo mới.</div><?php endif;?>
 <div class="uc-list"><?php foreach($rows as $r):?>
 <article class="uc-record <?= (int)$r['is_read']===0?'uc-unread':''?>"><div><strong><?=kp_e($r['title'])?></strong><small><?=kp_e($r['created_at'])?> · <?= (int)$r['is_read']===0?'Chưa đọc':'Đã đọc'?></small><p><?=kp_e($r['body'])?></p></div>
-<?php if(preg_match('~^/[a-z0-9/?&=_-]{1,179}$~iD',(string)$r['link_path'])):?><a href="<?=kp_e($r['link_path'])?>">Xem chi tiết ↗</a><?php endif;?>
+<?php if(kp_center_safe_path((string)$r['link_path']) && (string)$r['link_path'] !== ''):?><a href="<?=kp_e($r['link_path'])?>">Xem chi tiết ↗</a><?php endif;?>
 </article><?php endforeach;?></div>
 <?php endif;?>
 <?php kp_player_foot();?>
