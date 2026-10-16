@@ -38,7 +38,7 @@ function kp_public_page_start(string $title, string $active, string $description
 <a class="lp-skip" href="#noi-dung">Đi đến nội dung chính</a>
 <header class="lp-header" data-landing-header>
     <div class="lp-container lp-nav">
-        <a class="lp-brand" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><span class="lp-brand-mark"><img src="/assets/img/emblem.svg" width="52" height="52" alt=""></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a>
+        <a class="lp-brand" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><span class="lp-brand-mark"><img src="/assets/img/kpah-logo-fantasy.svg" width="174" height="64" alt="NGHIỆN KPAH"></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a>
         <button class="lp-menu-toggle" type="button" aria-expanded="false" aria-controls="lp-menu" data-landing-menu><span></span><span></span><span></span><b class="lp-sr-only">Mở menu</b></button>
         <nav class="lp-links" id="lp-menu" aria-label="Điều hướng chính">
             <?php foreach ($links as $key => $link): ?><a<?= $active === $key ? ' class="is-active" aria-current="page"' : '' ?> href="<?= kp_e($link[0]) ?>"><span><?= kp_e($link[1]) ?></span> <?= kp_e($link[2]) ?></a><?php endforeach; ?>
@@ -59,7 +59,7 @@ function kp_public_page_end(): void
 {
     ?><section class="lp-inner-cta"><div class="lp-container"><div><span class="lp-section-kicker">SẴN SÀNG PHIÊU LƯU?</span><h2>Vào game và viết tiếp <em>hành trình của bạn</em></h2></div><div><a class="lp-button lp-button-primary" href="/tai-game">Tải game ngay</a><a class="lp-button lp-button-glass" href="/dang-ky">Tạo tài khoản</a></div></div></section>
 </main>
-<footer class="lp-footer"><div class="lp-container lp-footer-main"><a class="lp-brand" href="/"><span class="lp-brand-mark"><img src="/assets/img/emblem.svg" width="52" height="52" alt=""></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a><nav aria-label="Liên kết cuối trang"><a href="/gioi-thieu">Giới thiệu</a><a href="/tai-game">Tải game</a><a href="/giftcode">Giftcode</a><a href="/tin-tuc">Tin tức</a><a href="/cong-dong">Cộng đồng</a></nav></div><div class="lp-container lp-footer-bottom"><span>© <?= date('Y') ?> NGHIỆN KPAH · Cổng thông tin cộng đồng người chơi</span><a href="#noi-dung">Lên đầu trang ↑</a></div></footer>
+<footer class="lp-footer"><div class="lp-container lp-footer-main"><a class="lp-brand" href="/"><span class="lp-brand-mark"><img src="/assets/img/kpah-logo-fantasy.svg" width="174" height="64" alt="NGHIỆN KPAH"></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a><nav aria-label="Liên kết cuối trang"><a href="/gioi-thieu">Giới thiệu</a><a href="/tai-game">Tải game</a><a href="/giftcode">Giftcode</a><a href="/tin-tuc">Tin tức</a><a href="/cong-dong">Cộng đồng</a></nav></div><div class="lp-container lp-footer-bottom"><span>© <?= date('Y') ?> NGHIỆN KPAH · Cổng thông tin cộng đồng người chơi</span><a href="#noi-dung">Lên đầu trang ↑</a></div></footer>
 <script src="/assets/js/giftcodes.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/giftcodes.js') ?>" defer></script>
 <script src="/assets/js/landing.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/landing.js') ?>" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
