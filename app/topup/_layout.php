@@ -14,6 +14,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#10131e"><meta name="robots" content="noindex,nofollow">
 <title><?= kp_e($title) ?> · KPAH</title>
+<link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/topup.css?v=<?= (int) @filemtime(KP_ROOT . '/assets/css/topup.css') ?>">
 <?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>"><?php endif;?>
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
@@ -38,5 +39,10 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 }
 function kp_topup_page_end() { ?>
 <footer class="tp-footer"><span>KPAH · TÀI NGUYÊN TRONG GAME</span><span>Kiểm tra kỹ thông tin trước khi xác nhận</span></footer>
-</main></div></body></html>
+</main></div>
+<?php if(!empty($_SESSION['kp_toast']) && is_array($_SESSION['kp_toast'])): $toast=$_SESSION['kp_toast']; unset($_SESSION['kp_toast']); ?>
+<div hidden data-toast-type="<?=kp_e($toast['type']??'success')?>" data-toast-title="<?=kp_e($toast['title']??'')?>" data-toast-message="<?=kp_e($toast['message']??'')?>"></div>
+<?php endif;?>
+<script src="/assets/js/toast.js?v=1" defer></script>
+</body></html>
 <?php }
