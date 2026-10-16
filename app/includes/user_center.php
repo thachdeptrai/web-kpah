@@ -21,10 +21,18 @@ function kp_center_event($userId, $type) {
             ->execute([(int)$userId,$type,$ua,$hint]);
     } catch (Throwable $e) { kp_log('security event recording unavailable', $e); }
 }
+function kp_center_safe_path($path) {
+    // Explicit allowlist prevents protocol-relative links, external redirects,
+    // injected query strings and future unreviewed user-controlled links.
+    return is_string($path) && in_array($path, [
+        '', '/thong-bao', '/lich-su-bao-mat', '/giftcode-cua-toi',
+        '/theo-doi-don-nap', '/lich-su-nap', '/ho-so', '/nhan-vat'
+    ], true);
+}
 function kp_center_notify($userId,$title,$body,$category='system',$path='') {
     if ((int)$userId < 1 || strlen($title)>120 || strlen($body)>500
         || !in_array($category,['system','security','payment','gift'],true)
-        || ($path!=='' && !preg_match('~^/[a-z0-9/?&=_-]{1,179}$~iD',$path))) return false;
+        || !kp_center_safe_path($path)) return false;
     try {
         $st=kp_db()->prepare('INSERT INTO kp_user_notifications (user_id,title,body,category,link_path) VALUES (?,?,?,?,?)');
         return $st->execute([(int)$userId,$title,$body,$category,$path]);
