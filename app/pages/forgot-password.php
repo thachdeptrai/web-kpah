@@ -30,16 +30,18 @@ $version = trim((string) kp_config('app.version', ''));
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-recovery">
+<body class="kp-auth-page kp-auth-recovery kp-auth-v2">
 <a class="skip-link" href="#recovery-form">Bỏ qua và đến biểu mẫu khôi phục</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
-  <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
+  <span class="kp-auth-header-tagline">Thế giới tuổi thơ<br>Sống lại trong bạn!</span>
+  <nav class="kp-auth-links" aria-label="Điều hướng website">
+    <a href="/cong-dong">Cộng đồng</a>
+    <a href="/gioi-thieu">Hướng dẫn</a>
     <a href="/">Trang chủ</a>
-    <a href="/dang-nhap">Đăng nhập</a>
-    <a href="/dang-ky">Đăng ký</a>
-    <a href="/quen-mat-khau" aria-current="page">Khôi phục</a>
+    <a class="kp-auth-download" href="/tai-game"><span aria-hidden="true">↓</span>&nbsp;<span class="kp-auth-download__text">Tải game ngay</span></a>
   </nav>
 </header>
 <div class="scene" aria-hidden="true"><canvas id="embers"></canvas></div>
@@ -55,12 +57,11 @@ $version = trim((string) kp_config('app.version', ''));
     </defs>
 </svg>
 <main class="stage login-stage recovery-stage">
-    <section class="brand recovery-brand" aria-labelledby="page-title">
-        <div class="emblem" aria-hidden="true"><img src="/assets/img/emblem.svg" alt="" width="400" height="400"></div>
-        <p class="wordmark" aria-label="<?= kp_e($appName) ?>"><?= kp_e($appName) ?></p>
-        <p class="recovery-kicker">ACCOUNT SECURITY / <?= $version !== '' ? kp_e($version) : 'RECOVERY CENTER' ?></p>
-        <h1 id="page-title">Lấy lại quyền<br><span>truy cập.</span></h1>
-        <p class="lead">Một bước xác minh email để bạn trở lại hành trình của mình.</p>
+    <section class="brand kp-auth-story recovery-brand" aria-labelledby="page-title">
+        <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">03 · KHÔI PHỤC</span><span class="kp-auth-story__tag">AN TOÀN · BẢO MẬT · TIN CẬY</span></div>
+        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
+        <h1 id="page-title">Lấy lại quyền <span>truy cập.</span></h1>
+        <p class="lead">Xác minh tài khoản và sớm trở lại cùng những chiến hữu của bạn.</p>
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span><strong>Xác minh email:</strong> mã được gửi tới email đã liên kết với tài khoản.</span></li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span><strong>An toàn:</strong> mã chỉ dùng một lần và tự hết hạn.</span></li>
@@ -70,11 +71,21 @@ $version = trim((string) kp_config('app.version', ''));
     </section>
     <section class="panel" aria-labelledby="panel-title">
         <div class="panel-inner login-panel recovery-panel">
+            <nav class="kp-auth-switch" aria-label="Chuyển giữa các trang tài khoản">
+                <a href="/dang-nhap">Đăng nhập</a>
+                <a href="/dang-ky">Đăng ký</a>
+                <a href="/quen-mat-khau" aria-current="page">Quên mật khẩu</a>
+            </nav>
             <div class="login-panel-heading">
                 <span class="login-eyebrow">ACCOUNT RECOVERY <i></i></span>
                 <span class="login-version">SECURE RESET</span>
             </div>
-            <h2 id="panel-title">Quên mật khẩu?</h2>
+            <div class="kp-auth-steps" aria-label="Quy trình khôi phục tài khoản">
+                <div class="kp-auth-steps__item"><span class="kp-auth-steps__num">1</span><span>Xác minh tài khoản</span></div>
+                <div class="kp-auth-steps__item"><span class="kp-auth-steps__num">2</span><span>Nhận mã qua email</span></div>
+                <div class="kp-auth-steps__item"><span class="kp-auth-steps__num">3</span><span>Đặt mật khẩu mới</span></div>
+            </div>
+            <h2 id="panel-title">Khôi phục mật khẩu</h2>
             <p class="login-intro">Nhập tài khoản hoặc email đã đăng ký. Sau khi nhận mã, hãy đặt mật khẩu mới.</p>
             <form id="recovery-form" data-endpoint="/api/forgot-password" autocomplete="on">
                 <input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
