@@ -291,3 +291,14 @@ body.kp-auth-page {
   .kp-auth-page .wordmark { background:none;color:CanvasText;-webkit-text-fill-color:CanvasText; }
   .kp-auth-page .panel-inner,.kp-auth-page .control input,.kp-auth-page .btn { border:1px solid CanvasText; }
 }
+/* Light illustrated foundation and larger legible auth text. No behavior changes. */
+.kp-auth-page .scene{background:linear-gradient(180deg,rgba(231,247,255,.25),rgba(250,253,255,.75)),url("/assets/img/fantasy-world.svg") center top/cover no-repeat,#ebf8ff}
+.kp-auth-page .kp-auth-logo img{width:152px;height:59px;max-width:34vw;padding:0;border:0;border-radius:0;background:none;box-shadow:none;filter:drop-shadow(0 5px 8px rgba(67,83,124,.17))}
+.kp-auth-page .kp-auth-logo strong{display:none}
+.kp-auth-page .kp-auth-links a{font-size:.91rem}
+.kp-auth-page .panel h2{font-size:clamp(1.42rem,2vw,1.95rem)}
+.kp-auth-page .control input{font-size:.94rem;min-height:45px}
+.kp-auth-page .control label,.kp-auth-page .field label,.kp-auth-page .check-label{font-size:.9rem}
+.kp-auth-page .btn{font-size:.97rem}
+.kp-auth-page .brand .lead{font-size:clamp(.94rem,1.3vw,1.07rem)}
+@media(max-width:600px){.kp-auth-page .kp-auth-logo img{width:126px;height:auto;max-width:42vw}}
