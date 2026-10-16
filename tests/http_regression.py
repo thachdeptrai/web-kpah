@@ -1,3 +1,4 @@
+"""HTTP regression against a disposable kpah_route_test fixture. No external services."""
 import html, http.cookiejar, json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 BASE=os.environ.get('KPAH_TEST_URL','http://127.0.0.1:8089').rstrip('/')
