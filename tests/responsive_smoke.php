@@ -15,7 +15,7 @@ function read_layout(string $path): string {
     return $contents;
 }
 $templates=[
-    'app/pages/index.php','app/pages/register.php','app/pages/login.php',
+    'app/includes/public_landing.php','app/pages/register.php','app/pages/login.php',
     'app/pages/forgot-password.php','app/pages/not-found.php',
     'app/includes/player_portal.php','app/topup/_layout.php',
     'app/admin/index.php','app/admin/login.php','app/admin/referrals.php',
@@ -26,6 +26,8 @@ foreach($templates as $template){
     check_layout(strpos($html,'/assets/css/site-responsive.css')!==false,
                  'responsive CSS included in '.$template);
 }
+check_layout(strpos(read_layout('app/pages/index.php'),'public_landing.php')!==false,
+             'public home loads shared responsive landing shell');
 $home=read_layout('app/pages/home.php');
 $source=read_layout('app/includes/dashboard_data.php');
 $layout=read_layout('assets/css/site-responsive.css');
