@@ -43,7 +43,7 @@ JS=r"""JSON.stringify((()=>{
  fail(!seen('.kp-auth-switch'),'account tabs absent');
  const storyLogo=$('.kp-auth-story__logo');
  fail(!storyLogo||!storyLogo.complete||storyLogo.naturalWidth===0,'story logo unavailable');
- const btns=[...document.querySelectorAll('form input:not([type=hidden]):not([type=checkbox])')];
+ const btns=[...document.querySelectorAll('form input:not([type=hidden]):not([type=checkbox])')].filter(input=>!input.closest('.hp') && getComputedStyle(input).visibility !== 'hidden');
  btns.forEach((input,i)=>{const t=input.getBoundingClientRect();
    fail(t.right>innerWidth+2||t.left<0,'input outside viewport '+i)});
  return {width:innerWidth,page:location.pathname,scrollWidth:document.documentElement.scrollWidth,
