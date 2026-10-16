@@ -289,6 +289,7 @@ body.kp-auth-page.kp-auth-v2{
  .kp-auth-v2 .kp-auth-topbar{min-height:64px;padding:8px 10px}
  .kp-auth-v2 .kp-auth-logo img{width:108px;height:46px}
  .kp-auth-v2 .kp-auth-links a{font-size:10px;min-height:34px;padding:6px 7px}
+ .kp-auth-v2 .kp-auth-links a[href="/cong-dong"],.kp-auth-v2 .kp-auth-links a[href="/gioi-thieu"]{display:none}
  .kp-auth-v2 .kp-auth-links .kp-auth-download{padding:7px 8px}
  .kp-auth-v2 .kp-auth-links .kp-auth-download .kp-auth-download__text{display:none}
  .kp-auth-v2 .stage,.kp-auth-v2 .login-stage,.kp-auth-v2 .recovery-stage{width:calc(100% - 16px);gap:9px}
