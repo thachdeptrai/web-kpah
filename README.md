@@ -149,6 +149,14 @@ Cấu hình riêng đặt ngoài Git:
 
 **Không commit mật khẩu, API key, SQL dump, `.env` hoặc nhật ký giao dịch.** Không xóa `storage/topup/` khi deploy; cần sao lưu **cả database lẫn storage** để giữ dữ liệu đối soát.
 
+## Trung tâm người chơi và Toast thông báo
+
+Đã có 4 đường dẫn (tất cả yêu cầu đăng nhập): `/giftcode-cua-toi`, `/thong-bao`, `/theo-doi-don-nap`, `/lich-su-bao-mat`.
+
+**Quan trọng:** Sau khi pull mã mới, sao lưu DB và chạy `database/user_center.sql` trên database đang được web sử dụng. Script chỉ tạo 2 bảng InnoDB mới; không sửa cấu trúc game. Lịch sử bảo mật bắt đầu ghi từ thời điểm tính năng được kích hoạt; thông báo hiện ghi nhận đổi mật khẩu thành công, không giả lập thông báo thanh toán cho đơn cũ.
+
+Các thao tác đã tích hợp hiển thị Toast góc phải gồm tiêu đề thành công/thất bại và lý do. Chi tiết cách mở rộng: [docs/USER_CENTER.md](docs/USER_CENTER.md).
+
 ## Thư mục RES và icon vật phẩm
 
 Thư mục `res/` đã được tạo ở root, bên trong có `res/.gitignore` để **không commit tài nguyên copy từ game**. Copy **nội dung của `map/`** từ server Java sang `res/`; icon sẽ ở `res/icon/176.png` tương ứng `map/icon/176.png`.
