@@ -223,3 +223,47 @@
  .kp-home-page .lp-quest-card{transition:none}
  .kp-home-page .lp-quest-card:hover{transform:none}
 }
+
+
+/* Refined reward showcase: hand-drawn SVG, zero emoji placeholders */
+.kp-home-page .lp-quest-treasure{
+  position:relative;
+  background:linear-gradient(148deg,#fff 0%,#fffaf0 62%,#f2f0ff 100%);
+  border-color:#e7d8ec
+}
+.kp-home-page .lp-quest-treasure::before{
+  content:"";position:absolute;right:-70px;top:-90px;width:270px;height:270px;
+  border-radius:50%;background:radial-gradient(circle,rgba(255,207,130,.2),transparent 72%);
+  pointer-events:none
+}
+.kp-home-page .lp-quest-treasure .lp-quest-gem{
+  color:#7851dc;border-color:#e6d2ff;
+  background:linear-gradient(135deg,#f9ecff,#e8e9ff);
+  font-family:Georgia,serif;font-size:24px
+}
+.kp-home-page .lp-quest-treasure-art{
+  display:grid;place-items:center;flex:1;
+  min-height:160px;max-height:none;margin:1px 0 0;overflow:visible;position:relative
+}
+.kp-home-page .lp-treasure-illustration{
+  display:block;position:relative;width:min(100%,282px);
+  height:auto;max-height:195px;object-fit:contain;
+  filter:drop-shadow(0 11px 11px rgba(79,78,133,.13));
+  animation:kpf-treasure-float 6s ease-in-out infinite
+}
+.kp-home-page .lp-quest-treasure .lp-quest-meta{
+  display:flex;align-items:baseline;justify-content:center;gap:8px;
+  min-height:35px;margin:0 0 15px
+}
+.kp-home-page .lp-quest-treasure .lp-quest-meta strong{
+  color:#d48021;font-size:clamp(24px,2.5vw,29px)
+}
+.kp-home-page .lp-quest-treasure .lp-quest-meta span{font-size:12px}
+@keyframes kpf-treasure-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(max-width:760px){
+ .kp-home-page .lp-quest-treasure-art{min-height:145px}
+ .kp-home-page .lp-treasure-illustration{max-height:175px}
+}
+@media(prefers-reduced-motion:reduce){
+ .kp-home-page .lp-treasure-illustration{animation:none}
+}
