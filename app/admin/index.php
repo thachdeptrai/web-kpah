@@ -30,7 +30,7 @@ try {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Trang chủ quản trị · KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin-home.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin-home.css?v=<?= (int)@filemtime(KP_ROOT . '/assets/css/admin-home.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
@@ -53,11 +53,15 @@ try {
     <article class="metric"><div class="metric-top"><span>Lượt dùng mã</span><span class="metric-icon cyan">◷</span></div><strong><?= number_format($stats['uses']) ?></strong><small>Lịch sử sử dụng được ghi nhận</small></article>
   </section>
   <section class="section-heading"><div><div class="eyebrow">WORKSPACE</div><h2>Khu vực quản lý</h2><p>Chọn mục cần làm.</p></div><span class="admin-count"><?= number_format($stats['admins']) ?> admin đang bật</span></section>
-  <div class="gam-dashboard-entry" style="margin:0 0 18px">
-    <a href="/quan-tri/tai-khoan-game" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:16px 20px;border:1px solid rgba(153,137,255,.38);border-radius:15px;background:rgba(153,137,255,.09)">
-      <span><strong style="display:block">♙ Quản lý tài khoản game &amp; nhân vật</strong><small style="display:block;margin-top:5px;color:#aab4ce">Tra cứu người chơi, ban/mở ban tài khoản hoặc nhân vật độc lập, có lịch sử xử lý.</small></span><span>Đi đến quản lý ↗</span>
-    </a>
-  </div>
+  <a class="game-account-feature" href="/quan-tri/tai-khoan-game">
+    <span class="game-account-feature-icon" aria-hidden="true">♙</span>
+    <span class="game-account-feature-copy">
+      <small>QUẢN LÝ NGƯỜI CHƠI / GAME</small>
+      <strong>Quản lý tài khoản &amp; nhân vật</strong>
+      <span>Tra cứu người chơi, khóa hoặc mở khóa tài khoản và nhân vật, xem lịch sử xử lý.</span>
+    </span>
+    <span class="game-account-feature-action">Mở quản lý <span aria-hidden="true">↗</span></span>
+  </a>
   <section class="actions">
     <a class="action-card featured" href="/quan-tri/nap"><span class="action-icon">✧</span><span class="action-copy"><small>THANH TOÁN / 01</small><strong>Quản lý nạp tài nguyên</strong><span>Trang riêng cho tỷ lệ quy đổi, quản lý thanh toán và đối soát giao dịch.</span><b>Mở quản lý nạp <span aria-hidden="true">↗</span></b></span></a>
     <a class="action-card" href="/quan-tri/diem-nong-dan"><span class="action-icon cyan">✧</span><span class="action-copy"><small>VẬN HÀNH / GIÁM SÁT</small><strong>Kiểm tra Điểm nông dân</strong><span>Tìm kiếm, lọc dữ liệu lỗi và theo dõi điểm bất thường theo từng nhân vật.</span><b>Mở bảng giám sát <span aria-hidden="true">↗</span></b></span></a>
