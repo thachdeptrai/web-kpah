@@ -7,6 +7,7 @@ $name = trim((string)($_GET['name'] ?? ''));
 $character = null;
 $groups = [];
 $templates = [];
+$attributeLabels = [];
 $error = false;
 try {
     $pdo = kp_db();
@@ -19,6 +20,8 @@ try {
             ];
         }
         $templates = kp_inventory_templates($pdo, array_map(function($g){ return $g['items']; },$groups));
+        try { $attributeLabels = kp_inventory_attribute_labels($pdo); }
+        catch (Throwable $e) { kp_log('inventory attribute names unavailable', $e); }
     }
 } catch (Throwable $e) { kp_log('character inventory unavailable', $e); $error=true; }
 if (!$error && !$character) http_response_code(404);
@@ -66,7 +69,7 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 </div>
 <?php if ($item['attributes']): ?>
 <details class="ci-attrs"><summary>Thuộc tính lưu trong game</summary><div class="ci-chips">
-<?php foreach ($item['attributes'] as $attribute=>$value): ?><span>ATB <?= (int)$attribute ?>: <?= (int)$value ?></span><?php endforeach; ?>
+<?php foreach ($item['attributes'] as $attribute=>$value): ?><span><?= kp_e(kp_inventory_attribute_name($attribute, $attributeLabels)) ?>: <?= (int)$value ?></span><?php endforeach; ?>
 </div></details>
 <?php endif; ?>
 </div></article>
@@ -75,7 +78,7 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 <?php endif; ?>
 </section>
 <?php endforeach; ?>
-<p class="ci-hint">Icon lấy từ <code>data_item.xstart</code> và file <code>res/icon/{ID}.png</code>. Chép nội dung của <code>map/</code> vào <code>res/</code> để hiện hình. Các thuộc tính ATB hiện dùng số thứ tự gốc để tránh đặt sai tên/chỉ số của game.</p>
+<p class="ci-hint">Icon lấy từ <code>data_item.xstart</code> và file <code>res/icon/{ID}.png</code>. Chép nội dung của <code>map/</code> vào <code>res/</code> để hiện hình. Tên thuộc tính được tải từ bảng <code>data_attribute</code> của game; giá trị giữ nguyên dữ liệu lưu, chưa tự đổi sang phần trăm.</p>
 <?php endif; ?>
 <div class="portal-return"><a href="/nhan-vat">← Quay lại nhân vật</a></div>
 <script src="/assets/js/character-inventory.js?v=1" defer></script>
