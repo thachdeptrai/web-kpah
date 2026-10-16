@@ -107,6 +107,7 @@ jobs:
         run: |
           python3 -m pip install --user websocket-client
           python3 tests/home_layout_visual.py
+          python3 tests/public_pages_visual.py
       - name: Upload homepage viewport screenshots
         if: always() && matrix.php == '8.3' && matrix.server == 'cli'
         uses: actions/upload-artifact@v4
