@@ -79,7 +79,7 @@ $csrf = kp_csrf_token();
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#0b0a16">
+<meta name="theme-color" content="#eef7ff">
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,6 +87,7 @@ $csrf = kp_csrf_token();
 <title>Đăng nhập quản trị · NGHIỆN KPAH</title>
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-login.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-login.css') ?>">
+<link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 </head>
 <body class="kp-admin-login-page">
 <div class="kp-admin-login-scene" aria-hidden="true"></div>
@@ -131,4 +132,5 @@ $csrf = kp_csrf_token();
  </section>
 </main>
 <footer class="kp-auth-footer">© NGHIỆN KPAH · BẢO MẬT DÀNH CHO QUẢN TRỊ VIÊN</footer>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body></html>
