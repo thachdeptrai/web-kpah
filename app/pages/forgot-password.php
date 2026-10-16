@@ -31,8 +31,9 @@ $version = trim((string) kp_config('app.version', ''));
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v3.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v3.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-recovery kp-auth-v2">
+<body class="kp-auth-page kp-auth-recovery kp-auth-v2 kp-auth-v3">
 <a class="skip-link" href="#recovery-form">Bỏ qua và đến biểu mẫu khôi phục</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
@@ -60,10 +61,15 @@ $version = trim((string) kp_config('app.version', ''));
 </svg>
 <main class="stage login-stage recovery-stage">
     <section class="brand kp-auth-story recovery-brand" aria-labelledby="page-title">
+        <div class="kp-auth-story__intro">
         <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">03 · KHÔI PHỤC</span><span class="kp-auth-story__tag">AN TOÀN · BẢO MẬT · TIN CẬY</span></div>
         <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
         <h1 id="page-title">Lấy lại quyền <span>truy cập.</span></h1>
         <p class="lead">Xác minh tài khoản và sớm trở lại cùng những chiến hữu của bạn.</p>
+        </div>
+        <figure class="kp-auth-story__visual" aria-label="Chiến binh tìm lại hành trình">
+            <img src="/assets/img/auth-recovery-adventure.svg" width="760" height="710" alt="" loading="eager" decoding="async">
+        </figure>
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span><strong>Xác minh email:</strong> mã được gửi tới email đã liên kết với tài khoản.</span></li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span><strong>An toàn:</strong> mã chỉ dùng một lần và tự hết hạn.</span></li>
