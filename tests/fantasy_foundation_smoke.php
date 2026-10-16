@@ -36,12 +36,12 @@ foreach (['app/includes/public_landing.php', 'app/includes/player_portal.php', '
           'app/pages/forgot-password.php', 'app/admin/login.php'] as $template) {
     $check(strpos($read($template), '/assets/js/fantasy-foundation.js') !== false, 'JS enabled in ' . $template);
 }
-foreach (['assets/img/fantasy-world.svg', 'assets/img/kpah-logo-fantasy.svg'] as $asset) {
+foreach (['assets/img/fantasy-world.svg', 'assets/img/kpah-logo-fantasy.svg', 'assets/img/treasure-chest-fantasy.svg'] as $asset) {
     $drawing = $read($asset);
     $check(strpos($drawing, '<svg ') !== false && strpos($drawing, '</svg>') !== false,
         'vector art structured ' . $asset);
 }
-foreach (['Khởi đầu hành trình', 'Quà chờ chủ nhân', 'Đi cùng đồng đội'] as $label) {
+foreach (['Khởi đầu hành trình', 'Kho báu phiêu lưu', 'Đi cùng đồng đội'] as $label) {
     $check(strpos($home, $label) !== false, 'quest feature ' . $label);
 }
 foreach (['Top Sức mạnh', 'Nhân vật nổi bật', 'Khám phá KPAH'] as $label) {
