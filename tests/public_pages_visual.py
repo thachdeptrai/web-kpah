@@ -49,7 +49,7 @@ def main():
     exe=next((shutil.which(n) for n in ("google-chrome","google-chrome-stable","chromium","chromium-browser") if shutil.which(n)),None)
     if not exe:raise SystemExit("Chrome/Chromium unavailable")
     failures=[]
-    with tempfile.TemporaryDirectory(prefix="kpah-public-") as profile:
+    with tempfile.TemporaryDirectory(prefix="kpah-public-", ignore_cleanup_errors=True) as profile:
         with open(os.devnull,"wb") as devnull:
             proc=subprocess.Popen([exe,"--headless=new","--no-sandbox","--disable-dev-shm-usage",
                 "--disable-gpu","--no-first-run","--remote-allow-origins=*",
