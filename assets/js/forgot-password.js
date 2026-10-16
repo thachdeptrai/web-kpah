@@ -7,6 +7,8 @@
   function show(message, good) {
     feedback.textContent = message;
     feedback.className = 'form-feedback ' + (good ? 'is-good' : 'is-bad');
+    feedback.setAttribute('role', good ? 'status' : 'alert');
+    feedback.setAttribute('aria-live', good ? 'polite' : 'assertive');
     if (good && window.KpUI && typeof window.KpUI.toast === 'function') {
       window.KpUI.toast({ type: 'success', title: 'Yêu cầu thành công', message: message });
     }
