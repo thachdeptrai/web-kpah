@@ -46,5 +46,6 @@ function kp_topup_page_end() { ?>
 <?php endif;?>
 <script src="/assets/js/toast.js?v=1" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
+<script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body></html>
 <?php }
