@@ -93,5 +93,6 @@ function kp_admin_nav($active = 'home', $role = null)
   </div>
 </nav>
 <script src="/assets/js/admin-nav.js?v=1" defer></script>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
     <?php
 }
