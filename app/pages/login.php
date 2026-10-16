@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/user_center.php';
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 
@@ -32,6 +33,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     $_SESSION['kp_user_username'] = (string)$user['username'];
                     $_SESSION['kp_user_last_seen'] = time();
                     unset($_SESSION['kp_admin_id'], $_SESSION['kp_admin_role']);
+                    kp_center_event((int)$user['id'], 'login');
+                    $_SESSION['kp_toast']=['type'=>'success','title'=>'Đăng nhập thành công','message'=>'Đã mở khu tài khoản của bạn.'];
                     header('Location: /tai-khoan');
                     exit;
                 }
