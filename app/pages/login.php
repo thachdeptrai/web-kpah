@@ -64,6 +64,7 @@ $version = trim((string)kp_config('app.version', ''));
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="/assets/css/register.css?v=1">
     <link rel="stylesheet" href="/assets/css/login.css?v=2">
+    <link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body>
@@ -134,6 +135,8 @@ $version = trim((string)kp_config('app.version', ''));
 </main>
 <footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><?php if ($version !== ''): ?><span>Phiên bản <?= kp_e($version) ?></span><?php endif; ?><a href="/dang-ky">Đăng ký tài khoản</a></footer>
 <script src="/assets/js/scene.js?v=1" defer></script>
+<?php if($error!==''):?><div hidden data-toast-type="error" data-toast-title="Đăng nhập thất bại" data-toast-message="<?=kp_e($error)?>"></div><?php endif;?>
+<script src="/assets/js/toast.js?v=1" defer></script>
 <script src="/assets/js/login.js?v=1" defer></script>
 </body>
 </html>
