@@ -24,7 +24,6 @@ try {
 if (!$error && !$character) http_response_code(404);
 kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 ?>
-<link rel="stylesheet" href="/assets/css/character-inventory.css?v=1">
 <section class="portal-hero portal-hero--compact"><div class="portal-hero-copy">
 <span class="portal-kicker">✦ HỒ SƠ NHÂN VẬT NÂNG CAO</span>
 <h1><?= $character ? kp_e((string)$character['charname']) : 'Không tìm thấy nhân vật' ?></h1>
@@ -55,7 +54,7 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 ?>
 <article class="ci-item">
 <div class="ci-icon">
-<?php if ($icon !== ''): ?><img src="<?= kp_e($icon) ?>" alt="" width="60" height="60" loading="lazy" onerror="this.hidden=true"><?php endif; ?>
+<?php if ($icon !== ''): ?><img src="<?= kp_e($icon) ?>" alt="" width="60" height="60" loading="lazy"><?php endif; ?>
 <span aria-hidden="true">✦</span>
 </div>
 <div class="ci-item-copy"><strong><?= kp_e($itemName) ?></strong>
