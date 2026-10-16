@@ -111,6 +111,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <link rel="stylesheet" href="/assets/css/user-home.css?v=6">
 <link rel="stylesheet" href="/assets/css/home-theme.css?v=7">
 <?php if($withCharacters): ?><link rel="stylesheet" href="/assets/css/characters.css?v=2"><?php endif; ?>
+<?php if($title==='Hồ sơ nhân vật'): ?><link rel="stylesheet" href="/assets/css/character-inventory.css?v=1"><?php endif; ?>
 <link rel="stylesheet" href="/assets/css/player-portal.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-portal.css') ?>">
 <?php if($active==='home'):?><link rel="stylesheet" href="/assets/css/dashboard.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/dashboard.css') ?>"><?php endif;?>
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
