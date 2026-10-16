@@ -52,11 +52,16 @@ for old,new in catalog['aliases'].items():
 for path in ['/','/dang-nhap','/dang-ky','/quen-mat-khau','/quan-tri/dang-nhap']:
     clean_page(guest,path)
 landing_body=clean_page(guest,'/')
-check('id="tai-game"' in landing_body,'landing has download section')
-check('href="#tai-game"' in landing_body,'landing has download CTA')
+check('href="/tai-game"' in landing_body,'landing links to download page')
+check('lp-home-destinations' in landing_body,'landing has focused destination cards')
+for public_path in ('/gioi-thieu','/tai-game','/giftcode','/tin-tuc','/cong-dong'):
+    check('href="'+public_path+'"' in landing_body,'landing links to '+public_path)
+download_body=clean_page(guest,'/tai-game')
 for platform in ('Android','Windows','Java / JAR','iPhone / iPad'):
-    check(platform in landing_body,'landing download platform '+platform)
-check('lp-download-card' in landing_body,'landing download cards render')
+    check(platform in download_body,'download page platform '+platform)
+check('lp-download-card' in download_body,'download cards render on dedicated page')
+for public_path in ('/gioi-thieu','/giftcode','/tin-tuc','/cong-dong'):
+    clean_page(guest,public_path)
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/top-nap','/vi-vnd','/diem-tich-luy']:
     status,h,b=guest.request(path)
     check(status==302 and h.get('Location','').startswith('/dang-nhap'),'guest login guard '+path)
