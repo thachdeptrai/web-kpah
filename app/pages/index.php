@@ -37,6 +37,8 @@ unset($platform);
 $supportUrl = kp_safe_url(kp_config('links.support', ''));
 $communityUrl = 'https://zalo.me/g/zmyedl5en7sldmd9el1z';
 $accountCount = null;
+$characterCount = null;
+$onlineCount = null;
 $publicGiftcodes = [];
 $featuredHeroes = [];
 $rankingMetric = 'Sức mạnh';
@@ -44,6 +46,12 @@ $rankingMetric = 'Sức mạnh';
 try {
     $db = kp_db();
     $accountCount = (int) $db->query('SELECT COUNT(*) FROM team_user')->fetchColumn();
+    try {
+        $characterCount = (int) $db->query('SELECT COUNT(*) FROM tob_char WHERE del=1 AND ban=0')->fetchColumn();
+        $onlineCount = (int) $db->query("SELECT COUNT(*) FROM tob_char WHERE del=1 AND ban=0 AND lastLog >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)")->fetchColumn();
+    } catch (Throwable $countError) {
+        kp_log('không tải được thống kê nhân vật trang chủ', $countError);
+    }
     $publicGiftcodes = kp_giftcode_public_list($db, 6);
     try {
         $featuredHeroes = array_slice(kp_rankings_fetch('strength'), 0, 5);
@@ -116,66 +124,81 @@ $highlights = [
             <span></span><span></span><span></span><b class="lp-sr-only">Mở menu</b>
         </button>
         <nav class="lp-links" id="lp-menu" aria-label="Điều hướng chính">
-            <a href="#gioi-thieu">Giới thiệu</a>
-            <a href="#tai-game">Tải game</a>
+            <a class="is-active" href="/"><span>⌂</span> Trang chủ</a>
+            <a href="/nap-the"><span>♙</span> Nạp thẻ</a>
             <a href="#giftcode">Giftcode</a>
-            <a href="#tin-tuc">Tin tức</a>
-            <a href="#cong-dong">Cộng đồng</a>
+            <a href="/bang-xep-hang">BXH</a>
+            <a href="<?= kp_e($communityUrl) ?>" target="_blank" rel="noopener noreferrer">Diễn đàn</a>
+            <a href="#gioi-thieu">Hướng dẫn</a>
         </nav>
         <div class="lp-nav-actions">
+            <a class="lp-download-nav" href="#tai-game">▣ <span>Tải game</span></a>
             <?php if ($isLoggedIn): ?>
                 <a class="lp-nav-account" href="<?= kp_e($accountUrl) ?>"><span>◎</span>Tài khoản</a>
             <?php else: ?>
                 <a class="lp-nav-login" href="<?= kp_e($loginUrl) ?>">Đăng nhập</a>
-                <a class="lp-button lp-button-small" href="<?= kp_e($registerUrl) ?>">Chơi ngay <span>→</span></a>
             <?php endif; ?>
         </div>
     </div>
 </header>
 
 <main id="noi-dung">
-    <section class="lp-hero" aria-labelledby="lp-title">
-        <div class="lp-hero-sky" aria-hidden="true">
-            <span class="lp-cloud lp-cloud-one"></span>
-            <span class="lp-cloud lp-cloud-two"></span>
-            <span class="lp-cloud lp-cloud-three"></span>
-            <span class="lp-orb lp-orb-one"></span>
-            <span class="lp-orb lp-orb-two"></span>
+    <section class="lp-home-stage" aria-labelledby="lp-title">
+        <div class="lp-container lp-home-hero">
+            <div class="lp-home-title" data-landing-reveal>
+                <span class="lp-home-spark">✦</span>
+                <h1 id="lp-title"><small>NGHIỆN</small><strong>KPAH</strong></h1>
+                <p class="lp-home-tagline">HÀNH TRÌNH TUỔI THƠ</p>
+                <p class="lp-home-subtitle">Sống lại ký ức · Kết nối đam mê · Cùng nhau phát triển</p>
+                <div class="lp-home-actions">
+                    <a class="lp-button lp-button-primary" href="#tai-game">Tải game ngay</a>
+                    <a class="lp-button lp-button-warm" href="/nap-the">◉ Nạp thẻ</a>
+                </div>
+            </div>
         </div>
-        <div class="lp-container lp-hero-layout">
-            <div class="lp-hero-copy" data-landing-reveal>
-                <span class="lp-pill"><i></i> Máy chủ cộng đồng KPAH</span>
-                <p class="lp-eyebrow">HÀNH TRÌNH HUYỀN THOẠI BẮT ĐẦU</p>
-                <h1 id="lp-title">Bước vào thế giới<br><em>phiêu lưu bất tận</em></h1>
-                <p class="lp-lead">Gặp lại ký ức tuổi thơ trong một thế giới KPAH sống động — nơi đồng đội sát cánh, thử thách đang chờ và huyền thoại mang tên bạn.</p>
-                <div class="lp-hero-actions">
-                    <a class="lp-button lp-button-primary" href="<?= kp_e($isLoggedIn ? $accountUrl : $registerUrl) ?>">
-                        <?= $isLoggedIn ? 'Vào khu tài khoản' : 'Bắt đầu hành trình' ?> <span>→</span>
-                    </a>
-                    <a class="lp-button lp-button-glass" href="#tai-game"><span class="lp-play">↓</span> Tải game</a>
+
+        <div class="lp-container lp-home-dashboard" data-landing-reveal>
+            <div class="lp-home-summary">
+                <div class="lp-home-stats">
+                    <article><span class="lp-stat-icon is-green">⌁</span><div><strong><?= $onlineCount === null ? '—' : number_format($onlineCount,0,',','.') ?></strong><small>ĐANG ONLINE</small></div></article>
+                    <article><span class="lp-stat-icon is-blue">♟</span><div><strong><?= $accountCount === null ? '—' : number_format($accountCount,0,',','.') ?></strong><small>TÀI KHOẢN</small></div></article>
+                    <article><span class="lp-stat-icon is-pink">♣</span><div><strong><?= $characterCount === null ? '—' : number_format($characterCount,0,',','.') ?></strong><small>NHÂN VẬT</small></div></article>
+                    <article><span class="lp-stat-icon is-orange">▣</span><div><strong><?= count($publicGiftcodes) ?></strong><small>GIFTCODE</small></div></article>
                 </div>
-                <div class="lp-hero-trust" aria-label="Thông tin nhanh">
-                    <div class="lp-avatar-stack" aria-hidden="true"><span>Đ</span><span>P</span><span>K</span><span>+</span></div>
-                    <p><strong><?= $accountCount !== null ? number_format($accountCount, 0, ',', '.') . '+' : 'Cộng đồng' ?></strong><span>người chơi cùng phiêu lưu</span></p>
-                </div>
+                <article class="lp-event-card">
+                    <div class="lp-event-head"><strong>Sự kiện nổi bật <span>HOT</span></strong><a href="#tin-tuc">Xem tất cả →</a></div>
+                    <ul>
+                        <?php foreach (array_slice($highlights,0,3) as $highlight): ?>
+                        <li><span>✦</span><a href="<?= kp_e($highlight['href']) ?>"><?= kp_e($highlight['title']) ?></a><small>NEW</small></li>
+                        <?php endforeach; ?>
+                        <li><span>✦</span><a href="#cong-dong">Gia nhập cộng đồng NGHIỆN KPAH</a><small>24/7</small></li>
+                    </ul>
+                </article>
             </div>
 
-            <div class="lp-hero-art" aria-hidden="true" data-landing-reveal>
-                <span class="lp-magic-ring"></span>
-                <span class="lp-art-glow"></span>
-                <img class="lp-character lp-character-side lp-character-mage" src="/assets/img/rank-sorcerer.svg" width="220" height="247" alt="">
-                <img class="lp-character lp-character-main" src="/assets/img/rank-guardian.svg" width="220" height="247" alt="">
-                <img class="lp-character lp-character-side lp-character-archer" src="/assets/img/rank-archer.svg" width="220" height="247" alt="">
-                <span class="lp-float-card lp-float-card-top"><i>✦</i><b>Thế giới mở</b><small>Tự do khám phá</small></span>
-                <span class="lp-float-card lp-float-card-bottom"><i>♛</i><b>Bang hội</b><small>Chiến đấu cùng nhau</small></span>
-                <span class="lp-island"></span>
+            <div class="lp-home-widgets">
+                <article class="lp-widget lp-widget-ranking">
+                    <div class="lp-widget-head"><h2>🏅 Top <?= kp_e($rankingMetric) ?></h2><a href="/bang-xep-hang">Xem tất cả →</a></div>
+                    <?php if ($featuredHeroes): ?><ol>
+                        <?php foreach ($featuredHeroes as $index => $hero): ?><li><span class="lp-rank-medal rank-<?= $index+1 ?>"><?= $index+1 ?></span><span class="lp-rank-face"><?= kp_e(strtoupper(substr((string)$hero['name'],0,1))) ?></span><strong><?= kp_e($hero['name']) ?></strong><b><?= number_format((int)$hero['score'],0,',','.') ?></b></li><?php endforeach; ?>
+                    </ol><?php else: ?><p class="lp-widget-empty">Bảng xếp hạng đang cập nhật.</p><?php endif; ?>
+                </article>
+
+                <article class="lp-widget lp-widget-characters">
+                    <div class="lp-widget-head"><h2>🧩 Nhân vật nổi bật</h2><a href="/bang-xep-hang">Xem tất cả →</a></div>
+                    <div class="lp-character-showcase">
+                        <?php $characterArt=['rank-guardian.svg','rank-sorcerer.svg','rank-archer.svg','rank-guardian.svg']; foreach (array_slice($featuredHeroes,0,4) as $index => $hero): ?>
+                        <div><strong><?= kp_e($hero['name']) ?></strong><small><?= kp_e($rankingMetric) ?> <?= number_format((int)$hero['score'],0,',','.') ?></small><img src="/assets/img/<?= kp_e($characterArt[$index]) ?>" width="150" height="170" alt="" loading="lazy"></div>
+                        <?php endforeach; ?>
+                        <?php if (!$featuredHeroes): ?><p class="lp-widget-empty">Nhân vật nổi bật sẽ xuất hiện khi có dữ liệu.</p><?php endif; ?>
+                    </div>
+                </article>
+
+                <article class="lp-widget lp-widget-gallery">
+                    <div class="lp-widget-head"><h2>⚔ Hình ảnh game</h2></div>
+                    <a href="#gioi-thieu" class="lp-gallery-image"><img src="/assets/img/home-hero-anime.webp" width="560" height="315" alt="Thế giới fantasy NGHIỆN KPAH" loading="lazy"><span>Khám phá thế giới →</span></a>
+                </article>
             </div>
-        </div>
-        <div class="lp-container lp-stats" data-landing-reveal>
-            <article><span class="lp-stat-icon lp-stat-violet">♟</span><div><strong><?= $accountCount !== null ? number_format($accountCount, 0, ',', '.') : '—' ?></strong><small>Tài khoản đã tạo</small></div></article>
-            <article><span class="lp-stat-icon lp-stat-cyan">⌄</span><div><strong><?= $readyDownloads ?></strong><small>Nền tảng sẵn sàng</small></div></article>
-            <article><span class="lp-stat-icon lp-stat-amber">✦</span><div><strong><?= count($publicGiftcodes) ?></strong><small>Giftcode công khai</small></div></article>
-            <article><span class="lp-stat-icon lp-stat-rose">♥</span><div><strong>24/7</strong><small>Cộng đồng đồng hành</small></div></article>
         </div>
     </section>
 
