@@ -44,8 +44,9 @@ $canSubmit = $isOpen;
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-portal-v3.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v3.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v4.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v4.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-register kp-auth-v2 kp-auth-v3">
+<body class="kp-auth-page kp-auth-register kp-auth-v2 kp-auth-v3 kp-auth-v4">
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
