@@ -78,7 +78,6 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 <?php endif; ?>
 </section>
 <?php endforeach; ?>
-<p class="ci-hint">Icon lấy từ <code>data_item.xstart</code> và file <code>res/icon/{ID}.png</code>. Chép nội dung của <code>map/</code> vào <code>res/</code> để hiện hình. Tên thuộc tính được tải từ bảng <code>data_attribute</code> của game; giá trị giữ nguyên dữ liệu lưu, chưa tự đổi sang phần trăm.</p>
 <?php endif; ?>
 <div class="portal-return"><a href="/nhan-vat">← Quay lại nhân vật</a></div>
 <script src="/assets/js/character-inventory.js?v=1" defer></script>
