@@ -65,6 +65,10 @@ body.kp-auth-page.kp-auth-v2.kp-auth-recovery .stage{
   box-shadow:var(--auth-shadow);text-align:left;
   animation:none
 }
+/* Direct the illustrated key art to a different character for each journey. */
+.kp-auth-v2.kp-auth-login .brand.kp-auth-story{background-position:center,20% center}
+.kp-auth-v2.kp-auth-register .brand.kp-auth-story{background-position:center,82% center}
+.kp-auth-v2.kp-auth-recovery .brand.kp-auth-story{background-position:center,34% center}
 .kp-auth-v2 .kp-auth-story::before{
   content:"";position:absolute;z-index:-1;inset:0;
   background:radial-gradient(ellipse at 60% 42%,transparent 24%,rgba(0,39,99,.14) 78%);pointer-events:none
