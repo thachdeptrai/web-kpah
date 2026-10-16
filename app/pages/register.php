@@ -307,5 +307,6 @@ $canSubmit = $isOpen;
 
 <script src="/assets/js/register.js?v=5" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
+<script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body>
 </html>
