@@ -102,6 +102,19 @@ jobs:
             sleep 1
           done
           python3 tests/http_regression.py
+      - name: Browser responsive overlap regression
+        if: matrix.php == '8.3' && matrix.server == 'cli'
+        run: |
+          python3 -m pip install --user websocket-client
+          python3 tests/home_layout_visual.py
+      - name: Upload homepage viewport screenshots
+        if: always() && matrix.php == '8.3' && matrix.server == 'cli'
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-layout-viewport-screenshots
+          path: artifacts/home-layout/*.png
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Server error log on failure
         if: failure()
         run: |
