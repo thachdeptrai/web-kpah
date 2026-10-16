@@ -33,13 +33,14 @@ $canSubmit = $isOpen;
     <title>Đăng ký tài khoản – <?= kp_e($appName) ?></title>
     <meta name="description" content="Tạo tài khoản để đăng nhập vào game <?= kp_e($appName) ?>.">
     <meta name="robots" content="noindex,follow">
-    <meta name="theme-color" content="#0b0a16">
+    <meta name="theme-color" content="#eef7ff">
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
     <link rel="stylesheet" href="/assets/css/register.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 </head>
 <body>
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
@@ -296,5 +297,6 @@ $canSubmit = $isOpen;
 
 <script src="/assets/js/scene.js?v=1" defer></script>
 <script src="/assets/js/register.js?v=5" defer></script>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>
 </html>

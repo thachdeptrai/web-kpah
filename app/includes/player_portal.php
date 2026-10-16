@@ -104,7 +104,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0f19">
+<meta name="theme-color" content="#eef7ff">
 <meta name="robots" content="noindex,nofollow">
 <title><?= kp_e($title) ?> · <?= kp_e($app) ?></title>
 <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -120,6 +120,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <?php if($active==='home'):?><link rel="stylesheet" href="/assets/css/dashboard.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/dashboard.css') ?>"><?php endif;?>
 <link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 </head>
 <body class="home-page portal-page">
 <a class="home-skip-link" href="#portal-content">Đến nội dung chính</a>
@@ -153,6 +154,7 @@ function kp_player_foot($withProfileJs=false)
 <?php endif;?>
 <?php if($withProfileJs): ?><script src="/assets/js/user-home.js?v=2" defer></script><?php endif; ?>
 <script src="/assets/js/toast.js?v=1" defer></script>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body></html>
 <?php
 }

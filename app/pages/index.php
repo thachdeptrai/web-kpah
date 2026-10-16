@@ -48,7 +48,7 @@ try {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0b091b">
+    <meta name="theme-color" content="#eef7ff">
     <meta name="description" content="NGHIỆN KPAH — cổng thông tin, tài khoản và cộng đồng dành cho người chơi KPAH.">
     <meta name="robots" content="index,follow">
     <title>NGHIỆN KPAH — Cổng thông tin người chơi</title>
@@ -59,6 +59,7 @@ try {
     <link rel="stylesheet" href="/assets/css/landing.css?v=3">
     <link rel="stylesheet" href="/assets/css/giftcodes.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 </head>
 <body class="landing-page">
 <a class="lp-skip" href="#gioi-thieu">Đi đến nội dung chính</a>
@@ -227,5 +228,6 @@ try {
     <a href="#lp-title">Lên đầu trang ↑</a>
 </footer>
 <script src="/assets/js/giftcodes.js?v=1" defer></script>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>
 </html>
