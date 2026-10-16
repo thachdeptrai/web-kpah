@@ -102,9 +102,17 @@ class CDP:
 
 def wait_for_remote_debugging(temp, proc):
     port_file=Path(temp)/"DevToolsActivePort"
-    for _ in range(120):
+    # Chromium can create DevToolsActivePort before writing the port number.
+    # Retry until the file has a valid first line; do not treat an empty file
+    # as a browser failure (flaky on loaded GitHub Actions runners).
+    for _ in range(200):
         if port_file.exists():
-            return int(port_file.read_text().splitlines()[0])
+            try:
+                lines = port_file.read_text().splitlines()
+                if lines and lines[0].strip().isdigit():
+                    return int(lines[0])
+            except OSError:
+                pass
         if proc.poll() is not None:
             raise RuntimeError("Chrome exited early with code "+str(proc.returncode))
         time.sleep(.1)
