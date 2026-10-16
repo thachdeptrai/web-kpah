@@ -61,14 +61,14 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 <span aria-hidden="true">✦</span>
 </div>
 <div class="ci-item-copy"><strong><?= kp_e($itemName) ?></strong>
-<small>Ô <?= $index+1 ?> · ID <?= (int)$item['template_id'] ?><?= $item['plus']>0 ? ' · +'.(int)$item['plus'] : '' ?></small>
+<small>Vị trí <?= $index+1 ?><?= $item['plus']>0 ? ' · +'.(int)$item['plus'] : '' ?></small>
 <div class="ci-chips">
 <?php if ($item['level']>0): ?><span>Cấp <?= (int)$item['level'] ?></span><?php endif; ?>
 <?php if ($item['durability']!==null && $item['max_durability']!==null): ?><span>Độ bền <?= (int)$item['durability'] ?>/<?= (int)$item['max_durability'] ?></span><?php endif; ?>
-<?php if ($template): ?><span>Loại <?= (int)$template['type'] ?></span><?php endif; ?>
+
 </div>
 <?php if ($item['attributes']): ?>
-<details class="ci-attrs"><summary>Thuộc tính lưu trong game</summary><div class="ci-chips">
+<details class="ci-attrs"><summary>Chi tiết thuộc tính</summary><div class="ci-chips">
 <?php foreach ($item['attributes'] as $attribute=>$value): ?><span><?= kp_e(kp_inventory_attribute_name($attribute, $attributeLabels)) ?>: <?= (int)$value ?></span><?php endforeach; ?>
 </div></details>
 <?php endif; ?>
