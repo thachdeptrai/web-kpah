@@ -29,6 +29,10 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^(?:robots\.txt|sitemap\.xml)$ - [END]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^assets/.*\.(?:css|js|svg|png|jpe?g|gif|webp|ico|ttf|woff2?)$ - [END,NC]
+# Game icon copies are read-only image assets. Never execute or download code/config from res/.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^res/icon/[0-9]+\.png$ - [END,NC]
+RewriteRule ^res(?:/|$) - [F,END,NC]
 RewriteRule ^ index.php [END,QSA]
 
 # Do not expose environment files, credentials, backups, or database dumps.
