@@ -9,6 +9,7 @@ function kp_public_community_url(): string
 function kp_public_page_start(string $title, string $active, string $description): void
 {
     $loggedIn = !empty($_SESSION['kp_user_id']);
+    $GLOBALS['kp_public_active'] = $active;
     $links = [
         'home' => ['/', '⌂', 'Trang chủ'],
         'about' => ['/gioi-thieu', '✦', 'Giới thiệu'],
@@ -33,9 +34,10 @@ function kp_public_page_start(string $title, string $active, string $description
     <link rel="stylesheet" href="/assets/css/landing.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/landing.css') ?>">
     <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
     <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+    <link rel="stylesheet" href="/assets/css/public-pages-v2.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/public-pages-v2.css') ?>">
     <?php if ($active === 'home'): ?><link rel="stylesheet" href="/assets/css/home-layout.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/home-layout.css') ?>"><?php endif; ?>
 </head>
-<body class="landing-page public-inner-page<?= $active === 'home' ? ' kp-home-page' : '' ?>">
+<body class="landing-page public-inner-page<?= $active === 'home' ? ' kp-home-page' : ' kp-inner-page' ?>">
 <a class="lp-skip" href="#noi-dung">Đi đến nội dung chính</a>
 <header class="lp-header" data-landing-header>
     <div class="lp-container lp-nav">
@@ -53,7 +55,30 @@ function kp_public_page_start(string $title, string $active, string $description
 
 function kp_public_page_hero(string $kicker, string $title, string $copy, string $symbol = '✦'): void
 {
-    ?><section class="lp-inner-hero"><div class="lp-inner-orb orb-one"></div><div class="lp-inner-orb orb-two"></div><div class="lp-container lp-inner-hero-grid"><div data-landing-reveal><a class="lp-inner-back" href="/">← Trang chủ</a><span class="lp-section-kicker"><?= kp_e($kicker) ?></span><h1><?= $title ?></h1><p><?= kp_e($copy) ?></p></div><div class="lp-inner-emblem" aria-hidden="true"><span><?= kp_e($symbol) ?></span><img src="/assets/img/emblem.svg" width="170" height="170" alt=""></div></div></section><?php
+    // Presentation-only artwork. The page-specific handler continues to provide
+    // all real content, URLs and data; do not change its API contract.
+    global $kp_public_active;
+    $artByPage = [
+        'about' => ['/assets/img/rank-archer.svg', 'archer'],
+        'download' => ['/assets/img/rank-guardian.svg', 'guardian'],
+        'giftcode' => ['/assets/img/treasure-chest-fantasy.svg', 'gift'],
+        'news' => ['/assets/img/fantasy-world.svg', 'news'],
+        'community' => ['/assets/img/rank-sorcerer.svg', 'sorcerer'],
+    ];
+    $art = $artByPage[$kp_public_active ?? ''] ?? ['/assets/img/kpah-logo-fantasy.svg', 'logo'];
+    ?><section class="lp-inner-hero" aria-label="<?= kp_e($kicker) ?>">
+        <div class="lp-container lp-inner-hero-grid">
+            <div data-landing-reveal>
+                <a class="lp-inner-back" href="/">← Trở về trang chủ</a>
+                <span class="lp-section-kicker"><?= kp_e($kicker) ?></span>
+                <h1><?= $title ?></h1>
+                <p><?= kp_e($copy) ?></p>
+            </div>
+            <div class="lp-inner-emblem lp-inner-emblem--<?= kp_e($art[1]) ?>" aria-hidden="true">
+                <img src="<?= kp_e($art[0]) ?>" width="320" height="285" alt="" decoding="async">
+            </div>
+        </div>
+    </section><?php
 }
 
 function kp_public_page_end(): void
