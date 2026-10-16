@@ -32,7 +32,7 @@ Bản cập nhật [Security Audit — PR #13](https://github.com/thachdeptrai/w
 | Trang chủ | Giới thiệu, tải game, các giftcode được admin công khai, thông tin cộng đồng và liên kết website |
 | Tài khoản | Đăng ký, đăng nhập, khôi phục mật khẩu, xác minh email và cập nhật hồ sơ |
 | Tổng quan | Ví VNĐ, tổng nạp, Point, nhân vật thuộc tài khoản, giao dịch gần đây, thông tin bảo mật và thành tích khi có dữ liệu |
-| Nhân vật | Cấp độ, kinh nghiệm, Xu, Lượng, Lượng khóa và bang hội từ dữ liệu game |
+| Nhân vật | Cấp độ, tài nguyên, bang hội, hồ sơ nâng cao và xem trang bị/hành trang/rương/túi đồ từ dữ liệu game |
 | Xếp hạng | Các danh mục Top nạp, tài sản, cấp độ, VIP, chiến trường, nông trại…; chỉ hiện mục có dữ liệu phù hợp |
 | Nạp thẻ | Tích hợp API đối tác thẻ; thẻ hợp lệ cộng **VNĐ thực nhận sau chiết khấu** vào ví |
 | Nạp ngân hàng | payOS/VietQR; cộng ví VNĐ khi xác minh giao dịch, thưởng ngân hàng theo cấu hình |
@@ -53,6 +53,7 @@ Giao diện có stylesheet riêng cho desktop và mobile. Các thông tin riêng
 | `/dang-ky`, `/dang-nhap`, `/quen-mat-khau` | Đăng ký, đăng nhập, khôi phục |
 | `/tai-khoan` | Dashboard tài khoản |
 | `/ho-so`, `/nhan-vat` | Hồ sơ và nhân vật |
+| `/nhan-vat/chi-tiet?name=...` | Xem trang bị và túi đồ của nhân vật thuộc tài khoản |
 | `/bang-xep-hang` | Bảng xếp hạng |
 | `/nap` | Chọn phương thức nạp |
 | `/nap-the`, `/nap-ngan-hang` | Nạp thẻ và ngân hàng |
@@ -147,6 +148,14 @@ Cấu hình riêng đặt ngoài Git:
 - Biến môi trường database: `KPAH_DB_HOST`, `KPAH_DB_PORT`, `KPAH_DB_NAME`, `KPAH_DB_USER`, `KPAH_DB_PASS`.
 
 **Không commit mật khẩu, API key, SQL dump, `.env` hoặc nhật ký giao dịch.** Không xóa `storage/topup/` khi deploy; cần sao lưu **cả database lẫn storage** để giữ dữ liệu đối soát.
+
+## Thư mục RES và icon vật phẩm
+
+Thư mục `res/` đã được tạo ở root, bên trong có `res/.gitignore` để **không commit tài nguyên copy từ game**. Copy **nội dung của `map/`** từ server Java sang `res/`; icon sẽ ở `res/icon/176.png` tương ứng `map/icon/176.png`.
+
+Hồ sơ nhân vật tại `/nhan-vat` dẫn tới trang chi tiết `/nhan-vat/chi-tiet?name=...`, hiển thị trang bị/hành trang/rương/túi đồ bằng cách đọc các trường `tob_char.equip`, `inven`, `bag`, `tuido`. Tên từ `data_item.name`, icon từ `data_item.xstart` → `/res/icon/{xstart}.png`. Chỉ đọc dữ liệu của tài khoản đang đăng nhập.
+
+Cách copy đúng, mẫu lệnh Windows, cấu trúc item Java và các giới hạn: [docs/CHARACTER_RES.md](docs/CHARACTER_RES.md).
 
 ## Cài đặt trên Windows Server / XAMPP
 
