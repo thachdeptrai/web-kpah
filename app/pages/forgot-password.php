@@ -17,7 +17,7 @@ $version = trim((string) kp_config('app.version', ''));
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#0b0a16">
+    <meta name="theme-color" content="#eef7ff">
     <title>Quên mật khẩu – <?= kp_e($appName) ?></title>
     <meta name="description" content="Khôi phục mật khẩu tài khoản <?= kp_e($appName) ?> bằng email đã liên kết.">
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
@@ -28,6 +28,7 @@ $version = trim((string) kp_config('app.version', ''));
     <link rel="stylesheet" href="/assets/css/login.css?v=2">
     <link rel="stylesheet" href="/assets/css/recovery.css?v=2">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 </head>
 <body>
 <a class="skip-link" href="#recovery-form">Bỏ qua và đến biểu mẫu khôi phục</a>
@@ -110,5 +111,6 @@ $version = trim((string) kp_config('app.version', ''));
 <footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><a href="/dang-nhap">Đăng nhập</a></footer>
 <script src="/assets/js/scene.js?v=1" defer></script>
 <script src="/assets/js/forgot-password.js?v=2" defer></script>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>
 </html>
