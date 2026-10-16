@@ -78,3 +78,29 @@ function kp_inventory_icon_url($template)
     // A missing copy renders a CSS placeholder; the endpoint is allowlisted by Apache.
     return '/res/icon/'.$id.'.png';
 }
+
+
+/**
+ * Game loads labels from data_attribute ORDER BY id (Database.loadNameAttributeItem).
+ * We only label the base atb[0..32]; unknown extended offsets retain their raw IDs.
+ * Do not infer percent units from 'ispercent' without the game's formatter.
+ */
+function kp_inventory_attribute_labels($pdo)
+{
+    $st = $pdo->query('SELECT id, name FROM data_attribute WHERE id BETWEEN 0 AND 32 ORDER BY id');
+    $labels = [];
+    foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $id = (int)($row['id'] ?? -1);
+        $name = trim((string)($row['name'] ?? ''));
+        if ($id >= 0 && $id <= 32 && $name !== '') {
+            $labels[$id] = $name;
+        }
+    }
+    return $labels;
+}
+
+function kp_inventory_attribute_name($id, array $labels)
+{
+    $id = (int)$id;
+    return $labels[$id] ?? ('Thuộc tính #' . $id);
+}
