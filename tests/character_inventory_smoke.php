@@ -38,4 +38,29 @@ $db = new class($statement) {
 kp_inventory_character($db, 7, 'Alice');
 inv_assert($statement->params === [7,'Alice'], 'ownership parameter binding');
 inv_assert(kp_inventory_character($db, 7, '../') === null || $statement->params === [7,'../'], 'input never becomes SQL identifier');
-echo "Character inventory smoke PASS\n";
+$attributeSql = new class {
+    public function fetchAll($mode) {
+        return [
+            ['id'=>0,'name'=>'Tấn công'],
+            ['id'=>1,'name'=>'Thủ vật'],
+            ['id'=>2,'name'=>'Né tránh'],
+            ['id'=>30,'name'=>'Tăng tấn công']
+        ];
+    }
+};
+$attributeDb = new class($attributeSql) {
+    private $statement;
+    public function __construct($statement) { $this->statement=$statement; }
+    public function query($sql) {
+        inv_assert(strpos($sql, 'FROM data_attribute') !== false, 'load from correct table');
+        inv_assert(strpos($sql, 'ORDER BY id') !== false, 'deterministic index mapping');
+        return $this->statement;
+    }
+};
+$labels = kp_inventory_attribute_labels($attributeDb);
+inv_assert(kp_inventory_attribute_name(0,$labels) === 'Tấn công', 'attack attribute label');
+inv_assert(kp_inventory_attribute_name(1,$labels) === 'Thủ vật', 'physical defense label');
+inv_assert(kp_inventory_attribute_name(2,$labels) === 'Né tránh', 'dodge attribute label');
+inv_assert(kp_inventory_attribute_name(30,$labels) === 'Tăng tấn công', 'attack boost label');
+inv_assert(kp_inventory_attribute_name(70,$labels) === 'Thuộc tính #70', 'unknown attribute fallback');
+echo "Character inventory smoke PASS\\n";
