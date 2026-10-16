@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/user_center.php';
 kp_send_security_headers(false);
 header('Content-Type: application/json; charset=utf-8');
 
@@ -69,6 +70,8 @@ try {
         kp_change_password_reply(['ok' => false, 'message' => 'Tài khoản vừa thay đổi hoặc bị khóa. Vui lòng đăng nhập lại.'], 409);
     }
     session_regenerate_id(true);
+    kp_center_event($userId, 'password_change');
+    kp_center_notify($userId, 'Mật khẩu đã thay đổi', 'Mật khẩu tài khoản được cập nhật thành công trên website.', 'security', '/lich-su-bao-mat');
 
     kp_change_password_reply(['ok' => true, 'message' => 'Đổi mật khẩu thành công. Mật khẩu mới đã được lưu.']);
 } catch (Throwable $e) {
