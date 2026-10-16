@@ -69,8 +69,9 @@ $version = trim((string)kp_config('app.version', ''));
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v3.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v3.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-login kp-auth-v2">
+<body class="kp-auth-page kp-auth-login kp-auth-v2 kp-auth-v3">
 <a class="skip-link" href="#login-form">Bỏ qua và đến biểu mẫu đăng nhập</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
@@ -96,10 +97,15 @@ $version = trim((string)kp_config('app.version', ''));
 </svg>
 <main class="stage login-stage">
     <section class="brand kp-auth-story" aria-labelledby="page-title">
+        <div class="kp-auth-story__intro">
         <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">01 · ĐĂNG NHẬP</span><span class="kp-auth-story__tag">HÀNH TRÌNH TUỔI THƠ</span></div>
         <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
         <h1 id="page-title">Chào mừng trở lại, chiến hữu!</h1>
         <p class="lead">Đăng nhập để tiếp tục chuyến phiêu lưu trong thế giới <?= kp_e($appName) ?>.</p>
+        </div>
+        <figure class="kp-auth-story__visual" aria-label="Chiến binh trở lại vùng đất tuổi thơ">
+            <img src="/assets/img/auth-login-adventure.svg" width="760" height="710" alt="" loading="eager" decoding="async">
+        </figure>
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tài khoản:</strong> nhập đúng tên tài khoản đã đăng ký.</span></li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span><strong>Bảo mật:</strong> không chia sẻ mật khẩu hoặc mã xác minh.</span></li>
