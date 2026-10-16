@@ -42,16 +42,18 @@ $canSubmit = $isOpen;
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-register">
+<body class="kp-auth-page kp-auth-register kp-auth-v2">
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
-  <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
+  <span class="kp-auth-header-tagline">Thế giới tuổi thơ<br>Sống lại trong bạn!</span>
+  <nav class="kp-auth-links" aria-label="Điều hướng website">
+    <a href="/cong-dong">Cộng đồng</a>
+    <a href="/gioi-thieu">Hướng dẫn</a>
     <a href="/">Trang chủ</a>
-    <a href="/dang-nhap">Đăng nhập</a>
-    <a href="/dang-ky" aria-current="page">Đăng ký</a>
-    <a href="/quen-mat-khau">Khôi phục</a>
+    <a class="kp-auth-download" href="/tai-game"><span aria-hidden="true">↓</span>&nbsp;<span class="kp-auth-download__text">Tải game ngay</span></a>
   </nav>
 </header>
 
@@ -81,11 +83,11 @@ $canSubmit = $isOpen;
 
 <main class="stage">
     <!-- Khu nhận diện thương hiệu -->
-    <section class="brand" aria-labelledby="page-title">
-        <div class="emblem" aria-hidden="true"><img src="/assets/img/emblem.svg" alt="" width="400" height="400"></div>
-        <p class="wordmark" aria-label="<?= kp_e($appName) ?>"><?= kp_e($appName) ?></p>
-        <h1 id="page-title">Đăng ký tài khoản</h1>
-        <p class="lead">Tạo tài khoản để đăng nhập vào game <?= kp_e($appName) ?>.</p>
+    <section class="brand kp-auth-story" aria-labelledby="page-title">
+        <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">02 · ĐĂNG KÝ</span><span class="kp-auth-story__tag">MỞ RA CHUYẾN PHIÊU LƯU</span></div>
+        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
+        <h1 id="page-title">Hành trình mới đang chờ bạn!</h1>
+        <p class="lead">Tạo tài khoản an toàn và sẵn sàng bước vào vùng đất <?= kp_e($appName) ?>.</p>
 
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tên tài khoản:</strong> <?= kp_e($userHint) ?></span></li>
@@ -97,8 +99,14 @@ $canSubmit = $isOpen;
     <!-- Biểu mẫu -->
     <section class="panel" aria-labelledby="panel-title">
         <div class="panel-inner">
+            <nav class="kp-auth-switch" aria-label="Chuyển giữa các trang tài khoản">
+                <a href="/dang-nhap">Đăng nhập</a>
+                <a href="/dang-ky" aria-current="page">Đăng ký</a>
+                <a href="/quen-mat-khau">Quên mật khẩu</a>
+            </nav>
             <div id="form-view">
-                <h2 id="panel-title">Thông tin tài khoản</h2>
+                <h2 id="panel-title">Tạo tài khoản mới</h2>
+                <p class="login-intro">Điền đầy đủ thông tin, xác minh email và nhập mã giới thiệu để gia nhập NGHIỆN KPAH.</p>
 
                 <div id="alert" class="alert" role="alert" tabindex="-1" hidden>
                     <svg class="icon" aria-hidden="true"><use id="alert-icon" href="#i-alert"/></svg>
