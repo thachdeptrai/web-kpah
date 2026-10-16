@@ -68,16 +68,18 @@ $version = trim((string)kp_config('app.version', ''));
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-login">
+<body class="kp-auth-page kp-auth-login kp-auth-v2">
 <a class="skip-link" href="#login-form">Bỏ qua và đến biểu mẫu đăng nhập</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
-  <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
+  <span class="kp-auth-header-tagline">Thế giới tuổi thơ<br>Sống lại trong bạn!</span>
+  <nav class="kp-auth-links" aria-label="Điều hướng website">
+    <a href="/cong-dong">Cộng đồng</a>
+    <a href="/gioi-thieu">Hướng dẫn</a>
     <a href="/">Trang chủ</a>
-    <a href="/dang-nhap" aria-current="page">Đăng nhập</a>
-    <a href="/dang-ky">Đăng ký</a>
-    <a href="/quen-mat-khau">Khôi phục</a>
+    <a class="kp-auth-download" href="/tai-game"><span aria-hidden="true">↓</span>&nbsp;<span class="kp-auth-download__text">Tải game ngay</span></a>
   </nav>
 </header>
 <div class="scene" aria-hidden="true"><canvas id="embers"></canvas></div>
@@ -93,11 +95,11 @@ $version = trim((string)kp_config('app.version', ''));
     </defs>
 </svg>
 <main class="stage login-stage">
-    <section class="brand" aria-labelledby="page-title">
-        <div class="emblem" aria-hidden="true"><img src="/assets/img/emblem.svg" alt="" width="400" height="400"></div>
-        <p class="wordmark" aria-label="<?= kp_e($appName) ?>"><?= kp_e($appName) ?></p>
-        <h1 id="page-title">Đăng nhập tài khoản</h1>
-        <p class="lead">Tiếp tục hành trình của bạn trong thế giới <?= kp_e($appName) ?>.</p>
+    <section class="brand kp-auth-story" aria-labelledby="page-title">
+        <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">01 · ĐĂNG NHẬP</span><span class="kp-auth-story__tag">HÀNH TRÌNH TUỔI THƠ</span></div>
+        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
+        <h1 id="page-title">Chào mừng trở lại, chiến hữu!</h1>
+        <p class="lead">Đăng nhập để tiếp tục chuyến phiêu lưu trong thế giới <?= kp_e($appName) ?>.</p>
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tài khoản:</strong> nhập đúng tên tài khoản đã đăng ký.</span></li>
             <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span><strong>Bảo mật:</strong> không chia sẻ mật khẩu hoặc mã xác minh.</span></li>
@@ -106,6 +108,11 @@ $version = trim((string)kp_config('app.version', ''));
     </section>
     <section class="panel" aria-labelledby="panel-title">
         <div class="panel-inner login-panel">
+            <nav class="kp-auth-switch" aria-label="Chuyển giữa các trang tài khoản">
+                <a href="/dang-nhap" aria-current="page">Đăng nhập</a>
+                <a href="/dang-ky">Đăng ký</a>
+                <a href="/quen-mat-khau">Quên mật khẩu</a>
+            </nav>
             <div class="login-panel-heading">
                 <span class="login-eyebrow">PLAYER ACCESS <i></i></span>
                 <span class="login-version"><?= $version !== '' ? 'VERSION '.kp_e($version) : 'SECURE SIGN IN' ?></span>
