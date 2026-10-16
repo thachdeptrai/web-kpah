@@ -121,5 +121,6 @@ $version = trim((string) kp_config('app.version', ''));
 <footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><a href="/dang-nhap">Đăng nhập</a></footer>
 <script src="/assets/js/forgot-password.js?v=2" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
+<script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body>
 </html>
