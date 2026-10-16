@@ -169,6 +169,10 @@ kp_player_head('Tổng quan tài khoản','home',$user);
         <a href="/vi-vnd"><span aria-hidden="true">◎</span> Ví VNĐ & đổi mốc <span aria-hidden="true">↗</span></a>
         <a href="/diem-tich-luy"><span aria-hidden="true">✧</span> Point tích lũy & đổi quà <span aria-hidden="true">↗</span></a>
         <a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp VNĐ <span aria-hidden="true">↗</span></a>
+        <a href="/giftcode-cua-toi"><span aria-hidden="true">🎁</span> Giftcode của tôi <span aria-hidden="true">↗</span></a>
+        <a href="/thong-bao"><span aria-hidden="true">◉</span> Trung tâm thông báo <span aria-hidden="true">↗</span></a>
+        <a href="/theo-doi-don-nap"><span aria-hidden="true">◷</span> Theo dõi đơn nạp <span aria-hidden="true">↗</span></a>
+        <a href="/lich-su-bao-mat"><span aria-hidden="true">◇</span> Lịch sử bảo mật <span aria-hidden="true">↗</span></a>
         <a href="/#dien-dan"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
     </div>
 </section>
