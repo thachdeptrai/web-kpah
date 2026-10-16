@@ -49,6 +49,10 @@ JS=r"""JSON.stringify((()=>{
  fail(head&&form&&head.bottom>form.top+2,'header covers form');
  fail(intersect(nav,logo),'header navigation collides with logo');
  fail(!seen('.kp-auth-switch'),'account tabs absent');
+ const tips=$('.kp-auth-story .rules');
+ fail(innerWidth<=820 && tips && getComputedStyle(tips).display!=='none',
+      'mobile story tip list still visible');
+
  fail(head&&nav&&nav.right>innerWidth+2,'nav clipped outside viewport');
 
  const storyLogo=$('.kp-auth-story__logo');
