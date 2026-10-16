@@ -1,4 +1,3 @@
-"""HTTP regression against a disposable kpah_route_test fixture. No external services."""
 import html, http.cookiejar, json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 BASE=os.environ.get('KPAH_TEST_URL','http://127.0.0.1:8089').rstrip('/')
@@ -166,7 +165,7 @@ check(status==200 and int(head.get('Content-Length','0'))==len(jar_bytes),'publi
 check('Nghien_KPAH.jar' in head.get('Content-Disposition',''),'JAR download retains filename')
 status,head,body=guest.request('/tai-game/tep?nen-tang=java',headers={'Range':'bytes=0-3'})
 check(status==206 and head.get('Content-Range')=='bytes 0-3/'+str(len(jar_bytes)) and body=='PK\x03\x04','JAR download supports range resume')
-check('/tai-game/tep?nen-tang=java' in guest.request('/')[2],'JAR link visible on homepage after publish')
+check('/tai-game/tep?nen-tang=java' in guest.request('/tai-game')[2],'JAR link visible on download page after publish')
 remove_fields={**jar_fields,'remove[java]':'1'}
 remove_fields.pop('enabled[java]')
 remove_fields['csrf']=csrf(c.request('/quan-tri/tai-game')[2])
