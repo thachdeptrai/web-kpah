@@ -1,0 +1,26 @@
+/* User center: same navy/gold portal visual language. */
+.uc-heading{padding:34px 0 20px}.uc-heading>span{font-size:10px;letter-spacing:.22em;color:#e6c287}
+.uc-heading h1{font-size:clamp(24px,4vw,36px);color:#f9e5c0;margin:9px 0}
+.uc-heading p,.uc-note{color:#b8aecb;line-height:1.8;font-size:12px}
+.uc-list{display:grid;gap:12px;margin:18px 0 30px}
+.uc-record{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:18px 20px;background:#201b35;border:1px solid #a998ba41;border-radius:12px}
+.uc-record.uc-unread{border-left:4px solid #e3bd7a}
+.uc-record>div{flex:1;min-width:0}.uc-record strong{display:block;color:#fce6bd;font-size:15px;overflow-wrap:anywhere}
+.uc-record small{display:block;color:#aca3c1;margin-top:6px;font-size:11px}
+.uc-record p{font-size:12px;color:#cec6dd;line-height:1.8;overflow-wrap:anywhere}
+.uc-record a{font-size:12px;color:#f1cd90}
+.uc-tags{display:flex;flex-wrap:wrap;gap:8px}.uc-tags span{padding:6px 9px;font-size:11px;background:#eac38116;border:1px solid #d8ad7345;color:#f1ddbc}
+.uc-alert{margin:16px 0;padding:15px;border:1px solid #dfb2a7;background:#722d3140;color:#ffe2df;border-radius:8px}
+.uc-empty{padding:32px 20px;margin-top:18px;border:1px dashed #ad9ab255;color:#c6bdd8;text-align:center}
+.uc-actions{margin:12px 0}.uc-actions button{cursor:pointer;background:#eac687;border:0;border-radius:9px;padding:12px 16px;font-weight:800;color:#292032}
+.uc-progress{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.uc-progress span{font-size:10px;color:#b8acc9;border:1px solid #a69bb344;padding:6px 8px;border-radius:7px}
+.uc-progress span.is-done{color:#d8f4e6;border-color:#8ac3a076;background:#2d654a2a}
+@media(max-width:700px){.uc-record{padding:14px}.uc-heading{padding-top:18px}}
+/* Shared toast/snackbar. Positioned away from page content and keyboard. */
+.kp-toast-stack{position:fixed;z-index:9999;top:18px;right:18px;display:grid;gap:10px;width:min(390px,calc(100vw - 30px));pointer-events:none}
+.kp-toast{pointer-events:auto;position:relative;display:flex;align-items:flex-start;gap:12px;padding:15px 36px 15px 16px;border-radius:12px;border:1px solid #75c2a0;background:#173329;color:#f7fff9;box-shadow:0 16px 44px #0005;font-family:"Be Vietnam Pro",system-ui,sans-serif}
+.kp-toast[data-type="error"]{border-color:#f39b98;background:#3c1b23}
+.kp-toast-icon{font-size:20px;line-height:1.2}.kp-toast strong{font-size:13px;display:block}.kp-toast p{font-size:11px;line-height:1.7;color:#d7dedc;margin:5px 0 0;overflow-wrap:anywhere}
+.kp-toast-close{position:absolute;top:8px;right:9px;color:inherit;background:transparent;border:0;cursor:pointer;font-size:19px}
+@media(max-width:540px){.kp-toast-stack{top:12px;right:12px;width:calc(100vw - 24px)}}
+@media(prefers-reduced-motion:no-preference){.kp-toast{animation:kp-slide-in .2s ease-out}@keyframes kp-slide-in{from{transform:translateX(12px);opacity:.5}to{transform:none;opacity:1}}}
