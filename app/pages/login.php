@@ -57,7 +57,7 @@ $version = trim((string)kp_config('app.version', ''));
     <title>Đăng nhập tài khoản – <?= kp_e($appName) ?></title>
     <meta name="description" content="Đăng nhập tài khoản game <?= kp_e($appName) ?>.">
     <meta name="robots" content="noindex,follow">
-    <meta name="theme-color" content="#0b0a16">
+    <meta name="theme-color" content="#eef7ff">
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,6 +66,7 @@ $version = trim((string)kp_config('app.version', ''));
     <link rel="stylesheet" href="/assets/css/login.css?v=2">
     <link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 </head>
 <body>
 <a class="skip-link" href="#login-form">Bỏ qua và đến biểu mẫu đăng nhập</a>
@@ -138,5 +139,6 @@ $version = trim((string)kp_config('app.version', ''));
 <?php if($error!==''):?><div hidden data-toast-type="error" data-toast-title="Đăng nhập thất bại" data-toast-message="<?=kp_e($error)?>"></div><?php endif;?>
 <script src="/assets/js/toast.js?v=1" defer></script>
 <script src="/assets/js/login.js?v=1" defer></script>
+<script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>
 </html>
