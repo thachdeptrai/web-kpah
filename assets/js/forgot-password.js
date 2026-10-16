@@ -24,6 +24,19 @@
       .catch(function () { show('Không kết nối được máy chủ. Hãy thử lại.', false); })
       .finally(function () { sendButton.disabled = false; sendButton.innerHTML = 'Gửi mã về Gmail <span>↗</span>'; });
   });
+  // Presentation only: reveal/re-hide recovery password fields; never changes API requests.
+  Array.prototype.forEach.call(form.querySelectorAll('[data-auth-toggle]'), function (button) {
+    button.addEventListener('click', function () {
+      var field = document.getElementById(button.getAttribute('data-auth-toggle'));
+      if (!field) return;
+      var reveal = field.type === 'password';
+      field.type = reveal ? 'text' : 'password';
+      button.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+      button.setAttribute('aria-label', reveal ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+      var use = button.querySelector('use');
+      if (use) use.setAttribute('href', reveal ? '#i-eye-off' : '#i-eye');
+    });
+  });
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     var password = document.getElementById('new_password').value;
