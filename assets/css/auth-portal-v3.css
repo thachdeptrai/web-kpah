@@ -1,0 +1,187 @@
+/*
+  NGHIỆN KPAH / Auth Journey v3
+  Deliberate improvement over v2: character art is its OWN media region.
+  Neither typography nor form UI is positioned over illustration pixels.
+  Opt-in: body.kp-auth-v3, loaded after legacy auth styles.
+*/
+body.kp-auth-page.kp-auth-v3 {
+  --auth-v3-blue:#346dee;
+  --auth-v3-violet:#6951ef;
+  --auth-v3-ink:#233861;
+  --auth-v3-line:#d3e6fa;
+  color-scheme:light;
+  background:linear-gradient(180deg,#c8edff 0%,#e8f7ff 44%,#f6fbff 100%);
+}
+.kp-auth-v3 .scene{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(223,244,255,.58),rgba(255,255,255,.79)),
+      url("/assets/img/fantasy-world.svg") center top/cover no-repeat;
+}
+.kp-auth-v3 .stage,.kp-auth-v3 .login-stage,.kp-auth-v3 .recovery-stage{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.07fr);
+  align-items:start;column-gap:clamp(14px,1.7vw,26px);row-gap:16px;
+  width:min(1380px,calc(100% - 36px));max-width:1380px;
+  padding:0 0 20px;margin:0 auto;min-height:0
+}
+body.kp-auth-page.kp-auth-v3.kp-auth-login .stage,
+body.kp-auth-page.kp-auth-v3.kp-auth-recovery .stage{
+  grid-template-columns:minmax(0,1fr) minmax(0,1.07fr)
+}
+.kp-auth-v3 .stage>.brand,.kp-auth-v3 .stage>.panel{align-self:start;min-width:0}
+.kp-auth-v3 .stage>.panel{display:block}
+.kp-auth-v3 .brand.kp-auth-story{
+  display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+  position:relative;isolation:isolate;overflow:visible;gap:13px;
+  margin:0;padding:0;border:0;border-radius:0;min-height:0;
+  background:none!important;box-shadow:none;text-align:left;
+  animation:none
+}
+.kp-auth-v3 .brand.kp-auth-story::before,
+.kp-auth-v3 .brand.kp-auth-story::after{content:none!important;display:none!important}
+.kp-auth-v3 .kp-auth-story__intro{
+  flex:none;position:relative;z-index:1;min-width:0;
+  padding:21px clamp(18px,2.2vw,30px) 24px;
+  border:1px solid rgba(255,255,255,.98);
+  border-radius:21px;background:linear-gradient(148deg,rgba(255,255,255,.98),rgba(245,250,255,.93));
+  box-shadow:0 12px 32px rgba(44,90,156,.12);
+}
+.kp-auth-v3 .kp-auth-story__top{
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  margin:0 0 8px;color:#4a69a4;
+}
+.kp-auth-v3 .kp-auth-story__chapter{
+  background:linear-gradient(115deg,#eef4ff,#e8eaff);
+  border:1px solid #cddcfa;color:#5144da;
+  border-radius:9px;padding:5px 11px;font-size:11px;font-weight:900
+}
+.kp-auth-v3 .kp-auth-story__tag{color:#4e6c9b;font-size:10px;font-weight:850;letter-spacing:.045em}
+.kp-auth-v3 .kp-auth-story__logo{
+  display:block;width:min(100%,280px);max-width:100%;
+  height:auto;margin:0 0 8px;filter:drop-shadow(0 4px 7px rgba(60,75,117,.17))
+}
+.kp-auth-v3 .kp-auth-story h1,
+.kp-auth-v3 .kp-auth-story.recovery-brand h1{
+  color:#274071;margin:0 0 8px;font-family:"Baloo 2","Be Vietnam Pro",sans-serif;
+  font-size:clamp(24px,2.4vw,33px);line-height:1.22;letter-spacing:-.025em;
+  font-weight:850;text-shadow:none;overflow-wrap:anywhere;text-wrap:balance
+}
+.kp-auth-v3 .kp-auth-story.recovery-brand h1 span{color:#6050e0;-webkit-text-fill-color:#6050e0}
+.kp-auth-v3 .kp-auth-story .lead{
+  color:#546f99;margin:0;max-width:65ch;
+  font-size:clamp(12px,1.13vw,14px);line-height:1.7;
+  font-weight:550;text-shadow:none;
+}
+.kp-auth-v3 .kp-auth-story__visual{
+  position:relative;display:grid;place-items:center;
+  width:100%;height:clamp(340px,38vw,505px);
+  flex:none;margin:0;padding:0;overflow:hidden;
+  border:1px solid rgba(255,255,255,.96);
+  border-radius:21px;
+  background:radial-gradient(circle at 45% 28%,#fcffff 0%,#d2efff 64%,#b6e1fb);
+  box-shadow:0 14px 35px rgba(45,93,162,.13)
+}
+.kp-auth-v3 .kp-auth-story__visual img{
+  display:block;position:static;
+  width:100%;height:100%;max-width:100%;max-height:100%;
+  object-fit:contain;object-position:center;transform:none;
+  margin:0;padding:0;border:0;
+  filter:none;pointer-events:none;
+}
+.kp-auth-v3 .kp-auth-story .rules,
+.kp-auth-v3 .login-stage .kp-auth-story .rules{
+  display:grid;grid-template-columns:1fr;gap:8px;max-width:none;
+  margin:0;padding:0;list-style:none;
+}
+.kp-auth-v3 .kp-auth-story .rules li{
+  margin:0;min-width:0;min-height:42px;padding:10px 13px;
+  border:1px solid rgba(210,226,247,.98);border-radius:11px;
+  background:rgba(255,255,255,.94);box-shadow:0 7px 18px rgba(42,76,140,.07);
+  color:#4f668e;font-size:12px;font-weight:550;line-height:1.5;
+  backdrop-filter:none
+}
+.kp-auth-v3 .kp-auth-story .rules li strong{color:#354e78}
+.kp-auth-v3 .kp-auth-story .rules .icon{color:#5b51e8;flex:none}
+.kp-auth-v3 .kp-auth-story .brand-register-link{color:#4b43d6}
+.kp-auth-v3 .kp-auth-story .brand-register-link:hover{color:#256ac8}
+.kp-auth-v3 .panel-inner,.kp-auth-v3 .login-panel,.kp-auth-v3 .recovery-panel{
+  border:1px solid rgba(255,255,255,.99);border-radius:21px;
+  background:linear-gradient(160deg,#fff,rgba(250,253,255,.985));
+  box-shadow:0 20px 52px rgba(46,84,145,.15);
+  padding:clamp(22px,3vw,39px);
+  min-width:0
+}
+.kp-auth-v3 .kp-auth-switch{margin-bottom:20px}
+.kp-auth-v3 .panel h2{font-size:clamp(25px,2.4vw,32px);letter-spacing:-.018em}
+.kp-auth-v3 .login-intro{font-size:13px}
+.kp-auth-v3 .control input{background:#fbfdff;border-color:#ccdff7;font-size:16px}
+.kp-auth-v3 .control input:focus{border-color:#7863f5;box-shadow:0 0 0 4px rgba(108,91,239,.12)}
+.kp-auth-v3 .alert{border-radius:12px}
+.kp-auth-v3 .btn-primary{
+  background:linear-gradient(116deg,#8360ff,#514cf1 54%,#2f82f8);
+  box-shadow:0 11px 23px rgba(85,78,235,.21)
+}
+.kp-auth-v3 .btn-primary:hover{box-shadow:0 15px 29px rgba(85,78,235,.27)}
+.kp-auth-v3 .success-mark{box-shadow:0 0 0 8px rgba(40,191,124,.08)}
+.kp-auth-v3 .footer{position:relative;z-index:1}
+@media(max-width:1080px){
+  .kp-auth-v3 .stage{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+  body.kp-auth-page.kp-auth-v3.kp-auth-login .stage,
+  body.kp-auth-page.kp-auth-v3.kp-auth-recovery .stage{
+    grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)
+  }
+  .kp-auth-v3 .kp-auth-story__visual{height:380px}
+  .kp-auth-v3 .kp-auth-story__intro{padding:17px 20px}
+  .kp-auth-v3 .kp-auth-story__logo{width:230px}
+  .kp-auth-v3 .panel-inner{padding:24px}
+}
+@media(max-width:820px){
+  .kp-auth-v3 .stage,.kp-auth-v3 .login-stage,.kp-auth-v3 .recovery-stage,
+  body.kp-auth-page.kp-auth-v3.kp-auth-login .stage,
+  body.kp-auth-page.kp-auth-v3.kp-auth-recovery .stage{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    width:min(680px,calc(100% - 24px));max-width:680px;
+    padding:0 0 14px;gap:12px;align-items:start
+  }
+  .kp-auth-v3 .brand.kp-auth-story{
+    display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
+    align-items:stretch;gap:10px;min-height:0;
+    padding:0;border:0;border-radius:0;background:none
+  }
+  .kp-auth-v3 .kp-auth-story__intro{
+    display:flex;flex-direction:column;justify-content:center;
+    border-radius:16px;margin:0;padding:15px
+  }
+  .kp-auth-v3 .kp-auth-story__tag{display:none}
+  .kp-auth-v3 .kp-auth-story__logo{width:150px;margin:0 0 5px}
+  .kp-auth-v3 .kp-auth-story h1,
+  .kp-auth-v3 .kp-auth-story.recovery-brand h1{font-size:clamp(18px,3vw,24px);line-height:1.23;margin:0 0 6px}
+  .kp-auth-v3 .kp-auth-story .lead{font-size:11px;line-height:1.5}
+  .kp-auth-v3 .kp-auth-story__visual{width:100%;height:100%;min-height:190px;border-radius:16px}
+  .kp-auth-v3 .kp-auth-story .rules{display:none}
+  .kp-auth-v3 .panel-inner,.kp-auth-v3 .login-panel,.kp-auth-v3 .recovery-panel{padding:22px;border-radius:17px}
+}
+@media(max-width:480px){
+  .kp-auth-v3 .stage,.kp-auth-v3 .login-stage,.kp-auth-v3 .recovery-stage,
+  body.kp-auth-page.kp-auth-v3.kp-auth-login .stage,
+  body.kp-auth-page.kp-auth-v3.kp-auth-recovery .stage{
+    width:calc(100% - 16px);gap:9px
+  }
+  .kp-auth-v3 .brand.kp-auth-story{
+    grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);
+    min-height:0;gap:7px;padding:0;
+  }
+  .kp-auth-v3 .kp-auth-story__intro{padding:11px 10px;border-radius:13px}
+  .kp-auth-v3 .kp-auth-story__chapter{font-size:9px;padding:4px 7px}
+  .kp-auth-v3 .kp-auth-story__logo{width:min(100%,130px);margin:0 0 3px}
+  .kp-auth-v3 .kp-auth-story h1,
+  .kp-auth-v3 .kp-auth-story.recovery-brand h1{
+    font-size:clamp(17px,4.6vw,22px);line-height:1.17;margin:0 0 4px
+  }
+  .kp-auth-v3 .kp-auth-story .lead{font-size:10px;line-height:1.45}
+  .kp-auth-v3 .kp-auth-story__visual{min-height:174px;border-radius:13px}
+  .kp-auth-v3 .panel-inner,.kp-auth-v3 .login-panel,.kp-auth-v3 .recovery-panel{padding:20px 16px}
+}
+@media(prefers-reduced-motion:reduce){
+ .kp-auth-v3 .brand,.kp-auth-v3 .panel{animation:none!important}
+}
