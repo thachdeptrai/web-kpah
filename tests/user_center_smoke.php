@@ -32,4 +32,9 @@ check(strpos($trackerSource, "verified_pending_delivery") !== false,'verified ca
 check(strpos(file_get_contents(KP_ROOT.'/assets/js/toast.js'),'textContent=') !== false,'Toast uses text only for untrusted status');
 $eventSource=file_get_contents(KP_ROOT.'/app/includes/user_center.php');
 check(strpos($eventSource, 'mb_convert_encoding') !== false,'security history sanitizes browser header');
-echo "User center smoke PASS\n";
+check(kp_center_safe_path('/lich-su-bao-mat')===true,'internal notification link allowed');
+foreach (['//attacker.example','/\\\\attacker.example','https://attacker.example','/thong-bao?return=//attacker.example','/quan-tri'] as $badLink) {
+ check(kp_center_safe_path($badLink)===false,'untrusted notification link blocked');
+}
+check(strpos(file_get_contents(KP_ROOT.'/app/pages/notifications.php'),'kp_center_safe_path')!==false,'renderer verifies internal links');
+echo "User center smoke PASS\\n";
