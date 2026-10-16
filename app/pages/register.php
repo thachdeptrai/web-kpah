@@ -46,7 +46,7 @@ $canSubmit = $isOpen;
 <body class="kp-auth-page kp-auth-register">
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
 <header class="kp-auth-topbar">
-  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/emblem.svg" width="41" height="41" alt=""><strong>NGHIỆN KPAH</strong></a>
+  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
   <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
     <a href="/">Trang chủ</a>
     <a href="/dang-nhap">Đăng nhập</a>
