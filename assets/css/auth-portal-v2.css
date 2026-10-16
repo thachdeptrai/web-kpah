@@ -49,6 +49,12 @@ body.kp-auth-page.kp-auth-v2{
   width:min(1400px,calc(100% - 34px));max-width:1400px;min-height:0;
   margin:0 auto;padding:0 0 18px
 }
+/* Explicit auth-page modifiers in the legacy theme have higher specificity.
+   Override their grid-template-columns here, otherwise login/recovery stay side-by-side on mobile. */
+body.kp-auth-page.kp-auth-v2.kp-auth-login .stage,
+body.kp-auth-page.kp-auth-v2.kp-auth-recovery .stage{
+  grid-template-columns:minmax(0,1fr) minmax(0,1.04fr)
+}
 .kp-auth-v2 .stage>.brand,.kp-auth-v2 .stage>.panel{min-width:0;align-self:stretch;margin:0}
 .kp-auth-v2 .brand.kp-auth-story{
   position:relative;isolation:isolate;display:flex;flex-direction:column;
@@ -273,6 +279,10 @@ body.kp-auth-page.kp-auth-v2{
  .kp-auth-v2 .stage,.kp-auth-v2 .login-stage,.kp-auth-v2 .recovery-stage{
   display:grid;grid-template-columns:1fr;gap:12px;
   width:min(680px,calc(100% - 24px));max-width:680px;padding:0 0 10px
+ }
+ body.kp-auth-page.kp-auth-v2.kp-auth-login .stage,
+ body.kp-auth-page.kp-auth-v2.kp-auth-recovery .stage{
+   grid-template-columns:minmax(0,1fr)
  }
  .kp-auth-v2 .brand.kp-auth-story{
   min-height:325px;padding:22px;gap:6px;
