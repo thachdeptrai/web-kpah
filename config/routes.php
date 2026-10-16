@@ -9,6 +9,7 @@ return [
         '/quen-mat-khau' => ['file' => 'app/pages/forgot-password.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/tai-khoan' => ['file' => 'app/pages/home.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/ho-so' => ['file' => 'app/pages/profile.php', 'scope' => 'player', 'redirect_legacy' => true],
+        '/nhan-vat/chi-tiet' => ['file' => 'app/pages/character-detail.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/nhan-vat' => ['file' => 'app/pages/characters.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/bang-xep-hang' => ['file' => 'app/pages/rankings.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/captcha' => ['file' => 'app/pages/captcha.php', 'scope' => 'player', 'redirect_legacy' => true],
