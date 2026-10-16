@@ -93,6 +93,10 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
         ['characters','/nhan-vat','♙','Nhân vật'],
         ['rankings','/bang-xep-hang','♛','Xếp hạng'],
         ['topup','/nap','✦','Nạp'],
+        ['gifts','/giftcode-cua-toi','🎁','Giftcode của tôi'],
+        ['notifications','/thong-bao','◉','Thông báo'],
+        ['orders','/theo-doi-don-nap','◷','Theo dõi đơn nạp'],
+        ['security','/lich-su-bao-mat','♢','Lịch sử bảo mật'],
     ];
     ?>
 <!doctype html>
@@ -114,6 +118,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <?php if($title==='Hồ sơ nhân vật'): ?><link rel="stylesheet" href="/assets/css/character-inventory.css?v=1"><?php endif; ?>
 <link rel="stylesheet" href="/assets/css/player-portal.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-portal.css') ?>">
 <?php if($active==='home'):?><link rel="stylesheet" href="/assets/css/dashboard.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/dashboard.css') ?>"><?php endif;?>
+<link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head>
 <body class="home-page portal-page">
@@ -143,7 +148,11 @@ function kp_player_foot($withProfileJs=false)
         <a href="/api/logout">ĐĂNG XUẤT ↗</a>
     </footer>
 </main>
+<?php if(!empty($_SESSION['kp_toast']) && is_array($_SESSION['kp_toast'])): $toast=$_SESSION['kp_toast']; unset($_SESSION['kp_toast']); ?>
+<div data-toast-type="<?=kp_e($toast['type']??'success')?>" data-toast-title="<?=kp_e($toast['title']??'')?>" data-toast-message="<?=kp_e($toast['message']??'')?> " hidden></div>
+<?php endif;?>
 <?php if($withProfileJs): ?><script src="/assets/js/user-home.js?v=2" defer></script><?php endif; ?>
+<script src="/assets/js/toast.js?v=1" defer></script>
 </body></html>
 <?php
 }
