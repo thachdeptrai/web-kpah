@@ -22,6 +22,7 @@ $js = $read('assets/js/fantasy-foundation.js');
 $uiCss = $read('assets/css/ui-system.css');
 $home = $read('app/pages/index.php');
 $landing = $read('assets/css/landing.css');
+$homeCss = $read('assets/css/home-layout.css');
 foreach (['--kpf-gradient:', '--kpf-space-', '--kpf-radius-', '--kpf-shadow', '.kpf-hero', '.kpf-card', '.kpf-btn', '.kpf-input',
           '.kpf-table', '.kpf-badge', '.kpf-tab', '.kpf-stat', '.kpf-portal', '.kpf-admin-panel', '.kpf-modal', '.kpf-toast', 'prefers-reduced-motion'] as $token) {
     $check(strpos($css, $token) !== false, 'foundation CSS provides ' . $token);
@@ -51,5 +52,6 @@ $check(strpos($home, 'kp_rankings_fetch') !== false &&
        strpos($home, 'SELECT COUNT(*) FROM team_user') !== false,
        'public dynamic database sources kept');
 $check(strpos($home, 'kpah-logo-fantasy.svg') !== false &&
-       strpos($landing, 'fantasy-world.svg') !== false, 'illustrated brand used on home');
+       strpos($homeCss, 'home-hero-anime.webp') !== false &&
+       strpos($css, 'fantasy-world.svg') !== false, 'illustrated assets are available for home and shared components');
 echo 'Fantasy foundation static regression passed.' . PHP_EOL;
