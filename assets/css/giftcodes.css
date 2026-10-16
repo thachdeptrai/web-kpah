@@ -1,0 +1,49 @@
+/* NGHIỆN KPAH Giftcode landing + admin */
+.lp-gift-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.lp-gift-card{min-width:0;padding:24px;border:1px solid rgba(242,208,143,.3);background:linear-gradient(143deg,rgba(46,35,80,.88),rgba(16,12,37,.9));box-shadow:0 15px 40px rgba(0,0,0,.14)}
+.lp-gift-caption{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:9px;color:#f1ce83;font-weight:700;letter-spacing:.08em}
+.lp-gift-caption small{font-size:10px;letter-spacing:0;color:#c9bfdc}
+.lp-gift-card h3{font-size:19px;color:#fff2ce;margin:17px 0 8px}
+.lp-gift-card p{font-size:12px;color:#cdc3df;line-height:1.8;min-height:43px;margin:0 0 15px}
+.lp-gift-rewards{display:flex;flex-wrap:wrap;gap:7px;min-height:30px;margin-bottom:18px}
+.lp-gift-rewards span{border:1px solid #d6b87743;background:#c2a57616;color:#f4ddaf;padding:6px 9px;font-size:10px}
+.lp-gift-code-line{display:flex;align-items:stretch;gap:8px;min-width:0}
+.lp-gift-code-line code{display:flex;align-items:center;flex:1;min-width:0;padding:12px;overflow-wrap:anywhere;border:1px dashed #d1b7767b;color:#fff;font-size:14px;font-weight:700}
+.lp-gift-copy{cursor:pointer;flex:none;border:0;background:#f1ce83;color:#231d28;font-family:inherit;font-size:11px;font-weight:800;padding:9px 13px}
+.lp-gift-copy:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.lp-gift-footnote{font-size:11px;color:#aca2c6;line-height:1.85;margin:21px 0 0}
+.lp-gift-empty{border-top:1px solid #ffffff33;border-bottom:1px solid #ffffff33;padding:26px 4px;color:#f6deaa}
+.lp-gift-empty p{font-size:12px;color:#aca2c6}
+@media(max-width:700px){.lp-gift-grid{grid-template-columns:1fr}.lp-gift-card{padding:19px}}
+@media(max-width:350px){.lp-gift-code-line{flex-wrap:wrap}.lp-gift-copy{width:100%}}
+.gc-admin{margin:0;min-height:100vh;background:#0b0b1b;color:#ebe7f9;font:14px/1.6 "Be Vietnam Pro",system-ui,sans-serif}
+.gc-admin *{box-sizing:border-box}.gc-admin a{color:#f0ce8e;text-decoration:none}
+.gc-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px max(20px,calc((100% - 1280px)/2));background:#15132c;border-bottom:1px solid #ffffff21;font-size:12px}
+.gc-shell{max-width:1280px;margin:0 auto;padding:14px 20px 65px}
+.gc-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin:9px 0 26px}
+.gc-heading span{color:#dfb772;font-size:10px;letter-spacing:.15em}.gc-heading h1{margin:4px 0;font-size:clamp(24px,4vw,37px);line-height:1.2}.gc-heading p,.gc-panel>p{color:#aca6c1;font-size:12px;line-height:1.8}
+.gc-panel{margin:20px 0;padding:22px;border:1px solid #a197b132;background:linear-gradient(130deg,#19172d,#111126);border-radius:13px}
+.gc-panel h2{margin:0 0 5px;font-size:19px;color:#fce8bd}.gc-panel h2 small{font-size:11px;color:#b4a9c8}
+.gc-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
+.gc-form label,.gc-filters label{display:grid;gap:6px;color:#e4dcf5;font-size:12px;font-weight:650;min-width:0}
+.gc-form input:not([type=checkbox]),.gc-form textarea,.gc-filters input{width:100%;min-width:0;padding:12px;border:1px solid #847a9d75;border-radius:8px;background:#0e0e20;color:#fff;font:inherit;font-size:13px}
+.gc-form input:focus,.gc-form textarea:focus,.gc-filters input:focus{outline:2px solid #ddc48c;outline-offset:1px}
+.gc-form input[readonly]{opacity:.75}.gc-full{grid-column:1/-1}
+.gc-form label.gc-check{display:flex;align-items:center;gap:9px;min-height:35px}
+.gc-form button,.gc-filters button{font:inherit;font-weight:800;color:#231e24;border:0;border-radius:8px;background:#f1cf8f;cursor:pointer;padding:11px 19px}
+.gc-alert{padding:13px 17px;border-radius:8px;margin-bottom:15px}.gc-ok{border:1px solid #92d0af;color:#d1f9e2}.gc-error{border:1px solid #f0a5a5;color:#ffe0e0}
+.gc-code-list{display:grid;gap:9px;margin-top:16px}
+.gc-code{border:1px solid #ffffff28;border-radius:10px;background:#ffffff06}
+.gc-code summary{cursor:pointer;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px}
+.gc-code summary strong{font-size:15px;color:#f6ddaa;overflow-wrap:anywhere}
+.gc-code summary span{color:#b9b2cf;font-size:11px}.gc-code summary b{margin-left:auto;font-size:11px;color:#dbb976}
+.gc-code[open]>form{padding:0 16px 19px;border-top:1px solid #ffffff1b}
+.gc-buttons{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.gc-form button.gc-danger{color:#ffdddd;background:#713737}
+.gc-filters{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:18px 0}
+.gc-filters label{min-width:min(200px,100%);flex:1}.gc-filters a{padding:10px}
+.gc-table-wrap{overflow-x:auto}.gc-table-wrap table{border-collapse:collapse;width:100%;min-width:720px;font-size:12px}
+.gc-table-wrap th,.gc-table-wrap td{padding:12px;border-bottom:1px solid #ffffff22;text-align:left;max-width:260px;overflow-wrap:anywhere}
+.gc-table-wrap th{color:#d8bd89;background:#ffffff09}.gc-pagination{display:flex;gap:15px;align-items:center;margin-top:16px}
+@media(max-width:850px){.gc-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.gc-shell{padding:12px 12px 50px}.gc-panel{padding:15px}.gc-form{grid-template-columns:1fr}.gc-top{padding:12px}.gc-heading h1{font-size:25px}}

@@ -14,6 +14,7 @@ function kp_admin_nav($active = 'home', $role = null)
         'home' => ['/quan-tri', 'Tổng quan'],
         'downloads' => ['/quan-tri/tai-game', 'Tải game'],
         'referrals' => ['/quan-tri/ma-gioi-thieu', 'Mã giới thiệu'],
+        'giftcodes' => ['/quan-tri/giftcode', 'Giftcode game'],
         'key-users' => ['/quan-tri/tai-khoan-key', 'Tài khoản key'],
         'game-accounts' => ['/quan-tri/tai-khoan-game', 'Tài khoản game'],
         'mod-history' => ['/quan-tri/lich-su-thao-tac', 'Lịch sử thao tác'],
@@ -29,7 +30,7 @@ function kp_admin_nav($active = 'home', $role = null)
         ? ['Tài khoản' => ['referrals']]
         : [
             'Truy cập nhanh' => ['home', 'downloads'],
-            'Tài khoản' => ['game-accounts', 'mod-history', 'referrals', 'key-users'],
+            'Tài khoản' => ['game-accounts', 'mod-history', 'giftcodes', 'referrals', 'key-users'],
             'Thanh toán' => ['index', 'orders', 'rates', 'wallet-credit'],
             'Vận hành' => ['grant', 'points', 'farmer'],
         ];
