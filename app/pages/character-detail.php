@@ -78,4 +78,5 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 <p class="ci-hint">Icon lấy từ <code>data_item.xstart</code> và file <code>res/icon/{ID}.png</code>. Chép nội dung của <code>map/</code> vào <code>res/</code> để hiện hình. Các thuộc tính ATB hiện dùng số thứ tự gốc để tránh đặt sai tên/chỉ số của game.</p>
 <?php endif; ?>
 <div class="portal-return"><a href="/nhan-vat">← Quay lại nhân vật</a></div>
+<script src="/assets/js/character-inventory.js?v=1" defer></script>
 <?php kp_player_foot(); ?>
