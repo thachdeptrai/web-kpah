@@ -43,8 +43,9 @@ $canSubmit = $isOpen;
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-portal-v2.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v2.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-portal-v3.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-portal-v3.css') ?>">
 </head>
-<body class="kp-auth-page kp-auth-register kp-auth-v2">
+<body class="kp-auth-page kp-auth-register kp-auth-v2 kp-auth-v3">
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
 <header class="kp-auth-topbar">
   <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
@@ -84,10 +85,15 @@ $canSubmit = $isOpen;
 <main class="stage">
     <!-- Khu nhận diện thương hiệu -->
     <section class="brand kp-auth-story" aria-labelledby="page-title">
+        <div class="kp-auth-story__intro">
         <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">02 · ĐĂNG KÝ</span><span class="kp-auth-story__tag">MỞ RA CHUYẾN PHIÊU LƯU</span></div>
         <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
         <h1 id="page-title">Hành trình mới đang chờ bạn!</h1>
         <p class="lead">Tạo tài khoản an toàn và sẵn sàng bước vào vùng đất <?= kp_e($appName) ?>.</p>
+        </div>
+        <figure class="kp-auth-story__visual" aria-label="Nữ chiến binh sẵn sàng khám phá thế giới">
+            <img src="/assets/img/auth-register-adventure.svg" width="760" height="710" alt="" loading="eager" decoding="async">
+        </figure>
 
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tên tài khoản:</strong> <?= kp_e($userHint) ?></span></li>
