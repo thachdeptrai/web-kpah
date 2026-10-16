@@ -4,7 +4,16 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 function kp_center_event($userId, $type) {
     if ((int)$userId < 1 || !in_array($type, ['login','password_change'], true)) return;
     try {
-        $ua = substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 120);
+        $ua = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
+        // The UA header is untrusted input; prevent invalid UTF-8 and control characters.
+        $ua = preg_replace('/[\\x00-\\x1F\\x7F]/', ' ', $ua);
+        if (function_exists('mb_convert_encoding')) {
+            $ua = mb_convert_encoding($ua, 'UTF-8', 'UTF-8');
+            $ua = mb_substr($ua, 0, 100, 'UTF-8');
+        } else {
+            $ua = preg_replace('/[^\\x20-\\x7E]/', '', $ua);
+            $ua = substr($ua, 0, 100);
+        }
         // Store only a coarse, masked network hint, never a raw address.
         $ip = (string)kp_client_ip();
         $hint = filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_IPV4) ? preg_replace('/\.\d+$/','.xxx',$ip) : 'IPv6 / không xác định';
