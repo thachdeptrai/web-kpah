@@ -8,6 +8,14 @@ on:
       - 'app/pages/characters.php'
       - 'app/pages/rankings.php'
       - 'app/includes/player_portal.php'
+      - 'app/includes/user_center.php'
+      - 'app/pages/my-giftcodes.php'
+      - 'app/pages/notifications.php'
+      - 'app/pages/order-tracker.php'
+      - 'app/pages/security-history.php'
+      - 'assets/js/toast.js'
+      - 'assets/css/user-center.css'
+      - 'tests/user_center_smoke.php'
       - 'app/includes/character_inventory.php'
       - 'app/pages/character-detail.php'
       - 'tests/character_inventory_smoke.php'
@@ -24,6 +32,14 @@ on:
       - 'app/pages/characters.php'
       - 'app/pages/rankings.php'
       - 'app/includes/player_portal.php'
+      - 'app/includes/user_center.php'
+      - 'app/pages/my-giftcodes.php'
+      - 'app/pages/notifications.php'
+      - 'app/pages/order-tracker.php'
+      - 'app/pages/security-history.php'
+      - 'assets/js/toast.js'
+      - 'assets/css/user-center.css'
+      - 'tests/user_center_smoke.php'
       - 'app/includes/character_inventory.php'
       - 'app/pages/character-detail.php'
       - 'tests/character_inventory_smoke.php'
@@ -58,6 +74,8 @@ jobs:
         run: php tests/rankings_smoke.php
       - name: Character inventory source and ownership smoke tests
         run: php tests/character_inventory_smoke.php
+      - name: User center query and scope regression
+        run: php tests/user_center_smoke.php
       - name: Parse podium SVG images
         shell: bash
         run: |
