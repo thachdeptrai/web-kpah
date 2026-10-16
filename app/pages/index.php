@@ -5,6 +5,7 @@
  */
 require __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/game_downloads.php';
+require_once __DIR__ . '/../includes/giftcodes.php';
 
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
@@ -34,9 +35,11 @@ foreach ($downloadPlatforms as &$platform) {
 unset($platform);
 $supportUrl = kp_safe_url(kp_config('links.support', ''));
 $accountCount = null;
+$publicGiftcodes = [];
 
 try {
     $accountCount = (int) kp_db()->query('SELECT COUNT(*) FROM team_user')->fetchColumn();
+    $publicGiftcodes = kp_giftcode_public_list(kp_db(), 8);
 } catch (Throwable $e) {
     kp_log('không tải được số lượng tài khoản trang chủ', $e);
 }
@@ -66,6 +69,7 @@ try {
         </a>
         <nav class="lp-links" aria-label="Điều hướng chính">
             <a class="lp-download-nav" href="#tai-game">Tải game</a>
+            <a href="#giftcode">Giftcode</a>
             <a href="#gioi-thieu">Giới thiệu</a>
             <a href="#thong-tin">Thông tin</a>
             <a href="#dien-dan">Diễn đàn</a>
@@ -125,6 +129,35 @@ try {
             <span>Chưa có tài khoản? Đăng ký miễn phí để bắt đầu hành trình.</span>
             <a href="<?= kp_e($registerUrl) ?>">Tạo tài khoản <span aria-hidden="true">↗</span></a>
         </div>
+    </section>
+
+
+    <section class="lp-wrap lp-section lp-gift-section" id="giftcode" aria-labelledby="gift-title">
+        <div class="lp-section-head">
+            <div><span class="lp-index">QUÀ TẶNG · NGHIỆN KPAH</span><h2 id="gift-title">Giftcode dành cho bạn</h2></div>
+            <p>Nhận mã tại đây và nhập trực tiếp trong game để nhận phần thưởng.</p>
+        </div>
+        <?php if ($publicGiftcodes): ?>
+        <div class="lp-gift-grid">
+            <?php foreach ($publicGiftcodes as $gift): ?>
+            <article class="lp-gift-card">
+                <div class="lp-gift-caption"><span>✦ QUÀ TẶNG TRONG GAME</span><small>Còn <?= number_format((int)$gift['limit_use'],0,',','.') ?> lượt</small></div>
+                <h3><?= kp_e($gift['title'] !== '' ? $gift['title'] : 'Mã quà tặng KPAH') ?></h3>
+                <p><?= kp_e($gift['description'] !== '' ? $gift['description'] : 'Nhập mã trong game để nhận phần thưởng.') ?></p>
+                <div class="lp-gift-rewards">
+                    <?php if ((int)$gift['xu'] > 0): ?><span><?= number_format((int)$gift['xu'],0,',','.') ?> Xu</span><?php endif; ?>
+                    <?php if ((int)$gift['luong'] > 0): ?><span><?= number_format((int)$gift['luong'],0,',','.') ?> Lượng</span><?php endif; ?>
+                    <?php if ((int)$gift['luongLock'] > 0): ?><span><?= number_format((int)$gift['luongLock'],0,',','.') ?> Lượng khóa</span><?php endif; ?>
+                    <?php if ($gift['item'] !== null && $gift['item'] !== ''): ?><span>Quà vật phẩm</span><?php endif; ?>
+                </div>
+                <div class="lp-gift-code-line"><code><?= kp_e($gift['giftcode']) ?></code><button type="button" class="lp-gift-copy" data-gift-code="<?= kp_e($gift['giftcode']) ?>" aria-label="Sao chép mã <?= kp_e($gift['giftcode']) ?>">Sao chép</button></div>
+            </article>
+            <?php endforeach; ?>
+        </div>
+        <?php else: ?>
+        <div class="lp-gift-empty"><strong>Chưa có giftcode công khai</strong><p>Những đợt quà tặng mới sẽ xuất hiện tại đây khi được mở.</p></div>
+        <?php endif; ?>
+        <p class="lp-gift-footnote">Mỗi nhân vật chỉ có thể nhận một lần với cùng mã. Số lượt còn lại có thể thay đổi khi người chơi khác nhập mã.</p>
     </section>
 
     <section class="lp-wrap lp-section" id="gioi-thieu" aria-labelledby="intro-title">
@@ -192,5 +225,6 @@ try {
     <span>© <?= date('Y') ?> · Cổng thông tin cộng đồng KPAH</span>
     <a href="#lp-title">Lên đầu trang ↑</a>
 </footer>
+<script src="/assets/js/giftcodes.js?v=1" defer></script>
 </body>
 </html>
