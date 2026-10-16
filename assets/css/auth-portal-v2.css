@@ -10,7 +10,7 @@ body.kp-auth-page.kp-auth-v2{
 }
 .kp-auth-v2 *, .kp-auth-v2 *::before,.kp-auth-v2 *::after{box-sizing:border-box}
 .kp-auth-v2 .scene{
-  position:fixed;inset:0;z-index:-2;pointer-events:none;
+  position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
     linear-gradient(180deg,rgba(218,240,255,.35) 0%,rgba(234,248,255,.76) 60%,#eff9ff 100%),
     url("/assets/img/fantasy-world.svg") center 25%/cover no-repeat,#e5f7ff;
