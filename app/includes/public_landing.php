@@ -33,8 +33,9 @@ function kp_public_page_start(string $title, string $active, string $description
     <link rel="stylesheet" href="/assets/css/landing.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/landing.css') ?>">
     <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
     <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+    <?php if ($active === 'home'): ?><link rel="stylesheet" href="/assets/css/home-layout.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/home-layout.css') ?>"><?php endif; ?>
 </head>
-<body class="landing-page public-inner-page">
+<body class="landing-page public-inner-page<?= $active === 'home' ? ' kp-home-page' : '' ?>">
 <a class="lp-skip" href="#noi-dung">Đi đến nội dung chính</a>
 <header class="lp-header" data-landing-header>
     <div class="lp-container lp-nav">
