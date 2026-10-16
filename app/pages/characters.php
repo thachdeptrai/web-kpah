@@ -118,7 +118,7 @@ kp_player_head('Nhân vật của tôi','characters',$user,true);
                                         <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.5"/><path d="M10 5.8v4.7l3.1 1.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                                         <?= $lastSeen !== '' ? 'Đăng nhập gần nhất: ' . kp_e($lastSeen) : 'Chưa có lịch sử đăng nhập' ?>
                                     </span>
-                                    <span class="char-ui-bottom-mark" aria-hidden="true">✦</span>
+                                    <a class="char-ui-view-inventory" href="/nhan-vat/chi-tiet?name=<?= rawurlencode($charName) ?>">Xem trang bị & túi đồ ↗</a>
                                 </div>
                             </div>
                         </div>
