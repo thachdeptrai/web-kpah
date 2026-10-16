@@ -29,7 +29,7 @@ Bản cập nhật [Security Audit — PR #13](https://github.com/thachdeptrai/w
 
 | Khu vực | Nội dung |
 | --- | --- |
-| Trang chủ | Giới thiệu, khu tải game Android/Windows/iOS, thông tin cộng đồng và các liên kết website |
+| Trang chủ | Giới thiệu, tải game, các giftcode được admin công khai, thông tin cộng đồng và liên kết website |
 | Tài khoản | Đăng ký, đăng nhập, khôi phục mật khẩu, xác minh email và cập nhật hồ sơ |
 | Tổng quan | Ví VNĐ, tổng nạp, Point, nhân vật thuộc tài khoản, giao dịch gần đây, thông tin bảo mật và thành tích khi có dữ liệu |
 | Nhân vật | Cấp độ, kinh nghiệm, Xu, Lượng, Lượng khóa và bang hội từ dữ liệu game |
@@ -38,7 +38,7 @@ Bản cập nhật [Security Audit — PR #13](https://github.com/thachdeptrai/w
 | Nạp ngân hàng | payOS/VietQR; cộng ví VNĐ khi xác minh giao dịch, thưởng ngân hàng theo cấu hình |
 | Ví VNĐ | Đổi mốc Xu/Lượng/Lượng khóa cho nhân vật đủ điều kiện; cần xác nhận nhân vật đã thoát game |
 | Point | Tích điểm từ giao dịch nạp hợp lệ, xem số dư và gửi yêu cầu đổi quà |
-| Quản trị | Điều hướng chung, quản lý nạp/đối soát, tỷ lệ quy đổi, thưởng ngân hàng, Point và quà, mã giới thiệu |
+| Quản trị | Điều hướng chung, CRUD giftcode và lịch sử nhận quà, quản lý nạp/đối soát, tỷ lệ quy đổi, thưởng ngân hàng, Point và quà, mã giới thiệu |
 | Role `key` | Chỉ truy cập phần mã giới thiệu được phân quyền; không có quyền admin toàn hệ thống |
 
 Giao diện có stylesheet riêng cho desktop và mobile. Các thông tin riêng tư của người chơi được truy vấn theo tài khoản đăng nhập, không dùng bảng xếp hạng công khai để hiển thị dữ liệu cá nhân.
@@ -66,6 +66,7 @@ Giao diện có stylesheet riêng cho desktop và mobile. Các thông tin riêng
 | --- | --- |
 | `/quan-tri/dang-nhap` | Đăng nhập admin/key |
 | `/quan-tri` | Tổng quan quản trị (**admin**) |
+| `/quan-tri/giftcode` | Quản lý giftcode, công khai lên trang chủ và tra lịch sử nhân vật đã nhận (**admin**) |
 | `/quan-tri/tai-game` | Bật/tắt bản tải PC, Android, iOS; quản lý link và file upload (**admin**) |
 | `/quan-tri/ma-gioi-thieu` | Mã giới thiệu (**admin/key**, theo quyền) |
 | `/quan-tri/tai-khoan-key` | Tạo/khóa tài khoản role key (**admin**) |
@@ -112,6 +113,8 @@ Chi tiết triển khai và cấu hình: [docs/GAME_DOWNLOADS.md](docs/GAME_DOWN
 **Tỷ lệ Point mặc định:** 1 Point / 1.000 VNĐ nạp hợp lệ, tương đương **10.000đ = 10 Point**. Tỷ lệ thực tế lấy từ `kp_points_program.points_per_1000`. Point chỉ tính cho giao dịch đủ điều kiện sau thời điểm kích hoạt chương trình, có sổ cái chống ghi trùng. Quà đổi được tạo thành yêu cầu để admin xử lý, không tự phát vật phẩm game.
 
 Hệ thống có cơ chế chống gửi lặp, nhật ký ví, trạng thái đối soát và xử lý các kết quả chưa chắc chắn. **Không tự ý sửa trạng thái `completed`, cộng lại tiền hoặc xóa nhật ký khi chưa đối chiếu với nhà cung cấp.** Trạng thái thanh toán thành công và việc giao tài nguyên game là hai việc cần phân biệt.
+
+Tài liệu giftcode: [Quản trị và hiển thị mã quà tặng](docs/GIFTCODES.md).
 
 Tài liệu nghiệp vụ: [Ví VNĐ & role key](docs/VND_WALLET_KEY.md) · [payOS](docs/PAYOS.md) · [API thẻ](docs/CARD_API.md) · [Point](docs/LOYALTY_POINTS.md).
 
