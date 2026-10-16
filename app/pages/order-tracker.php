@@ -25,8 +25,9 @@ $paid=$done||in_array($status,['paid_waiting_delivery','wallet_crediting','credi
 <div class="uc-progress"><span class="is-done">Đã tạo</span><span class="<?= $paid?'is-done':'' ?>">Đã xác minh thanh toán</span><span class="<?= $done?'is-done':'' ?>">Hoàn tất</span></div></div></article>
 <?php endforeach;?>
 <?php foreach($cards as $r):
-$status=(string)($r['status']??'');$complete=in_array($status,['completed','wallet_credited','success'],true);
+$status=(string)($r['status']??'');$complete=in_array($status,['completed','wallet_credited'],true);
+$cardVerified=$complete||in_array($status,['verified_pending_delivery','queued','crediting','wallet_crediting'],true);
 ?><article class="uc-record"><div><strong>Thẻ cào #<?=kp_e(substr((string)$r['id'],0,10))?></strong><small><?=date('d/m/Y H:i',(int)$r['created_at'])?> · <?=number_format((int)$r['amount'],0,',','.')?> VNĐ</small><p>Trạng thái: <?=kp_e(kp_topup_status_label($status))?></p>
-<div class="uc-progress"><span class="is-done">Đã tạo</span><span class="<?= $complete?'is-done':'' ?>">Đã xử lý</span></div></div></article><?php endforeach;?>
+<div class="uc-progress"><span class="is-done">Đã tạo</span><span class="<?= $cardVerified?'is-done':'' ?>">Thẻ hợp lệ</span><span class="<?= $complete?'is-done':'' ?>">Hoàn tất</span></div></div></article><?php endforeach;?>
 </div><p class="uc-note">Các bước hiển thị dựa trên trạng thái được lưu, không tự coi đơn chưa xử lý là thanh toán thành công. <a href="/lich-su-nap">Xem bảng lịch sử đầy đủ →</a></p>
 <?php kp_player_foot();?>
