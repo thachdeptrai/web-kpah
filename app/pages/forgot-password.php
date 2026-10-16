@@ -29,9 +29,19 @@ $version = trim((string) kp_config('app.version', ''));
     <link rel="stylesheet" href="/assets/css/recovery.css?v=2">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 </head>
-<body>
+<body class="kp-auth-page kp-auth-recovery">
 <a class="skip-link" href="#recovery-form">Bỏ qua và đến biểu mẫu khôi phục</a>
+<header class="kp-auth-topbar">
+  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/emblem.svg" width="41" height="41" alt=""><strong>NGHIỆN KPAH</strong></a>
+  <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
+    <a href="/">Trang chủ</a>
+    <a href="/dang-nhap">Đăng nhập</a>
+    <a href="/dang-ky">Đăng ký</a>
+    <a href="/quen-mat-khau" aria-current="page">Khôi phục</a>
+  </nav>
+</header>
 <div class="scene" aria-hidden="true"><canvas id="embers"></canvas></div>
 <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
     <defs>
@@ -109,7 +119,6 @@ $version = trim((string) kp_config('app.version', ''));
     </section>
 </main>
 <footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><a href="/dang-nhap">Đăng nhập</a></footer>
-<script src="/assets/js/scene.js?v=1" defer></script>
 <script src="/assets/js/forgot-password.js?v=2" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>

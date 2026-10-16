@@ -67,9 +67,19 @@ $version = trim((string)kp_config('app.version', ''));
     <link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 </head>
-<body>
+<body class="kp-auth-page kp-auth-login">
 <a class="skip-link" href="#login-form">Bỏ qua và đến biểu mẫu đăng nhập</a>
+<header class="kp-auth-topbar">
+  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/emblem.svg" width="41" height="41" alt=""><strong>NGHIỆN KPAH</strong></a>
+  <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
+    <a href="/">Trang chủ</a>
+    <a href="/dang-nhap" aria-current="page">Đăng nhập</a>
+    <a href="/dang-ky">Đăng ký</a>
+    <a href="/quen-mat-khau">Khôi phục</a>
+  </nav>
+</header>
 <div class="scene" aria-hidden="true"><canvas id="embers"></canvas></div>
 <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
     <defs>
@@ -135,9 +145,7 @@ $version = trim((string)kp_config('app.version', ''));
     </section>
 </main>
 <footer class="footer"><span>&copy; <?= date('Y') ?> <?= kp_e($appName) ?>. Bảo lưu mọi quyền.</span><?php if ($version !== ''): ?><span>Phiên bản <?= kp_e($version) ?></span><?php endif; ?><a href="/dang-ky">Đăng ký tài khoản</a></footer>
-<script src="/assets/js/scene.js?v=1" defer></script>
-<?php if($error!==''):?><div hidden data-toast-type="error" data-toast-title="Đăng nhập thất bại" data-toast-message="<?=kp_e($error)?>"></div><?php endif;?>
-<script src="/assets/js/toast.js?v=1" defer></script>
+<?php if($error!==''):?><div hidden data-ui-toast="error" data-ui-toast-title="Đăng nhập thất bại" data-ui-toast-message="<?=kp_e($error)?>"></div><?php endif;?>
 <script src="/assets/js/login.js?v=1" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>

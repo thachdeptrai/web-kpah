@@ -4,7 +4,13 @@
   if (!form) return;
   var feedback = document.getElementById('recovery-feedback');
   var sendButton = document.getElementById('request-reset-code');
-  function show(message, good) { feedback.textContent = message; feedback.className = 'form-feedback ' + (good ? 'is-good' : 'is-bad'); }
+  function show(message, good) {
+    feedback.textContent = message;
+    feedback.className = 'form-feedback ' + (good ? 'is-good' : 'is-bad');
+    if (good && window.KpUI && typeof window.KpUI.toast === 'function') {
+      window.KpUI.toast({ type: 'success', title: 'Yêu cầu thành công', message: message });
+    }
+  }
   function request(data) {
     return fetch(form.dataset.endpoint, { method: 'POST', credentials: 'same-origin', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(function (r) { return r.json(); });

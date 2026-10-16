@@ -454,6 +454,9 @@
         el.formView.hidden = true;
         el.successView.hidden = false;
         el.successTitle.focus();
+        if (window.KpUI && typeof window.KpUI.toast === 'function') {
+            window.KpUI.toast({ type: 'success', title: 'Tạo tài khoản thành công', message: 'Bạn có thể đăng nhập và bắt đầu hành trình.' });
+        }
         window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
 

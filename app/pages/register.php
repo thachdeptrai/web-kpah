@@ -41,9 +41,19 @@ $canSubmit = $isOpen;
     <link rel="stylesheet" href="/assets/css/register.css?v=1">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+<link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">
 </head>
-<body>
+<body class="kp-auth-page kp-auth-register">
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
+<header class="kp-auth-topbar">
+  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/emblem.svg" width="41" height="41" alt=""><strong>NGHIỆN KPAH</strong></a>
+  <nav class="kp-auth-links" aria-label="Điều hướng tài khoản">
+    <a href="/">Trang chủ</a>
+    <a href="/dang-nhap">Đăng nhập</a>
+    <a href="/dang-ky" aria-current="page">Đăng ký</a>
+    <a href="/quen-mat-khau">Khôi phục</a>
+  </nav>
+</header>
 
 <div class="scene" aria-hidden="true">
     <canvas id="embers"></canvas>
@@ -295,7 +305,6 @@ $canSubmit = $isOpen;
 </dialog>
 <?php endif; ?>
 
-<script src="/assets/js/scene.js?v=1" defer></script>
 <script src="/assets/js/register.js?v=5" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 </body>
