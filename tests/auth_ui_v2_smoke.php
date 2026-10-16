@@ -54,4 +54,14 @@ foreach(['data-endpoint="/api/forgot-password"','id="request-reset-code"',
 }
 au_assert(strpos($reg,'Google')===false && strpos($login,'Google')===false,
  'no unsupported social auth mocked');
+$recoveryJs=au_read('assets/js/forgot-password.js');
+au_assert(strpos($recovery,'data-auth-toggle="new_password"')!==false &&
+          strpos($recovery,'data-auth-toggle="confirm_password"')!==false &&
+          strpos($recoveryJs,"querySelectorAll('[data-auth-toggle]')")!==false,
+          'recovery password reveal retains form submit contract');
+au_assert(strpos($css,'font:600 16px')!==false,
+          'mobile form text avoids Safari automatic focus zoom');
+au_assert(strpos($css,'background-position:center,20% center')!==false &&
+          strpos($css,'background-position:center,82% center')!==false,
+          'illustration composition differs across journeys');
 echo "PASS: auth UI v2 preserves authentication contracts\n";
