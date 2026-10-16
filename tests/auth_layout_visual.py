@@ -32,6 +32,14 @@ JS=r"""JSON.stringify((()=>{
  const head=r('.kp-auth-topbar'),story=r('.kp-auth-story'),form=r('.panel-inner'),
        footer=r('.footer'),nav=r('.kp-auth-links'),logo=r('.kp-auth-logo');
  fail(!document.body.classList.contains('kp-auth-v2'),'missing auth v2 body class');
+ fail(!document.body.classList.contains('kp-auth-v3'),'missing v3 design');
+ const intro=r('.kp-auth-story__intro'),picture=r('.kp-auth-story__visual');
+ fail(!intro||!picture,'separate picture and text zones absent');
+ fail(intersect(intro,picture),'artwork intersects text zone');
+ const art=$('.kp-auth-story__visual img');
+ fail(!art||!art.complete||art.naturalWidth===0,'new standalone artwork failed to load');
+ if(art)fail(getComputedStyle(art).objectFit!=='contain','artwork must not crop with cover');
+
  fail(!document.querySelector('link[href*="auth-portal-v2.css"]'),'missing stylesheet');
  fail(!head||!story||!form||!footer,'missing layout region');
  fail(document.documentElement.scrollWidth>innerWidth+2,
@@ -41,6 +49,8 @@ JS=r"""JSON.stringify((()=>{
  fail(head&&form&&head.bottom>form.top+2,'header covers form');
  fail(intersect(nav,logo),'header navigation collides with logo');
  fail(!seen('.kp-auth-switch'),'account tabs absent');
+ fail(head&&nav&&nav.right>innerWidth+2,'nav clipped outside viewport');
+
  const storyLogo=$('.kp-auth-story__logo');
  fail(!storyLogo||!storyLogo.complete||storyLogo.naturalWidth===0,'story logo unavailable');
  const btns=[...document.querySelectorAll('form input:not([type=hidden]):not([type=checkbox])')].filter(input=>!input.closest('.hp') && getComputedStyle(input).visibility !== 'hidden');
