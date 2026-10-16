@@ -1,0 +1,4 @@
+# Keep the res/ directory in Git, but never commit copied game assets.
+# Copy contents of server map/ here (e.g. map/icon/123.png -> res/icon/123.png).
+*
+!.gitignore
