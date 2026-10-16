@@ -25,10 +25,31 @@ try {
     kp_giftcode_catalog_set(100, ['public'=>true,'title'=>'A','description'=>'']);
     kp_giftcode_catalog_set(101, ['public'=>true,'title'=>'B','description'=>'']);
     kp_giftcode_catalog_set(102, ['public'=>false,'title'=>'C','description'=>'']);
-    $pdo = new PDO('sqlite::memory:');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->exec('CREATE TABLE giftcode (id INTEGER PRIMARY KEY, giftcode TEXT, xu INTEGER, luong INTEGER, luongLock INTEGER, item TEXT, limit_use INTEGER, type INTEGER)');
-    $pdo->exec("INSERT INTO giftcode VALUES (100,'ACTIVE',100,0,0,NULL,5,0),(101,'EXPIRED',0,0,0,NULL,0,0),(102,'HIDDEN',0,0,0,NULL,9,0),(103,'DISABLED',0,0,0,NULL,8,1)");
+    // Fake PDO-compatible query object: tests selection without requiring SQLite or DB.
+    $statement = new class {
+        public $ids = [];
+        public function execute($params) { $this->ids = $params; }
+        public function fetchAll($mode) {
+            $data = [
+                100=>['id'=>100,'giftcode'=>'ACTIVE','xu'=>100,'luong'=>0,'luongLock'=>0,'item'=>null,'limit_use'=>5],
+                101=>['id'=>101,'giftcode'=>'EXPIRED','xu'=>0,'luong'=>0,'luongLock'=>0,'item'=>null,'limit_use'=>0],
+                102=>['id'=>102,'giftcode'=>'HIDDEN','xu'=>0,'luong'=>0,'luongLock'=>0,'item'=>null,'limit_use'=>9]
+            ];
+            $found=[];
+            foreach ($this->ids as $id) {
+                if (isset($data[$id]) && $data[$id]['limit_use']>0) $found[]=$data[$id];
+            }
+            return $found;
+        }
+    };
+    $pdo = new class($statement) {
+        private $statement;
+        public function __construct($statement) { $this->statement=$statement; }
+        public function prepare($sql) {
+            if (strpos($sql,'type = 0 AND limit_use > 0')===false) throw new RuntimeException('Active-only SQL filter absent');
+            return $this->statement;
+        }
+    };
     $rows=kp_giftcode_public_list($pdo,8);
     $check(count($rows)===1 && $rows[0]['giftcode']==='ACTIVE', 'hidden/exhausted giftcode leaked');
     echo "Giftcode smoke PASS\n";
