@@ -125,7 +125,7 @@ def main():
     ) if shutil.which(n)),None)
     if not executable:
         raise SystemExit("Chrome/Chromium unavailable; cannot verify UI geometry")
-    with tempfile.TemporaryDirectory(prefix="kpah-home-browser-") as profile:
+    with tempfile.TemporaryDirectory(prefix="kpah-home-browser-", ignore_cleanup_errors=True) as profile:
         args=[executable,"--headless=new","--no-sandbox","--disable-dev-shm-usage",
               "--disable-gpu","--no-first-run","--no-default-browser-check",
               "--remote-allow-origins=*","--remote-debugging-port=0",
