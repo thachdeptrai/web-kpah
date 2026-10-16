@@ -158,7 +158,9 @@ body.kp-auth-page.kp-auth-v3.kp-auth-recovery .stage{
   .kp-auth-v3 .kp-auth-story.recovery-brand h1{font-size:clamp(18px,3vw,24px);line-height:1.23;margin:0 0 6px}
   .kp-auth-v3 .kp-auth-story .lead{font-size:11px;line-height:1.5}
   .kp-auth-v3 .kp-auth-story__visual{width:100%;height:100%;min-height:190px;border-radius:16px}
-  .kp-auth-v3 .kp-auth-story .rules{display:none}
+  .kp-auth-v3 .kp-auth-story .rules,
+  .kp-auth-v3 .login-stage .kp-auth-story .rules,
+  .kp-auth-v3 .recovery-stage .kp-auth-story .rules{display:none}
   .kp-auth-v3 .panel-inner,.kp-auth-v3 .login-panel,.kp-auth-v3 .recovery-panel{padding:22px;border-radius:17px}
 }
 @media(max-width:480px){
