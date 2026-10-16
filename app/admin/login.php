@@ -133,4 +133,5 @@ $csrf = kp_csrf_token();
 </main>
 <footer class="kp-auth-footer">© NGHIỆN KPAH · BẢO MẬT DÀNH CHO QUẢN TRỊ VIÊN</footer>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
+<script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body></html>
