@@ -11,7 +11,7 @@
   var phoneInput=document.getElementById('phone');
   var originalEmail=emailInput.value.trim().toLowerCase();
   var firstLink=!originalEmail;
-  function show(message,good){feedback.textContent=message;feedback.className='form-feedback '+(good?'is-good':'is-bad');}
+  function show(message,good){feedback.textContent=message;feedback.className='form-feedback '+(good?'is-good':'is-bad');if(window.kpToast)window.kpToast(good?'success':'error',good?'Thành công':'Thất bại',message);}
   function send(data){return fetch(form.dataset.endpoint,{method:'POST',credentials:'same-origin',body:data,headers:{'X-Requested-With':'XMLHttpRequest'}}).then(function(r){return r.json().then(function(j){if(!r.ok&&!j.message)j.message='Không xử lý được yêu cầu.';return j;});});}
   function busy(button,loading,label,on){button.disabled=on;button.textContent=on?loading:label;}
   sendOldButton.addEventListener('click',function(){
@@ -47,7 +47,7 @@
     passwordForm.addEventListener('submit',function(event){
       event.preventDefault();
       var currentPassword=document.getElementById('current_password'),newPassword=document.getElementById('new_password'),confirmPassword=document.getElementById('confirm_password');
-      function passwordMessage(message,good){passwordFeedback.textContent=message;passwordFeedback.className='form-feedback '+(good?'is-good':'is-bad');}
+      function passwordMessage(message,good){passwordFeedback.textContent=message;passwordFeedback.className='form-feedback '+(good?'is-good':'is-bad');if(window.kpToast)window.kpToast(good?'success':'error',good?'Thành công':'Thất bại',message);}
       if(newPassword.value!==confirmPassword.value){passwordMessage('Mật khẩu mới và phần xác nhận không trùng nhau.',false);confirmPassword.focus();return;}
       if(currentPassword.value===newPassword.value){passwordMessage('Mật khẩu mới phải khác mật khẩu hiện tại.',false);newPassword.focus();return;}
       passwordSubmit.disabled=true;var label=passwordSubmit.querySelector('span:first-child');if(label)label.textContent='Đang cập nhật…';
