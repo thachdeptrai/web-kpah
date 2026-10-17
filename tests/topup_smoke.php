@@ -41,4 +41,13 @@ if (kp_topup_hmac('123456789','SERIAL1',$secret)===kp_topup_hmac('123456789','SE
 }
 try { kp_topup_units(1,100); fwrite(STDERR,"FAIL zero-unit conversion not rejected\n");exit(1); }
 catch (RuntimeException $e) { echo "OK reject zero-unit conversion\n"; }
+$layout=file_get_contents(KP_ROOT.'/app/topup/_layout.php');
+$overview=file_get_contents(KP_ROOT.'/app/topup/index.php');
+$theme=file_get_contents(KP_ROOT.'/assets/css/topup-player-light.css');
+check(strpos($layout,'if(!$admin):?><link rel="stylesheet" href="/assets/css/topup-player-light.css')!==false,true,'only player topup shell loads light theme');
+check(strpos($layout,'if($admin): ?><span class="tp-brand-mark"')!==false,true,'admin brand is unchanged');
+check(strpos($layout,'function kp_topup_art_icon')!==false,true,'topup uses bespoke KPAH icon art');
+check(strpos($overview,'kp_topup_art_icon')!==false,true,'topup overview replaces industrial unicode glyphs');
+check(strpos($theme,'body.tp-page:not(.tp-admin)')!==false,true,'player theme scoped away from admin');
+check(strpos($theme,'kpah-player-icon-atlas.png')!==false,true,'topup uses original PNG fantasy icon atlas');
 echo "PASS: topup smoke checks\n";

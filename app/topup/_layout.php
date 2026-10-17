@@ -1,6 +1,11 @@
 <?php
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/../includes/admin_nav.php';
+function kp_topup_art_icon(string $name): string {
+    static $allowed = ['dashboard','user','gamepad','trophy','wallet','gift','bell','receipt','shield','logout','points','bank'];
+    if (!in_array($name,$allowed,true)) return '';
+    return '<span class="kp-art-icon kp-art-icon--'.$name.'" aria-hidden="true"></span>';
+}
 function kp_topup_page_start($title, $active, $username = '', $admin = false) {
     kp_send_security_headers(true);
     header('Content-Type: text/html; charset=utf-8');
@@ -19,15 +24,16 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>"><?php endif;?>
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+<?php if(!$admin):?><link rel="stylesheet" href="/assets/css/topup-player-light.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/topup-player-light.css') ?>"><?php endif;?>
 </head>
 <body class="tp-page<?= $admin ? ' tp-admin' : '' ?>">
 <div class="tp-shell">
 <aside class="tp-sidebar" aria-label="Điều hướng">
-  <a class="tp-brand" href="<?= kp_e($home) ?>"><span class="tp-brand-mark">K<span>.</span></span><span><b>KPAH</b><small><?= $admin ? 'Quản trị nạp' : 'Khu nạp tài nguyên' ?></small></span></a>
+  <a class="tp-brand" href="<?= kp_e($home) ?>"><?php if($admin): ?><span class="tp-brand-mark">K<span>.</span></span><?php else: ?><span class="tp-brand-mark tp-brand-game-logo"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="" loading="eager"></span><?php endif; ?><span><b>KPAH</b><small><?= $admin ? 'Quản trị nạp' : 'Khu nạp tài nguyên' ?></small></span></a>
   <div class="tp-nav-label"><?= $admin ? 'QUẢN TRỊ' : 'TÀI KHOẢN' ?></div>
   <nav class="tp-nav">
     <?php foreach($nav as $item): ?>
-      <a class="tp-nav-link<?= $active===$item[2] ? ' is-active' : '' ?>" href="<?= kp_e($item[0]) ?>"<?= $active===$item[2] ? ' aria-current="page"' : '' ?>><span class="tp-nav-dot">✧</span><?= kp_e($item[1]) ?><span class="tp-nav-arrow">↗</span></a>
+      <a class="tp-nav-link<?= $active===$item[2] ? ' is-active' : '' ?>" href="<?= kp_e($item[0]) ?>"<?= $active===$item[2] ? ' aria-current="page"' : '' ?>><?php if($admin): ?><span class="tp-nav-dot">✧</span><?php else: ?><span class="tp-nav-art"><?= kp_topup_art_icon(['index'=>'wallet','card'=>'receipt','history'=>'receipt','top'=>'trophy','bank'=>'bank','points'=>'points','wallet'=>'wallet'][$item[2]]??'wallet') ?></span><?php endif; ?><?= kp_e($item[1]) ?><span class="tp-nav-arrow">↗</span></a>
     <?php endforeach; ?>
   </nav>
   <a class="tp-back" href="<?= kp_e($home) ?>">← <?= $admin ? 'Về admin' : 'Về tài khoản' ?></a>
