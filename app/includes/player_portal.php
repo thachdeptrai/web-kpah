@@ -5,6 +5,7 @@
  */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/farmer_points.php';
+require_once __DIR__.'/user_center.php';
 
 function kp_player_account()
 {
@@ -107,6 +108,11 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
     header('Content-Type: text/html; charset=utf-8');
     $app=(string)kp_config('app.name','KPAH');
     $username=(string)$user['username'];
+    $unread=0;$latestUnread=null;
+    try{
+        $st=kp_db()->prepare('SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=? AND is_read=0');$st->execute([(int)$user['id']]);$unread=(int)$st->fetchColumn();
+        if($unread>0){$st=kp_db()->prepare('SELECT title,body FROM kp_user_notifications WHERE user_id=? AND is_read=0 ORDER BY id DESC LIMIT 1');$st->execute([(int)$user['id']]);$latestUnread=$st->fetch(PDO::FETCH_ASSOC)?:null;}
+    }catch(Throwable $e){kp_log('player unread notification count unavailable',$e);}
     $initial=function_exists('mb_substr')
         ? mb_strtoupper(mb_substr($username,0,1,'UTF-8'),'UTF-8')
         : strtoupper(substr($username,0,1));
@@ -160,9 +166,10 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
     <button type="button" class="portal-nav-toggle" aria-controls="portal-nav-list" aria-expanded="false"><span class="portal-nav-toggle-art" aria-hidden="true"><?= kp_player_icon_art('dashboard') ?></span><span>Danh mục tài khoản</span><span class="portal-toggle-arrow" aria-hidden="true">▾</span></button>
     <nav id="portal-nav-list" class="portal-nav-list" aria-label="Các chức năng tài khoản">
         <?php foreach($nav as $item): ?>
-        <a class="rail-icon<?= $active===$item[0]?' active':'' ?>" href="<?= kp_e($item[1]) ?>" title="<?= kp_e($item[3]) ?>"<?= $active===$item[0]?' aria-current="page"':'' ?>>
+        <a class="rail-icon<?= $active===$item[0]?' active':'' ?><?= $item[0]==='notifications'&&$unread>0?' has-unread':'' ?>" href="<?= kp_e($item[1]) ?>" title="<?= kp_e($item[3]) ?>"<?= $active===$item[0]?' aria-current="page"':'' ?>>
             <span class="portal-nav-icon" aria-hidden="true"><?= kp_player_icon_art($item[2]) ?></span>
             <span class="portal-nav-label"><?= kp_e($item[3]) ?></span>
+            <?php if($item[0]==='notifications'&&$unread>0):?><span class="portal-notice-count" aria-label="<?=$unread?> thông báo chưa đọc"><?=$unread>99?'99+':$unread?></span><?php endif;?>
         </a>
         <?php endforeach; ?>
     </nav>
@@ -176,8 +183,9 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <main class="home-main portal-main" id="portal-content">
     <header class="home-top portal-top">
         <div class="home-breadcrumb"><span class="breadcrumb-kicker">KPAH</span><span class="breadcrumb-separator">/</span><span><?= kp_e($title) ?></span></div>
-        <div class="top-user"><span class="top-status"><i></i> ĐANG ĐĂNG NHẬP</span><span class="top-user-name"><?= kp_e($username) ?></span><span class="mini-avatar" aria-hidden="true"><?= kp_e($initial) ?></span><a class="top-logout" href="/api/logout">Đăng xuất ↗</a></div>
+        <div class="top-user"><span class="top-status"><i></i> ĐANG ĐĂNG NHẬP</span><a class="portal-notification-shortcut<?= $unread>0?' has-unread':''?>" href="/thong-bao" aria-label="Thông báo<?= $unread>0?' · '.$unread.' chưa đọc':''?>"><?=kp_player_icon_art('bell')?><?php if($unread>0):?><b><?=$unread>99?'99+':$unread?></b><?php endif;?></a><span class="top-user-name"><?= kp_e($username) ?></span><span class="mini-avatar" aria-hidden="true"><?= kp_e($initial) ?></span><a class="top-logout" href="/api/logout">Đăng xuất ↗</a></div>
     </header>
+<?php $shown=(int)($_SESSION['kp_user_notice_toast_count']??0);if($unread>0&&$shown!==$unread):$_SESSION['kp_user_notice_toast_count']=$unread;?><div hidden data-ui-toast="warning" data-ui-toast-title="Bạn có <?=number_format($unread,0,',','.')?> thông báo chưa đọc" data-ui-toast-message="<?=kp_e($latestUnread['title']??'Mở Trung tâm thông báo để xem chi tiết.')?>" data-ui-toast-duration="6500"></div><?php elseif($unread===0):$_SESSION['kp_user_notice_toast_count']=0;endif;?>
 <?php
 }
 

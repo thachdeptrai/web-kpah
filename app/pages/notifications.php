@@ -25,7 +25,7 @@ kp_player_head('Thông báo','notifications',$user);
 <div class="uc-toolbar"><span class="uc-count"><?= $unreadCount>0?(int)$unreadCount.' thông báo chưa đọc':'Bạn đã xem tất cả thông báo' ?></span><?php if($unreadCount>0): ?><form method="post" class="uc-actions"><input type="hidden" name="csrf" value="<?=kp_e(kp_csrf_token())?>"><input type="hidden" name="action" value="read_all"><button type="submit">Đánh dấu tất cả đã đọc</button></form><?php endif; ?></div>
 <?php if(!$rows):?><div class="uc-empty uc-empty-illustrated"><?= kp_player_icon_art('bell') ?><strong>Chưa có thông báo</strong><p>Những cập nhật liên quan đến tài khoản sẽ xuất hiện ở đây.</p></div><?php endif;?>
 <div class="uc-list"><?php foreach($rows as $r):?>
-<article class="uc-record uc-record--notification <?= (int)$r['is_read']===0?'uc-unread':''?>"><span class="uc-record-art" aria-hidden="true"><?= kp_player_icon_art('bell') ?></span><div><strong><?=kp_e($r['title'])?></strong><small><?=kp_e($r['created_at'])?> · <?= (int)$r['is_read']===0?'Chưa đọc':'Đã đọc'?></small><p><?=kp_e($r['body'])?></p></div>
+<article class="uc-record uc-record--notification <?= (int)$r['is_read']===0?'uc-unread':'uc-read'?>"><span class="uc-record-art" aria-hidden="true"><?= kp_player_icon_art('bell') ?></span><div><strong><?=kp_e($r['title'])?></strong><small><?=kp_e($r['created_at'])?> · <?= (int)$r['is_read']===0?'Chưa đọc':'Đã đọc'?></small><p><?=kp_e($r['body'])?></p></div>
 <?php if(kp_center_safe_path((string)$r['link_path']) && (string)$r['link_path'] !== ''):?><a href="<?=kp_e($r['link_path'])?>">Xem chi tiết ↗</a><?php endif;?>
 </article><?php endforeach;?></div>
 <?php endif;?>

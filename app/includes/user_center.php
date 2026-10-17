@@ -32,7 +32,7 @@ function kp_center_safe_path($path) {
 }
 function kp_admin_center_safe_path($path) {
     return is_string($path) && in_array($path, [
-        '', '/quan-tri', '/quan-tri/diem-tich-luy', '/quan-tri/doi-soat'
+        '', '/quan-tri', '/quan-tri/thong-bao', '/quan-tri/diem-tich-luy', '/quan-tri/doi-soat'
     ], true);
 }
 function kp_admin_notify($title,$body,$category='system',$path='') {

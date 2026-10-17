@@ -61,6 +61,7 @@
 .kp-admin-nav-v2 .kp-admin-nav-popover-link:focus-visible{background:#ffffff0c;color:#fff}
 .kp-admin-nav-v2 .kp-admin-nav-popover-link.is-active{background:#a596ff1d;color:#dcd3ff;border-color:#a596ff45}
 .kp-admin-nav-actions{display:flex;align-items:center;gap:8px;flex:none}
+.kp-admin-notification-bell{position:relative;display:inline-flex;align-items:center;gap:7px;min-height:39px;padding:8px 11px;border:1px solid #ffffff21;border-radius:10px;color:#d9d5e8!important;font-size:11px;font-weight:800}.kp-admin-notification-bell>span{color:#7f8aa6;font-size:9px}.kp-admin-notification-bell>i{position:absolute;top:-8px;right:-8px;display:grid;place-items:center;min-width:21px;height:21px;padding:0 5px;border:2px solid #17132d;border-radius:999px;background:#ef3340;color:#fff;font:800 10px/1 system-ui;box-shadow:0 3px 12px #ef334077;animation:kp-admin-alert-pulse 1.8s ease-in-out infinite}.kp-admin-notification-bell:has(i)>span{color:#ff4b58}.kp-admin-notification-bell:hover,.kp-admin-notification-bell.is-active{border-color:#ef5964;background:#ef334014;color:#fff!important}@keyframes kp-admin-alert-pulse{50%{box-shadow:0 3px 18px #ef3340aa,0 0 0 5px #ef33401a}}
 .kp-admin-nav-v2 .kp-admin-nav-exit{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
   min-height:39px;padding:8px 13px;border:1px solid #ffffff21;border-radius:10px;
@@ -80,6 +81,7 @@
     margin:12px auto 22px;padding:9px 11px;flex-direction:row;align-items:center;gap:12px
   }
   .kp-admin-nav-desktop,.kp-admin-nav-v2 .kp-admin-nav-exit{display:none}
+  .kp-admin-notification-bell b{display:none}.kp-admin-notification-bell{min-width:42px;justify-content:center;padding:8px}
   .kp-admin-nav-actions{margin-left:auto}
   .kp-admin-nav-mobile{display:block;position:static}
   .kp-admin-nav-mobile-toggle{

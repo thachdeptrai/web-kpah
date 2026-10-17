@@ -4,7 +4,11 @@
 .uc-heading p,.uc-note{color:#b8aecb;line-height:1.8;font-size:12px}
 .uc-list{display:grid;gap:12px;margin:18px 0 30px}
 .uc-record{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:18px 20px;background:#201b35;border:1px solid #a998ba41;border-radius:12px}
-.uc-record.uc-unread{border-left:4px solid #e3bd7a}
+.uc-record.uc-record--notification{position:relative;transition:opacity .18s,border-color .18s,background .18s}
+.uc-record.uc-unread{padding-left:32px;border:1px solid #ef3f516e;border-left:4px solid #ef3340;background:linear-gradient(120deg,#2b1d39,#201b35);box-shadow:0 9px 25px #ef33400d}
+.uc-record.uc-unread::before{content:"";position:absolute;left:13px;top:24px;width:9px;height:9px;border-radius:50%;background:#ef3340;box-shadow:0 0 0 4px #ef33401c,0 0 14px #ef334088}
+.uc-record.uc-unread strong{color:#fff1d5;font-weight:850}.uc-record.uc-unread small{color:#ff9ca4;font-weight:700}
+.uc-record.uc-read{opacity:.62;background:#19162a;border-color:#92889f2e}.uc-record.uc-read strong{color:#c6bdcf;font-weight:600}.uc-record.uc-read p,.uc-record.uc-read small{color:#8f8799}
 .uc-record>div{flex:1;min-width:0}.uc-record strong{display:block;color:#fce6bd;font-size:15px;overflow-wrap:anywhere}
 .uc-record small{display:block;color:#aca3c1;margin-top:6px;font-size:11px}
 .uc-record p{font-size:12px;color:#cec6dd;line-height:1.8;overflow-wrap:anywhere}

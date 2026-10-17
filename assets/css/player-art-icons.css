@@ -18,7 +18,10 @@
 .portal-page .uc-record-art{display:grid;place-items:center;flex:none;width:43px;height:43px;border:1px solid #e0e9f9;border-radius:12px;background:#f3f7ff}
 .portal-page .uc-record-art .kp-art-icon{width:32px;height:32px}
 .portal-page .uc-record>div:first-of-type{flex:1;min-width:0}
-.portal-page .uc-record.uc-unread{background:#fcfbff}
+.portal-page .uc-record.uc-unread{position:relative;padding-left:32px;border:1px solid rgba(239,51,64,.43);border-left:4px solid #ef3340;background:linear-gradient(120deg,#fff7f8,#fff);box-shadow:0 9px 25px rgba(239,51,64,.08)}
+.portal-page .uc-record.uc-unread::before{content:"";position:absolute;left:13px;top:24px;width:9px;height:9px;border-radius:50%;background:#ef3340;box-shadow:0 0 0 4px rgba(239,51,64,.12),0 0 14px rgba(239,51,64,.45)}
+.portal-page .uc-record.uc-unread strong{color:#241c31;font-weight:850}.portal-page .uc-record.uc-unread small{color:#d52f40;font-weight:750}
+.portal-page .uc-record.uc-read{opacity:.62;background:#f2eff5;border-color:#b8afc72e}.portal-page .uc-record.uc-read strong{color:#756c80;font-weight:600}.portal-page .uc-record.uc-read :is(p,small){color:#9a92a3}
 .portal-page .uc-record .uc-tags{flex:0 1 46%;justify-content:flex-end}
 .portal-page .uc-record .uc-tags span{border-radius:8px}
 .portal-page .uc-empty-illustrated{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:187px;gap:8px;padding:25px 15px;border-radius:16px;background:#fff}

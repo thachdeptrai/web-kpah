@@ -4,19 +4,20 @@
  * Mobile: accessible collapsible drawer. Links never grant permissions.
  */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/admin_notifications.php';
 
 function kp_admin_nav($active = 'home', $role = null)
 {
     $role = $role === null ? (string)($_SESSION['kp_admin_role'] ?? '') : (string)$role;
     if (!in_array($role, ['admin', 'key'], true)) return;
-    $pendingRewards = 0;
-    if ($role === 'admin') {
-        try { $pendingRewards = (int)kp_db()->query("SELECT COUNT(*) FROM kp_points_redemptions WHERE status='pending'")->fetchColumn(); }
-        catch (Throwable $e) { /* Point migration can be installed after deployment. */ }
-    }
+    $attention=$role==='admin'?kp_admin_attention_summary():['total'=>0,'latest'=>null];
+    $attentionToast=$role==='admin'&&$attention['total']>0&&(int)($_SESSION['kp_admin_notice_toast_count']??0)!==(int)$attention['total'];
+    if($role==='admin')$_SESSION['kp_admin_notice_toast_count']=(int)$attention['total'];
+    $pendingRewards=$role==='admin'?(int)$attention['points']:0;
 
     $items = [
         'home' => ['/quan-tri', 'Tổng quan'],
+        'notifications' => ['/quan-tri/thong-bao', 'Thông báo'],
         'downloads' => ['/quan-tri/tai-game', 'Tải game'],
         'referrals' => ['/quan-tri/ma-gioi-thieu', 'Mã giới thiệu'],
         'giftcodes' => ['/quan-tri/giftcode', 'Giftcode game'],
@@ -34,7 +35,7 @@ function kp_admin_nav($active = 'home', $role = null)
     $groups = $role === 'key'
         ? ['Tài khoản' => ['referrals']]
         : [
-            'Truy cập nhanh' => ['home', 'downloads'],
+            'Truy cập nhanh' => ['home', 'notifications', 'downloads'],
             'Tài khoản' => ['game-accounts', 'mod-history', 'giftcodes', 'referrals', 'key-users'],
             'Thanh toán' => ['index', 'orders', 'rates', 'wallet-credit'],
             'Vận hành' => ['grant', 'points', 'farmer'],
@@ -72,6 +73,7 @@ function kp_admin_nav($active = 'home', $role = null)
   </div>
 
   <div class="kp-admin-nav-actions">
+    <?php if($role==='admin'):?><a class="kp-admin-notification-bell<?= $active==='notifications'?' is-active':''?>" href="/quan-tri/thong-bao" aria-label="Thông báo quản trị<?= $attention['total']?' · '.$attention['total'].' việc cần xử lý':''?>"><span aria-hidden="true">●</span><b>Thông báo</b><?php if($attention['total']):?><i><?=$attention['total']>99?'99+':(int)$attention['total']?></i><?php endif;?></a><?php endif;?>
     <a class="kp-admin-nav-exit" href="/quan-tri/dang-xuat" title="Đăng xuất khỏi quản trị">Đăng xuất <span aria-hidden="true">↗</span></a>
     <details class="kp-admin-nav-mobile">
       <summary class="kp-admin-nav-mobile-toggle">
@@ -97,6 +99,7 @@ function kp_admin_nav($active = 'home', $role = null)
     </details>
   </div>
 </nav>
+<?php if($attentionToast):?><div hidden data-ui-toast="warning" data-ui-toast-title="<?=kp_e($attention['latest']['title']??'Có việc cần xử lý')?>" data-ui-toast-message="<?=kp_e($attention['latest']['body']??('Hiện có '.$attention['total'].' giao dịch hoặc yêu cầu chưa xử lý.'))?>" data-ui-toast-duration="7000"></div><?php endif;?>
 <script src="/assets/js/admin-nav.js?v=1" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 <script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
