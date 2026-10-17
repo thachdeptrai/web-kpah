@@ -86,6 +86,11 @@ if (!defined('KP_ROOT')) define('KP_ROOT',$root);
 if (!function_exists('kp_e')) {
     function kp_e($value) { return htmlspecialchars((string)$value,ENT_QUOTES,'UTF-8'); }
 }
+// Static navigation rendering intentionally omits production bootstrap/DB.
+// Helpers now log optional attention-query errors; supply an isolated logger.
+if (!function_exists('kp_log')) {
+    function kp_log($where, $e = null) { /* isolated layout fixture */ }
+}
 require_once $root.'/app/includes/admin_nav.php';
 ob_start();
 kp_admin_nav('rates','admin');
