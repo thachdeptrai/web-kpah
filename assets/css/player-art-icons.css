@@ -46,3 +46,34 @@
  .portal-page .portal-rail .portal-nav-icon .kp-art-icon{width:23px;height:23px}
  .portal-page .portal-action-icon .kp-art-icon{width:31px;height:31px}
 }
+
+/* Illustrated states and readable records on secondary account pages. */
+.portal-page .uc-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0 9px}
+.portal-page .uc-count{display:inline-flex;padding:7px 12px;border-radius:50px;background:#edf5ff;border:1px solid #dce8f7;color:#59739a;font-size:12px;font-weight:750}
+.portal-page .uc-toolbar .uc-actions{margin:0}
+.portal-page .uc-record{gap:13px;padding:17px 19px;border-color:#dce7f7;box-shadow:0 6px 18px rgba(65,99,159,.05)}
+.portal-page .uc-record-art{display:grid;place-items:center;flex:none;width:43px;height:43px;border:1px solid #e0e9f9;border-radius:12px;background:#f3f7ff}
+.portal-page .uc-record-art .kp-art-icon{width:32px;height:32px}
+.portal-page .uc-record>div:first-of-type{flex:1;min-width:0}
+.portal-page .uc-record.uc-unread{background:#fcfbff}
+.portal-page .uc-record .uc-tags{flex:0 1 46%;justify-content:flex-end}
+.portal-page .uc-record .uc-tags span{border-radius:8px}
+.portal-page .uc-empty-illustrated{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:187px;gap:8px;padding:25px 15px;border-radius:16px;background:#fff}
+.portal-page .uc-empty-illustrated .kp-art-icon{display:block;width:56px;height:56px}
+.portal-page .uc-empty-illustrated strong{font-size:15px;color:#325389}
+.portal-page .uc-empty-illustrated p{max-width:480px;color:#7084a2;font-size:12px;line-height:1.7}
+.portal-page .uc-empty-illustrated a{margin-top:4px;padding:7px 12px;border-radius:9px;background:#f3f4ff;border:1px solid #dbdef9;color:#5854c9;font-size:12px;font-weight:750}
+.portal-page .uc-state-pill{display:inline-block;margin-left:4px;padding:3px 9px;border:1px solid #d7e2f5;border-radius:99px;background:#f1f5fc;color:#587198;font-size:11px;font-weight:800}
+.portal-page .uc-state-good{border-color:#b7e8d1;background:#eafaf2;color:#157a57}
+.portal-page .uc-state-waiting{border-color:#f0d9a8;background:#fff8e7;color:#906c26}
+.portal-page .uc-progress{gap:7px;margin-top:12px}
+.portal-page .uc-progress span{border-radius:8px;padding:6px 10px;font-size:11px;background:#f1f5fc}
+.portal-page .uc-progress span.is-done{background:#e9f9f0}
+@media(max-width:640px){
+ .portal-page .uc-record{align-items:flex-start;padding:13px;gap:10px}
+ .portal-page .uc-record-art{width:37px;height:37px}
+ .portal-page .uc-record-art .kp-art-icon{width:28px;height:28px}
+ .portal-page .uc-record .uc-tags{flex:1 0 100%;justify-content:flex-start}
+ .portal-page .uc-empty-illustrated{min-height:172px}
+ .portal-page .uc-progress span{padding:6px 7px;font-size:10px}
+}

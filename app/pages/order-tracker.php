@@ -14,20 +14,20 @@ kp_player_head('Theo dõi đơn nạp','orders',$user);
 ?>
 <section class="uc-heading"><span>GIAO DỊCH CỦA BẠN</span><h1>Theo dõi đơn nạp</h1><p>Xem trạng thái thực tế của các đơn nạp, không cần ghi lại mã thẻ hay thông tin thanh toán.</p></section>
 <?php if($error):?><div class="uc-alert"><?=kp_e($error)?></div><?php endif;?>
-<?php if(!$cards&&!$bank):?><div class="uc-empty">Chưa có đơn nạp gần đây.</div><?php endif;?>
+<?php if(!$cards&&!$bank):?><div class="uc-empty uc-empty-illustrated"><?= kp_player_icon_art('receipt') ?><strong>Chưa có đơn nạp</strong><p>Thông tin đơn nạp thẻ và chuyển khoản sẽ hiển thị tại đây.</p><a href="/nap">Đến khu nạp game →</a></div><?php endif;?>
 <div class="uc-list">
 <?php foreach($bank as $r):
 $status=(string)$r['status'];
 $done=in_array($status,['completed','wallet_credited'],true);
 $paid=$done||in_array($status,['paid_waiting_delivery','wallet_crediting','crediting','queued','needs_review'],true);
 ?>
-<article class="uc-record"><div><strong>Chuyển khoản #<?=kp_e($r['order_code'])?></strong><small><?=kp_e($r['created_at'])?> · <?=number_format((int)$r['amount'],0,',','.')?> VNĐ</small><p>Trạng thái: <b><?=kp_e(['completed'=>'Hoàn tất','wallet_credited'=>'Đã cộng ví','pending'=>'Chờ thanh toán','wallet_pending'=>'Chờ thanh toán','creating'=>'Đang tạo đơn','wallet_creating'=>'Đang tạo đơn','queued'=>'Chờ game xử lý','needs_review'=>'Đang đối soát','paid_waiting_delivery'=>'Đã thanh toán, chờ cấp','crediting'=>'Đang cấp','wallet_crediting'=>'Đang cộng ví'][$status]??'Đang xử lý')?></b></p>
+<article class="uc-record uc-record--order"><span class="uc-record-art" aria-hidden="true"><?= kp_player_icon_art('bank') ?></span><div><strong>Chuyển khoản #<?=kp_e($r['order_code'])?></strong><small><?=kp_e($r['created_at'])?> · <?=number_format((int)$r['amount'],0,',','.')?> VNĐ</small><p>Trạng thái: <b class="uc-state-pill <?= $done?'uc-state-good':($paid?'uc-state-waiting':'uc-state-pending') ?>"><?=kp_e(['completed'=>'Hoàn tất','wallet_credited'=>'Đã cộng ví','pending'=>'Chờ thanh toán','wallet_pending'=>'Chờ thanh toán','creating'=>'Đang tạo đơn','wallet_creating'=>'Đang tạo đơn','queued'=>'Chờ game xử lý','needs_review'=>'Đang đối soát','paid_waiting_delivery'=>'Đã thanh toán, chờ cấp','crediting'=>'Đang cấp','wallet_crediting'=>'Đang cộng ví'][$status]??'Đang xử lý')?></b></p>
 <div class="uc-progress"><span class="is-done">Đã tạo</span><span class="<?= $paid?'is-done':'' ?>">Đã xác minh thanh toán</span><span class="<?= $done?'is-done':'' ?>">Hoàn tất</span></div></div></article>
 <?php endforeach;?>
 <?php foreach($cards as $r):
 $status=(string)($r['status']??'');$complete=in_array($status,['completed','wallet_credited'],true);
 $cardVerified=$complete||in_array($status,['verified_pending_delivery','queued','crediting','wallet_crediting'],true);
-?><article class="uc-record"><div><strong>Thẻ cào #<?=kp_e(substr((string)$r['id'],0,10))?></strong><small><?=date('d/m/Y H:i',(int)$r['created_at'])?> · <?=number_format((int)$r['amount'],0,',','.')?> VNĐ</small><p>Trạng thái: <?=kp_e(kp_topup_status_label($status))?></p>
+?><article class="uc-record uc-record--order"><span class="uc-record-art" aria-hidden="true"><?= kp_player_icon_art('receipt') ?></span><div><strong>Thẻ cào #<?=kp_e(substr((string)$r['id'],0,10))?></strong><small><?=date('d/m/Y H:i',(int)$r['created_at'])?> · <?=number_format((int)$r['amount'],0,',','.')?> VNĐ</small><p>Trạng thái: <b class="uc-state-pill <?= $complete?'uc-state-good':($cardVerified?'uc-state-waiting':'uc-state-pending') ?>"><?=kp_e(kp_topup_status_label($status))?></b></p>
 <div class="uc-progress"><span class="is-done">Đã tạo</span><span class="<?= $cardVerified?'is-done':'' ?>">Thẻ hợp lệ</span><span class="<?= $complete?'is-done':'' ?>">Hoàn tất</span></div></div></article><?php endforeach;?>
 </div><p class="uc-note">Các bước hiển thị dựa trên trạng thái được lưu, không tự coi đơn chưa xử lý là thanh toán thành công. <a href="/lich-su-nap">Xem bảng lịch sử đầy đủ →</a></p>
 <?php kp_player_foot();?>

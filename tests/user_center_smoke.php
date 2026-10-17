@@ -37,4 +37,13 @@ foreach (['//attacker.example','/\\\\attacker.example','https://attacker.example
  check(kp_center_safe_path($badLink)===false,'untrusted notification link blocked');
 }
 check(strpos(file_get_contents(KP_ROOT.'/app/pages/notifications.php'),'kp_center_safe_path')!==false,'renderer verifies internal links');
+foreach (['app/pages/my-giftcodes.php','app/pages/notifications.php','app/pages/order-tracker.php','app/pages/security-history.php'] as $p) {
+ $html=file_get_contents(KP_ROOT.'/'.$p);
+ check(strpos($html,'uc-record-art')!==false,'custom artwork in '.$p);
+ check(strpos($html,'uc-empty-illustrated')!==false,'empty-state artwork in '.$p);
+}
+$notice=file_get_contents(KP_ROOT.'/app/pages/notifications.php');
+check(strpos($notice,'if($unreadCount>0)')!==false,'read-all only offered with unread items');
+$orders=file_get_contents(KP_ROOT.'/app/pages/order-tracker.php');
+check(strpos($orders,'uc-state-pill')!==false,'payment status presentation uses backend states');
 echo "User center smoke PASS\\n";

@@ -8,9 +8,9 @@ kp_player_head('Lịch sử bảo mật','security',$user);
 ?>
 <section class="uc-heading"><span>BẢO VỆ TÀI KHOẢN</span><h1>Lịch sử bảo mật</h1><p>Xem những lần đăng nhập và thay đổi mật khẩu được ghi nhận trên website.</p></section>
 <?php if($error):?><div class="uc-alert">Chưa bật tính năng lịch sử bảo mật hoặc dữ liệu tạm thời không khả dụng.</div>
-<?php elseif(!$events):?><div class="uc-empty">Chưa có sự kiện nào kể từ khi kích hoạt tính năng.</div>
+<?php elseif(!$events):?><div class="uc-empty uc-empty-illustrated"><?= kp_player_icon_art('shield') ?><strong>Chưa có sự kiện bảo mật</strong><p>Đăng nhập và các lần đổi mật khẩu trên website sẽ được ghi nhận tại đây.</p></div>
 <?php else:?>
-<div class="uc-list"><?php foreach($events as $r):?><article class="uc-record"><div><strong><?= $r['event_type']==='login'?'Đăng nhập thành công':($r['event_type']==='password_change'?'Đổi mật khẩu':'Hoạt động bảo mật') ?></strong>
+<div class="uc-list"><?php foreach($events as $r):?><article class="uc-record uc-record--security"><span class="uc-record-art" aria-hidden="true"><?= kp_player_icon_art('shield') ?></span><div><strong><?= $r['event_type']==='login'?'Đăng nhập thành công':($r['event_type']==='password_change'?'Đổi mật khẩu':'Hoạt động bảo mật') ?></strong>
 <small><?=kp_e($r['created_at'])?></small><p>Thiết bị/trình duyệt: <?=kp_e($r['device_label']!==''?$r['device_label']:'Không xác định')?> · Mạng: <?=kp_e($r['ip_hint'])?></p></div></article><?php endforeach;?></div><?php endif;?>
 <p class="uc-note">Chỉ có sự kiện website phát sinh từ lúc kích hoạt. Không bao gồm đăng nhập trong game hoặc các lượt đăng nhập cũ.</p>
 <?php kp_player_foot();?>

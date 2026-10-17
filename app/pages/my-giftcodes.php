@@ -8,10 +8,10 @@ kp_player_head('Giftcode của tôi','gifts',$user);
 ?>
 <section class="uc-heading"><span>QUÀ ĐÃ NHẬN</span><h1>Lịch sử Giftcode của tôi</h1><p>Danh sách mã mà các nhân vật thuộc tài khoản của bạn đã nhận trong game.</p></section>
 <?php if($error):?><div class="uc-alert">Không tải được lịch sử. Vui lòng thử lại sau.</div>
-<?php elseif(!$rows):?><div class="uc-empty">Chưa có lượt nhận Giftcode nào được ghi nhận.</div>
+<?php elseif(!$rows):?><div class="uc-empty uc-empty-illustrated"><?= kp_player_icon_art('gift') ?><strong>Chưa có Giftcode đã nhận</strong><p>Khi nhận quà trong game, lịch sử sẽ hiển thị tại đây.</p><a href="/giftcode">Xem Giftcode công khai →</a></div>
 <?php else:?>
 <div class="uc-list"><?php foreach($rows as $r):?>
-<article class="uc-record"><div><strong><?=kp_e($r['giftcode'])?></strong><small>Nhân vật: <?=kp_e($r['player'])?></small></div><div class="uc-tags">
+<article class="uc-record uc-record--gift"><span class="uc-record-art" aria-hidden="true"><?= kp_player_icon_art('gift') ?></span><div><strong><?=kp_e($r['giftcode'])?></strong><small>Nhân vật: <?=kp_e($r['player'])?></small></div><div class="uc-tags">
 <?php if((int)$r['xu']):?><span>Xu: <?=kp_e(kp_player_format($r['xu']))?></span><?php endif;?>
 <?php if((int)$r['luong']):?><span>Lượng: <?=kp_e(kp_player_format($r['luong']))?></span><?php endif;?>
 <?php if((int)$r['luongK']):?><span>Lượng khóa: <?=kp_e(kp_player_format($r['luongK']))?></span><?php endif;?>
