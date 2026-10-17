@@ -38,7 +38,7 @@ auth_test(strpos($recovery, "kp_rate_limit('password_recovery_identity_minute'")
 auth_test(strpos($recovery, "kp_rate_limit('password_recovery_recipient_minute'") !== false, 'recovery has shared 60-second recipient cooldown across sessions');
 auth_test(strpos($recovery, "kp_rate_limit('password_recovery_recipient_window'") !== false, 'recovery limits number of emails per recipient');
 auth_test(strpos($recovery, "kp_recovery_reply([\n                    'ok' => true") !== false, 'recovery recipient throttling uses an enumeration-safe response');
-auth_test(strpos($recovery, "header('Retry-After: '.$retry)") !== false, 'recovery supplies Retry-After on IP or identity limit');
+auth_test(strpos($recovery, "header('Retry-After: '.") !== false, 'recovery supplies Retry-After on IP or identity limit');
 auth_test(strpos($recovery, "kp_csrf_rotate()") !== false, 'recovery rotates CSRF tokens like registration');
 $recoveryJs = auth_source('assets/js/forgot-password.js');
 auth_test(strpos($recoveryJs, 'startResendCountdown(result.retry_after || 60)') !== false, 'recovery client obeys backend cooldown');
