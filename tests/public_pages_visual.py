@@ -50,6 +50,16 @@ JS=r"""JSON.stringify((()=>{
   });
  }
  if(location.pathname==='/cong-dong'){
+  const logo=document.querySelector('.lp-community-zalo-art');
+  const heroLogo=document.querySelector('.lp-inner-emblem--zalo img');
+  for(const image of [logo,heroLogo]){
+    add(!image,'community large Zalo brand image missing');
+    if(!image)continue;
+    add(!image.getAttribute('src')?.endsWith('/assets/img/zalo-official.svg'),'wrong community brand image');
+    add(!image.complete||image.naturalWidth===0,'broken community Zalo brand image');
+    const pos=image.getBoundingClientRect();
+    add(pos.left < -2 || pos.right > innerWidth + 2,'community brand image offscreen');
+  }
   const button=document.querySelector('.lp-button-zalo');
   add(!button,'Zalo button missing');
   if(button){

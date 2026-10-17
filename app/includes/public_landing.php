@@ -63,7 +63,7 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
         'download' => ['/assets/img/rank-guardian.webp?v=20261017-2', 'guardian', 800, 800],
         'giftcode' => ['/assets/img/treasure-chest-fantasy.webp', 'gift', 800, 731],
         'news' => ['/assets/img/fantasy-world.webp', 'news', 1600, 600],
-        'community' => ['/assets/img/rank-sorcerer.webp', 'sorcerer', 560, 700],
+        'community' => ['/assets/img/zalo-official.svg', 'zalo', 50, 50],
     ];
     $art = $artByPage[$kp_public_active ?? ''] ?? ['/assets/img/kpah-logo-main.webp', 'logo', 1280, 512];
     ?><section class="lp-inner-hero" aria-label="<?= kp_e($kicker) ?>">

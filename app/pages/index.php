@@ -97,8 +97,9 @@ kp_public_page_start('Trang chủ','home','NGHIỆN KPAH — cổng thông tin, 
                         <?php else: ?>
                         <div class="home-player"><span aria-hidden="true">✦</span><div><small>NHÓM ZALO</small><strong>Hỏi đáp cùng người chơi</strong></div></div>
                         <?php endif; ?>
-                        <div class="home-community-actions"><a class="home-button home-button-primary" href="/cong-dong">Xem cộng đồng <span aria-hidden="true">↗</span></a><a class="home-text-link" href="/bang-xep-hang">Bảng xếp hạng →</a></div>
+                        <div class="home-community-actions"><a class="home-button home-button-primary home-button-zalo" href="/cong-dong"><img class="home-zalo-icon" src="/assets/img/zalo-official.svg" width="24" height="24" alt="" aria-hidden="true" loading="eager" decoding="async">Xem cộng đồng</a><a class="home-text-link" href="/bang-xep-hang">Bảng xếp hạng →</a></div>
                     </div>
+                    <div class="home-community-brand" aria-hidden="true"><img src="/assets/img/zalo-official.svg" width="180" height="180" alt="" loading="eager" decoding="async"></div>
                 </article>
             </div>
         </section>

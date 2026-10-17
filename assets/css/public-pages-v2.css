@@ -316,3 +316,31 @@
   min-height:48px;padding:10px 15px
  }
 }
+
+
+/* Community landing uses the same genuine Zalo brand artwork as its CTA. */
+.kp-inner-page .lp-inner-emblem--zalo img{
+ display:block;width:min(68%,185px);height:auto;max-height:100%;
+ aspect-ratio:1;object-fit:contain;border-radius:25px;
+ filter:drop-shadow(0 13px 22px rgba(0,104,255,.18))
+}
+.kp-inner-page .lp-community-art{
+ background:radial-gradient(circle at center,#fff 0%,#e6f1ff 70%,transparent 100%)
+}
+.kp-inner-page .lp-community-art img.lp-community-zalo-art{
+ display:block;width:min(68%,218px);height:auto;max-width:100%;
+ aspect-ratio:1;object-fit:contain;border-radius:32px;
+ filter:drop-shadow(0 17px 26px rgba(0,104,255,.14))
+}
+@media(max-width:600px){
+ .kp-inner-page .lp-community-art{min-height:200px}
+ .kp-inner-page .lp-community-art img.lp-community-zalo-art{
+  width:150px;height:150px;border-radius:25px
+ }
+}
+@media(max-width:360px){
+ .kp-inner-page .lp-community-art{min-height:175px}
+ .kp-inner-page .lp-community-art img.lp-community-zalo-art{
+  width:132px;height:132px;border-radius:22px
+ }
+}

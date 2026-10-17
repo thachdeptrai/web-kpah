@@ -286,3 +286,56 @@
  .kp-home-page .home-shortcuts>span{grid-column:1}
  .kp-home-page .home-community-actions{flex-wrap:wrap}
 }
+
+
+/* The homepage community panel uses the local genuine Zalo artwork. */
+.kp-home-page .home-community{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(124px,.34fr);
+ align-items:center;background:linear-gradient(135deg,#eff8ff,#e4f2ff)
+}
+.kp-home-page .home-community::before{background:none;opacity:0}
+.kp-home-page .home-community::after{
+ background:radial-gradient(circle at 87% 34%,rgba(0,104,255,.12),transparent 40%)
+}
+.kp-home-page .home-community-copy{
+ position:relative;z-index:2;min-width:0;max-width:none;padding:27px 6px 27px 28px
+}
+.kp-home-page .home-community-brand{
+ display:grid;place-items:center;min-width:0;width:min(100%,180px);
+ aspect-ratio:1;margin:0 20px 0 0;padding:17px;
+ border:1px solid rgba(205,229,255,.9);border-radius:29px;
+ background:#fff;box-shadow:0 14px 32px rgba(0,104,255,.12)
+}
+.kp-home-page .home-community-brand img{
+ display:block;width:100%;height:100%;object-fit:contain
+}
+.kp-home-page .home-community-actions .home-button-zalo{
+ gap:10px;min-height:48px;background:#355bd2;color:#fff
+}
+.kp-home-page .home-community-actions .home-button-zalo:hover{
+ background:#294bb6;color:#fff
+}
+.kp-home-page .home-community-actions .home-zalo-icon{
+ display:block;width:26px;height:26px;flex:none;
+ padding:2px;border-radius:7px;background:#fff;object-fit:contain
+}
+@media(max-width:1120px){
+ .kp-home-page .home-community{
+  grid-template-columns:minmax(0,1fr) minmax(92px,.3fr)
+ }
+ .kp-home-page .home-community-brand{padding:11px;margin-right:15px;border-radius:22px}
+ .kp-home-page .home-community-copy{padding:23px 6px 23px 22px}
+}
+@media(max-width:600px){
+ .kp-home-page .home-community{grid-template-columns:minmax(0,1fr)}
+ .kp-home-page .home-community-brand{
+  grid-row:1;width:112px;aspect-ratio:1;margin:19px auto 0;
+  padding:12px;border-radius:24px
+ }
+ .kp-home-page .home-community-copy{
+  grid-row:2;padding:15px 20px 24px
+ }
+ .kp-home-page .home-community-actions .home-button-zalo{
+  padding-inline:14px;gap:8px;min-height:46px
+ }
+}
