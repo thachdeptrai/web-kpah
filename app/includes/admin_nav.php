@@ -9,6 +9,11 @@ function kp_admin_nav($active = 'home', $role = null)
 {
     $role = $role === null ? (string)($_SESSION['kp_admin_role'] ?? '') : (string)$role;
     if (!in_array($role, ['admin', 'key'], true)) return;
+    $pendingRewards = 0;
+    if ($role === 'admin') {
+        try { $pendingRewards = (int)kp_db()->query("SELECT COUNT(*) FROM kp_points_redemptions WHERE status='pending'")->fetchColumn(); }
+        catch (Throwable $e) { /* Point migration can be installed after deployment. */ }
+    }
 
     $items = [
         'home' => ['/quan-tri', 'Tổng quan'],
@@ -58,7 +63,7 @@ function kp_admin_nav($active = 'home', $role = null)
           <div class="kp-admin-nav-popover">
             <span class="kp-admin-nav-popover-heading"><?= kp_e($heading) ?></span>
             <?php foreach ($groups[$heading] as $id): ?>
-              <a href="<?= kp_e($items[$id][0]) ?>" class="kp-admin-nav-popover-link<?= $active === $id ? ' is-active' : '' ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><?= kp_e($items[$id][1]) ?><span aria-hidden="true">↗</span></a>
+              <a href="<?= kp_e($items[$id][0]) ?>" class="kp-admin-nav-popover-link<?= $active === $id ? ' is-active' : '' ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><?= kp_e($items[$id][1]) ?><?php if($id==='points'&&$pendingRewards>0):?><b class="kp-admin-nav-badge"><?=$pendingRewards>99?'99+':$pendingRewards?></b><?php endif;?><span aria-hidden="true">↗</span></a>
             <?php endforeach; ?>
           </div>
         </details>
@@ -80,7 +85,7 @@ function kp_admin_nav($active = 'home', $role = null)
           <div class="kp-admin-nav-mobile-group">
             <span class="kp-admin-nav-mobile-group-title"><?= kp_e($heading) ?></span>
             <?php foreach ($ids as $id): ?>
-              <a class="kp-admin-nav-mobile-link<?= $active === $id ? ' is-active' : '' ?>" href="<?= kp_e($items[$id][0]) ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><span><?= kp_e($items[$id][1]) ?></span><span aria-hidden="true">↗</span></a>
+              <a class="kp-admin-nav-mobile-link<?= $active === $id ? ' is-active' : '' ?>" href="<?= kp_e($items[$id][0]) ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><span><?= kp_e($items[$id][1]) ?><?php if($id==='points'&&$pendingRewards>0):?> <b class="kp-admin-nav-badge"><?=$pendingRewards>99?'99+':$pendingRewards?></b><?php endif;?></span><span aria-hidden="true">↗</span></a>
             <?php endforeach; ?>
           </div>
         <?php endforeach; ?>

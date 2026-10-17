@@ -26,8 +26,28 @@ function kp_center_safe_path($path) {
     // injected query strings and future unreviewed user-controlled links.
     return is_string($path) && in_array($path, [
         '', '/thong-bao', '/lich-su-bao-mat', '/giftcode-cua-toi',
-        '/theo-doi-don-nap', '/lich-su-nap', '/ho-so', '/nhan-vat'
+        '/theo-doi-don-nap', '/lich-su-nap', '/ho-so', '/nhan-vat',
+        '/diem-tich-luy'
     ], true);
+}
+function kp_admin_center_safe_path($path) {
+    return is_string($path) && in_array($path, [
+        '', '/quan-tri', '/quan-tri/diem-tich-luy', '/quan-tri/doi-soat'
+    ], true);
+}
+function kp_admin_notify($title,$body,$category='system',$path='') {
+    if (strlen($title)>120 || strlen($body)>500
+        || !in_array($category,['system','payment','reward'],true)
+        || !kp_admin_center_safe_path($path)) return false;
+    try {
+        $st=kp_db()->prepare('INSERT INTO kp_admin_notifications (title,body,category,link_path) VALUES (?,?,?,?)');
+        return $st->execute([$title,$body,$category,$path]);
+    } catch (Throwable $e) { kp_log('admin notification recording unavailable',$e); return false; }
+}
+function kp_admin_notifications($pdo,$max=30) {
+    $st=$pdo->query('SELECT id,title,body,category,link_path,is_read,created_at
+        FROM kp_admin_notifications ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max)));
+    return $st->fetchAll(PDO::FETCH_ASSOC);
 }
 function kp_center_notify($userId,$title,$body,$category='system',$path='') {
     if ((int)$userId < 1 || strlen($title)>120 || strlen($body)>500

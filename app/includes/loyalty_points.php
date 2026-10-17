@@ -1,6 +1,7 @@
 <?php
 /** Website loyalty Points, separate from any game-character progression. */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/user_center.php';
 
 /** Exactly one ledger row per verified payment, under an InnoDB transaction. */
 function kp_points_award(int $userId, string $source, string $reference, int $amountVnd, $orderCreatedAt): bool {
@@ -35,6 +36,9 @@ function kp_points_award(int $userId, string $source, string $reference, int $am
         $st->execute([$points,$points,$userId]);
         if ($st->rowCount()!==1) throw new RuntimeException('Chưa hoàn tất cập nhật ví Point.');
         $db->commit();
+        kp_center_notify($userId,'Bạn vừa nhận Point',
+            'Đã cộng '.number_format($points,0,',','.').' Point từ giao dịch nạp hợp lệ.',
+            'payment','/diem-tich-luy');
         return true;
     } catch(Throwable $e) { if ($db->inTransaction()) $db->rollBack(); throw $e; }
 }
@@ -75,6 +79,12 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken): int
         $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
         $st->execute([$userId,-$cost,'redeem',(string)$id,'Đổi quà: '.$reward['title']]);
         $db->commit();
+        kp_center_notify($userId,'Yêu cầu đổi quà đang chờ duyệt',
+            'Đơn #'.$id.' · '.$reward['title'].' đã được gửi. Point đã được giữ và quản trị viên sẽ kiểm tra.',
+            'gift','/diem-tich-luy');
+        kp_admin_notify('Có 1 đơn đổi quà đang chờ duyệt',
+            'Đơn #'.$id.' · tài khoản ID '.$userId.' yêu cầu đổi '.$reward['title'].'.',
+            'reward','/quan-tri/diem-tich-luy');
         return $id;
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }
@@ -106,6 +116,54 @@ function kp_points_review_redemption(int $redemptionId, int $adminId, string $ac
         $st=$db->prepare('UPDATE kp_points_redemptions SET status=?,admin_note=? WHERE id=? AND status="pending"');
         $st->execute([$action,'#'.$adminId.' '.$note,$redemptionId]);
         if($st->rowCount()!==1)throw new RuntimeException('Không hoàn tất đối soát yêu cầu.');
-        $db->commit();return $action;
+        $db->commit();
+        $title=(string)$redemption['reward_title'];
+        $body=$action==='fulfilled'
+            ? 'Đơn #'.$redemptionId.' đã được duyệt. Quà “'.$title.'” đã được quản trị viên xác nhận cộng/phát. Ghi chú: '.$note
+            : 'Đơn #'.$redemptionId.' bị từ chối. '.number_format((int)$redemption['points_cost'],0,',','.').' Point đã được hoàn lại. Lý do: '.$note;
+        kp_center_notify((int)$redemption['user_id'],
+            $action==='fulfilled'?'Quà đã được duyệt và cộng':'Đơn đổi quà bị từ chối',
+            $body,'gift','/diem-tich-luy');
+        return $action;
+    }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
+}
+
+/** Append-only administrator adjustment. The request token makes retries idempotent. */
+function kp_points_adjust(int $userId, int $adminId, int $delta, string $reason, string $requestToken): bool {
+    $reason=trim($reason);
+    if($userId<1||$adminId<1||$delta===0||abs($delta)>100000000
+        ||$reason===''||strlen($reason)>180||!preg_match('/^[a-f0-9]{32}$/D',$requestToken))
+        throw new InvalidArgumentException('Điều chỉnh Point không hợp lệ.');
+    $db=kp_db();$db->beginTransaction();
+    try{
+        $st=$db->prepare('SELECT user_id FROM kp_points_ledger WHERE source_type=? AND source_ref=? LIMIT 1');
+        $st->execute(['admin_adjust',$requestToken]);$previous=$st->fetchColumn();
+        if($previous!==false){
+            if((int)$previous!==$userId)throw new RuntimeException('Mã thao tác Point không hợp lệ.');
+            $db->commit();return false;
+        }
+        $st=$db->prepare('SELECT id,username FROM team_user WHERE id=? AND ban=0 LIMIT 1');
+        $st->execute([$userId]);$user=$st->fetch(PDO::FETCH_ASSOC);
+        if(!$user)throw new RuntimeException('Không tìm thấy tài khoản đang hoạt động.');
+        $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
+        $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+        $st->execute([$userId]);$balance=$st->fetchColumn();
+        if($balance===false||$delta<0&&(int)$balance<abs($delta))throw new RuntimeException('Số dư Point không đủ để trừ.');
+        $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
+        $st->execute([$userId,$delta,'admin_adjust',$requestToken,'Admin #'.$adminId.': '.$reason]);
+        if($delta>0){
+            $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_earned=total_earned+? WHERE user_id=?');
+            $st->execute([$delta,$delta,$userId]);
+        }else{
+            $spent=abs($delta);
+            $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance-?,total_spent=total_spent+? WHERE user_id=? AND balance>=?');
+            $st->execute([$spent,$spent,$userId,$spent]);
+        }
+        if($st->rowCount()!==1)throw new RuntimeException('Không cập nhật được ví Point.');
+        $db->commit();
+        kp_center_notify($userId,$delta>0?'Point đã được cộng':'Point đã được điều chỉnh',
+            'Quản trị viên đã '.($delta>0?'cộng ':'trừ ').number_format(abs($delta),0,',','.').' Point. Lý do: '.$reason,
+            'payment','/diem-tich-luy');
+        return true;
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }

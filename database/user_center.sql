@@ -22,3 +22,16 @@ CREATE TABLE IF NOT EXISTS kp_user_security_events (
  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
  KEY idx_user_recent (user_id,id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shared operations inbox for administrators. No player data is copied here.
+CREATE TABLE IF NOT EXISTS kp_admin_notifications (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ title VARCHAR(120) NOT NULL,
+ body VARCHAR(500) NOT NULL,
+ category VARCHAR(20) NOT NULL DEFAULT 'system',
+ link_path VARCHAR(180) NOT NULL DEFAULT '',
+ is_read TINYINT(1) NOT NULL DEFAULT 0,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ KEY idx_admin_unread (is_read,id),
+ KEY idx_admin_newest (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

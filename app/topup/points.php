@@ -42,7 +42,7 @@ try {
     $st=$db->prepare('SELECT points_delta,source_type,note,created_at FROM kp_points_ledger WHERE user_id=? ORDER BY id DESC LIMIT 40');
     $st->execute([$userId]);$ledger=$st->fetchAll(PDO::FETCH_ASSOC);
     $rewards=$db->query('SELECT id,title,description,points_cost,stock FROM kp_points_rewards WHERE is_active=1 ORDER BY points_cost ASC,id ASC LIMIT 80')->fetchAll(PDO::FETCH_ASSOC);
-    $st=$db->prepare('SELECT id,reward_title,points_cost,status,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
+    $st=$db->prepare('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
     $st->execute([$userId]);$redemptions=$st->fetchAll(PDO::FETCH_ASSOC);
 }catch(Throwable $e){
     kp_log('player loyalty page failed',$e);
@@ -71,8 +71,8 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 </section>
 <section class="tp-section"><div class="tp-panel"><h2>Yêu cầu đổi quà</h2>
 <?php if(!$redemptions):?><p class="tp-muted">Bạn chưa đổi quà nào.</p><?php else:?>
-<div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Phần quà</th><th>Point</th><th>Trạng thái</th><th>Ngày</th></tr></thead><tbody>
-<?php foreach($redemptions as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['reward_title'])?></td><td><?=number_format((int)$x['points_cost'],0,',','.')?></td><td><?=kp_e($x['status'])?></td><td><?=kp_e($x['created_at'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
+<div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Phần quà</th><th>Point</th><th>Trạng thái</th><th>Cập nhật</th><th>Ngày</th></tr></thead><tbody>
+<?php $redemptionLabels=['pending'=>'Đang chờ duyệt','fulfilled'=>'Đã duyệt · quà đã cộng/phát','rejected'=>'Từ chối · đã hoàn Point'];foreach($redemptions as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['reward_title'])?></td><td><?=number_format((int)$x['points_cost'],0,',','.')?></td><td><span class="tp-pill <?=kp_e($x['status'])?>"><?=kp_e($redemptionLabels[$x['status']]??$x['status'])?></span></td><td><?=kp_e($x['admin_note']?:($x['status']==='pending'?'Quản trị viên đang kiểm tra':'—'))?></td><td><?=kp_e($x['created_at'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <section class="tp-section"><div class="tp-panel"><h2>Lịch sử Point</h2>
 <?php if(!$ledger):?><p class="tp-muted">Chưa có giao dịch Point.</p><?php else:?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Point</th></tr></thead><tbody>
