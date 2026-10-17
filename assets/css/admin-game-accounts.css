@@ -125,3 +125,19 @@
 .gam-bulk-target:has(input:checked) em::after{content:" · Mở ban"}
 .gam-bulk-form>button[disabled]{opacity:.45;cursor:not-allowed}
 @media(max-width:650px){.gam-bulk-item{padding:11px}.gam-bulk-pick{padding:10px}.gam-bulk-target em{display:none}.gam-bulk-target-list{max-height:320px}}
+
+
+/* Moderation: keep bulk unban scope, controls and selected targets visible. */
+@media(max-width:560px){
+ .gam-grid,.gam-bulk-grid,.gam-facts{grid-template-columns:minmax(0,1fr)}
+ .gam-search,.gam-history-form,.gam-bulk-tools{flex-wrap:wrap;min-width:0}
+ .gam-search :is(input,select,button),.gam-bulk-tools :is(input,select,button){min-width:0;max-width:100%}
+ .gam-section-head,.gam-char-header,.gam-account-item{min-width:0;flex-wrap:wrap;gap:9px}
+ .gam-bulk-target :is(strong,small){overflow-wrap:anywhere}
+ .gam-audit-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+@media(max-width:360px){
+ .gam-panel{padding:12px}
+ .gam-metrics,.gam-char-stats{grid-template-columns:minmax(0,1fr)}
+ .gam-search-buttons>button{flex:1 1 100%}
+}

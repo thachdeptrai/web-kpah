@@ -55,3 +55,27 @@
 .tp-farmer-checkbox{width:20px!important;height:20px!important;min-width:20px;flex:none;accent-color:#e2b45a}
 .tp-farmer-note{margin-top:16px}
 @media(max-width:650px){.tp-farmer-gift-card{padding:16px}.tp-farmer-offline{align-items:flex-start}}
+
+
+/* Finance: numeric balances remain readable; form grids stack and tables scroll. */
+.tp-page :is(.tp-shell,.tp-content,.tp-panel,.tp-card,.tp-form,.tp-table-wrap)>*{min-width:0}
+.tp-page :is(.tp-table-wrap,.tp-payment-stage,.tp-payment-embed){max-width:100%}
+.tp-page :is(.tp-panel,.tp-card,.tp-alert,.tp-hero){overflow-wrap:anywhere}
+@media(max-width:820px){
+ .tp-page .tp-sidebar .tp-nav{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+ .tp-page .tp-sidebar .tp-nav-link{flex:none;min-height:43px}
+}
+@media(max-width:560px){
+ .tp-page .tp-header{display:flex;flex-wrap:wrap;gap:8px}
+ .tp-page .tp-header>*{max-width:100%;min-width:0}
+ .tp-page .tp-breadcrumb{overflow-wrap:anywhere}
+ .tp-page :is(.tp-grid,.tp-grid.two,.tp-row,.tp-summary){grid-template-columns:minmax(0,1fr)}
+ .tp-page :is(.tp-form,.tp-fields,.tp-actions){max-width:100%}
+ .tp-page :is(input,select,textarea){min-width:0;max-width:100%}
+ .tp-page .tp-table-wrap{overflow-x:auto;overscroll-behavior-x:contain}
+ .tp-page .tp-footer{flex-wrap:wrap;gap:8px}
+}
+@media(max-width:360px){
+ .tp-page .tp-content{padding-inline:10px}
+ .tp-page .tp-panel{padding:13px}
+}

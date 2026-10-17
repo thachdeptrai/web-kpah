@@ -756,3 +756,29 @@ body.portal-page:before{
   min-height:100vh;padding:0 13px 25px!important
  }
 }
+
+
+/* All nine account links remain accessible via horizontal scroll on phones. */
+.portal-page :is(.portal-main,.pd-section,.account-section,.characters-section,.rankings-section)>*{min-width:0}
+.portal-page :is(.portal-hero-copy,.portal-section-heading,.pd-heading,.uc-heading){overflow-wrap:anywhere}
+.portal-page :is(.profile-layout,.characters-grid,.pd-stat-grid,.pd-actions)>*{min-width:0}
+.portal-page :is(.profile-form,.password-change,.input-with-action) :is(input,select,textarea){width:100%;min-width:0;max-width:100%}
+.portal-page :is(.ci-item,.uc-record,.lb-list-row,.char-ui-stat) :is(strong,small,code){overflow-wrap:anywhere}
+@media(max-width:680px){
+ body.portal-page .side-rail.portal-rail .portal-nav-list{min-width:0;max-width:100%;overflow-x:auto!important;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:7px;-webkit-overflow-scrolling:touch}
+ body.portal-page .side-rail.portal-rail .portal-nav-list .rail-icon{min-height:44px!important;scroll-snap-align:start;white-space:nowrap}
+ body.portal-page .portal-main{box-sizing:border-box;padding-bottom:30px!important}
+ body.portal-page .portal-top{flex-wrap:wrap;gap:8px}
+ .portal-page :is(.portal-hero-buttons,.pd-heading,.portal-section-heading,.profile-form-footer,.uc-actions){flex-wrap:wrap}
+}
+@media(max-width:420px){
+ body.portal-page .side-rail.portal-rail .portal-rail-logo{width:52px!important}
+ .portal-page .pd-stat-grid{grid-template-columns:minmax(0,1fr)}
+ .portal-page :is(.portal-primary,.portal-secondary,.pd-inline-link){min-height:43px}
+ .portal-page .profile-identity{flex-wrap:wrap;gap:9px}
+ .portal-page .portal-top .top-user-name{max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media(max-width:360px){
+ .portal-page .portal-hero h1{font-size:clamp(24px,8vw,31px)}
+ .portal-page .portal-hero-buttons>*{flex-basis:100%}
+}

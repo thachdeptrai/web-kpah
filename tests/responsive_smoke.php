@@ -103,3 +103,20 @@ check_layout(strpos($keyMenu,'/quan-tri/ma-gioi-thieu')!==false &&
              strpos($keyMenu,'/quan-tri/tai-game')===false &&
              strpos($keyMenu,'/quan-tri/cong-vnd')===false,
              'key role only sees its permitted referral page');
+
+
+// CSS guardrails for all page families; independent of database fixtures.
+$familyStyles=[
+ 'assets/css/site-responsive.css'=>['max-width:768px','max-width:480px','max-width:360px','tp-table-wrap'],
+ 'assets/css/player-portal-v3.css'=>['max-width:680px','max-width:420px','portal-nav-list','scroll-snap-type'],
+ 'assets/css/auth-portal-v4.css'=>['max-width:820px','max-width:480px','max-width:360px','#reg-form'],
+ 'assets/css/admin-nav.css'=>['max-width:900px','max-width:560px','kp-admin-nav-mobile-panel'],
+ 'assets/css/public-pages-v2.css'=>['max-width:480px','max-width:360px','lp-inner-hero-grid'],
+ 'assets/css/home-layout.css'=>['max-width:480px','max-width:360px','home-logo-heading'],
+ 'assets/css/topup.css'=>['max-width:560px','max-width:360px','tp-table-wrap'],
+ 'assets/css/admin-game-accounts.css'=>['max-width:560px','max-width:360px','gam-audit-scroll'],
+];
+foreach($familyStyles as $file=>$checks){
+ $css=read_layout($file);
+ foreach($checks as $needle)check_layout(strpos($css,$needle)!==false,'responsive '. $file .' '. $needle);
+}

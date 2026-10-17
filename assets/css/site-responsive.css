@@ -179,3 +179,34 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
  html{scroll-behavior:auto}
  :where(.portal-page,.tp-page) *{scroll-behavior:auto}
 }
+
+
+/* 2026-10 shared mobile safeguards: grid children, forms and wide records. */
+:where(.portal-page,.tp-page,.landing-page,.kp-auth-page) :is(.grid,.tp-grid,.pd-stat-grid,.portal-hero,.lp-container,.lp-download-grid,.lp-gift-grid,.home-adventure-grid,.home-connect-grid,.panel,.card,.field)>*{min-width:0}
+:where(.portal-page,.tp-page,.kp-inner-page,.kp-home-page) :is(.uc-record,.tp-panel,.tp-card,.pd-panel,.profile-card,.home-panel,.lp-download-card,.lp-news-card,.lp-gift-card){max-width:100%;overflow-wrap:anywhere}
+:where(.tp-page,body:not(.kp-admin-login-page)) :is(.tp-table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.table-scroll,.table-wrap){max-width:100%;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+:where(.tp-page,.portal-page,.kp-auth-page) pre{max-width:100%;overflow-x:auto;white-space:pre}
+:where(.tp-page,.portal-page,.kp-auth-page) :is(input,textarea,select){box-sizing:border-box;min-width:0}
+@media(max-width:768px){
+ :where(.tp-page,.portal-page,.kp-auth-page) :is(input:not([type=checkbox]):not([type=radio]),textarea,select){font-size:16px}
+ .tp-page :is(.tp-actions,.tp-form-actions,.tp-filters){flex-wrap:wrap;gap:10px}
+ body:not(.kp-admin-login-page) :is(.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.table-scroll,.table-wrap){overflow-x:auto}
+}
+@media(max-width:480px){
+ .tp-page .tp-header{align-items:flex-start;gap:8px}
+ .tp-page .tp-breadcrumb{min-width:0;overflow-wrap:anywhere;line-height:1.6}
+ .tp-page .tp-nav{scroll-padding-inline:8px}
+ .tp-page .tp-nav-link{flex:none;min-height:42px}
+ .tp-page :is(.tp-grid,.tp-grid.two,.tp-row,.tp-summary){grid-template-columns:minmax(0,1fr)}
+ body:not(.kp-admin-login-page) :is(.gc-form,.farmer-form,.gam-history-form,.gam-search,.dl-grid){grid-template-columns:minmax(0,1fr)}
+ body:not(.kp-admin-login-page) :is(.gc-filters,.gam-search-buttons,.farmer-pagination){flex-wrap:wrap;max-width:100%}
+ body:not(.kp-admin-login-page) :is(.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.table-scroll,.table-wrap){width:100%;overflow-x:auto}
+ body:not(.kp-admin-login-page) :is(.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.table-scroll,.table-wrap)>table{min-width:600px}
+ .portal-page :is(.uc-heading,.uc-actions,.pd-heading,.portal-section-heading){min-width:0;flex-wrap:wrap;gap:10px}
+}
+@media(max-width:360px){
+ .tp-page :is(.tp-card,.tp-panel){padding-inline:12px}
+ .tp-page .tp-content{padding-inline:10px}
+ .portal-page :is(.portal-hero,.pd-panel,.profile-card,.security-card){padding-inline:14px}
+ body:not(.kp-admin-login-page) :is(.metrics,.stats){grid-template-columns:minmax(0,1fr)}
+}
