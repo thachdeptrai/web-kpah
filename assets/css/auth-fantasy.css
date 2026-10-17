@@ -302,3 +302,15 @@ body.kp-auth-page {
 .kp-auth-page .btn{font-size:.97rem}
 .kp-auth-page .brand .lead{font-size:clamp(.94rem,1.3vw,1.07rem)}
 @media(max-width:600px){.kp-auth-page .kp-auth-logo img{width:126px;height:auto;max-width:42vw}}
+
+
+/* Guest design system: one display family and one readable Vietnamese text family. */
+body.kp-auth-page {
+  --font-logo:"Baloo 2","Be Vietnam Pro",sans-serif;
+  --font-head:"Baloo 2","Be Vietnam Pro",sans-serif;
+  --kp-font-display:"Baloo 2","Be Vietnam Pro",sans-serif;
+  --kp-font-sans:"Be Vietnam Pro",system-ui,sans-serif;
+}
+body.kp-auth-page :is(h1,h2,h3,.kp-auth-logo strong,.kp-auth-header-tagline) {
+  font-family:"Baloo 2","Be Vietnam Pro",sans-serif;
+}

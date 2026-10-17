@@ -37,8 +37,8 @@ $canSubmit = $isOpen;
     <link rel="icon" type="image/webp" href="/assets/img/favicon.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
-    <link rel="stylesheet" href="/assets/css/register.css?v=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&amp;display=swap">
+    <link rel="stylesheet" href="/assets/css/register.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/register.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/auth-fantasy.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/auth-fantasy.css') ?>">

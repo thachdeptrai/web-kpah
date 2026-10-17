@@ -1,7 +1,7 @@
 /* ==========================================================================
    KPAH – Trang đăng ký tài khoản
    Màu: Void #0b0a16 · Night #14112b · Arcane #7f8cff · Gold #e2b45a · Moon #cfd6ff
-   Chữ: Cinzel (logo), Philosopher (tiêu đề, có tiếng Việt), Be Vietnam Pro (nội dung)
+   Chữ: Baloo 2 (tiêu đề/nhận diện), Be Vietnam Pro (nội dung)
    ========================================================================== */
 
 :root {
@@ -19,8 +19,8 @@
     --line: rgba(207, 214, 255, .16);
     --field: rgba(7, 6, 18, .6);
 
-    --font-logo: "Cinzel", "Trajan Pro", Georgia, serif;
-    --font-head: "Philosopher", Georgia, "Times New Roman", serif;
+    --font-logo: "Baloo 2", "Be Vietnam Pro", sans-serif;
+    --font-head: "Baloo 2", "Be Vietnam Pro", sans-serif;
     --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
 }
 
