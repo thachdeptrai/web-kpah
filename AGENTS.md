@@ -22,9 +22,23 @@ These are code-review guardrails, **not** proof that an audit has passed.
   development server does not apply Apache .htaccess directives.
 - Review third-party scripts before running them. Vibe Check scanner may run only against
   an authorized test site; CI uses a local header/CORS fixture (not production).
-- Do not rename routes, change pricing/currency ratios, alter the game schema, or push
-  directly to main during a security-only change.
+- Do not rename routes, change pricing/currency ratios, or alter the game schema.
+  For security-only work, prefer review branches unless the repository owner explicitly
+  authorizes commits directly to `main`; after each direct commit verify GitHub CI.
 - No test with real player balances or live payment credentials. Mark untested risks explicitly.
 
 Review [security-reports/SECURITY_AUDIT.md](security-reports/SECURITY_AUDIT.md)
 and [security-reports/REMAINING_RISKS.md](security-reports/REMAINING_RISKS.md) before merge.
+
+## Security reviewer pre-merge / pre-deploy checklist
+
+- [ ] Confirm every changed private endpoint checks session authorization **server-side**, even when called directly, and verifies player/character ownership.
+- [ ] Ensure all state-changing browser actions enforce CSRF and role permissions; callback endpoints instead require authenticated provider evidence.
+- [ ] For dynamic SQL, bind all values and allowlist column names, sort keys, and fragments. Never interpret a clean scanner report as a data-flow proof.
+- [ ] Confirm HTML/attribute/URL/JS contexts are escaped appropriately; reject URL authority backslashes and unsafe schemes.
+- [ ] Check login/recovery limits independently by source IP and target identity, with fail-closed storage.
+- [ ] For topup/VNĐ/Point/giftcode/item operations, verify amount & target server-side, journal before MyISAM mutations, reject duplicate tokens and ambiguous retries.
+- [ ] Never automatically repay or re-grant on an uncertain state; require authoritative reconciliation.
+- [ ] Run PHP lint, scoped regression tests, Semgrep focused gate, review advisory findings and compare diffs for secrets.
+- [ ] Before calling a business flow safe, exercise a **disposable** staging database/game/provider simulation with concurrency and failure injection.
+- [ ] Do not run ZAP, Strix, Nuclei or exploit probes against production. Check proxy TLS, Apache AllowOverride and private storage denial with authorized deployment access.
