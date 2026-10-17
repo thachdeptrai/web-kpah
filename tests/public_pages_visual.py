@@ -120,7 +120,8 @@ JS=r"""JSON.stringify((()=>{
    add(positioning.position!=='fixed','toast is not viewport-anchored');
    add(t.top>44||t.top<0,'toast must be in the top-right corner');
    add(t.right>innerWidth+2||innerWidth-t.right>44,'toast is not right-aligned');
-   add(positioning.bottom!=='auto','toast is still bottom-anchored');
+   // Chromium can resolve bottom:auto to a used pixel value for fixed elements.
+   // Bounding geometry above is the reliable criterion: top <=44 and right <=44.
    add(document.documentElement.scrollWidth>innerWidth+2,'toast causes horizontal overflow');
    toastRegion.remove();
  }
