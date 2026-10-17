@@ -233,4 +233,37 @@ if os.environ.get('KPAH_TEST_SESSION_FIXTURE')=='1':
     check(status==302 and h.get('Location')=='/tai-khoan','new account can log in')
     status,h,b=new.request('/nhan-vat')
     check(status==200 and 'FixtureHero' not in b and 'OtherHero' not in b,'new account sees no other player characters')
+# Password recovery anti-spam integration: all identifiers below are nonexistent,
+# so this exercises real HTTP rate limits without sending any SMTP messages.
+recovery=Client()
+recovery_token=csrf(recovery.request('/quen-mat-khau')[2])
+status,h,b=recovery.request('/api/forgot-password',{
+    'csrf':recovery_token,'action':'send_code','identity':'unknown-recovery-regression@example.invalid'
+})
+recovery_reply=json.loads(b)
+check(status==200 and recovery_reply.get('ok') and recovery_reply.get('retry_after')==60,
+      'recovery gives generic success and starts 60-second cooldown')
+check(recovery_reply.get('csrf') and recovery_reply['csrf']!=recovery_token,
+      'recovery rotates CSRF after send as registration does')
+recovery_token=recovery_reply['csrf']
+status,h,b=recovery.request('/api/forgot-password',{
+    'csrf':recovery_token,'action':'send_code','identity':'unknown-recovery-regression@example.invalid'
+})
+recovery_reply=json.loads(b)
+check(status==429 and recovery_reply.get('code')=='rate_limit' and
+      int(h.get('Retry-After','0'))>=1 and recovery_reply.get('retry_after',0)>=1,
+      'repeat recovery request blocked with Retry-After')
+recovery_token=recovery_reply['csrf']
+# Changing identities must not allow unlimited SMTP attempts from one IP.
+recovery_statuses=[]
+for i in range(6):
+    status,h,b=recovery.request('/api/forgot-password',{
+        'csrf':recovery_token,'action':'send_code',
+        'identity':'unknown-recovery-variant-%d@example.invalid'%i
+    })
+    payload=json.loads(b)
+    recovery_token=payload['csrf']
+    recovery_statuses.append(status)
+check(429 in recovery_statuses and recovery_statuses[-1]==429,
+      'recovery IP-global throttle resists rotating identities')
 print('TOTAL HTTP CHECKS:',passed)

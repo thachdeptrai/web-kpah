@@ -2,20 +2,66 @@
 require __DIR__ . '/../includes/bootstrap.php';
 kp_send_security_headers(false);
 header('Content-Type: application/json; charset=utf-8');
-function kp_recovery_reply(array $payload, $status = 200) { http_response_code($status); echo json_encode($payload, JSON_UNESCAPED_UNICODE); exit; }
+function kp_recovery_reply(array $payload, $status = 200) {
+    http_response_code($status);
+    // Match registration: every response issues the next one-use form token.
+    $payload['csrf'] = kp_csrf_rotate();
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+function kp_recovery_limited($retry) {
+    $retry = max(1, (int)$retry);
+    header('Retry-After: '.$retry);
+    kp_recovery_reply([
+        'ok' => false,
+        'code' => 'rate_limit',
+        'retry_after' => $retry,
+        'message' => 'Bạn yêu cầu mã quá nhiều lần. Vui lòng chờ '.(int)ceil($retry/60).' phút rồi thử lại.'
+    ], 429);
+}
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Allow: POST'); kp_recovery_reply(['ok'=>false,'message'=>'Phương thức không hợp lệ.'],405); }
 if (!kp_csrf_check($_POST['csrf'] ?? '')) kp_recovery_reply(['ok'=>false,'message'=>'Phiên bảo mật hết hạn. Hãy tải lại trang.'],403);
 $action = (string)($_POST['action'] ?? '');
 if ($action === 'send_code') {
-    $identity = trim((string)($_POST['identity'] ?? ''));
+    $identity = isset($_POST['identity']) && is_string($_POST['identity']) ? trim($_POST['identity']) : '';
     if ($identity === '' || strlen($identity) > 254) kp_recovery_reply(['ok'=>false,'message'=>'Nhập tên tài khoản hoặc email hợp lệ.'],422);
-    list($allowed, $retry) = kp_rate_limit('password_recovery', kp_client_ip().'|'.strtolower($identity), 5, 900, true);
-    if (!$allowed) kp_recovery_reply(['ok'=>false,'message'=>'Bạn yêu cầu quá nhiều lần. Hãy thử lại sau ít phút.'],429);
+    $ip = kp_client_ip();
+    $normalizedIdentity = strtolower($identity);
+    // A global IP bucket prevents bypass by rotating usernames/email addresses.
+    // Consume BEFORE querying the DB or calling SMTP, with atomic file locks.
+    list($allowed, $retry) = kp_rate_limit('password_recovery_ip', $ip, 5, 600, true);
+    if (!$allowed) kp_recovery_limited($retry);
+    list($allowed, $retry) = kp_rate_limit('password_recovery_ip_hour', $ip, 15, 3600, true);
+    if (!$allowed) kp_recovery_limited($retry);
+    // Shared across sessions and source IPs for the same submitted identity.
+    // Applied to unknown identities too, so the response cannot reveal existence.
+    list($allowed, $retry) = kp_rate_limit('password_recovery_identity_minute', $normalizedIdentity, 1, 60, true);
+    if (!$allowed) kp_recovery_limited($retry);
+    list($allowed, $retry) = kp_rate_limit('password_recovery_identity_window', $normalizedIdentity, 3, 900, true);
+    if (!$allowed) kp_recovery_limited($retry);
     try {
         $st = kp_db()->prepare('SELECT id, email FROM team_user WHERE (username = ? OR LOWER(TRIM(email)) = LOWER(TRIM(?))) AND ban = 0 LIMIT 1');
         $st->execute([$identity, $identity]);
         $user = $st->fetch();
         if ($user && filter_var((string)$user['email'], FILTER_VALIDATE_EMAIL)) {
+            // Both "username" and "email" resolve to the SAME recipient bucket.
+            // The bucket is global across IPs/sessions and cannot be bypassed
+            // using alternative identifiers for the same account.
+            $recipient = strtolower(trim((string)$user['email']));
+            $recipientKey = hash('sha256', $recipient);
+            list($recipientAllowed) = kp_rate_limit('password_recovery_recipient_minute', $recipientKey, 1, 60, true);
+            if ($recipientAllowed) {
+                list($recipientAllowed) = kp_rate_limit('password_recovery_recipient_window', $recipientKey, 3, 900, true);
+            }
+            if (!$recipientAllowed) {
+                // Match the generic success response for unknown addresses to
+                // avoid leaking which usernames have a recovery mailbox.
+                kp_recovery_reply([
+                    'ok' => true,
+                    'retry_after' => 60,
+                    'message' => 'Nếu thông tin khớp tài khoản có email hợp lệ, mã sẽ được gửi tới email đã liên kết. Hãy kiểm tra cả Spam/Thư rác.'
+                ]);
+            }
             $code = (string)random_int(100000, 999999);
             $ttl = max(60, (int)kp_config('registration.email_code_ttl', 600));
             kp_send_mail_smtp((string)$user['email'], 'Mã khôi phục mật khẩu KPAH', "Mã khôi phục mật khẩu của bạn là: ".$code."\nMã có hiệu lực trong ".(int)ceil($ttl/60)." phút.\nNếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua thư này.");
@@ -26,7 +72,7 @@ if ($action === 'send_code') {
             unset($_SESSION['kp_recovery_hash'], $_SESSION['kp_recovery_expiry'], $_SESSION['kp_recovery_user']);
         }
         // Thông báo chung để không tiết lộ tài khoản/email có tồn tại hay không.
-        kp_recovery_reply(['ok'=>true,'message'=>'Nếu thông tin khớp tài khoản có email hợp lệ, mã sẽ được gửi tới email đã liên kết. Hãy kiểm tra cả Spam/Thư rác.']);
+        kp_recovery_reply(['ok'=>true,'retry_after'=>60,'message'=>'Nếu thông tin khớp tài khoản có email hợp lệ, mã sẽ được gửi tới email đã liên kết. Hãy kiểm tra cả Spam/Thư rác.']);
     } catch (Throwable $e) {
         kp_log('gửi mã khôi phục mật khẩu thất bại', $e);
         kp_recovery_reply(['ok'=>false,'message'=>'Chưa gửi được mã. Hãy kiểm tra cấu hình SMTP của máy chủ.'],503);

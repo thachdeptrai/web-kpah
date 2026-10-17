@@ -33,6 +33,17 @@ $recovery = auth_source('app/api/forgot-password.php');
 auth_test(strpos($recovery, 'AND ban = 0 LIMIT 1') !== false, 'recovery reads reject banned accounts');
 auth_test(strpos($recovery, 'UPDATE team_user SET password = ? WHERE id = ? AND password = ? AND ban = 0') !== false, 'recovery CAS rejects stale or banned account');
 auth_test(strpos($recovery, '$update->rowCount() !== 1') !== false, 'recovery CAS checks affected rows');
+auth_test(strpos($recovery, "kp_rate_limit('password_recovery_ip'") !== false, 'recovery has global IP limit regardless of identity');
+auth_test(strpos($recovery, "kp_rate_limit('password_recovery_identity_minute'") !== false, 'recovery has 60-second identity cooldown');
+auth_test(strpos($recovery, "kp_rate_limit('password_recovery_recipient_minute'") !== false, 'recovery has shared 60-second recipient cooldown across sessions');
+auth_test(strpos($recovery, "kp_rate_limit('password_recovery_recipient_window'") !== false, 'recovery limits number of emails per recipient');
+auth_test(strpos($recovery, "kp_recovery_reply([\n                    'ok' => true") !== false, 'recovery recipient throttling uses an enumeration-safe response');
+auth_test(strpos($recovery, "header('Retry-After: '.$retry)") !== false, 'recovery supplies Retry-After on IP or identity limit');
+auth_test(strpos($recovery, "kp_csrf_rotate()") !== false, 'recovery rotates CSRF tokens like registration');
+$recoveryJs = auth_source('assets/js/forgot-password.js');
+auth_test(strpos($recoveryJs, 'startResendCountdown(result.retry_after || 60)') !== false, 'recovery client obeys backend cooldown');
+auth_test(strpos($recoveryJs, 'form.elements.csrf.value = json.csrf') !== false, 'recovery client refreshes rotated CSRF');
+
 
 $_SESSION = [];
 auth_test(kp_csrf_check('') === false, 'empty CSRF rejected');
