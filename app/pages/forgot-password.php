@@ -69,6 +69,9 @@ $version = trim((string) kp_config('app.version', ''));
         <p class="lead">Xác minh tài khoản và sớm trở lại cùng những chiến hữu của bạn.</p>
         </div>
         <figure class="kp-auth-story__visual" aria-label="Chiến binh tìm lại hành trình">
+            <?php if (is_file(KP_ROOT . '/assets/img/auth-recovery-art.webp')): ?>
+            <img class="kp-auth-story__keyart" src="/assets/img/auth-recovery-art.webp" alt="" loading="eager" decoding="async" fetchpriority="high">
+            <?php endif; ?>
             <img src="/assets/img/auth-recovery-adventure.webp" width="800" height="640" alt="" loading="eager" decoding="async">
         </figure>
         <ul class="rules">

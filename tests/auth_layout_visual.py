@@ -17,7 +17,7 @@ from home_layout_visual import CDP,wait_for_remote_debugging
 
 BASE=os.environ.get("KPAH_TEST_URL","http://127.0.0.1:8089").rstrip("/")
 PATHS={"login":"/dang-nhap","register":"/dang-ky","recovery":"/quen-mat-khau"}
-WIDTHS=[320,375,768,1024,1440]
+WIDTHS=[320,360,375,420,768,820,1024,1440]
 OUTPUT=Path("artifacts/auth-layout")
 OUTPUT.mkdir(parents=True,exist_ok=True)
 JS=r"""JSON.stringify((()=>{
@@ -57,6 +57,23 @@ JS=r"""JSON.stringify((()=>{
 
  const storyLogo=$('.kp-auth-story__logo');
  fail(!storyLogo||!storyLogo.complete||storyLogo.naturalWidth===0,'story logo unavailable');
+ const poster=$('.kp-auth-story__keyart');
+ if(document.body.classList.contains('kp-auth-v4')){
+   fail(!poster,'native responsive WebP artwork absent');
+   if(poster){
+     fail(!poster.complete||poster.naturalWidth===0,'responsive WebP failed to load');
+     fail(getComputedStyle(poster).objectFit!=='contain','responsive artwork is cropped instead of contained');
+     const p=poster.getBoundingClientRect();
+     fail(p.left<-2||p.right>innerWidth+2,'responsive artwork overflows viewport');
+     const figure=picture;
+     fail(figure&&(p.left<figure.left-2||p.right>figure.right+2||
+         p.top<figure.top-2||p.bottom>figure.bottom+2),'responsive artwork escapes frame');
+   }
+   if(innerWidth<=480){
+     fail(story&&(story.height<170||story.height>230),
+          'mobile artwork height is outside usable range: '+story?.height);
+   }
+ }
  const isCompact=location.pathname==='/dang-ky'||location.pathname==='/quen-mat-khau';
  if(isCompact&&document.body.classList.contains('kp-auth-v4')){
    const imageHeight=story?.height??0;
