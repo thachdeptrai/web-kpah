@@ -160,5 +160,6 @@ $csrf = kp_csrf_token();
 <footer class="footer"><span>© <?= date('Y') ?> NGHIỆN KPAH</span><a href="/">Về trang chủ</a></footer>
 <?php if ($error !== ''): ?><div hidden data-ui-toast="error" data-ui-toast-title="Đăng nhập thất bại" data-ui-toast-message="<?= kp_e($error) ?>"></div><?php endif; ?>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
+<script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body>
 </html>
