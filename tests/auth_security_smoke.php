@@ -23,7 +23,7 @@ function auth_source($path) {
 $login = auth_source('app/pages/login.php');
 auth_test(strpos($login, 'FROM team_user WHERE username = ? AND ban = 0 LIMIT 1') !== false, 'banned accounts rejected at login query');
 $profile = auth_source('app/api/user-profile.php');
-auth_test(strpos($profile, 'SELECT email FROM team_user WHERE id = ? AND ban = 0 LIMIT 1') !== false, 'profile reads require active account');
+auth_test(strpos($profile, 'FROM team_user WHERE id = ? AND ban = 0 LIMIT 1') !== false, 'profile reads require active account');
 auth_test(strpos($profile, 'UPDATE team_user SET email = ?, phone = ? WHERE id = ? AND ban = 0') !== false, 'profile writes require active account');
 $password = auth_source('app/api/change-password.php');
 auth_test(strpos($password, 'SELECT password FROM team_user WHERE id = ? AND ban = 0 LIMIT 1') !== false, 'password change checks ban status');

@@ -14,7 +14,7 @@ foreach (['strength','agitity','spirit','dexterity','luck'] as $unusedStat) {
 inv_assert(strpos($portalCss, 'center 48%/cover no-repeat') !== false &&
     strpos($portalCss, 'right 44%/auto 145%') === false,
     'hero vista fills the surface with a blended overlay, without a pasted rectangle');
-inv_assert(strpos($detail, "in_array($field, ['hp','mp'], true)") !== false,
+inv_assert(strpos($detail, "in_array(\$field, ['hp','mp'], true)") !== false,
     'hide zero HP/MP while keeping populated values');
 $items = kp_inventory_parse($raw);
 inv_assert(count($items) === 2, 'invalid game items rejected');
