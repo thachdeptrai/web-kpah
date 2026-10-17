@@ -783,3 +783,128 @@ body.portal-page:before{
   background:linear-gradient(90deg,rgba(255,255,255,.96),rgba(240,249,255,.91)),url("/assets/img/portal-sky-vista.webp") center/cover no-repeat;
  }
 }
+
+
+/* Leaderboards and character inventory follow the bright account concept. */
+.portal-page .rank-group{
+ border-color:#dce8f8;border-radius:16px;
+ background:linear-gradient(145deg,#ffffffed,#f5f9ffed);
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .rank-group h2{color:#596f9b;opacity:1}
+.portal-page .rank-group .rank-categories{border:0;padding:0}
+.portal-page .rank-category{
+ border-color:#d8e4f7;border-radius:11px;background:#fff;color:#526f9c;
+ box-shadow:0 2px 7px #4676b10b
+}
+.portal-page .rank-category:hover,.portal-page .rank-category.is-selected{
+ color:#fff;border-color:#4c79f2;background:linear-gradient(110deg,#5194f5,#6657e9);
+ box-shadow:0 6px 14px #617fe52a
+}
+.portal-page .rank-category-glint{color:#df9d2e}
+.portal-page .rank-category.is-selected .rank-category-glint{color:#fff}
+.portal-page .lb-hero-mark{right:5.5%;bottom:-34px;width:190px;height:190px}
+.portal-page .lb-hero-mark .lb-orbit{border-color:#9db9eb7a}
+.portal-page .lb-hero-mark .lb-orbit-2{border-color:#aabce27a}
+.portal-page .lb-hero-trophy{
+ position:relative;z-index:2;display:grid;place-items:center;width:132px;height:132px;
+ border:1px solid #f0d794;border-radius:38px 38px 46px 46px;
+ background:linear-gradient(145deg,#fff9e6,#fff 72%);
+ box-shadow:0 15px 30px #a8782540, inset 0 2px #fff;
+ transform:rotate(3deg)
+}
+.portal-page .lb-hero-trophy .kp-art-icon{width:93px;height:93px;filter:drop-shadow(0 6px 5px #a66a3440)}
+.portal-page .lb-hero-sparks{color:#e6a631}
+.portal-page .rankings-board-heading h2{color:#29467f}
+.portal-page .rankings-board-heading p{color:#7185a7}
+.portal-page .lb-season-stamp{border-color:#e8ddb8;background:linear-gradient(145deg,#fff8e8,#fff);color:#aa7a28}
+.portal-page .lb-season-stamp b{color:#b87c18}
+.portal-page .lb-empty{
+ border-color:#dce8f8;border-radius:18px;background:linear-gradient(145deg,#fff,#f3f8ff);
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .lb-empty>span{color:#7b68e9}
+.portal-page .lb-empty h3{color:#2a477e}
+.portal-page .lb-empty p{color:#7185a7}
+.portal-page .podium-card{
+ border-color:#d8e5f7;border-radius:20px 20px 15px 15px;
+ background:radial-gradient(ellipse at 50% 27%,rgba(var(--medal-rgb),.22),transparent 59%),linear-gradient(155deg,#fff,#f5f9ff);
+ box-shadow:0 14px 32px #4c77ad1b,inset 0 1px #fff
+}
+.portal-page .podium-rank-1{
+ border-color:#e9cc7b;
+ background:radial-gradient(ellipse at 50% 21%,#fff1c8,transparent 60%),linear-gradient(155deg,#fff,#fff9ea 80%);
+ box-shadow:0 20px 42px #bb913121
+}
+.portal-page .podium-stage{background:linear-gradient(180deg,#f4faff88,#ffffff12)}
+.portal-page .podium-halo:before{background:radial-gradient(circle,rgba(var(--medal-rgb),.30),rgba(var(--medal-rgb),.06) 53%,transparent 72%)}
+.portal-page .podium-rank-badge{border-color:#dbe5f4;background:#fff;color:#49628d;box-shadow:0 4px 12px #5476a222}
+.portal-page .podium-rank-1 .podium-rank-badge{border-color:#e7c766;background:#fff8df;color:#9a6917}
+.portal-page .podium-info h3{color:#2a467d}
+.portal-page .podium-value>span{color:#7488a8}
+.portal-page .podium-value strong,.portal-page .podium-rank-1 .podium-value strong{color:#304f89}
+.portal-page .lb-podium-breakdown span{border-color:#e0e9f7;background:#f5f8ff;color:#687da2}
+.portal-page .lb-podium-breakdown b{color:#315184}
+.portal-page .podium-base{
+ color:#526990;border-top-color:#e1e9f6;
+ background:repeating-linear-gradient(90deg,transparent,transparent 28px,#ffffff80 29px,transparent 30px),linear-gradient(180deg,rgba(var(--medal-rgb),.2),#f5f9ff 80%);
+ box-shadow:inset 0 7px 15px rgba(var(--medal-rgb),.08)
+}
+.portal-page .podium-base>span,.portal-page .podium-rank-1 .podium-base>span{color:#8a713d;text-shadow:none}
+.portal-page .lb-lower{border-color:#dce8f8;border-radius:17px;background:#fff;box-shadow:var(--pp-shadow)}
+.portal-page .lb-lower-heading{border-color:#e5edf8}
+.portal-page .lb-lower-heading h3{color:#29467e}
+.portal-page .lb-count{color:#7b8eaa}
+.portal-page .lb-list-row{border-color:#e9eff8}
+.portal-page .lb-list-row:hover{background:#f5f8ff}
+.portal-page .lb-list-number{color:#8294b0}
+.portal-page .lb-list-avatar{border-color:#dbe5f6;background:linear-gradient(135deg,#eaf3ff,#f5f0ff);color:#615bd0}
+.portal-page .lb-list-name{color:#2d4d84}
+.portal-page .lb-list-secondary{color:#8192ad}
+.portal-page .lb-list-secondary b{color:#61799f}
+.portal-page .lb-list-score small{color:#8393ad}
+.portal-page .lb-list-score strong{color:#455fc8}
+.portal-page .lb-no-more,.portal-page .lb-source{color:#8292ad}
+.portal-page .lb-source code{color:#667bd0}
+
+.portal-page .ci-summary>div{
+ border-color:#dce7f8;border-radius:14px;background:linear-gradient(145deg,#fff,#f5f9ff);
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .ci-summary span{color:#7789a7}
+.portal-page .ci-summary strong{color:#2e4b83}
+.portal-page .ci-tabs a{
+ border-color:#d6e2f6;border-radius:10px;background:#fff;color:#566e9e;
+ box-shadow:0 3px 9px #476da30d
+}
+.portal-page .ci-tabs a:hover,.portal-page .ci-tabs a:focus-visible{border-color:#aebcf7;background:#f2f4ff;color:#4f51c6}
+.portal-page .ci-tabs span{color:#655ce0}
+.portal-page .ci-section{
+ border-color:#dce7f8;border-radius:18px;background:#ffffffed;
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .ci-heading h2{color:#29467e}
+.portal-page .ci-heading span{color:#7b8eaa}
+.portal-page .ci-item{border-color:#e1eafa;border-radius:13px;background:linear-gradient(145deg,#fff,#f7faff)}
+.portal-page .ci-icon{border-color:#d7e3f5;border-radius:11px;background:linear-gradient(145deg,#edf5ff,#fff);color:#8269e8}
+.portal-page .ci-icon img{background:linear-gradient(145deg,#edf5ff,#fff)}
+.portal-page .ci-item-copy>strong{color:#304e83}
+.portal-page .ci-item-copy>small{color:#7b8dab}
+.portal-page .ci-chips span{border-color:#dce5f4;border-radius:7px;background:#f5f8fd;color:#687da1}
+.portal-page .ci-attrs summary{color:#6258d7}
+.portal-page .ci-empty{border-color:#d3e1f5;border-radius:12px;background:#f9fbff;color:#7386a5}
+.portal-page .char-ui-view-inventory{border-color:#cfd9fb;background:#f2f3ff;color:#5453c9!important;border-radius:8px}
+.portal-page .char-ui-view-inventory:hover{background:#e8ebff}
+@media(max-width:680px){
+ .portal-page .rank-group-directory{margin:12px 0 20px}
+ .portal-page .rank-group{padding:13px}
+ .portal-page .lb-hero-mark{right:-15px;bottom:-19px;width:126px;height:126px;opacity:.55}
+ .portal-page .lb-hero-trophy{width:88px;height:88px;border-radius:26px}
+ .portal-page .lb-hero-trophy .kp-art-icon{width:63px;height:63px}
+ .portal-page .lb-hero-sparks{top:0;right:-5px;font-size:24px}
+ .portal-page .rank-podium{gap:8px;padding:27px 0 0}
+ .portal-page .podium-info{padding-inline:7px}
+ .portal-page .podium-rank-badge{left:8px;top:8px;min-width:35px;height:28px;font-size:13px}
+ .portal-page .ci-summary{gap:9px}
+ .portal-page .ci-section{padding:15px}
+}

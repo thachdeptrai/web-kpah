@@ -33,7 +33,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     </div>
     <div class="lb-hero-mark" aria-hidden="true">
         <span class="lb-orbit lb-orbit-1"></span><span class="lb-orbit lb-orbit-2"></span>
-        <img src="/assets/img/rank-guardian.webp?v=20261017-2" alt="" width="200" height="250" loading="eager">
+        <span class="lb-hero-trophy"><?= kp_player_icon_art('trophy') ?></span>
         <span class="lb-hero-sparks">✦</span>
     </div>
 </section>

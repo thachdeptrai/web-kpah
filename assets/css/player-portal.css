@@ -53,8 +53,6 @@
 .portal-hero--compact{min-height:188px}
 .portal-hero--compact h1{font-size:clamp(31px,3.4vw,44px)}
 .portal-hero-action{position:relative;z-index:2;white-space:nowrap;flex:none}
-.portal-emblem-ring{position:absolute;inset:12% 0;border:1px solid rgba(234,200,139,.15);border-radius:50%;transform:rotate(-18deg);box-shadow:0 0 0 17px rgba(234,200,139,.025)}
-.portal-emblem-label{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#dec28f;opacity:.8;font-size:8px;font-weight:800;letter-spacing:.26em}
 
 .portal-overview{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:39px
@@ -115,7 +113,6 @@
 .leaderboard-hero .portal-hero-copy{max-width:740px}
 .leaderboard-hero h1{margin:12px 0;font-size:clamp(33px,4vw,54px)}
 .lb-hero-mark{position:absolute;right:5.5%;bottom:-52px;width:197px;height:247px;display:grid;place-items:center;pointer-events:none}
-.lb-hero-mark>img{position:relative;z-index:2;max-width:100%;height:auto;filter:drop-shadow(0 5px 30px rgba(239,194,100,.2))}
 .lb-orbit{position:absolute;inset:12%;border:1px solid rgba(241,205,136,.21);border-radius:50%;transform:rotate(22deg)}
 .lb-orbit-2{inset:1%;border-style:dashed;opacity:.55;transform:rotate(-25deg)}
 .lb-hero-sparks{position:absolute;top:12px;right:-16px;font-size:35px;color:#f1cc7d;opacity:.7}
@@ -253,7 +250,6 @@
   .portal-hero{min-height:195px;margin:17px 0 18px;padding:23px 22px;border-radius:16px;gap:12px}
   .portal-hero h1{font-size:clamp(29px,6vw,39px);margin:12px 0}
   .portal-hero p{font-size:12px;line-height:1.75}
-  .portal-emblem-label{display:none}
   .portal-overview{gap:10px;margin-bottom:30px}
   .portal-overview-cell{padding:13px 12px;gap:9px}
   .portal-overview-cell>.portal-stat-icon{height:33px;width:33px;font-size:17px}
