@@ -38,6 +38,29 @@ jobs:
         id: advisory
         continue-on-error: true
         run: semgrep scan --metrics off --config p/php --json --output semgrep-php-advisory.json app config index.php
+      - name: Summarize advisory findings without printing source data
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from collections import Counter
+          from pathlib import Path
+          p=Path('semgrep-php-advisory.json')
+          if not p.exists():
+              print('Semgrep advisory report missing (scan may have failed)')
+          else:
+              data=json.loads(p.read_text(encoding='utf-8'))
+              issues=data.get('results', [])
+              print('Semgrep advisory findings:', len(issues))
+              for rule, count in Counter(r.get('check_id','') for r in issues).most_common():
+                  print('Rule:', rule, 'Count:', count)
+              for r in issues[:35]:
+                  start=r.get('start',{})
+                  print('Finding:',r.get('extra',{}).get('severity',''),
+                        r.get('check_id',''),r.get('path',''),
+                        'line',start.get('line', '?'))
+          PY
       - name: Upload advisory scan output
         if: always()
         uses: actions/upload-artifact@v4
