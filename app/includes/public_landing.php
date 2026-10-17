@@ -30,7 +30,7 @@ function kp_public_page_start(string $title, string $active, string $description
     <link rel="icon" type="image/webp" href="/assets/img/favicon.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&amp;display=swap">
     <link rel="stylesheet" href="/assets/css/landing.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/landing.css') ?>">
     <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
     <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
@@ -59,13 +59,13 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
     // all real content, URLs and data; do not change its API contract.
     global $kp_public_active;
     $artByPage = [
-        'about' => ['/assets/img/rank-archer.webp', 'archer'],
-        'download' => ['/assets/img/rank-guardian.webp', 'guardian'],
-        'giftcode' => ['/assets/img/treasure-chest-fantasy.webp', 'gift'],
-        'news' => ['/assets/img/fantasy-world.webp', 'news'],
-        'community' => ['/assets/img/rank-sorcerer.webp', 'sorcerer'],
+        'about' => ['/assets/img/rank-archer.webp', 'archer', 560, 700],
+        'download' => ['/assets/img/rank-guardian.webp', 'guardian', 672, 840],
+        'giftcode' => ['/assets/img/treasure-chest-fantasy.webp', 'gift', 800, 731],
+        'news' => ['/assets/img/fantasy-world.webp', 'news', 1600, 600],
+        'community' => ['/assets/img/rank-sorcerer.webp', 'sorcerer', 560, 700],
     ];
-    $art = $artByPage[$kp_public_active ?? ''] ?? ['/assets/img/kpah-logo-main.webp', 'logo'];
+    $art = $artByPage[$kp_public_active ?? ''] ?? ['/assets/img/kpah-logo-main.webp', 'logo', 1280, 512];
     ?><section class="lp-inner-hero" aria-label="<?= kp_e($kicker) ?>">
         <div class="lp-container lp-inner-hero-grid">
             <div data-landing-reveal>
@@ -75,7 +75,7 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
                 <p><?= kp_e($copy) ?></p>
             </div>
             <div class="lp-inner-emblem lp-inner-emblem--<?= kp_e($art[1]) ?>" aria-hidden="true">
-                <img src="<?= kp_e($art[0]) ?>" width="1280" height="512" alt="" decoding="async">
+                <img src="<?= kp_e($art[0]) ?>" width="<?= (int) $art[2] ?>" height="<?= (int) $art[3] ?>" alt="" decoding="async">
             </div>
         </div>
     </section><?php

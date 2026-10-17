@@ -267,3 +267,14 @@
 @media(prefers-reduced-motion:reduce){
  .kp-home-page .lp-treasure-illustration{animation:none}
 }
+/* Display type and copy sizing tuned for the fantasy artwork */
+.kp-home-page .lp-quest-card h2{
+  font-family:"Baloo 2","Be Vietnam Pro",sans-serif;
+  font-size:clamp(21px,1.9vw,26px);
+  font-weight:800;letter-spacing:0;line-height:1.2
+}
+.kp-home-page .lp-quest-description{font-size:14px;line-height:1.7}
+.kp-home-page .lp-quest-steps strong{font-size:13px}
+.kp-home-page .lp-quest-steps small{font-size:11px}
+.kp-home-page .lp-quest-link{border-radius:999px}
+.kp-home-page .lp-quest-card{border-radius:20px}
