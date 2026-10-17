@@ -49,7 +49,7 @@ $canSubmit = $isOpen;
 <body class="kp-auth-page kp-auth-register kp-auth-v2 kp-auth-v3<?= is_file(KP_ROOT . '/assets/img/auth-register-art.webp') ? ' kp-auth-v4' : '' ?>">
 <a class="skip-link" href="#reg-form">Bỏ qua và đến biểu mẫu đăng ký</a>
 <header class="kp-auth-topbar">
-  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
+  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
   <span class="kp-auth-header-tagline">Thế giới tuổi thơ<br>Sống lại trong bạn!</span>
   <nav class="kp-auth-links" aria-label="Điều hướng website">
     <a href="/cong-dong">Cộng đồng</a>
@@ -88,7 +88,7 @@ $canSubmit = $isOpen;
     <section class="brand kp-auth-story" aria-labelledby="page-title">
         <div class="kp-auth-story__intro">
         <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">02 · ĐĂNG KÝ</span><span class="kp-auth-story__tag">MỞ RA CHUYẾN PHIÊU LƯU</span></div>
-        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
+        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="" decoding="async">
         <h1 id="page-title">Hành trình mới đang chờ bạn!</h1>
         <p class="lead">Tạo tài khoản an toàn và sẵn sàng bước vào vùng đất <?= kp_e($appName) ?>.</p>
         </div>

@@ -37,7 +37,7 @@ $version = trim((string) kp_config('app.version', ''));
 <body class="kp-auth-page kp-auth-recovery kp-auth-v2 kp-auth-v3<?= is_file(KP_ROOT . '/assets/img/auth-recovery-art.webp') ? ' kp-auth-v4' : '' ?>">
 <a class="skip-link" href="#recovery-form">Bỏ qua và đến biểu mẫu khôi phục</a>
 <header class="kp-auth-topbar">
-  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-fantasy.svg" width="152" height="59" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
+  <a class="kp-auth-logo" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="NGHIỆN KPAH"><strong>NGHIỆN KPAH</strong></a>
   <span class="kp-auth-header-tagline">Thế giới tuổi thơ<br>Sống lại trong bạn!</span>
   <nav class="kp-auth-links" aria-label="Điều hướng website">
     <a href="/cong-dong">Cộng đồng</a>
@@ -64,7 +64,7 @@ $version = trim((string) kp_config('app.version', ''));
     <section class="brand kp-auth-story recovery-brand" aria-labelledby="page-title">
         <div class="kp-auth-story__intro">
         <div class="kp-auth-story__top"><span class="kp-auth-story__chapter">03 · KHÔI PHỤC</span><span class="kp-auth-story__tag">AN TOÀN · BẢO MẬT · TIN CẬY</span></div>
-        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-fantasy.svg" width="760" height="292" alt="" decoding="async">
+        <img class="kp-auth-story__logo" src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="" decoding="async">
         <h1 id="page-title">Lấy lại quyền <span>truy cập.</span></h1>
         <p class="lead">Xác minh tài khoản và sớm trở lại cùng những chiến hữu của bạn.</p>
         </div>

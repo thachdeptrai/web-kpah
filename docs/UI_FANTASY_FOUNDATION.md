@@ -7,7 +7,7 @@ Cung cấp nền tảng game UI fantasy/anime sáng có thể tái sử dụng �
 **Assets mới**
 
 - `assets/img/fantasy-world.svg`: background vector nhiều lớp (trời, mây, đảo nổi, đình, thác, foliage, petals), không nhúng chữ/nút hay mockup tĩnh.
-- `assets/img/kpah-logo-fantasy.svg`: logo vector vàng đồng có tagline, nền trong suốt. Ảnh raster gốc `home-hero-anime.webp` hiện còn dùng làm lớp nhân vật blend ở trang chủ; chưa xóa.
+- `assets/img/kpah-logo-main.webp`: logo minh họa fantasy raster, nền trong suốt, dùng thống nhất ở hero, header và footer.
 - `assets/css/fantasy-foundation.css`: namespace `kpf-`, token `--kpf-*`.
 - `assets/js/fantasy-foundation.js`: namespace `window.KpFantasy`, không trùng sự kiện `data-ui-*` cũ.
 
@@ -43,7 +43,7 @@ Typography dùng Be Vietnam Pro cho text và Baloo 2 (kèm fallback) cho title l
       <a class="kpf-btn kpf-btn--gold" href="/giftcode">Nhận quà</a>
     </div>
   </div>
-  <div class="kpf-hero__art"><img src="/assets/img/kpah-logo-fantasy.svg" alt="NGHIỆN KPAH"></div>
+  <div class="kpf-hero__art"><img src="/assets/img/kpah-logo-main.webp" alt="NGHIỆN KPAH"></div>
 </section>
 
 <div class="kpf-card-grid kpf-scope">

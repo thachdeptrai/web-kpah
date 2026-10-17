@@ -36,10 +36,18 @@ foreach (['app/includes/public_landing.php', 'app/includes/player_portal.php', '
           'app/pages/forgot-password.php', 'app/admin/login.php'] as $template) {
     $check(strpos($read($template), '/assets/js/fantasy-foundation.js') !== false, 'JS enabled in ' . $template);
 }
-foreach (['assets/img/fantasy-world.svg', 'assets/img/kpah-logo-fantasy.svg', 'assets/img/treasure-chest-fantasy.svg'] as $asset) {
+foreach (['assets/img/fantasy-world.svg', 'assets/img/treasure-chest-fantasy.svg'] as $asset) {
     $drawing = $read($asset);
     $check(strpos($drawing, '<svg ') !== false && strpos($drawing, '</svg>') !== false,
         'vector art structured ' . $asset);
+}
+$siteLogo = $read('assets/img/kpah-logo-main.webp');
+$check(substr($siteLogo, 0, 4) === 'RIFF' && substr($siteLogo, 8, 4) === 'WEBP',
+    'generated site logo is WEBP');
+foreach (['app/includes/public_landing.php', 'app/pages/login.php', 'app/pages/register.php',
+          'app/pages/forgot-password.php'] as $template) {
+    $check(strpos($read($template), 'kpah-logo-fantasy.svg') === false,
+        'legacy SVG logo removed from ' . $template);
 }
 foreach (['Khởi đầu hành trình', 'Kho báu phiêu lưu', 'Đi cùng đồng đội'] as $label) {
     $check(strpos($home, $label) !== false, 'quest feature ' . $label);
@@ -51,8 +59,7 @@ $check(strpos($home, 'kp_rankings_fetch') !== false &&
        strpos($home, 'kp_giftcode_public_list') !== false &&
        strpos($home, 'SELECT COUNT(*) FROM team_user') !== false,
        'public dynamic database sources kept');
-$check((strpos($home, 'kpah-logo-fantasy.svg') !== false ||
-        strpos($home, 'kpah-logo-main.svg') !== false) &&
+$check(strpos($home, 'kpah-logo-main.webp') !== false &&
        strpos($homeCss, 'home-hero-anime.webp') !== false &&
        strpos($css, 'fantasy-world.svg') !== false, 'illustrated assets are available for home and shared components');
 echo 'Fantasy foundation static regression passed.' . PHP_EOL;
