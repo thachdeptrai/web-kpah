@@ -3,6 +3,7 @@
 [![PHP & JS syntax](https://github.com/thachdeptrai/web-kpah/actions/workflows/php-js-syntax.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/php-js-syntax.yml)
 [![Security regression](https://github.com/thachdeptrai/web-kpah/actions/workflows/security-checks.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/security-checks.yml)
 [![Vibe Check](https://github.com/thachdeptrai/web-kpah/actions/workflows/vibe-security-audit.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/vibe-security-audit.yml)
+[![Semgrep security](https://github.com/thachdeptrai/web-kpah/actions/workflows/semgrep-security.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/semgrep-security.yml)
 
 Website cộng đồng **NGHIỆN KPAH** — quản lý tài khoản và nhân vật, bảng xếp hạng, nạp tiền vào ví VNĐ, đổi tài nguyên, tích Point đổi quà và quản trị hệ thống.
 
@@ -24,6 +25,20 @@ Bản cập nhật [Security Audit — PR #13](https://github.com/thachdeptrai/w
 - **Phạm vi Vibe Check:** CI chỉ quét headers/CORS trên **PHP fixture nội bộ tại localhost**, không quét website production và không khẳng định toàn bộ lỗ hổng đã được loại bỏ.
 
 Đọc chi tiết: [Kết quả audit](security-reports/SECURITY_AUDIT.md) · [Các sửa đổi](security-reports/SECURITY_FIXES.md) · [Bằng chứng kiểm thử](security-reports/SECURITY_TESTS.md) · [Rủi ro còn lại](security-reports/REMAINING_RISKS.md).
+
+## Cập nhật bảo mật — 18/10/2026
+
+Tiếp tục audit `main` bằng cách truy vết source và chạy GitHub Actions. Các phát hiện có bằng chứng được vá theo nhóm; **không thử khai thác production, không thay đổi số dư, schema game, dữ liệu người chơi hay serialization item**.
+
+- **Chống dò mật khẩu:** đăng nhập áp dụng ba ngân sách riêng: **80 lần/15 phút theo IP**, **20 lần/15 phút theo tên tài khoản** và **8 lần/15 phút theo cặp IP–tên tài khoản**. Nếu hệ thống lưu giới hạn gặp lỗi, yêu cầu không được bỏ qua kiểm tra.
+- **Liên kết an toàn:** `kp_safe_url()` kiểm tra URL chứa dấu gạch chéo ngược, ký tự điều khiển và khoảng trắng không an toàn; đã có regression test cho các URL hợp lệ và không hợp lệ.
+- **Ổn định Admin:** sửa fixture test thiếu logger và lỗi thanh điều hướng bị tràn ở màn hình **320px**. Browser regression đã có lần chạy **PASS**.
+- **Semgrep:** [`semgrep-security.yml`](.github/workflows/semgrep-security.yml) sử dụng Semgrep **1.181.0**. Bộ **2 quy tắc có mức chặn** chạy trên **96 file PHP**, ghi nhận **0 finding trong phạm vi hai quy tắc**. Bộ `p/php` rộng hơn chạy **23 quy tắc**, ghi nhận **130 cảnh báo cần rà soát** (116 output, 5 SQL, 5 filename, 4 callable), **không phải 130 lỗ hổng được xác minh**. Các vị trí SQL và đường dẫn file bị cảnh báo đã được đối chiếu với whitelist/prepared statements; các cảnh báo output chưa được xác minh hết.
+- **Kiểm thử và chính sách:** bổ sung `SECURITY.md`, checklist `AGENTS.md`, test offline và artifact kết quả scan. Các workflow PHP/JS, security regression, route/browser regression và Vibe Check fixture đã có lần chạy **PASS**. Theo dõi trạng thái mới nhất tại [GitHub Actions](https://github.com/thachdeptrai/web-kpah/actions).
+
+**Rủi ro chưa kiểm thử tích hợp:** callback nạp tiền bị gửi lại, xử lý trùng khi cộng ví/Point/giftcode, cấp item trên Java game server và khôi phục khi ghi vào bảng MyISAM bị gián đoạn. **Strix, OWASP ZAP, Nuclei chưa được chạy** do chưa có staging/tài khoản thử được ủy quyền. **Vibe Check chỉ quét fixture localhost**, không quét production.
+
+Xem [audit 18/10](security-reports/AUDIT_2026-10-18.md), [audit 15/10](security-reports/SECURITY_AUDIT.md), [chính sách bảo mật](SECURITY.md) và [rủi ro còn lại](security-reports/REMAINING_RISKS.md).
 
 ## Chức năng hiện có
 
@@ -193,6 +208,8 @@ web-kpah/
 ├── .htaccess                   # Rewrite và chặn truy cập nội bộ
 ├── .gitattributes              # GitHub Linguist nhận diện PHP/CSS/JS
 ├── AGENTS.md                   # Quy tắc code an toàn cho contributor/AI
+├── SECURITY.md                 # Chính sách công bố lỗ hổng và vận hành an toàn
+├── .semgrep/                   # Quy tắc phân tích PHP mức chặn
 ├── config/                     # Routes và cấu hình
 ├── app/
 │   ├── pages/                  # Trang người chơi
@@ -212,7 +229,7 @@ web-kpah/
 
 ## Kiểm thử và GitHub Actions
 
-**Giữ nguyên bộ test trong repo** để tránh hồi quy khi sửa code. Hiện có 6 workflow:
+**Giữ nguyên bộ test trong repo** để tránh hồi quy khi sửa code. Hiện có **7 workflow**:
 
 | Workflow | Phạm vi |
 | --- | --- |
@@ -222,6 +239,7 @@ web-kpah/
 | `security-checks.yml` | Phân quyền admin, CSRF, TOTP, file nhạy cảm |
 | `topup-lint.yml` | Cú pháp và logic kiểm tra nạp |
 | `vibe-security-audit.yml` | PHP 8.0 lint, kiểm thử account/admin/topup, chặn tracked artifact nhạy cảm, Vibe Check headers/CORS trên fixture localhost và lưu JSON report |
+| `semgrep-security.yml` | Semgrep 1.181.0: 2 quy tắc PHP chặn lỗi; quét thêm `p/php` ở chế độ cảnh báo và lưu artifact JSON |
 
 Chạy smoke test trên môi trường phát triển có PHP CLI:
 
@@ -235,6 +253,9 @@ Trên Windows CMD có thể chạy từng file, ví dụ:
 C:\xampp\php\php.exe tests\topup_smoke.php
 C:\xampp\php\php.exe tests\security_smoke.php
 C:\xampp\php\php.exe tests\auth_security_smoke.php
+C:\xampp\php\php.exe tests\security_auth_url_smoke.php
+C:\xampp\php\php.exe tests\safe_url_security_smoke.php
+C:\xampp\php\php.exe tests\admin_csrf_smoke.php
 C:\xampp\php\php.exe tests\responsive_smoke.php
 ```
 
@@ -245,15 +266,16 @@ File `.gitattributes` ép GitHub Linguist nhận diện PHP đúng và loại fi
 ## Bảo mật và giới hạn
 
 - Trang quản trị kiểm tra quyền ở backend, không chỉ ẩn menu. Role `key` bị chặn ở các trang admin không được cấp quyền.
-- Dùng CSRF, giới hạn tần suất, session và kiểm tra quyền sở hữu dữ liệu; admin có hỗ trợ TOTP theo cấu hình.
+- Dùng CSRF, giới hạn tần suất, session và kiểm tra quyền sở hữu dữ liệu; admin có hỗ trợ TOTP theo cấu hình. Đăng nhập người chơi được giới hạn theo IP, tên tài khoản và cặp IP–tài khoản.
 - Các API tài khoản được gia cố kiểm tra trạng thái khóa, tránh ghi đè mật khẩu khi có cập nhật đồng thời; mật khẩu tài khoản game vẫn cần tương thích định dạng hash cũ.
 - Một số bảng game/tài khoản sử dụng **MyISAM** nên không thể dựa vào database transaction để rollback các thay đổi số dư; cần giữ nguyên quy trình đối soát và nhật ký.
 - Không công khai dump SQL, khóa thanh toán, file local hay `storage/`.
+- Semgrep chỉ chặn các mẫu theo quy tắc tập trung; kết quả scan sạch **không** đồng nghĩa website không còn lỗ hổng.
 - Các bài test tự động **không thay thế** kiểm thử giao dịch thật, callback, Cloudflare, HTTPS, XAMPP và giao diện trực quan trên thiết bị thực tế.
 
 **Giới hạn audit:** Các bài kiểm tra CI không thay thế kiểm thử luồng thanh toán, game server Java hoặc cấu hình VPS thực tế. Mã Java và SQL export được rà soát riêng, **không nằm trong bản cập nhật website**. Xem [rủi ro còn lại](security-reports/REMAINING_RISKS.md) trước khi triển khai những thay đổi liên quan đến dữ liệu tiền/game.
 
-Tài liệu: [Bảo mật](docs/SECURITY_HARDENING.md) · [Triển khai URL](docs/ROUTING.md) · [Kiểm thử](docs/TESTING.md) · [Security Audit](security-reports/SECURITY_AUDIT.md).
+Tài liệu: [Chính sách bảo mật](SECURITY.md) · [Bảo mật triển khai](docs/SECURITY_HARDENING.md) · [Triển khai URL](docs/ROUTING.md) · [Kiểm thử](docs/TESTING.md) · [Audit 18/10](security-reports/AUDIT_2026-10-18.md) · [Audit 15/10](security-reports/SECURITY_AUDIT.md).
 
 ---
 
