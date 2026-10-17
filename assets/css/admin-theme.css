@@ -146,184 +146,156 @@ body:not(.kp-admin-login-page) :focus-visible{outline:2px solid #7187cf;outline-
 @media(max-width:600px){body:not(.kp-admin-login-page)>header,body:not(.kp-admin-login-page)>header.topbar,.gc-top{padding:12px 14px}body:not(.kp-admin-login-page)>header .brand-icon,body:not(.kp-admin-login-page)>header .brand-mark{width:42px;height:42px}}
 @media(prefers-reduced-motion:reduce){body:not(.kp-admin-login-page) *,body:not(.kp-admin-login-page) *::before,body:not(.kp-admin-login-page) *::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
 
-/* v4 · Admin observatory: layered sky, jewel navigation and tactile work surfaces. */
+/* v5 · Admin uses the same bright sky, white surfaces and blue-violet accents as the player portal. */
 :root{
-  --admin-ink:#263653;--admin-muted:#647592;--admin-line:#d8e1f1;
-  --admin-paper:#f9fbff;--admin-blue:#587de2;--admin-violet:#7767cc;
-  --admin-gold:#bd8731;--admin-green:#287a60;--admin-red:#bd5063;
-  --bg:#edf3ff;--panel:#f9fbff;--line:#d8e1f1;--text:#263653;--muted:#647592;
-  --violet:#7767cc;--cyan:#527bc9;--green:#287a60;--red:#bd5063;
-  --gold:#a9752a;--gold2:#845c23;--border:#d8e1f1;--surface:#f9fbff;--surface2:#eef3ff
+  --admin-ink:#23406e;--admin-muted:#6b82aa;--admin-line:#dbe8fb;
+  --admin-paper:rgba(255,255,255,.96);--admin-blue:#3b70ef;--admin-violet:#7656ef;
+  --admin-gold:#d68a25;--admin-green:#168966;--admin-red:#c84265;
+  --bg:#f3f8ff;--panel:#fff;--line:#dbe8fb;--text:#23406e;--muted:#6b82aa;
+  --violet:#7656ef;--cyan:#3b70ef;--green:#168966;--red:#c84265;
+  --gold:#a96b19;--gold2:#885514;--border:#dbe8fb;--surface:#fff;--surface2:#f3f8ff
 }
-html{background:#edf3ff}
-body:not(.kp-admin-login-page){
-  background:
-    radial-gradient(ellipse at 4% 15%,rgba(255,255,255,.95),transparent 27%),
-    radial-gradient(ellipse at 94% 5%,rgba(194,218,255,.9),transparent 29%),
-    radial-gradient(ellipse at 82% 78%,rgba(232,215,255,.66),transparent 34%),
-    radial-gradient(ellipse at 10% 88%,rgba(255,224,194,.42),transparent 32%),
-    linear-gradient(150deg,#f4f7ff 0%,#eaf2ff 46%,#f5f0ff 100%);
-  background-attachment:fixed
-}
-body:not(.kp-admin-login-page)::before{
-  opacity:.34;background-image:
-    radial-gradient(circle,#fff 0 1px,transparent 1.8px),
-    radial-gradient(circle,rgba(110,132,205,.4) 0 .8px,transparent 1.6px),
-    linear-gradient(135deg,transparent 49.8%,rgba(122,145,202,.075) 50%,transparent 50.2%);
-  background-size:53px 53px,83px 83px,100% 100%;mask-image:linear-gradient(#000,transparent 82%)
-}
-body:not(.kp-admin-login-page)::after{content:"";position:fixed;z-index:0;pointer-events:none;right:-140px;top:19vh;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.7),rgba(202,217,255,.26) 38%,transparent 71%);filter:blur(3px)}
-body:not(.kp-admin-login-page)>header,body:not(.kp-admin-login-page)>header.topbar,body:not(.kp-admin-login-page) .gc-top{
-  min-height:78px;padding-top:13px;padding-bottom:13px;
-  color:#f7f7ff;background:linear-gradient(108deg,#344d7a 0%,#4b5796 54%,#6b5caa 100%);
-  border:0;border-bottom:1px solid rgba(255,255,255,.32);
-  box-shadow:0 12px 32px rgba(43,59,111,.2),inset 0 -1px rgba(255,255,255,.19)
-}
-body:not(.kp-admin-login-page)>header .brand,body:not(.kp-admin-login-page)>header .head-right{color:#edf1ff}
-body:not(.kp-admin-login-page)>header .brand-icon,body:not(.kp-admin-login-page)>header .brand-mark{border:1px solid rgba(255,255,255,.52);border-radius:16px;background:linear-gradient(145deg,#fff,#e6efff);box-shadow:0 8px 20px rgba(20,31,78,.23)}
-body:not(.kp-admin-login-page)>header .brand small,body:not(.kp-admin-login-page)>header .brand .eyebrow{color:#d8dcff}
-body:not(.kp-admin-login-page)>header .brand strong,body:not(.kp-admin-login-page)>header .brand h1{color:#fff;text-shadow:0 2px 12px rgba(25,35,80,.2)}
-body:not(.kp-admin-login-page)>header .secure{padding:7px 10px;border:1px solid rgba(169,245,211,.28);border-radius:99px;background:rgba(213,255,237,.11);color:#d9ffeb}
-body:not(.kp-admin-login-page)>header .secure i{background:#8cf0bb;box-shadow:0 0 0 4px rgba(140,240,187,.16),0 0 16px rgba(140,240,187,.65)}
-body:not(.kp-admin-login-page)>header .user{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff}
-body:not(.kp-admin-login-page)>header .logout{border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.12);color:#fff}
-body:not(.kp-admin-login-page)>header .logout:hover{border-color:#fff;background:rgba(255,255,255,.23);color:#fff}
+html{background:#f5faff}
+body:not(.kp-admin-login-page){background:linear-gradient(180deg,rgba(218,241,255,.88),rgba(246,251,255,.96) 460px,#f5faff 1100px);color:#23406e}
+body:not(.kp-admin-login-page)::before{opacity:.075;background:url("/assets/img/fantasy-world.webp") top center/cover no-repeat;mask-image:linear-gradient(#000 0%,rgba(0,0,0,.7) 45%,transparent 90%)}
+body:not(.kp-admin-login-page)::after{content:none}
+body:not(.kp-admin-login-page)>header,body:not(.kp-admin-login-page)>header.topbar,body:not(.kp-admin-login-page) .gc-top{min-height:76px;color:#355582;background:rgba(255,255,255,.94);border:0;border-bottom:1px solid #d7e5fa;box-shadow:0 5px 24px rgba(52,103,184,.07);backdrop-filter:blur(14px)}
+body:not(.kp-admin-login-page)>header .brand,body:not(.kp-admin-login-page)>header .head-right{color:#5c759e}
+body:not(.kp-admin-login-page)>header .brand-icon,body:not(.kp-admin-login-page)>header .brand-mark{border:1px solid #d7e5fa;border-radius:14px;background:linear-gradient(145deg,#fff,#edf5ff);box-shadow:0 4px 12px rgba(52,103,184,.09)}
+body:not(.kp-admin-login-page)>header .brand small,body:not(.kp-admin-login-page)>header .brand .eyebrow{color:#7187aa}
+body:not(.kp-admin-login-page)>header .brand strong,body:not(.kp-admin-login-page)>header .brand h1{color:#233b79;text-shadow:none}
+body:not(.kp-admin-login-page)>header .secure{padding:6px 10px;border:1px solid #c4ecde;border-radius:99px;background:#eefff7;color:#16815b}
+body:not(.kp-admin-login-page)>header .secure i{background:#23b67d;box-shadow:0 0 0 4px rgba(35,182,125,.13)}
+body:not(.kp-admin-login-page)>header .user{border-color:#dbe8fb;background:#f3f8ff;color:#47648f}
+body:not(.kp-admin-login-page)>header .logout{border-color:#d2e1f8;background:#fff;color:#536e9c}
+body:not(.kp-admin-login-page)>header .logout:hover{border-color:#aec5f4;background:#f3f7ff;color:#4054ce}
 
-/* The dark violet ribbon anchors the otherwise bright workspace. */
-.kp-admin-nav.kp-admin-nav-v2{
-  --an-edge:rgba(255,255,255,.2);--an-text:#f4f2ff;--an-muted:#cfcae8;--an-accent:#ffe29b;
-  border:1px solid rgba(255,255,255,.22);border-radius:17px;
-  background:linear-gradient(108deg,#272e57 0%,#393b76 50%,#554681 100%);
-  box-shadow:0 14px 30px rgba(50,55,116,.2),inset 0 1px rgba(255,255,255,.13)
-}
-.kp-admin-nav-brand-mark{border-color:rgba(255,255,255,.58);background:linear-gradient(145deg,#fff,#e7edff);box-shadow:0 5px 15px rgba(15,23,64,.26)}
-.kp-admin-nav-brand-copy strong{color:#fff;text-shadow:0 2px 8px rgba(10,13,40,.28)}
-.kp-admin-nav-brand-copy small{color:#d7d4f1}
-.kp-admin-nav-v2 .kp-admin-nav-item{color:#e8e7fb}
-.kp-admin-nav-v2 .kp-admin-nav-item.is-active,.kp-admin-nav-v2 .kp-admin-nav-popover-link.is-active,.kp-admin-nav-v2 .kp-admin-nav-mobile-link.is-active{border-color:rgba(255,224,158,.48);background:linear-gradient(130deg,rgba(255,224,158,.2),rgba(255,255,255,.09));color:#ffe9b2;box-shadow:inset 0 1px rgba(255,255,255,.16)}
-.kp-admin-nav-v2 .kp-admin-nav-item:hover,.kp-admin-nav-v2 .kp-admin-nav-dropdown[open]>.kp-admin-nav-item{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.13);color:#fff}
-.kp-admin-nav-popover,.kp-admin-nav-mobile-panel{border:1px solid #d7def0;background:linear-gradient(145deg,#fff,#f2f4ff);box-shadow:0 22px 50px rgba(40,48,100,.2)}
-.kp-admin-nav-popover-heading,.kp-admin-nav-mobile-group-title{color:#7772b1}
-.kp-admin-nav-v2 .kp-admin-nav-popover-link,.kp-admin-nav-v2 .kp-admin-nav-mobile-link{color:#465575}
-.kp-admin-nav-v2 .kp-admin-nav-popover-link:hover,.kp-admin-nav-v2 .kp-admin-nav-mobile-link:hover{background:#edf1ff;color:#454c91}
-.kp-admin-nav-v2 .kp-admin-nav-exit{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.08);color:#e6e5fa}
-.kp-admin-nav-v2 .kp-admin-nav-exit:hover{border-color:#ffe29b;background:rgba(255,226,155,.14);color:#ffe9b2}
-.kp-admin-nav-mobile-toggle{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff}
-.kp-admin-nav-mobile-panel{background:linear-gradient(145deg,#fff,#f2f4ff)}
-.kp-admin-nav-mobile-heading strong{color:#344363}.kp-admin-nav-mobile-heading span{color:#6f70aa}
-.kp-admin-nav-mobile-bottom{border-top-color:#dce3f2}
+/* Player-portal rail styling, with its blue-violet active state. */
+.kp-admin-nav.kp-admin-nav-v2{--an-edge:#d7e5fa;--an-text:#536e9c;--an-muted:#8095b4;--an-accent:#7656ef;border:1px solid #d7e5fa;border-radius:15px;background:rgba(255,255,255,.96);box-shadow:0 6px 22px rgba(52,103,184,.08);color:#536e9c}
+.kp-admin-nav-brand-mark{border-color:#d7e5fa;background:linear-gradient(145deg,#fff,#edf5ff);box-shadow:0 4px 12px rgba(52,103,184,.08)}
+.kp-admin-nav-brand-copy strong{color:#233b79;text-shadow:none}
+.kp-admin-nav-brand-copy small{color:#7187aa}
+.kp-admin-nav-v2 .kp-admin-nav-item{color:#536e9c}
+.kp-admin-nav-v2 .kp-admin-nav-item.is-active,.kp-admin-nav-v2 .kp-admin-nav-popover-link.is-active,.kp-admin-nav-v2 .kp-admin-nav-mobile-link.is-active{border-color:#7665ee;background:linear-gradient(110deg,#8265fa,#4668ef);color:#fff;box-shadow:0 6px 13px rgba(78,90,227,.18)}
+.kp-admin-nav-v2 .kp-admin-nav-item:hover,.kp-admin-nav-v2 .kp-admin-nav-dropdown[open]>.kp-admin-nav-item{border-color:#d5e0fa;background:#edf3ff;color:#4054ce}
+.kp-admin-nav-popover,.kp-admin-nav-mobile-panel{border:1px solid #d7e5fa;border-radius:14px;background:#fff;box-shadow:0 16px 38px rgba(52,91,151,.15)}
+.kp-admin-nav-popover-heading,.kp-admin-nav-mobile-group-title{color:#7890b3}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link,.kp-admin-nav-v2 .kp-admin-nav-mobile-link{color:#536e9c}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link:hover,.kp-admin-nav-v2 .kp-admin-nav-mobile-link:hover{background:#edf3ff;color:#4054ce}
+.kp-admin-nav-v2 .kp-admin-nav-exit{border-color:#d7e5fa;color:#536e9c;background:#fff}
+.kp-admin-nav-v2 .kp-admin-nav-exit:hover{border-color:#aec5f4;color:#4054ce;background:#f3f7ff}
+.kp-admin-nav-mobile-toggle{border-color:#d7e5fa;background:#f3f8ff;color:#46658f}
+.kp-admin-nav-hamburger i{background:#5f78a4}
+.kp-admin-nav-mobile-heading strong{color:#233b79}.kp-admin-nav-mobile-heading span{color:#6b82aa}
+.kp-admin-nav-mobile-bottom{border-top-color:#dbe8fb}
 
-/* Shared page rhythm: tinted glass panels with a small amount of game-world warmth. */
-body:not(.kp-admin-login-page) :is(.shell,.wrap,.kp-key-users-content,.tp-content){padding-bottom:clamp(28px,5vw,58px)}
+/* Calm mastheads, clear cards and more breathing room across admin pages. */
+body:not(.kp-admin-login-page) :is(.shell,.wrap,.kp-key-users-content,.tp-content){padding-bottom:clamp(30px,5vw,56px)}
 body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-shell,body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-content{position:relative;z-index:1}
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome){
-  position:relative;isolation:isolate;overflow:hidden;margin-bottom:22px;padding:clamp(23px,3.5vw,40px);
-  border:1px solid rgba(181,198,230,.78);border-radius:24px;
-  background:linear-gradient(112deg,rgba(255,255,255,.97) 0%,rgba(241,246,255,.95) 55%,rgba(245,239,255,.93) 100%);
-  box-shadow:0 16px 42px rgba(66,83,139,.09),inset 0 1px rgba(255,255,255,.95)
-}
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome)::before{content:"";position:absolute;z-index:-1;inset:0 auto 0 0;width:5px;background:linear-gradient(180deg,#7f88e0,#8fc6dc 55%,#e6ba76)}
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome)::after{content:"";position:absolute;z-index:-1;right:-42px;top:-80px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(198,211,255,.55),rgba(217,210,255,.2) 46%,transparent 70%);pointer-events:none}
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) :is(h1,h2){color:#273958}
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) :is(p,.tp-lead){color:#667694}
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) .eyebrow,
-body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) .tp-kicker{color:#6a70b0}
-body:not(.kp-admin-login-page) .welcome-mark{border-color:#cdd7f1;background:radial-gradient(circle at 30% 24%,#fff,transparent 55%),linear-gradient(145deg,#edf3ff,#f4edff);box-shadow:inset 0 0 38px rgba(121,134,206,.09),0 18px 45px rgba(84,92,154,.13)}
-body:not(.kp-admin-login-page) .welcome-mark span{color:#7381cf;text-shadow:0 5px 22px rgba(118,115,202,.27)}
-body:not(.kp-admin-login-page) .welcome-mark small{color:#7987a7}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome){position:relative;isolation:isolate;overflow:hidden;margin-bottom:22px;padding:clamp(22px,3vw,34px);border:1px solid #d3e6fa;border-radius:20px;background:linear-gradient(108deg,rgba(255,255,255,.98),rgba(243,250,255,.97) 65%,rgba(231,246,255,.92));box-shadow:0 13px 32px rgba(42,99,179,.09)}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome)::before{content:"";position:absolute;z-index:-1;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,#7656ef,#3b70ef,#70c9ec)}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome)::after{content:"";position:absolute;z-index:-1;right:-65px;top:-125px;width:290px;height:290px;border-radius:50%;background:radial-gradient(circle,rgba(188,229,255,.5),transparent 69%);pointer-events:none}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) :is(h1,h2){color:#233b79}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) :is(p,.tp-lead){color:#60799f}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) .eyebrow,body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome) .tp-kicker{color:#6357d9}
+body:not(.kp-admin-login-page) .welcome-mark{border-color:#d2e0fa;background:linear-gradient(145deg,#fff,#e8f4ff);box-shadow:0 12px 32px rgba(59,112,239,.11)}
+body:not(.kp-admin-login-page) .welcome-mark span{color:#5e6de0;text-shadow:none}
+body:not(.kp-admin-login-page) .welcome-mark small{color:#7187aa}
 body:not(.kp-admin-login-page) :is(.section-heading,.panel-heading,.card-head,.tp-panel-head,.gam-section-head){margin-bottom:15px}
-body:not(.kp-admin-login-page) :is(.section-heading,.panel-heading) h2{color:#314264}
-body:not(.kp-admin-login-page) :is(.section-heading,.panel-heading) p{color:#75829a}
-
-body:not(.kp-admin-login-page) :is(.metric,.stat){position:relative;isolation:isolate;overflow:hidden;border:1px solid #d8e1f1;border-radius:19px;background:linear-gradient(145deg,#fff 0%,#f7f9ff 68%,#f2efff 100%);box-shadow:0 13px 30px rgba(61,82,145,.085),inset 0 1px #fff;transition:transform .2s,box-shadow .2s,border-color .2s}
-body:not(.kp-admin-login-page) :is(.metric,.stat)::before{content:"";position:absolute;z-index:-1;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--metric-accent,#7884d0),rgba(255,255,255,.25))}
-body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(1){--metric-accent:#7682d4}
-body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(2){--metric-accent:#56a890}
-body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(3){--metric-accent:#5d99cc}
-body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(4){--metric-accent:#d69c61}
-body:not(.kp-admin-login-page) :is(.metric,.stat):hover{transform:translateY(-3px);border-color:#c1cdef;box-shadow:0 18px 38px rgba(61,82,145,.13),inset 0 1px #fff}
-body:not(.kp-admin-login-page) :is(.metric strong,.stat-value){color:#303f64}
-body:not(.kp-admin-login-page) :is(.metric-top,.stat-label){color:#6f7d98}
-body:not(.kp-admin-login-page) :is(.metric-icon,.action-icon,.dl-platform-icon,.gam-avatar){border-color:#d8def1;background:linear-gradient(145deg,#f1f3ff,#e9f4ff);color:#6a71b4}
-body:not(.kp-admin-login-page) .metric-icon.green{color:#3e987a;background:#e7f7ef}
-body:not(.kp-admin-login-page) .metric-icon.cyan{color:#4c8db4;background:#e7f5fd}
-body:not(.kp-admin-login-page) .metric-icon.purple{color:#7970c7;background:#efedff}
-body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.farmer-hot-card,.tp-panel){border:1px solid #d8e1f1;border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(246,248,255,.96));box-shadow:0 14px 34px rgba(60,79,136,.08),inset 0 1px rgba(255,255,255,.98)}
-body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-panel{border-color:#d8e1f1;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(246,248,255,.96));box-shadow:0 14px 34px rgba(60,79,136,.08),inset 0 1px rgba(255,255,255,.98)}
+body:not(.kp-admin-login-page) :is(.section-heading,.panel-heading) h2{color:#2c4778}
+body:not(.kp-admin-login-page) :is(.section-heading,.panel-heading) p{color:#6b82aa}
+body:not(.kp-admin-login-page) :is(.metric,.stat){position:relative;isolation:isolate;overflow:hidden;border:1px solid #dbe8fb;border-radius:16px;background:#fff;box-shadow:0 8px 22px rgba(42,99,179,.075);transition:transform .18s,box-shadow .18s,border-color .18s}
+body:not(.kp-admin-login-page) :is(.metric,.stat)::before{content:"";position:absolute;z-index:-1;inset:0 0 auto;height:3px;background:var(--metric-accent,#6a7aee)}
+body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(1){--metric-accent:#7656ef}
+body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(2){--metric-accent:#1aa77a}
+body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(3){--metric-accent:#3b86e8}
+body:not(.kp-admin-login-page) :is(.metric,.stat):nth-child(4){--metric-accent:#efa932}
+body:not(.kp-admin-login-page) :is(.metric,.stat):hover{transform:translateY(-2px);border-color:#bfd4f5;box-shadow:0 13px 28px rgba(42,99,179,.12)}
+body:not(.kp-admin-login-page) :is(.metric strong,.stat-value){color:#2b4678}
+body:not(.kp-admin-login-page) :is(.metric-top,.stat-label){color:#6b82aa}
+body:not(.kp-admin-login-page) :is(.metric-icon,.action-icon,.dl-platform-icon,.gam-avatar){border-color:#dbe8fb;background:#edf4ff;color:#5e6fe0}
+body:not(.kp-admin-login-page) .metric-icon.green{color:#168966;background:#e6f8ef}
+body:not(.kp-admin-login-page) .metric-icon.cyan{color:#2476c8;background:#e7f5fd}
+body:not(.kp-admin-login-page) .metric-icon.purple{color:#7656ef;background:#efedff}
+body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.farmer-hot-card,.tp-panel){border:1px solid #dbe8fb;border-radius:17px;background:#fff;box-shadow:0 9px 25px rgba(42,99,179,.07)}
+body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-panel{border-color:#dbe8fb;background:#fff;box-shadow:0 9px 25px rgba(42,99,179,.07)}
 body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel){transition:border-color .18s,box-shadow .18s}
-body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel):hover{border-color:#cbd5ec;box-shadow:0 17px 38px rgba(60,79,136,.105),inset 0 1px #fff}
-body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel) :is(h2,h3){color:#304160}
-body:not(.kp-admin-login-page) .game-account-feature{position:relative;isolation:isolate;overflow:hidden;border:1px solid #b9c7ec;border-radius:20px;background:linear-gradient(110deg,#e9edff,#f5f1ff 58%,#fff6e8);box-shadow:0 15px 35px rgba(76,80,146,.12);transition:transform .2s,box-shadow .2s}
-body:not(.kp-admin-login-page) .game-account-feature:hover{transform:translateY(-3px);background:linear-gradient(110deg,#e4eaff,#f0eaff 58%,#fff1db);box-shadow:0 20px 42px rgba(76,80,146,.18)}
-body:not(.kp-admin-login-page) .game-account-feature-icon{border-color:#d1d5f2;background:linear-gradient(145deg,#fff,#e9eaff);color:#7177c4}
-body:not(.kp-admin-login-page) .game-account-feature-copy small{color:#7772bd}
-body:not(.kp-admin-login-page) .game-account-feature-copy strong{color:#2c3d60}
-body:not(.kp-admin-login-page) .game-account-feature-copy>span{color:#697895}
-body:not(.kp-admin-login-page) .game-account-feature-action{border-color:#c9d2ed;background:#fff;color:#596ba9}
-body:not(.kp-admin-login-page) .action-card{position:relative;isolation:isolate;overflow:hidden;border:1px solid #d8e1f1;border-radius:19px;background:linear-gradient(135deg,#fff,#f4f7ff 72%,#f2efff);box-shadow:0 12px 28px rgba(61,82,145,.075);transition:transform .2s,box-shadow .2s,border-color .2s}
-body:not(.kp-admin-login-page) .action-card::after{content:"";position:absolute;z-index:-1;right:-40px;bottom:-70px;width:170px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(196,205,255,.34),transparent 67%);pointer-events:none}
-body:not(.kp-admin-login-page) .action-card:hover{transform:translateY(-4px);border-color:#c0cbee;box-shadow:0 18px 36px rgba(61,82,145,.14)}
-body:not(.kp-admin-login-page) .action-card.featured{border-color:#c4c8ec;background:linear-gradient(120deg,#eceeff,#f8f7ff 68%,#fff5e9)}
-body:not(.kp-admin-login-page) .action-copy small{color:#7778b3}
-body:not(.kp-admin-login-page) .action-copy strong{color:#314261}
-body:not(.kp-admin-login-page) .action-copy>span{color:#70809b}
-body:not(.kp-admin-login-page) .action-copy b{color:#626eb5}
+body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel):hover{border-color:#c7daf6;box-shadow:0 13px 30px rgba(42,99,179,.1)}
+body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel) :is(h2,h3){color:#2c4778}
+body:not(.kp-admin-login-page) .game-account-feature{position:relative;isolation:isolate;overflow:hidden;border:1px solid #c9def5;border-radius:17px;background:linear-gradient(110deg,#edf6ff,#fff 75%);box-shadow:0 10px 25px rgba(42,99,179,.09);transition:transform .18s,box-shadow .18s}
+body:not(.kp-admin-login-page) .game-account-feature:hover{transform:translateY(-2px);border-color:#b7cef3;box-shadow:0 15px 30px rgba(42,99,179,.14)}
+body:not(.kp-admin-login-page) .game-account-feature-icon{border-color:#dbe8fb;background:#fff;color:#6273e3}
+body:not(.kp-admin-login-page) .game-account-feature-copy small{color:#6357d9}
+body:not(.kp-admin-login-page) .game-account-feature-copy strong{color:#2c4778}
+body:not(.kp-admin-login-page) .game-account-feature-copy>span{color:#6b82aa}
+body:not(.kp-admin-login-page) .game-account-feature-action{border-color:#d4e2fa;background:#fff;color:#536fd2}
+body:not(.kp-admin-login-page) .action-card{position:relative;isolation:isolate;overflow:hidden;border:1px solid #dbe8fb;border-radius:16px;background:#fff;box-shadow:0 8px 22px rgba(42,99,179,.07);transition:transform .18s,box-shadow .18s,border-color .18s}
+body:not(.kp-admin-login-page) .action-card::after{content:"";position:absolute;z-index:-1;right:-50px;bottom:-75px;width:175px;height:155px;border-radius:50%;background:radial-gradient(circle,rgba(192,228,255,.37),transparent 68%);pointer-events:none}
+body:not(.kp-admin-login-page) .action-card:hover{transform:translateY(-3px);border-color:#bfd4f5;box-shadow:0 14px 30px rgba(42,99,179,.12)}
+body:not(.kp-admin-login-page) .action-card.featured{border-color:#cbd9fb;background:linear-gradient(120deg,#eef3ff,#fff 75%)}
+body:not(.kp-admin-login-page) .action-copy small{color:#6357d9}
+body:not(.kp-admin-login-page) .action-copy strong{color:#2c4778}
+body:not(.kp-admin-login-page) .action-copy>span{color:#6b82aa}
+body:not(.kp-admin-login-page) .action-copy b{color:#5268d5}
 
-/* Tables, filters and buttons have consistent contrast and working-room spacing. */
-body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap){border:1px solid #dce4f1;border-radius:15px;background:rgba(255,255,255,.88);box-shadow:inset 0 1px #fff}
-body:not(.kp-admin-login-page) table{color:#364662}
-body:not(.kp-admin-login-page) :is(th,.gam-audit th){position:sticky;top:0;z-index:2;padding-top:13px;padding-bottom:13px;color:#627290;background:linear-gradient(180deg,#eef2ff,#eaf2fb);border-bottom:1px solid #dce4f1}
-body:not(.kp-admin-login-page) :is(td,.gam-audit td){border-bottom-color:#e7ecf5;color:#465570}
-body:not(.kp-admin-login-page) tbody tr:nth-child(even){background:rgba(241,245,253,.42)}
-body:not(.kp-admin-login-page) tbody tr:hover{background:#edf2ff}
-body:not(.kp-admin-login-page) :is(input:not([type=checkbox]):not([type=radio]),select,textarea,.search,.tp-input,.tp-select,.tp-textarea){min-height:42px;color:#30405d;background:#fff;border:1px solid #ccd7ea;border-radius:11px;box-shadow:inset 0 1px 2px rgba(55,71,112,.035)}
-body:not(.kp-admin-login-page) :is(input,select,textarea)::placeholder{color:#98a4b8}
-body:not(.kp-admin-login-page) :is(input,select,textarea):focus{border-color:#8795d4;box-shadow:0 0 0 4px rgba(112,124,203,.13);outline:0}
+/* Tables, filters and form controls stay crisp and easy to scan. */
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap){border:1px solid #dbe8fb;border-radius:13px;background:#fff;box-shadow:0 4px 14px rgba(42,99,179,.035)}
+body:not(.kp-admin-login-page) table{color:#354f7d}
+body:not(.kp-admin-login-page) :is(th,.gam-audit th){position:sticky;top:0;z-index:2;padding-top:13px;padding-bottom:13px;color:#52709b;background:#edf6ff;border-bottom:1px solid #dbe8fb}
+body:not(.kp-admin-login-page) :is(td,.gam-audit td){border-bottom-color:#eaf1fa;color:#405b85}
+body:not(.kp-admin-login-page) tbody tr:nth-child(even){background:rgba(243,248,255,.56)}
+body:not(.kp-admin-login-page) tbody tr:hover{background:#edf5ff}
+body:not(.kp-admin-login-page) :is(input:not([type=checkbox]):not([type=radio]),select,textarea,.search,.tp-input,.tp-select,.tp-textarea){min-height:42px;color:#2f4a78;background:#fff;border:1px solid #cbdcf3;border-radius:10px;box-shadow:inset 0 1px 2px rgba(48,72,115,.025)}
+body:not(.kp-admin-login-page) :is(input,select,textarea)::placeholder{color:#92a3be}
+body:not(.kp-admin-login-page) :is(input,select,textarea):focus{border-color:#7565f6;box-shadow:0 0 0 4px rgba(104,90,248,.13);outline:0}
 body:not(.kp-admin-login-page) :is(.tp-form,.gc-form,.dl-form,.farmer-form,.gam-search,.gam-history-form){row-gap:14px}
 body:not(.kp-admin-login-page) :is(.tp-field,.farmer-field,.gam-search label,.gam-mod-form label,.gc-form label){line-height:1.55}
 body:not(.kp-admin-login-page) :is(.tp-field small,.dl-field small,.farmer-caption,.gam-hint){line-height:1.65}
-body:not(.kp-admin-login-page) :is(button,.submit,.dl-save,.farmer-apply,.gam-search-buttons button,.gc-form button,.gc-filters button,.tp-button){min-height:42px;border:1px solid #6b78c0;border-radius:12px;background:linear-gradient(120deg,#687bd0,#8170c9 64%,#9374b9);color:#fff;box-shadow:0 8px 17px rgba(92,100,177,.2);font-weight:800;letter-spacing:.01em;transition:transform .16s,filter .16s,box-shadow .16s}
-body:not(.kp-admin-login-page) :is(button,.submit,.dl-save,.farmer-apply,.gam-search-buttons button,.gc-form button,.gc-filters button,.tp-button):hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 11px 22px rgba(92,100,177,.24)}
-body:not(.kp-admin-login-page) :is(button.secondary,.secondary,.gam-search-buttons a,.gam-pages a,.farmer-pagination a,.farmer-filter-mini a,.gc-filters a,.tp-button-secondary,.dl-preview,.farmer-reset,.gam-history-clear){border:1px solid #d0daec;background:linear-gradient(145deg,#fff,#f1f4fc);color:#52658c;box-shadow:0 4px 12px rgba(56,73,119,.055)}
-body:not(.kp-admin-login-page) :is(.tag,.pill,.gam-pill,.farmer-pill,.tp-badge){border-color:#cae6d8;background:#eaf7f0;color:#327859}
-body:not(.kp-admin-login-page) :is(.pill.off,.gam-pill.banned,.farmer-pill.farmer-bad,.gc-danger){border-color:#edcbd2;background:#fff0f2;color:#aa4559}
-body:not(.kp-admin-login-page) :is(.gam-pill.special,.farmer-pill.farmer-warning,.dl-upload-warning){border-color:#eeddb8;background:#fff6e5;color:#896427}
-body:not(.kp-admin-login-page) :is(.notice,.gc-alert.gc-ok,.gam-alert.success,.tp-alert.good){border:1px solid #c4e6d4;background:linear-gradient(110deg,#edf9f1,#eaf7fb);color:#286b51;box-shadow:0 7px 18px rgba(51,126,96,.07)}
-body:not(.kp-admin-login-page) :is(.error,.gc-alert.gc-error,.gam-alert.danger,.tp-alert.bad){border:1px solid #edccd4;background:linear-gradient(110deg,#fff1f3,#fff6f5);color:#a34355}
-body:not(.kp-admin-login-page) :is(.alert,.gam-alert.warning,.tp-alert.warning){border:1px solid #ead7ae;background:linear-gradient(110deg,#fff8e8,#fff4ed);color:#80602e}
-body:not(.kp-admin-login-page) :is(.live,.admin-count,.farmer-readonly,.gam-readonly){border:1px solid #c8e4d7;background:linear-gradient(120deg,#f0fbf4,#eaf7f5);color:#2b795c}
-body:not(.kp-admin-login-page) code{color:#5d5ca1;background:#efeffb;border:1px solid #e3e2f5;border-radius:6px;padding:.14em .38em}
-body:not(.kp-admin-login-page) :is(.gam-account-item,.gam-char,.gam-facts>div,.gam-char-stats>div,.gam-bulk-item,.gam-bulk-target-list,.gam-action-box,.gam-bulk-pick,.dl-toggle,.dl-file-status,.dl-progress,.dl-savebar,.farmer-monitor-status,.farmer-chart-box,.farmer-hot-card){border-color:#dce3f1;background:linear-gradient(145deg,#fff,#f4f7fd);color:#3a4962;box-shadow:none}
-body:not(.kp-admin-login-page) :is(.gam-account-item:hover,.gam-account-item.selected,.gam-bulk-target:hover,.gam-bulk-target:has(input:checked)){border-color:#bccbed;background:#edf2ff}
-body:not(.kp-admin-login-page) :is(.gam-action-box>summary,.gam-bulk-pick legend,.gam-bulk-tools button,.gam-bulk-target em){color:#4d5f7d}
-body:not(.kp-admin-login-page) .gam-bulk-target strong{color:#334260}
-body:not(.kp-admin-login-page) .gam-bulk-target small{color:#75839c}
-body:not(.kp-admin-login-page) .farmer-chart-box{border-radius:16px;background:linear-gradient(145deg,#fff,#f0f5ff)}
-body:not(.kp-admin-login-page) .farmer-chart .farmer-bar{fill:#7983d2}
-body:not(.kp-admin-login-page) .farmer-chart .farmer-grid{stroke:#d7e0ef}
-body:not(.kp-admin-login-page) .farmer-chart .farmer-axis-label{fill:#75829b}
-body:not(.kp-admin-login-page) .farmer-score,body:not(.kp-admin-login-page) .farmer-history-rate{color:#626cb1}
-body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-summary>div{border:1px solid #dce4f1;border-radius:15px;background:linear-gradient(145deg,#fff,#f3f6ff);box-shadow:0 8px 18px rgba(66,82,139,.06)}
-body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-summary strong{color:#626db7}
-body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-card{border-radius:18px;transition:transform .2s,box-shadow .2s}
-body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-card{border-color:#d8e1f1;background:linear-gradient(145deg,#fff,#f4f7ff);box-shadow:0 12px 30px rgba(60,79,136,.09);color:#394b69}
-body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-card:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(60,79,136,.14)}
-body:not(.kp-admin-login-page) .dl-savebar{position:sticky;bottom:12px;z-index:4;border:1px solid #d2dced;border-radius:15px;background:rgba(250,252,255,.93);box-shadow:0 12px 28px rgba(51,65,110,.14);backdrop-filter:blur(14px)}
-body:not(.kp-admin-login-page) footer,body:not(.kp-admin-login-page) .gam-footer{color:#7e8ba4}
-body:not(.kp-admin-login-page) :focus-visible{outline:3px solid #8290d3;outline-offset:3px}
-body:not(.kp-admin-login-page) .tp-page.tp-admin :is(.tp-input,.tp-select,.tp-textarea){border-color:#ccd7ea;background:#fff;color:#30405d;box-shadow:inset 0 1px 2px rgba(55,71,112,.035)}
+body:not(.kp-admin-login-page) :is(button,.submit,.dl-save,.farmer-apply,.gam-search-buttons button,.gc-form button,.gc-filters button,.tp-button){min-height:42px;border:1px solid #4669e9;border-radius:10px;background:linear-gradient(110deg,#8265fa,#4668ef);color:#fff;box-shadow:0 6px 15px rgba(78,90,227,.18);font-weight:800;letter-spacing:0;transition:transform .16s,filter .16s,box-shadow .16s}
+body:not(.kp-admin-login-page) :is(button,.submit,.dl-save,.farmer-apply,.gam-search-buttons button,.gc-form button,.gc-filters button,.tp-button):hover{filter:brightness(1.04);transform:translateY(-1px);box-shadow:0 9px 19px rgba(78,90,227,.22)}
+body:not(.kp-admin-login-page) :is(button.secondary,.secondary,.gam-search-buttons a,.gam-pages a,.farmer-pagination a,.farmer-filter-mini a,.gc-filters a,.tp-button-secondary,.dl-preview,.farmer-reset,.gam-history-clear){border:1px solid #d2e1f8;background:#fff;color:#536fd2;box-shadow:none}
+body:not(.kp-admin-login-page) :is(.tag,.pill,.gam-pill,.farmer-pill,.tp-badge){border-color:#c8ead9;background:#effbf5;color:#16815b}
+body:not(.kp-admin-login-page) :is(.pill.off,.gam-pill.banned,.farmer-pill.farmer-bad,.gc-danger){border-color:#f1cfd9;background:#fff1f5;color:#b73e60}
+body:not(.kp-admin-login-page) :is(.gam-pill.special,.farmer-pill.farmer-warning,.dl-upload-warning){border-color:#f0dfb9;background:#fff8e9;color:#94620f}
+body:not(.kp-admin-login-page) :is(.notice,.gc-alert.gc-ok,.gam-alert.success,.tp-alert.good){border:1px solid #c4e6d4;background:#effbf5;color:#16815b;box-shadow:0 5px 14px rgba(35,145,103,.06)}
+body:not(.kp-admin-login-page) :is(.error,.gc-alert.gc-error,.gam-alert.danger,.tp-alert.bad){border:1px solid #efcbd5;background:#fff2f5;color:#b43e5c}
+body:not(.kp-admin-login-page) :is(.alert,.gam-alert.warning,.tp-alert.warning){border:1px solid #efdfbd;background:#fff9ed;color:#8b641d}
+body:not(.kp-admin-login-page) :is(.live,.admin-count,.farmer-readonly,.gam-readonly){border:1px solid #c4e6d4;background:#effbf5;color:#16815b}
+body:not(.kp-admin-login-page) code{color:#4e59c3;background:#eef1ff;border:1px solid #dfe4ff;border-radius:6px;padding:.14em .38em}
+body:not(.kp-admin-login-page) :is(.gam-account-item,.gam-char,.gam-facts>div,.gam-char-stats>div,.gam-bulk-item,.gam-bulk-target-list,.gam-action-box,.gam-bulk-pick,.dl-toggle,.dl-file-status,.dl-progress,.dl-savebar,.farmer-monitor-status,.farmer-chart-box,.farmer-hot-card){border-color:#dbe8fb;background:#f8fbff;color:#40577e;box-shadow:none}
+body:not(.kp-admin-login-page) :is(.gam-account-item:hover,.gam-account-item.selected,.gam-bulk-target:hover,.gam-bulk-target:has(input:checked)){border-color:#bdd2f3;background:#edf5ff}
+body:not(.kp-admin-login-page) :is(.gam-action-box>summary,.gam-bulk-pick legend,.gam-bulk-tools button,.gam-bulk-target em){color:#4d6894}
+body:not(.kp-admin-login-page) .gam-bulk-target strong{color:#2c4778}
+body:not(.kp-admin-login-page) .gam-bulk-target small{color:#6b82aa}
+body:not(.kp-admin-login-page) .farmer-chart-box{border-radius:15px;background:#f8fbff}
+body:not(.kp-admin-login-page) .farmer-chart .farmer-bar{fill:#6578ed}
+body:not(.kp-admin-login-page) .farmer-chart .farmer-grid{stroke:#dbe8fb}
+body:not(.kp-admin-login-page) .farmer-chart .farmer-axis-label{fill:#7187aa}
+body:not(.kp-admin-login-page) .farmer-score,body:not(.kp-admin-login-page) .farmer-history-rate{color:#536fd2}
+body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-summary>div{border:1px solid #dbe8fb;border-radius:13px;background:#f8fbff;box-shadow:0 4px 14px rgba(42,99,179,.04)}
+body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-summary strong{color:#536fd2}
+body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-card{border-radius:16px;transition:transform .18s,box-shadow .18s;border-color:#dbe8fb;background:#fff;box-shadow:0 8px 22px rgba(42,99,179,.075);color:#40577e}
+body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(42,99,179,.12)}
+body:not(.kp-admin-login-page) .tp-page.tp-admin .tp-card::before{background:linear-gradient(90deg,#7656ef,#3b70ef)}
+body:not(.kp-admin-login-page) .dl-savebar{position:sticky;bottom:12px;z-index:4;border:1px solid #d2e1f8;border-radius:14px;background:rgba(255,255,255,.95);box-shadow:0 10px 25px rgba(42,99,179,.12);backdrop-filter:blur(12px)}
+body:not(.kp-admin-login-page) footer,body:not(.kp-admin-login-page) .gam-footer{color:#8197b5}
+body:not(.kp-admin-login-page) :focus-visible{outline:3px solid rgba(103,83,232,.48);outline-offset:3px}
+body:not(.kp-admin-login-page) .tp-page.tp-admin :is(.tp-input,.tp-select,.tp-textarea){border-color:#cbdcf3;background:#fff;color:#2f4a78;box-shadow:inset 0 1px 2px rgba(48,72,115,.025)}
 
-/* Keep the sign-in scene light, but give the welcome and form distinct visual weight. */
-.kp-admin-login-page{background:radial-gradient(ellipse at 18% 18%,#fff 0,transparent 35%),radial-gradient(ellipse at 85% 18%,#d9e7ff 0,transparent 37%),radial-gradient(ellipse at 58% 90%,#ede0ff 0,transparent 34%),linear-gradient(145deg,#eff5ff,#f7f1ff 70%,#fff5e8)}
-.kp-admin-login-page .kp-admin-login-scene{opacity:.3;filter:saturate(.72)}
-.kp-admin-login-page :is(.kp-auth-header,.kp-admin-login-card){border:1px solid rgba(191,203,231,.85);background:rgba(255,255,255,.82);box-shadow:0 22px 65px rgba(62,78,139,.14),inset 0 1px #fff;backdrop-filter:blur(18px)}
-.kp-admin-login-page .kp-admin-login-intro h1{color:#2c3d62}
-.kp-admin-login-page .kp-admin-login-card{border-radius:24px}
-.kp-admin-login-page .kp-admin-login-card button{min-height:48px;border-radius:13px;box-shadow:0 10px 22px rgba(92,100,177,.2)}
+/* Sign-in follows the same light palette. */
+.kp-admin-login-page{background:linear-gradient(180deg,#e5f5ff 0%,#f6fbff 58%,#f5faff 100%)}
+.kp-admin-login-page .kp-admin-login-scene{opacity:.28;filter:saturate(.75)}
+.kp-admin-login-page :is(.kp-auth-header,.kp-admin-login-card){border:1px solid #d7e5fa;background:rgba(255,255,255,.92);box-shadow:0 18px 48px rgba(42,99,179,.12);backdrop-filter:blur(14px)}
+.kp-admin-login-page :is(.kp-admin-login-intro h1,.kp-admin-login-card h2){color:#233b79}
+.kp-admin-login-page .kp-admin-login-card{border-radius:20px}
+.kp-admin-login-page .kp-admin-login-card button{min-height:46px;border-radius:11px;background:linear-gradient(110deg,#8265fa,#4668ef);box-shadow:0 7px 17px rgba(78,90,227,.18)}
+.kp-admin-login-page :is(.kp-admin-login-intro p,.kp-admin-login-security,.kp-admin-login-foot,.kp-auth-footer){color:#6b82aa}
+.kp-admin-login-page :is(input:not([type=checkbox]),select){border-color:#cbdcf3;background:#fff;color:#2f4a78}
+.kp-admin-login-page .error{border-color:#efcbd5;background:#fff2f5;color:#b43e5c}
 @media(max-width:680px){
   body:not(.kp-admin-login-page)>header,body:not(.kp-admin-login-page)>header.topbar,body:not(.kp-admin-login-page) .gc-top{min-height:66px}
-  body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome){padding:23px 18px;border-radius:19px}
-  body:not(.kp-admin-login-page) :is(.metric,.stat){border-radius:15px}
-  body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel){border-radius:16px}
+  body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading,.tp-page.tp-admin .tp-hero,.gam-welcome){padding:22px 18px;border-radius:16px}
+  body:not(.kp-admin-login-page) :is(.metric,.stat){border-radius:14px}
+  body:not(.kp-admin-login-page) :is(.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel){border-radius:15px}
 }
 @media(prefers-reduced-motion:reduce){body:not(.kp-admin-login-page) :is(.metric,.stat,.action-card,.tp-page.tp-admin .tp-card,.game-account-feature){transition:none!important}}
