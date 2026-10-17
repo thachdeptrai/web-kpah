@@ -23,6 +23,8 @@ on:
       - 'app/includes/rankings.php'
       - 'assets/css/player-portal.css'
       - 'assets/img/rank-*.webp'
+      - 'assets/img/kpah-player-icon-atlas.png'
+      - 'assets/css/player-art-icons.css'
       - 'tests/rankings_smoke.php'
       - '.github/workflows/player-portal-checks.yml'
   pull_request:
@@ -76,13 +78,19 @@ jobs:
         run: php tests/character_inventory_smoke.php
       - name: User center query and scope regression
         run: php tests/user_center_smoke.php
-      - name: Parse podium SVG images
+      - name: Validate WebP podium art and custom PNG icons
         shell: bash
         run: |
           python3 - <<'PY'
-          import xml.etree.ElementTree as ET
+          import struct
           for path in ('assets/img/rank-guardian.webp','assets/img/rank-sorcerer.webp','assets/img/rank-archer.webp'):
-              root=ET.parse(path).getroot()
-              assert root.tag.endswith('svg')
-              print(path,'valid SVG')
+              data=open(path,'rb').read()
+              assert len(data)>100 and data[:4]==b'RIFF' and data[8:12]==b'WEBP', path
+              print(path,'valid WebP artwork')
+          path='assets/img/kpah-player-icon-atlas.png'
+          data=open(path,'rb').read()
+          assert data[:8]==b'\\x89PNG\\r\\n\\x1a\\n', 'custom icon atlas is not PNG'
+          width,height=struct.unpack('>II',data[16:24])
+          assert (width,height)==(256,192), (width,height)
+          print(path,'valid original PNG icon atlas')
           PY
