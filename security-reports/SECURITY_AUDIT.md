@@ -27,3 +27,18 @@ Severity describes technical impact if the identified condition is reachable, no
 
 ## Unverified categories
 No full dynamic database test or production scan has occurred for SQLi, XSS, CSRF, auth bypass across *all* endpoints, IDOR, brute force, SSRF, arbitrary file upload, RCE, webhook races, dependency CVEs, payment replay, and real-world business-logic attacks. This review covers selected critical data paths and static evidence; further validation on staging is mandatory. See REMAINING_RISKS.md.
+
+
+## 2026-10-18 follow-up
+
+The authoritative follow-up to this 2026-10-15 snapshot is
+[**AUDIT_2026-10-18.md**](AUDIT_2026-10-18.md).
+It records newer authentication controls, CI fixture regression repairs,
+Semgrep execution evidence (focused rules: 0 findings in 96 files; PHP advisory:
+130 *unvalidated candidates*), source tracing of five SQL candidates and five
+filename candidates, and unchanged staging requirements.
+
+This historical report does not supersede the newer code. In particular,
+legacy MyISAM financial writes and Java game-side item/giftcode validation still
+require authorized disposable staging with concurrency/crash simulation before
+any claim of exact-once delivery.
