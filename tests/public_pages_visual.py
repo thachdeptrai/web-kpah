@@ -43,7 +43,7 @@ JS=r"""JSON.stringify((()=>{
      add(!content.complete||content.naturalWidth===0,'missing community Zalo logo');
    if(innerWidth>1240&&icon){
      const rect=icon.getBoundingClientRect();
-     add(rect.width<36||rect.height<36,'desktop navigation icon too small '+i);
+     add(rect.width<32||rect.height<32||rect.width>38,'desktop navigation icon outside balanced size '+i);
    }
  });
  if(innerWidth>1240){

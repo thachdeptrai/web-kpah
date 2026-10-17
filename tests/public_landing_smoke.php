@@ -35,6 +35,6 @@ $navigation=landing_read('assets/css/nav-modern.css');
 foreach (['home','about','download','giftcode','news','community'] as $key) {
     landing_assert(strpos($shell,"'".$key."'")!==false,'navigation destination retained '.$key);
 }
-landing_assert(strpos($navigation,'width:39px;height:39px')!==false,'desktop navigation icon container is enlarged');
+landing_assert(strpos($navigation,'width:34px;height:34px')!==false,'desktop navigation icon has balanced 34px container');
 landing_assert(strpos($navigation,'max-width:1240px')!==false && strpos($navigation,'max-width:430px')!==false,'tablet and narrow phone navigation layouts exist');
 echo "PASS: public landing page split\n";

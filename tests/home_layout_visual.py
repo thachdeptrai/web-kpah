@@ -80,7 +80,7 @@ JS = r"""JSON.stringify((() => {
     }
     if(innerWidth>1240&&icon){
       const box=icon.getBoundingClientRect();
-      add(box.width<36||box.height<36,'desktop navigation icon is too small at '+i);
+      add(box.width<32||box.height<32||box.width>38,'desktop navigation icon size outside balanced range at '+i);
     }
   });
   if(innerWidth>1240){
