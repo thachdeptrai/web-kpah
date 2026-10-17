@@ -19,6 +19,7 @@ storage/ratelimit/*
 *.sql
 !database/referral_codes.sql
 !database/verify_schema.sql
+!database/giftcode_item_options.sql
 *.sqlite
 *.sqlite3
 *.db
