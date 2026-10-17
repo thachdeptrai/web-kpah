@@ -32,6 +32,9 @@ try {
     $parsed = kp_giftcode_parse_rewards($serialized.',PT:4:10');
     $check(count($parsed['rewards']) === 1 && $parsed['rewards'][0]['options'][1]['id'] === 33, 'DBO parser round-trip failed');
     $check($parsed['legacy'] === ['PT:4:10'], 'legacy token was not preserved');
+    $knownOnly = kp_giftcode_parse_rewards('DB:999:1:0,PT:4:10', $itemMap);
+    $check($knownOnly['rewards'] === [], 'unknown DB item was exposed as editable');
+    $check($knownOnly['legacy'] === ['DB:999:1:0', 'PT:4:10'], 'unknown legacy item was not preserved');
     $defaultOnly = kp_giftcode_validate_reward_payload(json_encode([[
         'item_id'=>12, 'quantity'=>1, 'minutes'=>0, 'lock'=>0, 'magic'=>0, 'options'=>[],
     ]]), $itemMap, $optionMap, false);
@@ -41,6 +44,12 @@ try {
             'item_id'=>999, 'quantity'=>1, 'minutes'=>0, 'lock'=>0, 'magic'=>0, 'options'=>[],
         ]]), $itemMap, $optionMap, true);
         $check(false, 'unknown item accepted');
+    } catch (RuntimeException $expected) {}
+    try {
+        kp_giftcode_validate_reward_payload(json_encode([[
+            'item_id'=>12, 'quantity'=>1, 'minutes'=>0, 'lock'=>0, 'magic'=>2, 'options'=>[],
+        ]]), $itemMap, $optionMap, true);
+        $check(false, 'unsupported magic mode accepted');
     } catch (RuntimeException $expected) {}
     try {
         kp_giftcode_validate_reward_payload(json_encode([[

@@ -17,7 +17,7 @@ diff --git a/src/data/Database.java b/src/data/Database.java
 +                            int lock = Integer.parseInt(optionItem[4]);
 +                            int magic = Integer.parseInt(optionItem[5]);
 +                            if (quantity < 1 || quantity > 1000 || minutes < 0
-+                                    || (lock != 0 && lock != 1) || magic < 0 || magic > 2) {
++                                    || (lock != 0 && lock != 1) || magic < 0 || magic > 1) {
 +                                throw new IllegalArgumentException("GiftCode DBO co gia tri khong hop le");
 +                            }
 +                            for (int j = 0; j < quantity; j++) {

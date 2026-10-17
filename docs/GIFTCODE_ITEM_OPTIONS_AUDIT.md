@@ -53,6 +53,8 @@ vào catalog, không hardcode GemTemplate.
 - Mặc định/legacy: `DB:<itemId>:<quantity>:<minutes>`
 - Có tùy chỉnh: `DBO:<itemId>:<quantity>:<minutes>:<lock>:<magic>:<options>`
 - `options`: các cặp `optionId=param` phân cách bằng `;`.
+- `lock`: `0` hoặc `1`; `magic`: `0` (ma pháp/mặc định) hoặc `1` (vật lý),
+  đúng hai nhánh được `GiftCode.AddItem` hiện tại định nghĩa.
 
 Ví dụ contract (ID chỉ mang tính minh họa cú pháp):
 

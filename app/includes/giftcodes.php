@@ -208,7 +208,7 @@ function kp_giftcode_reward_catalog($pdo)
     return ['items'=>$items, 'options'=>$options, 'item_map'=>$itemMap, 'option_map'=>$optionMap];
 }
 
-function kp_giftcode_parse_rewards($value)
+function kp_giftcode_parse_rewards($value, array $itemMap = null)
 {
     $result = ['rewards'=>[], 'legacy'=>[]];
     $value = trim((string)$value);
@@ -218,7 +218,8 @@ function kp_giftcode_parse_rewards($value)
         if ($token === '') continue;
         $parts = explode(':', $token);
         if (count($parts) === 4 && $parts[0] === 'DB'
-            && ctype_digit($parts[1]) && ctype_digit($parts[2]) && ctype_digit($parts[3])) {
+            && ctype_digit($parts[1]) && ctype_digit($parts[2]) && ctype_digit($parts[3])
+            && ($itemMap === null || isset($itemMap[(int)$parts[1]]))) {
             $result['rewards'][] = [
                 'item_id'=>(int)$parts[1], 'quantity'=>(int)$parts[2],
                 'minutes'=>(int)$parts[3], 'lock'=>0, 'magic'=>0, 'options'=>[],
@@ -228,7 +229,8 @@ function kp_giftcode_parse_rewards($value)
         $dbo = explode(':', $token, 7);
         if (count($dbo) === 7 && $dbo[0] === 'DBO'
             && ctype_digit($dbo[1]) && ctype_digit($dbo[2]) && ctype_digit($dbo[3])
-            && ($dbo[4] === '0' || $dbo[4] === '1') && in_array($dbo[5], ['0','1','2'], true)) {
+            && ($dbo[4] === '0' || $dbo[4] === '1') && in_array($dbo[5], ['0','1','2'], true)
+            && ($itemMap === null || isset($itemMap[(int)$dbo[1]]))) {
             $parsedOptions = [];
             $valid = true;
             foreach ($dbo[6] === '' ? [] : explode(';', $dbo[6]) as $pair) {
@@ -277,7 +279,8 @@ function kp_giftcode_validate_reward_payload($json, array $itemMap, array $optio
         $quantity = kp_giftcode_payload_int(isset($raw['quantity']) ? $raw['quantity'] : null, 1, 1000, 'Số lượng vật phẩm');
         $minutes = kp_giftcode_payload_int(isset($raw['minutes']) ? $raw['minutes'] : 0, 0, 2147483647, 'Thời hạn vật phẩm');
         $lock = kp_giftcode_payload_int(isset($raw['lock']) ? $raw['lock'] : 0, 0, 1, 'Trạng thái khóa');
-        $magic = kp_giftcode_payload_int(isset($raw['magic']) ? $raw['magic'] : 0, 0, 2, 'Hệ vật lý/ma pháp');
+        // GiftCode::AddItem only defines 0 = ma pháp and 1 = vật lý.
+        $magic = kp_giftcode_payload_int(isset($raw['magic']) ? $raw['magic'] : 0, 0, 1, 'Hệ vật lý/ma pháp');
         $rawOptions = isset($raw['options']) ? $raw['options'] : [];
         if (!is_array($rawOptions) || array_values($rawOptions) !== $rawOptions || count($rawOptions) > 141) {
             throw new RuntimeException('Danh sách option của item ID '.$itemId.' không hợp lệ.');
