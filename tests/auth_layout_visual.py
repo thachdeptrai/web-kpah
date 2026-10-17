@@ -63,9 +63,11 @@ JS=r"""JSON.stringify((()=>{
    if(innerWidth<=820)fail(imageHeight>250,'compact auth artwork too tall on mobile: '+imageHeight);
    if(innerWidth>=960)fail(imageHeight>715,'compact auth artwork stretches beyond intended cap: '+imageHeight);
    if(location.pathname==='/dang-ky'&&innerWidth>=960){
-     const f=$('#reg-form>fieldset.fields');
-     const columns=f?getComputedStyle(f).gridTemplateColumns.split(' ').filter(Boolean):[];
-     fail(columns.length!==2,'register not arranged in two desktop columns');
+     const username=$('#reg-form [data-field="username"]');
+     const phone=$('#reg-form [data-field="phone"]');
+     fail(!username||!phone||
+          Math.abs(username.getBoundingClientRect().top-phone.getBoundingClientRect().top)>12,
+          'register username and phone must share the first desktop row');
    }
    if(innerWidth>=1200)fail(form&&form.height>1020,'compact auth form too tall on desktop: '+form.height);
  }
