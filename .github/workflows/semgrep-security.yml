@@ -1,0 +1,48 @@
+name: Semgrep focused security gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**/*.php'
+      - 'config/**/*.php'
+      - 'index.php'
+      - '.semgrep/**'
+      - '.github/workflows/semgrep-security.yml'
+  pull_request:
+    paths:
+      - 'app/**/*.php'
+      - 'config/**/*.php'
+      - 'index.php'
+      - '.semgrep/**'
+      - '.github/workflows/semgrep-security.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Semgrep CLI
+        run: python -m pip install --disable-pip-version-check 'semgrep>=1.100,<2'
+      - name: Focused high-confidence blocking rules
+        run: semgrep scan --metrics off --error --config .semgrep/security.yml app config index.php
+      - name: Additional PHP ruleset (advisory only)
+        id: advisory
+        continue-on-error: true
+        run: semgrep scan --metrics off --config p/php --json --output semgrep-php-advisory.json app config index.php
+      - name: Upload advisory scan output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-php-advisory
+          path: semgrep-php-advisory.json
+          if-no-files-found: ignore
+          retention-days: 14
