@@ -1,0 +1,450 @@
+/* NGHIỆN KPAH · Player Portal Reborn (2026-10)
+   Presentation only. All wallet, character, profile and security data remain server-rendered.
+   Last in the account stylesheet stack to neutralise the previous industrial dark theme. */
+body.home-page.portal-page{
+ --pp-ink:#23406e;--pp-heading:#233b79;--pp-muted:#6b82aa;
+ --pp-blue:#3b70ef;--pp-purple:#7656ef;--pp-line:#dbe8fb;
+ --pp-paper:#fff;--pp-soft:#f3f8ff;--pp-green:#168966;
+ --pp-shadow:0 14px 36px rgba(42,99,179,.1),0 2px 7px rgba(59,108,194,.04);
+ --home-bg:#e9f5ff;--home-panel:#fff;--home-panel-2:#f5f9ff;
+ --home-line:#dbe8fb;--home-text:#243c6c;--home-muted:#6b82aa;
+ --home-gold:#6453e2;--home-gold-hi:#473bce;--home-violet:#7656ef;
+ --home-green:#168966;--home-red:#dd5576;
+ --portal-gold:#6853e8;--portal-ivory:#243c70;--portal-muted:#6680a9;
+ --portal-stroke:#dbe8fb;--portal-panel:#fff;
+ color:var(--pp-ink);color-scheme:light;
+ background:linear-gradient(180deg,rgba(214,240,255,.95),rgba(246,251,255,.96) 590px,#f5faff 1200px);
+ font:500 14px/1.65 "Be Vietnam Pro",system-ui,sans-serif;
+}
+body.portal-page:before{
+ content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+ background:url("/assets/img/fantasy-world.svg") top center/cover no-repeat;
+ opacity:.1;
+}
+.portal-page *,.portal-page *:before,.portal-page *:after{box-sizing:border-box}
+.portal-page .home-skip-link{
+ background:var(--pp-blue);color:#fff;z-index:400;position:fixed;
+}
+.portal-page :is(a,button,input,select,textarea):focus-visible{
+ outline:3px solid rgba(103,83,232,.48);outline-offset:3px
+}
+.portal-page .portal-main{
+ position:relative;isolation:isolate;box-sizing:border-box;
+ width:calc(100% - 238px);max-width:none;min-width:0;
+ margin:0 0 0 238px;min-height:100vh;
+ padding:0 clamp(20px,3.4vw,52px) 26px
+}
+.portal-page .portal-main>*{min-width:0}
+.portal-page .side-rail.portal-rail{
+ position:fixed;z-index:150;inset:0 auto 0 0;
+ width:238px;height:100dvh;display:flex;flex-direction:column;
+ align-items:stretch;gap:0;margin:0;padding:17px 13px 13px;
+ overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;
+ border:0;border-right:1px solid #d7e5fa;border-radius:0;
+ background:linear-gradient(170deg,#fff,#f4f9ff 64%,#eaf2ff);
+ box-shadow:5px 0 35px rgba(52,103,184,.07);
+}
+.portal-page .portal-rail-logo{
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+ gap:2px;width:100%;height:auto;min-height:100px;flex:none;
+ padding:10px 8px 14px;margin:0;border-radius:14px;text-decoration:none;
+ background:linear-gradient(165deg,#edf5ff,#fff);
+}
+.portal-page .portal-rail-logo img{
+ display:block;width:min(100%,166px);height:64px;object-fit:contain;
+ filter:drop-shadow(0 4px 9px rgba(41,81,149,.1))
+}
+.portal-page .portal-rail-logo span{
+ font:900 10px/1.2 "Be Vietnam Pro",sans-serif;letter-spacing:.22em;
+ color:#5675af
+}
+.portal-page .portal-rail .rail-line{width:auto;height:1px;margin:13px 10px;background:#dbe7f8}
+.portal-page .portal-nav-caption{
+ font-size:10px;letter-spacing:.13em;color:#8b9fbc;font-weight:800;
+ padding:12px 15px 7px
+}
+.portal-page .portal-nav-list{display:grid;gap:5px;min-width:0}
+.portal-page .portal-rail .rail-icon{
+ display:flex;justify-content:flex-start;align-items:center;gap:12px;
+ flex:none;min-height:44px;width:100%;height:auto;margin:0;
+ padding:10px 12px;border:1px solid transparent;border-radius:11px;
+ color:#536e9c;background:transparent;text-decoration:none;
+ font-size:12px;font-weight:750;line-height:1.3;
+ transition:background .16s,color .16s,border-color .16s,transform .16s;
+}
+.portal-page .portal-rail .rail-icon:hover{
+ color:#4054ce;border-color:#d5e0fa;background:#edf3ff;transform:translateX(2px)
+}
+.portal-page .portal-rail .rail-icon.active{
+ color:#fff;background:linear-gradient(110deg,#8265fa,#4668ef);
+ border-color:#7667f4;box-shadow:0 6px 13px rgba(78,90,227,.2)
+}
+.portal-page .portal-rail .portal-nav-icon{
+ width:30px;height:30px;display:grid;place-items:center;flex:none;
+ background:#eef4ff;border-radius:9px;color:#677fe2
+}
+.portal-page .portal-rail .rail-icon.active .portal-nav-icon{
+ color:#fff;background:rgba(255,255,255,.19)
+}
+.portal-page .pp-icon{display:block;width:19px;height:19px;stroke:currentColor;
+ fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.portal-page .portal-rail .portal-nav-label{
+ display:block;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:12px
+}
+.portal-page .portal-rail .rail-bottom{
+ margin-top:auto;padding-top:15px;border-top:1px solid var(--pp-line)
+}
+.portal-page .portal-rail .rail-logout{color:#ad526b}
+.portal-page .portal-rail .rail-logout .portal-nav-icon{
+ color:#d05b79;background:#fff0f5
+}
+.portal-page .portal-top{
+ display:flex;justify-content:space-between;align-items:center;gap:15px;
+ position:relative;z-index:2;min-height:80px;
+ padding:12px 0;border-bottom:1px solid #d5e7fb
+}
+.portal-page .home-breadcrumb{
+ display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+ color:#657fa8;font-size:12px;letter-spacing:0;line-height:1.5
+}
+.portal-page .breadcrumb-kicker{color:#4c55de;font-size:12px;font-weight:900;letter-spacing:.08em}
+.portal-page .breadcrumb-separator{color:#acc2db}
+.portal-page .top-user{
+ display:flex;align-items:center;justify-content:flex-end;gap:11px;
+ min-width:0;max-width:100%;
+}
+.portal-page .top-status{
+ display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+ padding:7px 10px;border:1px solid #c4ecde;border-radius:999px;
+ background:#eefff7;color:#12815b;font-size:10px;font-weight:800;letter-spacing:0;
+}
+.portal-page .top-status i{width:7px;height:7px;flex:none;background:#23b67d;border-radius:50%}
+.portal-page .top-user-name{font-size:12px;color:#355582;font-weight:800;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.portal-page .mini-avatar{
+ height:40px;width:40px;display:grid;place-items:center;flex:none;
+ border-radius:13px;border:2px solid #fff;background:linear-gradient(145deg,#8a73fa,#417df3);
+ color:#fff;box-shadow:0 4px 11px #6373c43d;
+ font:800 16px "Be Vietnam Pro",sans-serif
+}
+.portal-page .top-logout{
+ min-height:39px;margin:0;padding:8px 12px;
+ border:1px solid #d2e1f8;border-radius:10px;background:#fff;
+ color:#5b68a7;font-size:11px;font-weight:750;text-decoration:none;
+}
+.portal-page .top-logout:hover{color:#3a4bdf;border-color:#aabcf7;background:#f7faff}
+.portal-page .portal-footer{
+ margin:38px 0 0;padding:19px 0 8px;border-top:1px solid var(--pp-line);
+ color:#8ba1bd;background:transparent;box-shadow:none
+}
+.portal-page .portal-footer a{color:#5360df}
+.portal-page .portal-footer .footer-brand{color:#5272a7}
+
+/* Welcome and account masthead: readable left copy + fantasy vista to right. */
+.portal-page .portal-hero{
+ position:relative;isolation:isolate;overflow:hidden;
+ display:flex;align-items:center;justify-content:space-between;gap:22px;
+ min-height:264px;margin:22px 0 25px;
+ padding:clamp(27px,3.3vw,46px);
+ border:1px solid rgba(255,255,255,.94);border-radius:24px;
+ background:linear-gradient(92deg,#fff 0%,#f2faff 48%,rgba(226,245,255,.73) 74%,rgba(221,245,255,.25)),
+ url("/assets/img/home-hero-anime.webp") right 44%/auto 135% no-repeat,
+ linear-gradient(120deg,#e3f8ff,#d2eaff);
+ box-shadow:0 20px 42px rgba(38,95,174,.14);
+}
+.portal-page .portal-hero:before{
+ content:"";position:absolute;z-index:-1;inset:0;top:auto;right:-8%;left:auto;
+ width:390px;height:140px;border:0;border-radius:60%;
+ background:rgba(255,255,255,.35);filter:blur(45px);box-shadow:none
+}
+.portal-page .portal-hero:after{
+ content:"";position:absolute;left:0;top:0;bottom:0;width:6px;height:auto;
+ background:linear-gradient(180deg,#57c9ff,#7c57f6)
+}
+.portal-page .portal-hero-copy{position:relative;z-index:2;min-width:0;max-width:740px}
+.portal-page .portal-kicker{
+ gap:8px;color:#5461de;font-size:10px;letter-spacing:.11em;font-weight:900;
+ text-transform:uppercase
+}
+.portal-page .portal-kicker>i{width:7px;height:7px;border-radius:50%;
+ background:#745af0;opacity:1
+}
+.portal-page .portal-hero h1{
+ margin:12px 0 12px;font:800 clamp(29px,3.4vw,46px)/1.2 "Be Vietnam Pro",sans-serif;
+ color:#234178;letter-spacing:-.045em;overflow-wrap:anywhere;
+ text-shadow:none
+}
+.portal-page .portal-hero h1 em,
+.portal-page .portal-section-heading h2 em,
+.portal-page .pd-heading h2 em,
+.portal-page .pd-panel h2 em{color:#5f52e9;font-style:normal}
+.portal-page .portal-hero p{max-width:510px;margin:0;
+ font-size:13px;line-height:1.8;color:#55729b
+}
+.portal-page .portal-hero-buttons{display:flex;flex-wrap:wrap;gap:11px;margin-top:20px}
+.portal-page :is(.portal-primary,.portal-secondary,.portal-hero-action){
+ display:inline-flex;align-items:center;justify-content:center;gap:13px;
+ min-height:43px;padding:10px 17px;border-radius:11px;
+ font-size:12px;font-weight:850;text-decoration:none!important;
+ box-shadow:none;transition:transform .18s,box-shadow .18s
+}
+.portal-page .portal-primary{
+ border:1px solid #665ef3;background:linear-gradient(112deg,#865efa,#496af2);
+ color:#fff!important;box-shadow:0 9px 18px rgba(101,92,229,.2)
+}
+.portal-page :is(.portal-secondary,.portal-hero-action){
+ border:1px solid #c5d6f7;color:#465bd0!important;
+ background:rgba(255,255,255,.9)
+}
+.portal-page :is(.portal-primary,.portal-secondary,.portal-hero-action):hover{
+ transform:translateY(-2px);box-shadow:0 12px 22px #5c85d02b
+}
+.portal-page .portal-hero--compact{min-height:184px}
+.portal-page .portal-hero--compact h1{font-size:clamp(29px,2.8vw,39px)}
+.portal-page .portal-hero-emblem{
+ position:relative;z-index:1;width:clamp(130px,20vw,230px);
+ flex:none;align-self:stretch;margin:-28px 0;
+ display:flex;align-items:center;justify-content:center
+}
+.portal-page .portal-hero-emblem img{
+ display:block;height:min(100%,225px);width:auto;max-width:100%;
+ object-fit:contain;filter:drop-shadow(0 10px 10px #40619a3b)
+}
+.portal-page .portal-emblem-ring{border-color:#b9d3f6;box-shadow:0 0 0 17px #e7f5ff75}
+.portal-page .portal-emblem-label{color:#5465ac;opacity:.85}
+.portal-page .portal-hero-meta{
+ display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:14px
+}
+.portal-page .portal-hero-meta span{
+ display:inline-flex;align-items:center;gap:6px;
+ padding:5px 10px;border:1px solid #cfe4fb;border-radius:999px;
+ background:#ffffffcf;color:#4773a7;font-size:10px;font-weight:750
+}
+.portal-page .portal-hero-meta .portal-meta-online{border-color:#bdebd7;color:#108766;background:#effff7}
+
+/* Dashboard resources. */
+.portal-page .pd-section{margin-bottom:25px}
+.portal-page :is(.pd-heading,.pd-panel-header,.portal-section-heading,.section-heading){
+ gap:14px;align-items:center;margin-bottom:14px
+}
+.portal-page :is(.pd-heading h2,.pd-panel h2,.portal-section-heading h2,.section-heading h2){
+ color:#25417a;font:800 clamp(22px,2.3vw,28px)/1.24 "Be Vietnam Pro",sans-serif;
+ letter-spacing:-.035em
+}
+.portal-page :is(.pd-heading h2,.pd-panel h2){margin:7px 0 0}
+.portal-page .pd-inline-link{
+ min-height:36px;padding:7px 11px;border-radius:9px;
+ background:#fff;border:1px solid #cfdef8;
+ color:#5265d7;font-size:11px;font-weight:800
+}
+.portal-page .pd-inline-link:hover{background:#eef3ff;border-color:#99adff}
+.portal-page .pd-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.portal-page .pd-stat-card{
+ display:flex;flex-direction:column;gap:10px;
+ min-height:156px;padding:20px;border:1px solid #dce9fa;border-radius:18px;
+ background:linear-gradient(145deg,#fff,#f7fbff);
+ box-shadow:var(--pp-shadow);color:#23417a;text-decoration:none;
+ transition:transform .18s,border-color .18s,box-shadow .18s;overflow:hidden
+}
+.portal-page .pd-stat-card:hover{
+ transform:translateY(-3px);border-color:#b3c8ff;box-shadow:0 18px 34px #729bd52b
+}
+.portal-page .pd-stat-wallet{
+ background:linear-gradient(145deg,#ecf5ff,#fafbff 65%,#fff);
+ border-color:#b8d9ff
+}
+.portal-page .pd-stat-card:nth-child(2){background:linear-gradient(145deg,#fffcf3,#fff)}
+.portal-page .pd-stat-card:nth-child(3){background:linear-gradient(145deg,#f5f1ff,#fff)}
+.portal-page .pd-stat-card:nth-child(4){background:linear-gradient(145deg,#eefff8,#fff)}
+.portal-page .pd-stat-top{gap:8px;align-items:center;color:#647ca2;font-size:12px;font-weight:800}
+.portal-page .pd-stat-symbol{
+ display:grid;place-items:center;width:42px;height:42px;flex:none;
+ border-radius:13px;background:#e5ecff;border:1px solid #d3defa;
+ color:#5167e5
+}
+.portal-page .pd-stat-card:nth-child(2) .pd-stat-symbol{background:#fff1d0;color:#ca8a2b;border-color:#f6e4b7}
+.portal-page .pd-stat-card:nth-child(3) .pd-stat-symbol{background:#eee7ff;color:#7958e9;border-color:#dcd0ff}
+.portal-page .pd-stat-card:nth-child(4) .pd-stat-symbol{background:#dcfaeb;color:#15946e;border-color:#baf0d5}
+.portal-page .pd-stat-symbol .pp-icon{width:20px;height:20px}
+.portal-page .pd-stat-card strong{
+ display:block;margin-top:auto;color:#2c4c92;
+ font-size:clamp(20px,2vw,29px);line-height:1.25;font-weight:850;
+ letter-spacing:-.035em;overflow-wrap:anywhere;white-space:normal
+}
+.portal-page .pd-stat-card small{color:#7186aa;font-size:10px;line-height:1.6}
+.portal-page .pd-split{display:grid;grid-template-columns:minmax(0,1.23fr) minmax(295px,.87fr);gap:16px;align-items:stretch}
+.portal-page .pd-split--lower{grid-template-columns:minmax(0,1.23fr) minmax(295px,.87fr)}
+.portal-page .pd-panel{
+ padding:22px;border:1px solid #dce7f8;border-radius:20px;
+ background:#fff;box-shadow:var(--pp-shadow);min-width:0;
+}
+.portal-page .pd-character{
+ gap:12px;padding:13px 0;border-color:#e5edfa
+}
+.portal-page .pd-character:first-child{border-top:0}
+.portal-page .pd-character-avatar{
+ width:56px;height:56px;display:grid;place-items:center;
+ border:1px solid #d4dbff;border-radius:16px;
+ background:linear-gradient(145deg,#e8eeff,#f7f4ff);
+ color:#6152d8
+}
+.portal-page .pd-character-name strong{color:#2b4c8b;font-size:14px}
+.portal-page .pd-character-name>span{
+ background:#ecedff;border:1px solid #dcdfff;color:#5753cf
+}
+.portal-page .pd-character-body p{color:#7589ab}
+.portal-page .pd-character-resources span{
+ background:#f0f5ff;color:#617fae;font-size:10px
+}
+.portal-page .pd-character-resources b{color:#33568e}
+.portal-page .pd-rewards{
+ background:linear-gradient(143deg,#f4f0ff,#fff 58%,#eef8ff);
+ border-color:#ddd2ff
+}
+.portal-page .pd-panel-symbol{
+ color:#7656ec;background:#e9e2ff;border:1px solid #d4c4ff
+}
+.portal-page .pd-reward-balance>span,.portal-page .pd-reward-balance>small{color:#6f7eae}
+.portal-page .pd-reward-balance>strong{color:#6b50df;font-size:clamp(33px,3.3vw,48px)}
+.portal-page .pd-reward-preview{
+ padding:14px;background:#fff;border:1px solid #e3ddff;border-radius:12px;
+}
+.portal-page .pd-reward-preview span{color:#6f53c9}
+.portal-page .pd-reward-preview strong{color:#314e85}
+.portal-page .pd-reward-preview small{color:#7d89ac}
+.portal-page .pd-panel-action{color:#554dd9;font-weight:850}
+.portal-page .pd-payment{border-top-color:#e5edfa}
+.portal-page .pd-payment-icon{
+ background:#eff3ff;border:1px solid #d9e3ff;color:#5f5cdb
+}
+.portal-page .pd-payment-main strong,.portal-page .pd-payment-end b{color:#2c4b85}
+.portal-page .pd-payment-main small,.portal-page .pd-payment-end small{color:#7589a9}
+.portal-page .pd-status-good,.portal-page .pd-verified{color:#0d9369!important}
+.portal-page .pd-status-neutral,.portal-page .pd-unverified{color:#b77a2d!important}
+.portal-page .pd-account-list>div{border-color:#e7edf9}
+.portal-page .pd-account-list dt{color:#6d83a6}
+.portal-page .pd-account-list dd{color:#2d4b83}
+.portal-page .pd-account-actions a{
+ background:#f4f6ff;border:1px solid #d6dfff;color:#5660d5;border-radius:10px
+}
+.portal-page .pd-account-actions a:hover{background:#e9ecff}
+.portal-page .pd-empty{color:#7287a8}
+.portal-page .pd-achievement-row{
+ background:#d7e4fb;border:1px solid #d1e1fc;border-radius:18px;
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .pd-achievement-identity,.portal-page .pd-achievement-item{
+ background:#fff;padding:19px
+}
+.portal-page .pd-achievement-identity>span{
+ background:#fff3d8;border:1px solid #f3e3b4;color:#d19a37
+}
+.portal-page .pd-achievement-identity small,.portal-page .pd-achievement-item small{color:#7890ad}
+.portal-page .pd-achievement-identity strong{color:#2b4b84}
+.portal-page .pd-achievement-item strong{color:#6051d7}
+
+/* Navigation cards, visible and genuinely linked to existing destinations. */
+.portal-page .portal-action-grid{gap:14px}
+.portal-page .portal-action-card{
+ background:#fff;border:1px solid #dce7fa;border-radius:18px;
+ box-shadow:var(--pp-shadow);padding:20px;
+ color:var(--pp-ink);transition:transform .18s,border-color .18s,box-shadow .18s
+}
+.portal-page .portal-action-card:before{height:4px;border-radius:0 0 9px 9px;background:var(--card-accent);opacity:1}
+.portal-page .portal-action-card:hover{border-color:#b4c8fc;box-shadow:0 20px 34px #759ad52e}
+.portal-page .portal-action-icon{
+ height:58px;width:58px;border-radius:16px;
+ color:#6456e2;background:#eeebff;border-color:#d9d1ff;font-size:27px
+}
+.portal-page .portal-action-copy small{color:#677cbe}
+.portal-page .portal-action-copy strong{color:#2b437b;font-size:18px}
+.portal-page .portal-action-copy>span{color:#6d82a4;font-size:11px}
+.portal-page .portal-action-go{color:#6a60e6;border-color:#d8defb}
+.portal-page .portal-quick-links{gap:9px}
+.portal-page .portal-quick-links a{
+ background:#ffffffd9;border:1px solid #dbe7f7;color:#4263a1;
+ border-radius:10px;font-size:11px;font-weight:750
+}
+.portal-page .portal-quick-links a:hover{color:#4a4de1;border-color:#bdcaff;background:#f3f5ff}
+.portal-page .portal-return a{color:#5266d3}
+.portal-page .portal-footer a:hover{color:#5842c2}
+
+/* Responsive navigation: labelled, horizontally scrollable top ribbon. No cut-off links. */
+@media(max-width:1180px){
+ .portal-page .portal-main{width:calc(100% - 214px);margin-left:214px;padding-inline:22px}
+ .portal-page .side-rail.portal-rail{width:214px}
+ .portal-page .pd-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portal-page .pd-split,.portal-page .pd-split--lower{grid-template-columns:minmax(0,1fr) minmax(270px,.8fr)}
+}
+@media(max-width:900px){
+ .portal-page .portal-main{width:100%;margin:0;padding:0 22px 25px}
+ .portal-page .side-rail.portal-rail{
+  position:relative;inset:auto;z-index:20;
+  width:100%;height:auto;min-height:0;
+  padding:9px 16px;margin:0;display:flex;flex-direction:row;align-items:center;
+  gap:12px;overflow:visible;border:0;border-bottom:1px solid #dce8f9;
+  border-radius:0;background:#ffffffed;box-shadow:0 4px 19px #3b76c31a
+ }
+ .portal-page .portal-rail-logo{
+  width:88px;min-height:0;height:56px;padding:3px;flex:none;border-radius:9px
+ }
+ .portal-page .portal-rail-logo img{width:80px;height:46px}
+ .portal-page .portal-rail-logo span{display:none}
+ .portal-page .portal-rail .rail-line,.portal-page .portal-rail .portal-nav-caption{display:none}
+ .portal-page .portal-nav-list{
+  display:flex;align-items:center;gap:7px;flex:1;min-width:0;
+  padding:4px 1px;overflow-x:auto;overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin
+ }
+ .portal-page .portal-rail .rail-icon{min-width:max-content;width:auto;flex:none;padding:7px 9px;min-height:42px;gap:6px}
+ .portal-page .portal-rail .portal-nav-icon{width:26px;height:26px}
+ .portal-page .portal-rail .portal-nav-label{white-space:nowrap;font-size:10px}
+ .portal-page .portal-rail .rail-bottom{display:none}
+ .portal-page .portal-top{min-height:67px}
+ .portal-page .pd-split,.portal-page .pd-split--lower{grid-template-columns:1fr}
+ .portal-page .profile-layout{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ .portal-page .portal-main{width:100%;margin:0;padding:0 13px 26px}
+ .portal-page .side-rail.portal-rail{padding:7px 9px;gap:6px}
+ .portal-page .portal-rail-logo{width:65px;height:49px}
+ .portal-page .portal-rail-logo img{width:63px;height:43px}
+ .portal-page .portal-rail .rail-icon{gap:5px;padding:6px 8px;min-height:41px}
+ .portal-page .portal-rail .portal-nav-icon{width:24px;height:24px}
+ .portal-page .portal-rail .portal-nav-label{font-size:10px}
+ .portal-page .portal-top{min-height:60px;gap:7px}
+ .portal-page .home-breadcrumb{font-size:10px;gap:5px}
+ .portal-page .top-status,.portal-page .top-logout{display:none}
+ .portal-page .top-user{gap:7px;flex-wrap:nowrap}
+ .portal-page .top-user-name{max-width:100px;font-size:11px}
+ .portal-page .mini-avatar{width:33px;height:33px;border-radius:10px}
+ .portal-page .portal-hero{
+  min-height:0;margin:15px 0 20px;padding:24px 18px;border-radius:18px;
+  background:linear-gradient(90deg,#fff 0%,#eff9ff 90%),url("/assets/img/home-hero-anime.webp") right center/cover;
+ }
+ .portal-page .portal-hero h1{font-size:clamp(27px,6.8vw,35px)}
+ .portal-page .portal-hero p{font-size:12px;line-height:1.75}
+ .portal-page .portal-hero-emblem{display:none}
+ .portal-page .portal-hero--compact .portal-hero-action{display:none}
+ .portal-page .pd-stat-grid{gap:9px}
+ .portal-page .pd-stat-card{min-height:138px;padding:14px 12px;gap:8px;border-radius:15px}
+ .portal-page .pd-stat-top{font-size:10px;align-items:center}
+ .portal-page .pd-stat-symbol{width:33px;height:33px;border-radius:11px}
+ .portal-page .pd-stat-card strong{font-size:clamp(17px,5.3vw,24px)}
+ .portal-page .pd-panel{padding:16px;border-radius:16px}
+ .portal-page .pd-heading h2,.portal-page .pd-panel h2{font-size:21px}
+ .portal-page .portal-action-card{padding:15px}
+ .portal-page .portal-action-copy strong{font-size:16px}
+ .portal-page .portal-action-icon{height:47px;width:47px}
+ .portal-page .pd-achievement-identity,.portal-page .pd-achievement-item{padding:13px}
+ .portal-page .portal-footer{font-size:10px}
+}
+@media(max-width:370px){
+ .portal-page .portal-main{padding-inline:10px}
+ .portal-page .pd-stat-grid{grid-template-columns:minmax(0,1fr)}
+ .portal-page .pd-stat-card{min-height:110px}
+ .portal-page .top-user-name{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .portal-page :is(.pd-stat-card,.portal-action-card,.portal-rail .rail-icon){transition:none!important}
+ .portal-page :is(.pd-stat-card,.portal-action-card,.portal-rail .rail-icon):hover{transform:none}
+}
