@@ -34,6 +34,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     $_SESSION['kp_user_last_seen'] = time();
                     unset($_SESSION['kp_admin_id'], $_SESSION['kp_admin_role']);
                     kp_center_event((int)$user['id'], 'login');
+                    kp_center_notify((int)$user['id'],'Đăng nhập mới',
+                        'Tài khoản của bạn vừa đăng nhập thành công. Nếu không phải bạn, hãy đổi mật khẩu ngay.',
+                        'security','/lich-su-bao-mat');
                     $_SESSION['kp_toast']=['type'=>'success','title'=>'Đăng nhập thành công','message'=>'Đã mở khu tài khoản của bạn.'];
                     header('Location: /tai-khoan');
                     exit;

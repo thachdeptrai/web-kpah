@@ -6,6 +6,7 @@
  *   -> giới hạn tần suất -> validate + email OTP + mã giới thiệu -> ghi database.
  */
 require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/user_center.php';
 
 kp_send_security_headers(false);
 header('Content-Type: application/json; charset=utf-8');
@@ -165,6 +166,12 @@ try {
 kp_referral_release($referral['lock'] ?? '');
 kp_rate_limit('reg_success', $ip, (int) $maxOk, (int) $okWindow, true);
 session_regenerate_id(true);
+try {
+    $st=kp_db()->prepare('SELECT id FROM team_user WHERE username=? LIMIT 1');$st->execute([$clean['username']]);$newUserId=$st->fetchColumn();
+    if($newUserId)kp_center_notify((int)$newUserId,'Tài khoản đã được tạo',
+        'Chào mừng bạn đến với KPAH. Hãy bảo vệ mật khẩu và không chia sẻ mã xác minh.',
+        'security','/ho-so');
+} catch(Throwable $e) { kp_log('registration notification unavailable',$e); }
 
 kp_reply([
     'ok'       => true,

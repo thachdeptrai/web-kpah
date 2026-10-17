@@ -35,6 +35,9 @@ check(strpos($toastSource,'window.kpToast = toastCompat')!==false,'legacy AJAX t
 $eventSource=file_get_contents(KP_ROOT.'/app/includes/user_center.php');
 check(strpos($eventSource, 'mb_convert_encoding') !== false,'security history sanitizes browser header');
 check(kp_center_safe_path('/lich-su-bao-mat')===true,'internal notification link allowed');
+check(kp_center_safe_path('/diem-tich-luy')===true,'Point notifications can link to the user store');
+check(kp_admin_center_safe_path('/quan-tri/diem-tich-luy')===true,'admin reward notification path allowed');
+check(kp_admin_center_safe_path('//attacker.example')===false,'admin notification external path blocked');
 foreach (['//attacker.example','/\\\\attacker.example','https://attacker.example','/thong-bao?return=//attacker.example','/quan-tri'] as $badLink) {
  check(kp_center_safe_path($badLink)===false,'untrusted notification link blocked');
 }

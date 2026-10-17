@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/user_center.php';
 kp_send_security_headers(false);
 header('Content-Type: application/json; charset=utf-8');
 function kp_profile_reply(array $payload, $status = 200) { http_response_code($status); echo json_encode($payload, JSON_UNESCAPED_UNICODE); exit; }
@@ -44,7 +45,7 @@ if (!kp_csrf_check($_POST['csrf'] ?? '')) kp_profile_reply(['ok'=>false,'message
 $action=(string)($_POST['action'] ?? 'update'); $userId=(int)$_SESSION['kp_user_id'];
 $email=strtolower(trim((string)($_POST['email'] ?? ''))); $oldCode=trim((string)($_POST['old_email_code'] ?? '')); $newCode=trim((string)($_POST['email_code'] ?? ''));
 try {
- $db=kp_db(); $st=$db->prepare('SELECT email FROM team_user WHERE id = ? AND ban = 0 LIMIT 1'); $st->execute([$userId]); $current=$st->fetch();
+ $db=kp_db(); $st=$db->prepare('SELECT email,phone FROM team_user WHERE id = ? AND ban = 0 LIMIT 1'); $st->execute([$userId]); $current=$st->fetch();
  if (!$current) kp_profile_reply(['ok'=>false,'message'=>'Không tìm thấy tài khoản.'],404);
  $oldEmail=strtolower(trim((string)$current['email']));
  if ($action==='send_old_email_code') {
@@ -95,7 +96,11 @@ try {
   $dupe=$db->prepare('SELECT 1 FROM team_user WHERE LOWER(TRIM(email)) = ? AND id <> ? LIMIT 1'); $dupe->execute([$email,$userId]);
   if ($dupe->fetchColumn()) kp_profile_reply(['ok'=>false,'message'=>'Email này đã được tài khoản khác sử dụng.'],409);
  }
+ $oldPhone=(string)($current['phone']??'');
  $up=$db->prepare('UPDATE team_user SET email = ?, phone = ? WHERE id = ? AND ban = 0'); $up->execute([$email,$phone,$userId]);
  if ($email!==$oldEmail) unset($_SESSION['kp_profile_old_email_verified_email'],$_SESSION['kp_profile_old_email_verified_expiry'],$_SESSION['kp_profile_email_hash'],$_SESSION['kp_profile_email_expiry'],$_SESSION['kp_profile_email_target'],$_SESSION['kp_profile_email_user']);
+ if($email!==$oldEmail||$phone!==$oldPhone)kp_center_notify($userId,'Hồ sơ tài khoản đã thay đổi',
+    ($email!==$oldEmail?'Email liên kết đã được cập nhật. ':'').($phone!==$oldPhone?'Số điện thoại đã được cập nhật.':''),
+    'security','/ho-so');
  kp_profile_reply(['ok'=>true,'message'=>'Đã lưu thông tin tài khoản.','email'=>$email,'phone'=>$phone]);
 } catch (Throwable $e) { kp_log('cập nhật hồ sơ user thất bại',$e); kp_profile_reply(['ok'=>false,'message'=>'Không thể xử lý yêu cầu lúc này. Hãy thử lại sau.'],503); }
