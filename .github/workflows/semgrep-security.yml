@@ -55,11 +55,13 @@ jobs:
               print('Semgrep advisory findings:', len(issues))
               for rule, count in Counter(r.get('check_id','') for r in issues).most_common():
                   print('Rule:', rule, 'Count:', count)
-              for r in issues[:35]:
-                  start=r.get('start',{})
-                  print('Finding:',r.get('extra',{}).get('severity',''),
-                        r.get('check_id',''),r.get('path',''),
-                        'line',start.get('line', '?'))
+              for rule, count in Counter(r.get('check_id','') for r in issues).most_common():
+                  print('First locations for', rule)
+                  for r in [x for x in issues if x.get('check_id','')==rule][:8]:
+                      start=r.get('start',{})
+                      print('Finding:',r.get('extra',{}).get('severity',''),
+                            r.get('check_id',''),r.get('path',''),
+                            'line',start.get('line', '?'))
           PY
       - name: Upload advisory scan output
         if: always()
