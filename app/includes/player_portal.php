@@ -79,24 +79,13 @@ function kp_player_format($value)
 }
 
 /**
- * Fixed, audited icon paths. Names are internal constants (never user input).
- * Keep icons inline to avoid third-party assets, fonts or JavaScript.
+ * Original KPAH illustrations (raster PNG atlas, not third-party SVG glyphs).
+ * Names come exclusively from the fixed server-side navigation and dashboard.
  */
-function kp_player_icon_svg(string $name): string {
-    static $paths=[
-        'dashboard'=>'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
-        'user'=>'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-        'gamepad'=>'<path d="M6 12h4m-2-2v4"/><circle cx="16.5" cy="10.5" r=".7"/><circle cx="18.5" cy="13.5" r=".7"/><path d="M6.6 6.5h10.8a4 4 0 0 1 3.9 3l1.3 6a3 3 0 0 1-4.9 2.9l-2.3-2.1H8.6l-2.3 2.1a3 3 0 0 1-4.9-2.9l1.3-6a4 4 0 0 1 3.9-3Z"/>',
-        'trophy'=>'<path d="M8 3h8v9a4 4 0 0 1-8 0V3ZM8 5H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4M12 16v5m-5 0h10"/>',
-        'wallet'=>'<rect x="3" y="5" width="18" height="15" rx="3"/><path d="M3 9h18m-6 5h3M6 5V3h12"/>',
-        'gift'=>'<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M2 9h20M12 9v12M12 9H7a3 3 0 1 1 3-3l2 3Zm0 0h5a3 3 0 1 0-3-3l-2 3Z"/>',
-        'bell'=>'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>',
-        'receipt'=>'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Zm3 5h6m-6 4h6"/>',
-        'shield'=>'<path d="M12 2 4 5v6c0 5 3 9 8 11 5-2 8-6 8-11V5l-8-3Zm-4 9 3 3 5-5"/>',
-        'logout'=>'<path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m5-4 5-5-5-5m5 5H9"/>',
-    ];
-    if (!isset($paths[$name])) return '';
-    return '<svg class="pp-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'.$paths[$name].'</svg>';
+function kp_player_icon_art(string $name): string {
+    static $allowed = ['dashboard','user','gamepad','trophy','wallet','gift','bell','receipt','shield','logout','points','bank'];
+    if (!in_array($name,$allowed,true)) return '';
+    return '<span class="kp-art-icon kp-art-icon--'.$name.'" aria-hidden="true"></span>';
 }
 
 function kp_player_head($title,$active,array $user,$withCharacters=false)
@@ -143,6 +132,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/player-portal-v3.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-portal-v3.css') ?>">
+<link rel="stylesheet" href="/assets/css/player-art-icons.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-art-icons.css') ?>">
 </head>
 <body class="home-page portal-page">
 <a class="home-skip-link" href="#portal-content">Đến nội dung chính</a>
@@ -156,14 +146,14 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
     <nav class="portal-nav-list" aria-label="Các chức năng tài khoản">
         <?php foreach($nav as $item): ?>
         <a class="rail-icon<?= $active===$item[0]?' active':'' ?>" href="<?= kp_e($item[1]) ?>" title="<?= kp_e($item[3]) ?>"<?= $active===$item[0]?' aria-current="page"':'' ?>>
-            <span class="portal-nav-icon" aria-hidden="true"><?= kp_player_icon_svg($item[2]) ?></span>
+            <span class="portal-nav-icon" aria-hidden="true"><?= kp_player_icon_art($item[2]) ?></span>
             <span class="portal-nav-label"><?= kp_e($item[3]) ?></span>
         </a>
         <?php endforeach; ?>
     </nav>
     <div class="rail-bottom">
         <a class="rail-icon rail-logout" href="/api/logout" title="Đăng xuất">
-            <span class="portal-nav-icon" aria-hidden="true"><?= kp_player_icon_svg('logout') ?></span>
+            <span class="portal-nav-icon" aria-hidden="true"><?= kp_player_icon_art('logout') ?></span>
             <span class="portal-nav-label">Đăng xuất</span>
         </a>
     </div>

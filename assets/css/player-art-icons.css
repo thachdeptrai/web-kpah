@@ -1,0 +1,48 @@
+/* KPAH Player Portal: bespoke fantasy illustrations, drawn as PNG art.
+   These are NOT SVG icons or decorative font glyphs. Shared atlas avoids
+   downloading 12 individual images and preserves the existing layout. */
+.portal-page .kp-art-icon{
+ display:inline-block;flex:none;vertical-align:middle;
+ width:27px;height:27px;
+ background-image:url('/assets/img/kpah-player-icon-atlas.png');
+ background-size:400% 300%;background-repeat:no-repeat;
+}
+.portal-page .kp-art-icon--dashboard{background-position:0% 0%}
+.portal-page .kp-art-icon--user{background-position:33.3333% 0%}
+.portal-page .kp-art-icon--gamepad{background-position:66.6667% 0%}
+.portal-page .kp-art-icon--trophy{background-position:100% 0%}
+.portal-page .kp-art-icon--wallet{background-position:0% 50%}
+.portal-page .kp-art-icon--gift{background-position:33.3333% 50%}
+.portal-page .kp-art-icon--bell{background-position:66.6667% 50%}
+.portal-page .kp-art-icon--receipt{background-position:100% 50%}
+.portal-page .kp-art-icon--shield{background-position:0% 100%}
+.portal-page .kp-art-icon--logout{background-position:33.3333% 100%}
+.portal-page .kp-art-icon--points{background-position:66.6667% 100%}
+.portal-page .kp-art-icon--bank{background-position:100% 100%}
+.portal-page .portal-rail .portal-nav-icon{
+ background:transparent;border:0;
+ width:31px;height:31px;border-radius:9px
+}
+.portal-page .portal-rail .rail-icon.active .portal-nav-icon{
+ background:rgba(255,255,255,.16)
+}
+.portal-page .portal-rail .portal-nav-icon .kp-art-icon{width:27px;height:27px}
+.portal-page .pd-stat-symbol .kp-art-icon{width:29px;height:29px}
+.portal-page .portal-action-icon .kp-art-icon{width:38px;height:38px}
+.portal-page .portal-action-icon{background:rgba(255,255,255,.65)}
+.portal-page .pd-panel-symbol .kp-art-icon{width:27px;height:27px}
+.portal-page .pd-payment-icon .kp-art-icon{width:25px;height:25px}
+.portal-page .portal-quick-art{
+ display:inline-grid;place-items:center;vertical-align:middle;
+ width:24px;height:24px;flex:none
+}
+.portal-page .portal-quick-art .kp-art-icon{width:24px;height:24px}
+@media(max-width:900px){
+ .portal-page .portal-rail .portal-nav-icon{width:27px;height:27px}
+ .portal-page .portal-rail .portal-nav-icon .kp-art-icon{width:25px;height:25px}
+}
+@media(max-width:600px){
+ .portal-page .portal-rail .portal-nav-icon{width:25px;height:25px}
+ .portal-page .portal-rail .portal-nav-icon .kp-art-icon{width:23px;height:23px}
+ .portal-page .portal-action-icon .kp-art-icon{width:31px;height:31px}
+}

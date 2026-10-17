@@ -16,7 +16,7 @@ pp_ok(strpos($base,'function kp_player_account()')!==false &&
       'authenticated user ownership guard intact');
 pp_ok(strpos($base,'player-portal-v3.css?v=')!==false,'v3 last-layer styles loaded with cache busting');
 pp_ok(strpos($base,'aria-label="Các chức năng tài khoản"')!==false,'accessible labelled navigation');
-pp_ok(strpos($base,'function kp_player_icon_svg')!==false,'fixed inline icon library');
+pp_ok(strpos($base,'function kp_player_icon_art')!==false,'fixed original raster icon library');
 foreach(['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/giftcode-cua-toi','/thong-bao','/theo-doi-don-nap','/lich-su-bao-mat','/api/logout'] as $route)
  pp_ok(strpos($base,$route)!==false,"existing portal route $route");
 pp_ok(strpos($css,'background:linear-gradient(180deg,rgba(214,240,255')!==false,'bright player palette');
@@ -36,6 +36,10 @@ pp_ok(strpos($profile,'/api/user-profile')!==false && strpos($profile,'/api/chan
 pp_ok(strpos($script,'profile-form')!==false && strpos($script,'change-password-form')!==false,'profile interaction preserved');
 pp_ok(strpos($characters,'kp_player_characters')!==false &&
       strpos($characters,'kp_e($charName)')!==false,'owned character output escaped');
-$dashboard=file_get_contents(KP_ROOT.'/app/pages/home.php');
+// Dashboard source is already loaded by pp_read() above.
 pp_ok(strpos($dashboard,'href="/cong-dong"')!==false && strpos($dashboard,'href="/#dien-dan"')===false,'dashboard community shortcut reaches actual community page');
+$art=pp_read('assets/css/player-art-icons.css');
+pp_ok(strpos($art,'kpah-player-icon-atlas.png')!==false,'portal includes custom illustrated raster sprite');
+pp_ok(strpos($base,'player-art-icons.css')!==false,'original illustrated icon CSS loaded by shared portal shell');
+pp_ok(strpos($dashboard,'kp_player_icon_art')!==false,'dashboard uses bespoke raster illustrations');
 echo "Player Portal v3 contract smoke PASS\n";

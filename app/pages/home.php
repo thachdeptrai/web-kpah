@@ -46,22 +46,22 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     </div>
     <div class="pd-stat-grid">
         <a href="/vi-vnd" class="pd-stat-card pd-stat-wallet">
-            <span class="pd-stat-top"><span>Ví VNĐ hiện có</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('wallet') ?></span></span>
+            <span class="pd-stat-top"><span>Ví VNĐ hiện có</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_art('wallet') ?></span></span>
             <strong><?= $walletReady?kp_player_format($dashboard['vnd']).'đ':'—' ?></strong>
             <small>Dùng số dư để đổi mốc Lượng <span aria-hidden="true">↗</span></small>
         </a>
         <a href="/bang-xep-hang?type=nap" class="pd-stat-card">
-            <span class="pd-stat-top"><span>Tổng đã nạp</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('receipt') ?></span></span>
+            <span class="pd-stat-top"><span>Tổng đã nạp</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_art('receipt') ?></span></span>
             <strong><?= $totalReady?kp_player_format($dashboard['tongnap']).'đ':'—' ?></strong>
             <small>Không tính tiền khuyến mãi <span aria-hidden="true">↗</span></small>
         </a>
         <a href="/diem-tich-luy" class="pd-stat-card">
-            <span class="pd-stat-top"><span>Point tích lũy</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('gift') ?></span></span>
+            <span class="pd-stat-top"><span>Point tích lũy</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_art('gift') ?></span></span>
             <strong><?= $pointsReady?kp_player_format($dashboard['points']):'—' ?></strong>
             <small>Điểm dùng để đổi quà <span aria-hidden="true">↗</span></small>
         </a>
         <a href="/nhan-vat" class="pd-stat-card">
-            <span class="pd-stat-top"><span>Nhân vật sở hữu</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('gamepad') ?></span></span>
+            <span class="pd-stat-top"><span>Nhân vật sở hữu</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_art('gamepad') ?></span></span>
             <strong><?= $dashboard['characters_count']===null?'—':(int)$dashboard['characters_count'] ?></strong>
             <small>Xem hồ sơ nhân vật <span aria-hidden="true">↗</span></small>
         </a>
@@ -101,7 +101,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
         <?php endif;?>
     </div>
     <div class="pd-panel pd-rewards">
-        <div class="pd-panel-header"><div><span class="portal-kicker"><i></i> ĐẶC QUYỀN THÀNH VIÊN</span><h2>Đổi quà <em>Point</em></h2></div><span class="pd-panel-symbol" aria-hidden="true">✧</span></div>
+        <div class="pd-panel-header"><div><span class="portal-kicker"><i></i> ĐẶC QUYỀN THÀNH VIÊN</span><h2>Đổi quà <em>Point</em></h2></div><span class="pd-panel-symbol" aria-hidden="true"><?= kp_player_icon_art('gift') ?></span></div>
         <div class="pd-reward-balance"><span>Point đang có</span><strong><?= $pointsReady?kp_player_format($pointsValue):'—' ?></strong><small><?= $pointsReady?'Đã tích lũy '.kp_player_format($dashboard['earned']??0).' Point':'Điểm đang cập nhật' ?></small></div>
         <?php if($dashboard['reward'] && $pointsReady):
             $reward=$dashboard['reward'];$cost=(int)$reward['points_cost'];$missing=max(0,$cost-$pointsValue); ?>
@@ -128,7 +128,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
             <div class="pd-payment-list">
                 <?php foreach($dashboard['payments'] as $payment):?>
                 <div class="pd-payment">
-                    <span class="pd-payment-icon" aria-hidden="true"><?= $payment['source']==='Thẻ cào'?'▣':'◎' ?></span>
+                    <span class="pd-payment-icon" aria-hidden="true"><?= kp_player_icon_art($payment['source']==='Thẻ cào'?'receipt':'bank') ?></span>
                     <span class="pd-payment-main"><strong><?=kp_e($payment['source'])?></strong><small><?= $payment['time']>0?date('d/m/Y H:i',(int)$payment['time']):'Chưa rõ thời gian' ?> · #<?=kp_e($payment['reference'])?></small></span>
                     <span class="pd-payment-end"><b><?=kp_player_format($payment['amount'])?>đ</b><small class="<?= $payment['done']?'pd-status-good':'pd-status-neutral' ?>"><?=kp_e($payment['label'])?></small></span>
                 </div>
@@ -155,7 +155,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
 <section class="pd-section pd-achievements" aria-labelledby="pd-achievements-title">
     <div class="pd-heading"><div><span class="portal-kicker"><i></i> THÀNH TÍCH CÁ NHÂN</span><h2 id="pd-achievements-title">Dấu ấn <em>nhân vật</em></h2></div><a class="pd-inline-link" href="/nhan-vat">Xem hồ sơ ↗</a></div>
     <div class="pd-achievement-row">
-        <div class="pd-achievement-identity"><span aria-hidden="true">♛</span><div><small>Nhân vật tiêu biểu</small><strong><?=kp_e($ach['charname'])?></strong></div></div>
+        <div class="pd-achievement-identity"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('trophy') ?></span><div><small>Nhân vật tiêu biểu</small><strong><?=kp_e($ach['charname'])?></strong></div></div>
         <div class="pd-achievement-item"><small>Danh vọng</small><strong><?=kp_player_format($ach['honor']??0)?></strong></div>
         <div class="pd-achievement-item"><small>Điểm PK</small><strong><?=kp_player_format($ach['nPK']??0)?></strong></div>
         <div class="pd-achievement-item"><small>Cấp VIP</small><strong><?= $ach['vip']!==null?kp_player_format($ach['vip']):'—' ?></strong></div>
@@ -166,20 +166,20 @@ kp_player_head('Tổng quan tài khoản','home',$user);
 <section class="portal-pages" aria-labelledby="portal-pages-title">
     <div class="portal-section-heading"><div><span class="portal-kicker"><i></i> KHÁM PHÁ KPAH</span><h2 id="portal-pages-title">Đi tới <em>chức năng</em></h2></div><p>Truy cập nhanh các trang thường dùng.</p></div>
     <div class="portal-action-grid">
-        <a class="portal-action-card portal-action-profile" href="/ho-so"><span class="portal-action-icon" aria-hidden="true">◎</span><span class="portal-action-copy"><small>TÀI KHOẢN</small><strong>Hồ sơ & bảo mật</strong><span>Cập nhật thông tin và mật khẩu.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
-        <a class="portal-action-card portal-action-characters" href="/nhan-vat"><span class="portal-action-icon" aria-hidden="true">♙</span><span class="portal-action-copy"><small>THẾ GIỚI GAME</small><strong>Nhân vật của tôi</strong><span>Cấp độ, Xu, Lượng, bang hội.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
-        <a class="portal-action-card portal-action-ranking" href="/bang-xep-hang"><span class="portal-action-icon" aria-hidden="true">♛</span><span class="portal-action-copy"><small>THÀNH TÍCH</small><strong>Bảng xếp hạng</strong><span>Thứ hạng trong thế giới KPAH.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
-        <a class="portal-action-card portal-action-topup" href="/nap"><span class="portal-action-icon" aria-hidden="true">✦</span><span class="portal-action-copy"><small>NẠP TÀI NGUYÊN</small><strong>Nạp & đổi mốc</strong><span>Ngân hàng, thẻ cào, đổi Lượng.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
+        <a class="portal-action-card portal-action-profile" href="/ho-so"><span class="portal-action-icon" aria-hidden="true"><?= kp_player_icon_art('user') ?></span><span class="portal-action-copy"><small>TÀI KHOẢN</small><strong>Hồ sơ & bảo mật</strong><span>Cập nhật thông tin và mật khẩu.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
+        <a class="portal-action-card portal-action-characters" href="/nhan-vat"><span class="portal-action-icon" aria-hidden="true"><?= kp_player_icon_art('gamepad') ?></span><span class="portal-action-copy"><small>THẾ GIỚI GAME</small><strong>Nhân vật của tôi</strong><span>Cấp độ, Xu, Lượng, bang hội.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
+        <a class="portal-action-card portal-action-ranking" href="/bang-xep-hang"><span class="portal-action-icon" aria-hidden="true"><?= kp_player_icon_art('trophy') ?></span><span class="portal-action-copy"><small>THÀNH TÍCH</small><strong>Bảng xếp hạng</strong><span>Thứ hạng trong thế giới KPAH.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
+        <a class="portal-action-card portal-action-topup" href="/nap"><span class="portal-action-icon" aria-hidden="true"><?= kp_player_icon_art('wallet') ?></span><span class="portal-action-copy"><small>NẠP TÀI NGUYÊN</small><strong>Nạp & đổi mốc</strong><span>Ngân hàng, thẻ cào, đổi Lượng.</span></span><span class="portal-action-go" aria-hidden="true">↗</span></a>
     </div>
     <div class="portal-quick-links">
-        <a href="/vi-vnd"><span aria-hidden="true">◎</span> Ví VNĐ & đổi mốc <span aria-hidden="true">↗</span></a>
-        <a href="/diem-tich-luy"><span aria-hidden="true">✧</span> Point tích lũy & đổi quà <span aria-hidden="true">↗</span></a>
+        <a href="/vi-vnd"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('wallet') ?></span> Ví VNĐ & đổi mốc <span aria-hidden="true">↗</span></a>
+        <a href="/diem-tich-luy"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('points') ?></span> Point tích lũy & đổi quà <span aria-hidden="true">↗</span></a>
         <a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp VNĐ <span aria-hidden="true">↗</span></a>
-        <a href="/giftcode-cua-toi"><span aria-hidden="true">🎁</span> Giftcode của tôi <span aria-hidden="true">↗</span></a>
-        <a href="/thong-bao"><span aria-hidden="true">◉</span> Trung tâm thông báo <span aria-hidden="true">↗</span></a>
-        <a href="/theo-doi-don-nap"><span aria-hidden="true">◷</span> Theo dõi đơn nạp <span aria-hidden="true">↗</span></a>
-        <a href="/lich-su-bao-mat"><span aria-hidden="true">◇</span> Lịch sử bảo mật <span aria-hidden="true">↗</span></a>
-        <a href="/cong-dong"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
+        <a href="/giftcode-cua-toi"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('gift') ?></span> Giftcode của tôi <span aria-hidden="true">↗</span></a>
+        <a href="/thong-bao"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('bell') ?></span> Trung tâm thông báo <span aria-hidden="true">↗</span></a>
+        <a href="/theo-doi-don-nap"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('receipt') ?></span> Theo dõi đơn nạp <span aria-hidden="true">↗</span></a>
+        <a href="/lich-su-bao-mat"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('shield') ?></span> Lịch sử bảo mật <span aria-hidden="true">↗</span></a>
+        <a href="/cong-dong"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('user') ?></span> Cộng đồng <span aria-hidden="true">↗</span></a>
     </div>
 </section>
 <?php kp_player_foot(); ?>
