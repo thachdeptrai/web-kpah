@@ -97,7 +97,8 @@ def main():
                     dev.eval("""(function(){
                         const form=document.getElementById('login-form');
                         form.querySelector('[name="username"]').value='routeplayer';
-                        form.querySelector('[name="password"]').value='FixturePass123';
+                        // http_regression.py changes the fixture user's password before visual tests.
+                        form.querySelector('[name="password"]').value='ChangedPass123';
                         form.submit();
                         return true;
                     })()""")
