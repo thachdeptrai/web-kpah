@@ -1,0 +1,19 @@
+rules:
+  - id: kpah-php-dynamic-code-execution
+    languages: [php]
+    severity: ERROR
+    message: Dynamic execution in a web application requires a separate security review.
+    pattern-either:
+      - pattern: eval($CODE)
+      - pattern: shell_exec($COMMAND)
+      - pattern: system($COMMAND)
+      - pattern: passthru($COMMAND)
+  - id: kpah-php-unescaped-superglobal-output
+    languages: [php]
+    severity: ERROR
+    message: Raw request values must not be printed; escape with kp_e().
+    pattern-either:
+      - pattern: echo $_GET[$KEY];
+      - pattern: echo $_POST[$KEY];
+      - pattern: print($_GET[$KEY]);
+      - pattern: print($_POST[$KEY]);
