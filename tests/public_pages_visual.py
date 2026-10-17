@@ -111,6 +111,19 @@ JS=r"""JSON.stringify((()=>{
    add(r.width>34||r.width<24||r.right>innerWidth+2,'introduction Zalo icon incorrect mobile sizing');
   }
  }
+ const toast=window.KpUI?.toast?.({type:'success',title:'Kiểm tra vị trí',message:'Toast trên bên phải',duration:1800});
+ const toastRegion=document.querySelector('.kp-ui-toast-region');
+ add(!toast||!toastRegion,'UI toast did not initialize');
+ if(toastRegion){
+   const t=toastRegion.getBoundingClientRect();
+   const positioning=getComputedStyle(toastRegion);
+   add(positioning.position!=='fixed','toast is not viewport-anchored');
+   add(t.top>44||t.top<0,'toast must be in the top-right corner');
+   add(t.right>innerWidth+2||innerWidth-t.right>44,'toast is not right-aligned');
+   add(positioning.bottom!=='auto','toast is still bottom-anchored');
+   add(document.documentElement.scrollWidth>innerWidth+2,'toast causes horizontal overflow');
+   toastRegion.remove();
+ }
  const bodyStyle=getComputedStyle(document.body);
  return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
   issues,heroHeight:hero?.height,contentTop:content?.y,

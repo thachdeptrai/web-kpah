@@ -397,7 +397,8 @@ html[data-ui-theme="kpah"] ::selection { color: #fff; background: var(--kp-prima
   position: fixed;
   z-index: 9999;
   right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
+  top: max(16px, env(safe-area-inset-top));
+  bottom: auto;
   width: min(390px, calc(100vw - 32px));
   display: grid;
   gap: 10px;
@@ -480,7 +481,7 @@ html[data-ui-theme="kpah"] ::selection { color: #fff; background: var(--kp-prima
 
 @media (max-width: 480px) {
   .kp-ui-stats { grid-template-columns: 1fr; }
-  .kp-ui-toast-region { inset-inline: 12px; bottom: max(12px, env(safe-area-inset-bottom)); width: auto; }
+  .kp-ui-toast-region { left: auto; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); bottom: auto; width: min(390px, calc(100vw - 24px)); }
   .kp-ui-modal-head,.kp-ui-modal-body,.kp-ui-modal-foot { padding: var(--kp-space-4); }
 }
 

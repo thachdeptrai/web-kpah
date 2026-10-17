@@ -120,3 +120,20 @@ foreach($familyStyles as $file=>$checks){
  $css=read_layout($file);
  foreach($checks as $needle)check_layout(strpos($css,$needle)!==false,'responsive '. $file .' '. $needle);
 }
+
+
+/* All notification engines must anchor top-right, including compact screens. */
+$toastStyles = [
+ 'assets/css/ui-system.css' => '.kp-ui-toast-region',
+ 'assets/css/fantasy-foundation.css' => '.kpf-toast-region',
+ 'assets/css/user-center.css' => '.kp-toast-stack',
+];
+foreach ($toastStyles as $file => $selector) {
+ $css=read_layout($file);
+ check_layout(strpos($css,$selector)!==false,'toast region exists in '.$file);
+ check_layout(strpos($css,'safe-area-inset-top')!==false &&
+              strpos($css,'safe-area-inset-right')!==false,
+              'toast respects top/right safe area in '.$file);
+ check_layout(strpos($css,'bottom:auto')!==false || strpos($css,'bottom: auto')!==false,
+              'toast does not anchor to bottom in '.$file);
+}
