@@ -38,6 +38,9 @@ pp_ok(strpos($characters,'kp_player_characters')!==false &&
       strpos($characters,'kp_e($charName)')!==false,'owned character output escaped');
 // Dashboard source is already loaded by pp_read() above.
 pp_ok(strpos($dashboard,'href="/cong-dong"')!==false && strpos($dashboard,'href="/#dien-dan"')===false,'dashboard community shortcut reaches actual community page');
+pp_ok(strpos($dashboard,'portal-hero-emblem')===false && strpos($dashboard,'rank-guardian.webp')===false,'dashboard hero no longer repeats leaderboard character art');
+pp_ok(strpos($css,'portal-sky-vista.webp')!==false && strpos($css,'portal-adventurer.webp')!==false,'dashboard uses newly painted local portal art');
+pp_ok(is_file($root.'/assets/img/portal-sky-vista.webp') && is_file($root.'/assets/img/portal-adventurer.webp') && !is_file($root.'/assets/img/portal-sky-vista.png') && !is_file($root.'/assets/img/portal-adventurer.png'),'optimized WebP portal artwork replaces old PNGs');
 $art=pp_read('assets/css/player-art-icons.css');
 pp_ok(strpos($art,'kpah-player-icon-atlas.png')!==false,'portal includes custom illustrated raster sprite');
 pp_ok(strpos($base,'player-art-icons.css')!==false,'original illustrated icon CSS loaded by shared portal shell');

@@ -147,7 +147,7 @@ body.portal-page:before{
  padding:clamp(27px,3.3vw,46px);
  border:1px solid rgba(255,255,255,.94);border-radius:24px;
  background:linear-gradient(92deg,#fff 0%,#f2faff 48%,rgba(226,245,255,.73) 74%,rgba(221,245,255,.25)),
- url("/assets/img/home-hero-anime.webp") right 44%/auto 135% no-repeat,
+ url("/assets/img/portal-sky-vista.webp") right 44%/auto 145% no-repeat,
  linear-gradient(120deg,#e3f8ff,#d2eaff);
  box-shadow:0 20px 42px rgba(38,95,174,.14);
 }
@@ -200,17 +200,6 @@ body.portal-page:before{
 }
 .portal-page .portal-hero--compact{min-height:184px}
 .portal-page .portal-hero--compact h1{font-size:clamp(29px,2.8vw,39px)}
-.portal-page .portal-hero-emblem{
- position:relative;z-index:1;width:clamp(130px,20vw,230px);
- flex:none;align-self:stretch;margin:-28px 0;
- display:flex;align-items:center;justify-content:center
-}
-.portal-page .portal-hero-emblem img{
- display:block;height:min(100%,225px);width:auto;max-width:100%;
- object-fit:contain;filter:drop-shadow(0 10px 10px #40619a3b)
-}
-.portal-page .portal-emblem-ring{border-color:#b9d3f6;box-shadow:0 0 0 17px #e7f5ff75}
-.portal-page .portal-emblem-label{color:#5465ac;opacity:.85}
 .portal-page .portal-hero-meta{
  display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:14px
 }
@@ -419,11 +408,10 @@ body.portal-page:before{
  .portal-page .mini-avatar{width:33px;height:33px;border-radius:10px}
  .portal-page .portal-hero{
   min-height:0;margin:15px 0 20px;padding:24px 18px;border-radius:18px;
-  background:linear-gradient(90deg,#fff 0%,#eff9ff 90%),url("/assets/img/home-hero-anime.webp") right center/cover;
+  background:linear-gradient(90deg,#fff 0%,#eff9ff 90%),url("/assets/img/portal-sky-vista.webp") right center/cover;
  }
  .portal-page .portal-hero h1{font-size:clamp(27px,6.8vw,35px)}
  .portal-page .portal-hero p{font-size:12px;line-height:1.75}
- .portal-page .portal-hero-emblem{display:none}
  .portal-page .portal-hero--compact .portal-hero-action{display:none}
  .portal-page .pd-stat-grid{gap:9px}
  .portal-page .pd-stat-card{min-height:138px;padding:14px 12px;gap:8px;border-radius:15px}
@@ -781,4 +769,17 @@ body.portal-page:before{
 @media(max-width:360px){
  .portal-page .portal-hero h1{font-size:clamp(24px,8vw,31px)}
  .portal-page .portal-hero-buttons>*{flex-basis:100%}
+}
+
+/* The account welcome uses a newly painted vista and its own mascot. Other pages keep their own art. */
+.portal-page .portal-dashboard-hero{
+ background:
+  linear-gradient(90deg,#fff 0%,rgba(244,251,255,.97) 38%,rgba(236,248,255,.48) 70%,rgba(232,246,255,.12)),
+  url("/assets/img/portal-adventurer.webp") right 8% center/auto 94% no-repeat,
+  url("/assets/img/portal-sky-vista.webp") center 52%/cover no-repeat,#e8f7ff;
+}
+@media(max-width:600px){
+ .portal-page .portal-dashboard-hero{
+  background:linear-gradient(90deg,rgba(255,255,255,.96),rgba(240,249,255,.91)),url("/assets/img/portal-sky-vista.webp") center/cover no-repeat;
+ }
 }

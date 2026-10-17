@@ -27,7 +27,6 @@ button,input,select,textarea{max-width:100%}
 .portal-page .portal-top .top-user-name{overflow-wrap:anywhere;min-width:0}
 .portal-page .portal-hero,.portal-page .portal-pages,.portal-page .rankings-section,
 .portal-page .characters-section,.portal-page .profile-layout{min-width:0;max-width:100%}
-.portal-page .portal-hero-emblem{max-width:30%}
 .portal-page .portal-action-grid>*,.portal-page .portal-overview>*,.portal-page .rank-group-directory>*{min-width:0}
 .portal-page .portal-quick-links{max-width:100%}
 
@@ -68,7 +67,6 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
 }
 @media(max-width:1040px){
  .portal-page .portal-main{padding-inline:22px}
- .portal-page .portal-hero-emblem{width:190px;margin-block:-15px}
  .tp-page .tp-content{padding-inline:20px}
  body .shell,body .wrap,body .kp-admin-nav{width:calc(100% - 32px)}
  body .metrics,body .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -93,7 +91,6 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
 @media(max-width:760px){
  .portal-page .portal-main{width:calc(100% - 54px);margin-left:54px;padding-inline:16px}
  .portal-page .portal-hero{padding:26px 23px}
- .portal-page .portal-hero-emblem{width:140px;max-width:25%}
  .portal-page .portal-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .portal-page .portal-top .top-logout{font-size:11px;white-space:nowrap}
  .portal-page .portal-top .top-user-name{max-width:130px}
@@ -125,7 +122,6 @@ body .top-actions,body .head-right{flex-wrap:wrap;justify-content:flex-end}
  .portal-page .portal-top .top-logout{font-size:10px}
  .portal-page .portal-hero{margin-top:19px;min-height:0;padding:24px 19px}
  .portal-page .portal-hero-copy{max-width:100%}
- .portal-page .portal-hero-emblem{display:none}
  .portal-page .portal-hero h1{font-size:clamp(27px,7.5vw,40px)}
  .portal-page .portal-hero p{font-size:12px;line-height:1.8}
  .portal-page .portal-primary,.portal-page .portal-secondary{flex:1 1 160px;justify-content:center;text-align:center;padding:11px}

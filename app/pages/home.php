@@ -33,11 +33,6 @@ kp_player_head('Tổng quan tài khoản','home',$user);
             <a href="/nhan-vat" class="portal-secondary">Xem nhân vật <span aria-hidden="true">↗</span></a>
         </div>
     </div>
-    <div class="portal-hero-emblem" aria-hidden="true">
-        <span class="portal-emblem-ring"></span>
-        <img src="/assets/img/rank-guardian.webp?v=20261017-2" alt="" width="220" height="275" loading="lazy">
-        <span class="portal-emblem-label">KPAH · LEGENDS</span>
-    </div>
 </section>
 
 <section class="pd-section" aria-labelledby="pd-assets-title">
