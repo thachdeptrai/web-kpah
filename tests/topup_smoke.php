@@ -50,4 +50,10 @@ check(strpos($layout,'function kp_topup_art_icon')!==false,true,'topup uses besp
 check(strpos($overview,'kp_topup_art_icon')!==false,true,'topup overview replaces industrial unicode glyphs');
 check(strpos($theme,'body.tp-page:not(.tp-admin)')!==false,true,'player theme scoped away from admin');
 check(strpos($theme,'kpah-player-icon-atlas.png')!==false,true,'topup uses original PNG fantasy icon atlas');
+$posBank=strpos($layout,"'/nap-ngan-hang','Ngân hàng','bank'");
+$posCard=strpos($layout,"'/nap-the','Nạp thẻ','card'");
+check($posBank!==false&&$posCard!==false&&$posBank<$posCard,true,'bank first in player topup navigation');
+$posBank=strpos($overview,'href="/nap-ngan-hang"');
+$posCard=strpos($overview,'href="/nap-the"');
+check($posBank!==false&&$posCard!==false&&$posBank<$posCard,true,'bank first in topup overview cards');
 echo "PASS: topup smoke checks\n";
