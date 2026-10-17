@@ -110,6 +110,15 @@ jobs:
           python3 tests/public_pages_visual.py
           python3 tests/auth_layout_visual.py
           python3 tests/player_portal_visual.py
+          python3 tests/admin_layout_visual.py
+      - name: Upload admin responsive snapshots
+        if: always() && matrix.php == '8.3' && matrix.server == 'cli'
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-responsive-screenshots
+          path: artifacts/admin-layout/*.png
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Upload homepage viewport screenshots
         if: always() && matrix.php == '8.3' && matrix.server == 'cli'
         uses: actions/upload-artifact@v4
