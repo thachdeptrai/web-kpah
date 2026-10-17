@@ -22,7 +22,12 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     <div class="portal-hero-copy">
         <span class="portal-kicker"><i></i> KHÔNG GIAN TÀI KHOẢN KPAH</span>
         <h1>Xin chào, <em><?=kp_e($username)?>.</em></h1>
-        <p>Xem ví, gặp lại các nhân vật và khám phá những phần quà dành riêng cho bạn.</p>
+        <p>Quản lý tài khoản, ví game, Point tích lũy và hành trình của từng nhân vật — tất cả tại một nơi.</p>
+        <div class="portal-hero-meta" aria-label="Trạng thái tài khoản">
+            <span class="portal-meta-online">● Đã đăng nhập</span>
+            <span>Tài khoản #<?= (int)$user['id'] ?></span>
+            <span><?= $registeredAt!==''?'Tham gia '.kp_e($registeredAt):'Chiến hữu KPAH' ?></span>
+        </div>
         <div class="portal-hero-buttons">
             <a href="/vi-vnd" class="portal-primary">Ví VNĐ & đổi mốc <span aria-hidden="true">↗</span></a>
             <a href="/nhan-vat" class="portal-secondary">Xem nhân vật <span aria-hidden="true">↗</span></a>
@@ -41,22 +46,22 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     </div>
     <div class="pd-stat-grid">
         <a href="/vi-vnd" class="pd-stat-card pd-stat-wallet">
-            <span class="pd-stat-top"><span>Ví VNĐ hiện có</span><span class="pd-stat-symbol" aria-hidden="true">◎</span></span>
+            <span class="pd-stat-top"><span>Ví VNĐ hiện có</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('wallet') ?></span></span>
             <strong><?= $walletReady?kp_player_format($dashboard['vnd']).'đ':'—' ?></strong>
             <small>Dùng số dư để đổi mốc Lượng <span aria-hidden="true">↗</span></small>
         </a>
         <a href="/bang-xep-hang?type=nap" class="pd-stat-card">
-            <span class="pd-stat-top"><span>Tổng đã nạp</span><span class="pd-stat-symbol" aria-hidden="true">↗</span></span>
+            <span class="pd-stat-top"><span>Tổng đã nạp</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('receipt') ?></span></span>
             <strong><?= $totalReady?kp_player_format($dashboard['tongnap']).'đ':'—' ?></strong>
             <small>Không tính tiền khuyến mãi <span aria-hidden="true">↗</span></small>
         </a>
         <a href="/diem-tich-luy" class="pd-stat-card">
-            <span class="pd-stat-top"><span>Point tích lũy</span><span class="pd-stat-symbol" aria-hidden="true">✧</span></span>
+            <span class="pd-stat-top"><span>Point tích lũy</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('gift') ?></span></span>
             <strong><?= $pointsReady?kp_player_format($dashboard['points']):'—' ?></strong>
             <small>Điểm dùng để đổi quà <span aria-hidden="true">↗</span></small>
         </a>
         <a href="/nhan-vat" class="pd-stat-card">
-            <span class="pd-stat-top"><span>Nhân vật sở hữu</span><span class="pd-stat-symbol" aria-hidden="true">♙</span></span>
+            <span class="pd-stat-top"><span>Nhân vật sở hữu</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_svg('gamepad') ?></span></span>
             <strong><?= $dashboard['characters_count']===null?'—':(int)$dashboard['characters_count'] ?></strong>
             <small>Xem hồ sơ nhân vật <span aria-hidden="true">↗</span></small>
         </a>
@@ -74,12 +79,13 @@ kp_player_head('Tổng quan tài khoản','home',$user);
             <div class="pd-character-list">
             <?php foreach($dashboard['characters'] as $character):
                 $name=(string)($character['charname']??'');
+                $charInitial=$name!==''?(function_exists('mb_substr')?mb_strtoupper(mb_substr($name,0,1,'UTF-8'),'UTF-8'):strtoupper(substr($name,0,1))):'★';
                 $clan=trim((string)($character['clanName']??''));
                 $lastSeen='';$stamp=strtotime((string)($character['lastLog']??''));
                 if($stamp!==false && $stamp>strtotime('2010-01-02'))$lastSeen=date('d/m/Y',$stamp);
             ?>
                 <article class="pd-character">
-                    <div class="pd-character-avatar" aria-hidden="true">♙</div>
+                    <div class="pd-character-avatar" aria-hidden="true"><?= kp_e($charInitial) ?></div>
                     <div class="pd-character-body">
                         <div class="pd-character-name"><strong><?=kp_e($name)?></strong><span>Cấp <?= (int)($character['lastLv']??0) ?></span></div>
                         <p><?= $clan!==''?kp_e($clan):'Chưa gia nhập bang hội' ?><?= $lastSeen!==''?' · Hoạt động '.$lastSeen:'' ?></p>
