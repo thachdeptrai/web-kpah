@@ -74,6 +74,11 @@ function kp_build_config()
         }
     }
 
+    $giftcodeDbo = getenv('KPAH_GIFTCODE_DBO_ENABLED');
+    if ($giftcodeDbo !== false && $giftcodeDbo !== '') {
+        $cfg['giftcode']['dbo_enabled'] = in_array(strtolower(trim((string)$giftcodeDbo)), ['1', 'true', 'yes', 'on'], true);
+    }
+
     return $cfg;
 }
 

@@ -33,6 +33,10 @@ return [
     'app' => [
         'version' => '1.0.0',
     ],
+    'giftcode' => [
+        // Chỉ chuyển true sau khi đã patch/restart game server và chạy migration item TEXT.
+        'dbo_enabled' => false,
+    ],
     'links' => [
         'login'    => '',   // điền đường dẫn trang đăng nhập THẬT của bạn
         'download' => '',           // trang tổng hợp các bản tải, nếu có
