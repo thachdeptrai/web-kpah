@@ -45,4 +45,7 @@ pp_ok(strpos($dashboard,'kp_player_icon_art')!==false,'dashboard uses bespoke ra
 pp_ok(strpos($characters,'char-ui-clan-art')!==false,'character guild badge uses custom fantasy icon');
 pp_ok(strpos($characters,'char-ui-stat-icon')!==false && strpos($characters,"kp_player_icon_art('points')")!==false,'character currencies use custom painted icons');
 pp_ok(strpos($characters,'char-ui-time-art')!==false,'recent activity uses CSS illustration instead of inline SVG icon');
+pp_ok(strpos($base,'portal-nav-toggle')!==false && strpos($base,'aria-expanded="false"')!==false,'accessible mobile account menu trigger');
+pp_ok(strpos($base,'player-mobile-nav.js')!==false,'mobile menu behavior loaded on all user pages');
+pp_ok(strpos($base,'id="portal-nav-list"')!==false,'menu trigger references the server navigation');
 echo "Player Portal v3 contract smoke PASS\n";

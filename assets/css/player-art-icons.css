@@ -95,3 +95,77 @@
  content:"";position:absolute;left:6px;top:7px;width:4px;height:2px;
  border-radius:2px;background:currentColor
 }
+
+/* Mobile account menu: compact accessible drawer, no nine-item scroll strip. */
+.portal-page .portal-nav-toggle{display:none}
+@media(max-width:900px){
+ .portal-page .side-rail.portal-rail{position:relative;z-index:250;overflow:visible}
+ .portal-page .portal-rail .portal-nav-toggle{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:9px;min-height:42px;margin-left:auto;padding:6px 12px;
+  border:1px solid #dce5f7;border-radius:11px;
+  background:#f7faff;color:#3e5689;font:750 12px "Be Vietnam Pro",sans-serif;
+  cursor:pointer
+ }
+ .portal-page .portal-rail .portal-nav-toggle[aria-expanded="true"]{
+  background:#eceeff;border-color:#bfc8f8;color:#594ac5
+ }
+ .portal-page .portal-nav-toggle-art{display:inline-grid;place-items:center;width:23px;height:23px}
+ .portal-page .portal-nav-toggle-art .kp-art-icon{width:22px;height:22px}
+ .portal-page .portal-toggle-arrow{font-size:15px;line-height:1;transition:transform .18s}
+ .portal-page .portal-nav-toggle[aria-expanded="true"] .portal-toggle-arrow{transform:rotate(180deg)}
+ .portal-page .portal-rail .portal-nav-list{
+  position:absolute!important;z-index:300;top:calc(100% + 6px);
+  left:12px;right:12px;bottom:auto;
+  display:none!important;grid-template-columns:repeat(2,minmax(0,1fr));
+  max-height:75dvh;max-height:min(75dvh,475px);
+  width:auto;min-width:0;padding:10px;gap:5px;margin:0;
+  overflow-y:auto;overflow-x:hidden;
+  border:1px solid #dce6f7;border-radius:15px;background:#fff;
+  box-shadow:0 14px 34px rgba(45,84,153,.16)
+ }
+ .portal-page .portal-rail .portal-nav-list.is-open{display:grid!important}
+ .portal-page .portal-rail .portal-nav-list .rail-icon{
+  min-width:0;width:100%;white-space:normal;
+  min-height:51px;padding:7px 10px;gap:8px;
+  border-radius:10px;overflow:visible
+ }
+ .portal-page .portal-rail .portal-nav-list .portal-nav-label{
+  min-width:0;white-space:normal;overflow-wrap:anywhere;
+  font-size:12px;line-height:1.35
+ }
+}
+@media(max-width:360px){
+ .portal-page .portal-rail .portal-nav-toggle{gap:5px;padding-inline:8px;font-size:11px}
+ .portal-page .portal-rail .portal-nav-list{left:8px;right:8px;padding:8px}
+ .portal-page .portal-rail .portal-nav-list .rail-icon{padding:7px;gap:5px}
+ .portal-page .portal-rail .portal-nav-list .portal-nav-label{font-size:11px}
+}
+
+/* Highest-specificity overrides for the legacy 680px !important rail rules. */
+@media(max-width:900px){
+ body.portal-page .side-rail.portal-rail .portal-nav-list{
+  display:none!important;position:absolute!important;flex:none!important;
+  left:12px;right:12px;top:calc(100% + 6px);
+  width:auto!important;max-width:none!important;min-width:0!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  padding:10px!important;scroll-snap-type:none!important;
+ }
+ body.portal-page .side-rail.portal-rail .portal-nav-list.is-open{
+  display:grid!important
+ }
+ body.portal-page .side-rail.portal-rail .portal-nav-list .rail-icon{
+  min-width:0!important;width:100%!important;max-width:100%!important;
+  white-space:normal!important;min-height:51px!important;
+  padding:7px 10px!important
+ }
+ body.portal-page .side-rail.portal-rail .portal-nav-list .portal-nav-label{
+  font-size:12px!important;white-space:normal!important
+ }
+}
+@media(max-width:360px){
+ body.portal-page .side-rail.portal-rail .portal-nav-list{left:8px;right:8px;padding:8px!important}
+ body.portal-page .side-rail.portal-rail .portal-nav-list .rail-icon{padding:7px!important}
+ body.portal-page .side-rail.portal-rail .portal-nav-list .portal-nav-label{font-size:11px!important}
+}

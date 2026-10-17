@@ -42,8 +42,17 @@ JS=r"""JSON.stringify((()=>{
  fail(links.length!==9,"missing account navigation links");
  fail(!q('.portal-rail .rail-icon[aria-current="page"]'),"active navigation missing");
  if(nav&&w<=900){
-  fail(getComputedStyle(nav).overflowX!=="auto","mobile navigation not horizontally scrollable");
-  fail(nav.getBoundingClientRect().right>w+2,"mobile navigation offscreen");
+  const toggle=q('.portal-nav-toggle');
+  fail(!toggle||getComputedStyle(toggle).display==='none','mobile menu toggle missing');
+  fail(getComputedStyle(nav).display!=='none','mobile menu should start collapsed');
+  if(toggle){
+   toggle.click();
+   fail(toggle.getAttribute('aria-expanded')!=='true','mobile account menu did not open');
+   fail(getComputedStyle(nav).display==='none','mobile menu links not visible when open');
+   fail(nav.getBoundingClientRect().right>w+2,'mobile menu offscreen');
+   toggle.click();
+   fail(toggle.getAttribute('aria-expanded')!=='false','mobile menu did not close');
+  }
  }
  const stats=[...document.querySelectorAll(".pd-stat-card")];
  if(location.pathname==="/tai-khoan"){

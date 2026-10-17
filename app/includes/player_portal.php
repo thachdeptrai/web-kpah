@@ -143,7 +143,8 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
     </a>
     <div class="rail-line" aria-hidden="true"></div>
     <span class="portal-nav-caption">DÀNH CHO NGƯỜI CHƠI</span>
-    <nav class="portal-nav-list" aria-label="Các chức năng tài khoản">
+    <button type="button" class="portal-nav-toggle" aria-controls="portal-nav-list" aria-expanded="false"><span class="portal-nav-toggle-art" aria-hidden="true"><?= kp_player_icon_art('dashboard') ?></span><span>Danh mục tài khoản</span><span class="portal-toggle-arrow" aria-hidden="true">▾</span></button>
+    <nav id="portal-nav-list" class="portal-nav-list" aria-label="Các chức năng tài khoản">
         <?php foreach($nav as $item): ?>
         <a class="rail-icon<?= $active===$item[0]?' active':'' ?>" href="<?= kp_e($item[1]) ?>" title="<?= kp_e($item[3]) ?>"<?= $active===$item[0]?' aria-current="page"':'' ?>>
             <span class="portal-nav-icon" aria-hidden="true"><?= kp_player_icon_art($item[2]) ?></span>
@@ -179,6 +180,7 @@ function kp_player_foot($withProfileJs=false)
 <div data-toast-type="<?=kp_e($toast['type']??'success')?>" data-toast-title="<?=kp_e($toast['title']??'')?>" data-toast-message="<?=kp_e($toast['message']??'')?> " hidden></div>
 <?php endif;?>
 <?php if($withProfileJs): ?><script src="/assets/js/user-home.js?v=2" defer></script><?php endif; ?>
+<script src="/assets/js/player-mobile-nav.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/player-mobile-nav.js') ?>" defer></script>
 <script src="/assets/js/toast.js?v=1" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 <script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
