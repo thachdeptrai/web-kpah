@@ -204,3 +204,13 @@
   .kp-admin-nav-brand-copy small{display:none}
   .kp-admin-nav-mobile-title small{max-width:70px}
 }
+
+/* 320px devices: retain bell, logo and accessible menu without horizontal overflow. */
+@media(max-width:360px){
+  .kp-admin-nav-v2 .kp-admin-nav-brand-copy{display:none}
+  .kp-admin-nav-v2 .kp-admin-nav-brand{flex:0 0 auto;padding:0}
+  .kp-admin-nav-v2 .kp-admin-nav-actions{gap:4px;min-width:0}
+  .kp-admin-nav-v2 .kp-admin-notification-bell{width:37px;min-width:37px;padding:6px}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-toggle{padding:6px 7px}
+  .kp-admin-nav-v2 .kp-admin-nav-mobile-title small{max-width:72px}
+}
