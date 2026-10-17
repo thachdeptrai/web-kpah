@@ -24,6 +24,12 @@ function kp_safe_url($url)
     if ($url === '') {
         return '';
     }
+    // Browsers interpret backslashes as slashes in special URLs. For example
+    // two leading backslashes resolve to an external authority despite not
+    // matching a naive "//" check. Reject controls and backslashes outright.
+    if (preg_match('/[\\x00-\\x1F\\x7F\\\\]/', $url)) {
+        return '';
+    }
     if (preg_match('#^https?://#i', $url)) {
         return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
     }
