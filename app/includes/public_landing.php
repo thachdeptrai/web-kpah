@@ -78,12 +78,17 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
                 <img src="<?= kp_e($art[0]) ?>" width="<?= (int) $art[2] ?>" height="<?= (int) $art[3] ?>" alt="" loading="eager" decoding="async">
             </div>
         </div>
+        <nav class="lp-page-tabs lp-container" aria-label="Các trang người chơi">
+            <?php foreach (['about'=>['/gioi-thieu','Giới thiệu'],'download'=>['/tai-game','Tải game'],'giftcode'=>['/giftcode','Giftcode'],'news'=>['/tin-tuc','Tin tức'],'community'=>['/cong-dong','Cộng đồng']] as $key=>$tab): ?>
+            <a href="<?= kp_e($tab[0]) ?>"<?= ($kp_public_active ?? '') === $key ? ' class="is-active" aria-current="page"' : '' ?>><?= kp_e($tab[1]) ?></a>
+            <?php endforeach; ?>
+        </nav>
     </section><?php
 }
 
 function kp_public_page_end(): void
 {
-    ?><section class="lp-inner-cta"><div class="lp-container"><div><span class="lp-section-kicker">SẴN SÀNG PHIÊU LƯU?</span><h2>Vào game và viết tiếp <em>hành trình của bạn</em></h2></div><div><a class="lp-button lp-button-primary" href="/tai-game">Tải game ngay</a><a class="lp-button lp-button-glass" href="/dang-ky">Tạo tài khoản</a></div></div></section>
+    ?><section class="lp-inner-cta"><div class="lp-container"><div><span class="lp-section-kicker">NGHIỆN KPAH</span><h2>Tải game & <em>tạo tài khoản</em></h2></div><div><a class="lp-button lp-button-primary" href="/tai-game">Tải game ngay</a><a class="lp-button lp-button-glass" href="/dang-ky">Tạo tài khoản</a></div></div></section>
 </main>
 <footer class="lp-footer"><div class="lp-container lp-footer-main"><a class="lp-brand" href="/"><span class="lp-brand-mark"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="NGHIỆN KPAH"></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a><nav aria-label="Liên kết cuối trang"><a href="/gioi-thieu">Giới thiệu</a><a href="/tai-game">Tải game</a><a href="/giftcode">Giftcode</a><a href="/tin-tuc">Tin tức</a><a href="/cong-dong">Cộng đồng</a></nav></div><div class="lp-container lp-footer-bottom"><span>© <?= date('Y') ?> NGHIỆN KPAH · Cổng thông tin cộng đồng người chơi</span><a href="#noi-dung">Lên đầu trang ↑</a></div></footer>
 <script src="/assets/js/giftcodes.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/giftcodes.js') ?>" defer></script>

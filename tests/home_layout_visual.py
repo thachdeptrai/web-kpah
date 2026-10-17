@@ -76,6 +76,12 @@ JS = r"""JSON.stringify((() => {
   document.querySelectorAll('.home-panel img').forEach(img => {
     add(!img.complete || img.naturalWidth === 0, 'feature artwork failed: '+img.getAttribute('src'));
   });
+  const brand=pick('.home-hero-logo'), brandBox=rect('.home-logo-heading');
+  add(!brand || !brand.complete || brand.naturalWidth===0,'large center logo missing or not loaded');
+  add(brandBox && hero && Math.abs((brandBox.left+brandBox.right)/2-(hero.left+hero.right)/2)>3,
+      'main logo is not centered in hero');
+  add(innerWidth>=1024 && brandBox && brandBox.width<500,'desktop main logo is too small');
+  add(brandBox && brandBox.width>innerWidth,'main logo overflows mobile viewport');
   const img=pick('.home-hero-scene');
   add(!img || !img.complete || img.naturalWidth===0,'hero scene asset not loaded');
   return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,issues,

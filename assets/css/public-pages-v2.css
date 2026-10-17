@@ -27,319 +27,227 @@
 .landing-page .lp-footer nav a{font-size:12px;color:#526d95}
 .landing-page .lp-footer-bottom{font-size:11px;color:#7588a6}
 .landing-page .lp-footer .lp-brand-mark{width:150px;height:60px}
-/* Illustrated portal subpage hero */
-.kp-inner-page{background:#f0f8ff;color:var(--public-ink)}
-.kp-inner-page .lp-container{width:min(calc(100% - 40px),1320px);max-width:1320px}
-.kp-inner-page .lp-inner-hero{
-  position:relative;isolation:isolate;overflow:hidden;
-  padding:clamp(36px,5vw,72px) 0 clamp(46px,5.5vw,78px);
-  min-height:0;background:linear-gradient(165deg,#b7e8ff,#ddf5ff 54%,#effaff)
-}
-.kp-inner-page .lp-inner-hero::before{
-  content:"";position:absolute;inset:0;z-index:-2;
-  background:url("/assets/img/fantasy-world.webp") center 42%/cover no-repeat;opacity:.57
-}
-.kp-inner-page .lp-inner-hero::after{
-  content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(90deg,rgba(238,250,255,.89),rgba(238,250,255,.64) 52%,rgba(236,248,255,.22) 100%)
-}
-.kp-inner-page .lp-inner-orb{display:none}
-.kp-inner-page .lp-inner-hero-grid{
-  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);
-  align-items:center;gap:clamp(28px,4vw,65px);min-width:0
-}
+
+/* One public-page layout: illustration, section navigation, then useful content. */
+.landing-page .lp-inner-cta h2 em{color:#6951cf}
+.landing-page .lp-inner-cta .lp-section-kicker{color:#7762a9}
+.landing-page .lp-inner-cta .lp-button-glass{background:#fff;color:#574394;border-color:#dcd4ef}
+.kp-inner-page{--page-ink:#283852;--page-copy:#5b6a82;--page-purple:#7053d5;background:#f7f8fc;color:var(--page-ink)}
+.kp-inner-page .lp-container{width:min(calc(100% - 48px),1180px);max-width:1180px}
+.kp-inner-page .lp-inner-hero{position:relative;isolation:isolate;overflow:hidden;padding:28px 0 0;min-height:0;background:linear-gradient(115deg,#eef6ff,#f5f0ff 65%,#fff6e8);border-bottom:1px solid #e5e4ee}
+.kp-inner-page .lp-inner-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url("/assets/img/home-hero-anime.webp") center 43%/cover no-repeat;opacity:.18;mask-image:none;-webkit-mask-image:none}
+.kp-inner-page .lp-inner-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(247,249,255,.96),rgba(246,245,255,.67) 60%,rgba(248,245,255,.16))}
+.kp-inner-page .lp-inner-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 310px;align-items:center;gap:48px;padding-block:10px 28px}
 .kp-inner-page .lp-inner-hero-grid>div{min-width:0}
-.kp-inner-page .lp-inner-back{
-  display:inline-flex;align-items:center;gap:6px;
-  margin:0 0 27px;padding:10px 14px;
-  border:1px solid #cfe1fb;border-radius:10px;background:rgba(255,255,255,.83);
-  box-shadow:0 5px 15px rgba(48,90,164,.09);
-  color:#3e5c89;font-size:12px;font-weight:800;text-decoration:none
-}
-.kp-inner-page .lp-section-kicker{
-  display:block;margin:0 0 13px;
-  color:#5344e4;font-weight:900;font-size:12px;letter-spacing:.07em
-}
-.kp-inner-page .lp-inner-hero h1{
-  max-width:800px;margin:0 0 18px;
-  font-family:"Baloo 2","Be Vietnam Pro",sans-serif;
-  font-size:clamp(39px,5vw,66px);font-weight:800;line-height:1.13;
-  letter-spacing:-.025em;text-wrap:balance;color:#243a62
-}
-.kp-inner-page .lp-inner-hero h1 em{font-style:normal;color:#5546e9}
-.kp-inner-page .lp-inner-hero p{
-  max-width:640px;margin:0;color:#435c82;
-  font-size:clamp(14px,1.2vw,16px);line-height:1.83;font-weight:500
-}
-.kp-inner-page .lp-inner-emblem{
-  position:relative;isolation:isolate;display:grid;place-items:center;
-  width:100%;max-width:385px;height:285px;margin-left:auto;
-  border:1px solid rgba(255,255,255,.8);border-radius:28px;
-  background:radial-gradient(circle at 50% 57%,rgba(255,255,255,.94),rgba(234,246,255,.64) 65%,rgba(199,231,255,.4));
-  box-shadow:0 20px 42px rgba(63,106,170,.15),inset 0 0 0 9px rgba(255,255,255,.24);
-  backdrop-filter:blur(5px)
-}
-.kp-inner-page .lp-inner-emblem::before{
-  position:absolute;z-index:-1;content:"";width:73%;height:74%;
-  border:2px dashed rgba(123,149,231,.32);border-radius:50%;
-  transform:rotate(-17deg)
-}
-.kp-inner-page .lp-inner-emblem img{
-  display:block;position:relative;max-width:92%;width:auto;height:260px;
-  object-fit:contain;filter:drop-shadow(0 13px 15px rgba(39,72,122,.23))
-}
-.kp-inner-page .lp-inner-emblem span{display:none}
-.kp-inner-page .lp-inner-emblem--gift img{max-width:97%;height:280px}
-.kp-inner-page .lp-inner-emblem--news img{width:94%;height:80%;object-fit:cover;border-radius:17px}
-.kp-inner-page .lp-inner-content{
-  padding:50px 0 80px;
-  background:linear-gradient(180deg,#eef8ff,#f8fcff 22%,#fff 100%)
-}
-.kp-inner-page .lp-adventure-grid,
-.kp-inner-page .lp-download-grid,
-.kp-inner-page .lp-gift-grid,
-.kp-inner-page .lp-news-grid,
-.kp-inner-page .lp-feature-strip{gap:18px}
-.kp-inner-page .lp-adventure-card,
-.kp-inner-page .lp-mini-feature,
-.kp-inner-page .lp-feature-strip article,
-.kp-inner-page .lp-download-card,
-.kp-inner-page .lp-gift-card,
-.kp-inner-page .lp-news-card,
-.kp-inner-page .lp-community-card{
-  border:1px solid #d9e8f9;border-radius:19px;background:rgba(255,255,255,.98);
-  box-shadow:0 12px 31px rgba(43,86,148,.11)
-}
-.kp-inner-page .lp-adventure-card:hover,
-.kp-inner-page .lp-mini-feature:hover,
-.kp-inner-page .lp-download-card:hover,
-.kp-inner-page .lp-gift-card:hover,
-.kp-inner-page .lp-news-card:hover{transform:translateY(-3px);box-shadow:0 18px 35px rgba(43,86,148,.16)}
-.kp-inner-page .lp-adventure-grid{display:grid;grid-template-columns:1.25fr .9fr;grid-template-rows:repeat(2,minmax(175px,auto))}
-.kp-inner-page .lp-adventure-card-large{min-height:385px;grid-row:span 2;display:flex;align-items:center;padding:36px;background:linear-gradient(135deg,#fff,#eaf2ff)}
-.kp-inner-page .lp-adventure-copy{max-width:62%;min-width:0}
-.kp-inner-page .lp-adventure-copy .lp-card-label{color:#5c4beb;font-size:12px;font-weight:900}
-.kp-inner-page .lp-adventure-copy h3{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:clamp(22px,2.4vw,33px);line-height:1.25;letter-spacing:-.02em;color:#263b63}
-.kp-inner-page .lp-adventure-copy p{font-size:14px;line-height:1.75}
-.kp-inner-page .lp-adventure-copy a{font-size:13px;font-weight:800}
-.kp-inner-page .lp-adventure-card>img{right:0;bottom:0;max-width:43%;width:250px;height:auto;max-height:315px}
-.kp-inner-page .lp-mini-feature{gap:14px;padding:24px;background:#fff}
-.kp-inner-page .lp-mini-feature>span{background:linear-gradient(135deg,#7966ff,#406fe9)}
-.kp-inner-page .lp-mini-feature h3{font-size:19px;line-height:1.4;color:#253a63}
-.kp-inner-page .lp-mini-feature p{font-size:13px;line-height:1.7;color:#63799c}
-.kp-inner-page .lp-feature-strip{margin-top:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.kp-inner-page .lp-feature-strip article{padding:24px;min-width:0}
-.kp-inner-page .lp-feature-strip b{font-size:15px;color:#5a4de4}
-.kp-inner-page .lp-feature-strip h3{margin:12px 0 7px;font-size:19px;color:#263b63;line-height:1.3}
-.kp-inner-page .lp-feature-strip p{margin:0;color:#5d7395;font-size:13px;line-height:1.75}
-/* Download: clear platform cards with real enabled/disabled states */
-.kp-inner-page .lp-download-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
-.kp-inner-page .lp-download-card{display:flex;flex-direction:column;gap:14px;padding:23px;min-width:0}
-.kp-inner-page .lp-platform-icon{width:59px;height:59px;border-radius:15px;font-size:21px}
-.kp-inner-page .lp-availability{font-size:11px;color:#0b9569;letter-spacing:.07em}
-.kp-inner-page .lp-download-card:not(.is-ready) .lp-availability{color:#ac791a}
-.kp-inner-page .lp-download-card h3{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;color:#253b65;font-size:23px;line-height:1.25}
-.kp-inner-page .lp-download-card p{min-height:0;font-size:13px;line-height:1.7}
-.kp-inner-page .lp-download-card>a,
-.kp-inner-page .lp-download-disabled{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;min-height:43px;padding:10px 14px;border-radius:11px;font-size:13px;font-weight:800}
-.kp-inner-page .lp-safe-note{display:flex;gap:15px;align-items:center;margin-top:22px;padding:20px 23px;border:1px solid #cdebdc;border-radius:16px;background:#ecfcf4}
-.kp-inner-page .lp-safe-note h3{font-size:17px;color:#215d48}
-.kp-inner-page .lp-safe-note p{font-size:13px;line-height:1.7}
-/* Giftcode: one detailed original chest illustration, no emoji or "QUÀ KPAH" placeholder */
-.kp-inner-page .lp-gift-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-.kp-inner-page .lp-gift-card{display:grid;grid-template-columns:165px minmax(0,1fr);min-width:0;overflow:hidden}
-.kp-inner-page .lp-gift-visual,
-.kp-inner-page .lp-gift-visual.tone-2,
-.kp-inner-page .lp-gift-visual.tone-3{
-  display:grid;place-items:center;min-width:0;
-  background:radial-gradient(circle at 55% 45%,#fff7df,#e5eeff 65%,#dbeaff 100%)
-}
+.kp-inner-page .lp-inner-back{display:inline-flex;align-items:center;margin:0 0 22px;padding:5px 0;font-size:11px;font-weight:600;color:#6a7390;text-decoration:none}
+.kp-inner-page .lp-inner-back:hover{color:#6547c3}
+.kp-inner-page .lp-section-kicker{display:block;font-size:10px;font-weight:800;letter-spacing:.13em;line-height:1.6;color:#7e66a8;margin:0 0 9px}
+.kp-inner-page .lp-inner-hero h1{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:clamp(38px,4.5vw,58px);line-height:1.08;letter-spacing:-.025em;max-width:700px;margin:0 0 16px;color:var(--page-ink);font-weight:800;text-wrap:balance;text-shadow:none}
+.kp-inner-page .lp-inner-hero h1 em{color:var(--page-purple);font-style:normal}
+.kp-inner-page .lp-inner-hero p{max-width:570px;margin:0;color:var(--page-copy);font-size:14px;line-height:1.8}
+.kp-inner-page .lp-inner-emblem{position:relative;isolation:isolate;display:grid;place-items:center;width:100%;max-width:310px;height:260px;margin:0;background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none}
+.kp-inner-page .lp-inner-emblem::before{content:"";position:absolute;inset:22px;border:1px solid rgba(255,255,255,.9);border-radius:50%;background:radial-gradient(circle,#fff8f4,#eee6ff99);z-index:-1;animation:none;transform:none}
+.kp-inner-page .lp-inner-emblem::after{display:none}
+.kp-inner-page .lp-inner-emblem img{position:relative;display:block;width:auto;height:250px;max-width:100%;object-fit:contain;filter:drop-shadow(0 14px 12px #4f447526)}
+.kp-inner-page .lp-inner-emblem--guardian img{width:230px;height:230px;border-radius:28px;object-fit:cover;filter:none;box-shadow:0 14px 32px #54406b1a}
+.kp-inner-page .lp-inner-emblem--news img{width:100%;height:200px;object-fit:cover;border:6px solid #fff;border-radius:22px;box-shadow:0 14px 25px #4c457322;transform:rotate(3deg);filter:none}
+.kp-inner-page .lp-inner-emblem--gift img{width:270px;height:250px}
+.kp-inner-page .lp-page-tabs{position:relative;display:flex;gap:7px;align-items:center;overflow-x:auto;padding-block:0 16px;scrollbar-width:thin}
+.kp-inner-page .lp-page-tabs a{display:inline-flex;align-items:center;justify-content:center;flex:none;padding:10px 20px;min-height:41px;font-size:12px;line-height:1.5;font-weight:700;color:#6b6681;text-decoration:none;border:1px solid transparent;border-radius:11px;white-space:nowrap}
+.kp-inner-page .lp-page-tabs a:hover{background:#ffffffb3;color:#684cc2}
+.kp-inner-page .lp-page-tabs a.is-active{background:#fff;border-color:#e2dced;color:#6748c3;box-shadow:0 4px 12px #60448f0a}
+.kp-inner-page .lp-inner-content{padding:42px 0 60px;background:linear-gradient(180deg,#f7f8fc,#fff)}
+.kp-inner-page .lp-content-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:25px}
+.kp-inner-page .lp-content-heading h2{margin:0;font-family:"Baloo 2","Be Vietnam Pro",sans-serif;color:var(--page-ink);font-size:30px;line-height:1.2;font-weight:800}
+.kp-inner-page .lp-content-heading p{margin:0;max-width:320px;font-size:12px;color:#6d778c;line-height:1.7}
+.kp-inner-page .lp-count-chip{display:inline-flex;padding:9px 14px;border:1px solid #e3dcec;border-radius:999px;background:#f4f0fc;color:#7555a5;font-size:11px;font-weight:700;white-space:nowrap}
+.kp-inner-page .lp-inline-link{color:#7455bb;font-size:12px;font-weight:700;text-decoration:none;line-height:1.6}
+.kp-inner-page .lp-inline-link:hover{text-decoration:underline}
+.kp-inner-page :is(.lp-download-card,.lp-gift-card,.lp-news-card,.lp-feature-strip article,.lp-mini-feature){border:1px solid #e4e5ef;border-radius:20px;background:#fff;box-shadow:0 8px 24px #34436606;min-width:0}
+.kp-inner-page :is(.lp-download-card,.lp-gift-card,.lp-news-card){transition:box-shadow .2s,transform .2s,border-color .2s}
+.kp-inner-page :is(.lp-download-card,.lp-gift-card,.lp-news-card):hover{transform:translateY(-3px);border-color:#cfc2ea;box-shadow:0 14px 32px #60558b12}
+/* Download cards distinguish available builds from unavailable platforms. */
+.kp-inner-page .lp-download-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.kp-inner-page .lp-download-card{display:flex;flex-direction:column;padding:26px;gap:20px;position:relative}
+.kp-inner-page .lp-download-card.is-ready{border-top:3px solid #7c62d8}
+.kp-inner-page .lp-download-card:not(.is-ready){border-top:3px solid #d9d9e2;background:#fafbfe}
+.kp-inner-page .lp-platform-icon{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:#eeeafa;color:#7455b7;font-family:"Be Vietnam Pro",sans-serif;font-size:26px;font-weight:700;box-shadow:none}
+.kp-inner-page .lp-platform-android{background:#e9f6ed;color:#3a8c61}
+.kp-inner-page .lp-platform-windows{background:#e9f2ff;color:#4e7cc7}
+.kp-inner-page .lp-platform-java{background:#fff0e5;color:#b57846}
+.kp-inner-page .lp-platform-ios{background:#f0edf9;color:#766094}
+.kp-inner-page .lp-availability{display:inline-flex;font-size:9px;font-weight:800;letter-spacing:.06em;line-height:1.6;color:#438b64;margin-bottom:7px}
+.kp-inner-page .lp-download-card:not(.is-ready) .lp-availability{color:#8c879c}
+.kp-inner-page .lp-download-card h3{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:26px;color:var(--page-ink);line-height:1.25;margin:0}
+.kp-inner-page .lp-download-card p{min-height:0;font-size:12px;line-height:1.8;color:var(--page-copy);margin:6px 0 0}
+.kp-inner-page .lp-download-card>a,.kp-inner-page .lp-download-disabled{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:45px;padding:11px 14px;margin-top:auto;border-radius:11px;font-size:12px;font-weight:700;line-height:1.5;text-decoration:none}
+.kp-inner-page .lp-download-card>a{background:linear-gradient(120deg,#7b62db,#6750c5);color:#fff}
+.kp-inner-page .lp-download-disabled{background:#eeeff5;color:#7b8191;border:1px solid #e5e6ef}
+.kp-inner-page .lp-safe-note{display:flex;align-items:center;gap:16px;margin-top:24px;padding:23px 25px;border:1px solid #e0e2ed;border-radius:17px;background:#f5f4fb}
+.kp-inner-page .lp-safe-note>span{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#e9e3f7;color:#7a5bab;font-size:19px}
+.kp-inner-page .lp-safe-note h3{margin:0 0 4px;font-size:15px;color:#42405d;line-height:1.5}
+.kp-inner-page .lp-safe-note p{margin:0;font-size:12px;color:#737087;line-height:1.8}
+.kp-inner-page .lp-safe-note a{color:#6d4eb0;font-weight:700}
+/* Giftcode tickets keep the actual code visible, including long codes. */
+.kp-inner-page .lp-gift-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.kp-inner-page .lp-gift-card{display:grid;grid-template-columns:145px minmax(0,1fr);overflow:hidden}
+.kp-inner-page .lp-gift-visual{display:grid;place-items:center;min-width:0;background:radial-gradient(circle,#fff3d6,#fbf4eb);border-right:1px dashed #e7d9c7}
 .kp-inner-page .lp-gift-visual::before,.kp-inner-page .lp-gift-visual::after{display:none}
-.kp-inner-page .lp-gift-visual img{position:relative;z-index:1;display:block;width:155px;height:155px;max-width:100%;object-fit:contain;filter:drop-shadow(0 12px 11px rgba(82,84,158,.14))}
-.kp-inner-page .lp-gift-copy{padding:20px;min-width:0}
-.kp-inner-page .lp-gift-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;font-size:11px;color:#6355dc}
-.kp-inner-page .lp-gift-meta small{font-size:11px;color:#b07c14}
-.kp-inner-page .lp-gift-copy h3{font-size:20px;line-height:1.35;color:#26395f}
-.kp-inner-page .lp-gift-copy p{font-size:13px;line-height:1.7;color:#607599}
-.kp-inner-page .lp-gift-rewards{display:flex;flex-wrap:wrap;gap:7px}
-.kp-inner-page .lp-gift-rewards span{padding:6px 9px;background:#edf5ff;color:#3c61a0;border-radius:8px;font-size:11px}
-.kp-inner-page .lp-gift-code-line{display:flex;align-items:center;gap:8px;min-width:0;margin-top:15px;padding:7px;border:1px dashed #c4d4eb;border-radius:11px;background:#f7faff}
-.kp-inner-page .lp-gift-code-line code{flex:1;min-width:0;font-size:12px;overflow:hidden;text-overflow:ellipsis}
-.kp-inner-page .lp-gift-code-line button{min-height:35px;padding:7px 11px;border-radius:8px;font-size:11px}
-.kp-inner-page .lp-empty-state{border:1px solid #d8e7f8;background:#fff;border-radius:17px;padding:22px}
-.kp-inner-page .lp-empty-state h3{color:#253b63;font-size:20px}
-.kp-inner-page .lp-empty-state p{font-size:13px;line-height:1.7;color:#697b9a}
-.kp-inner-page .lp-gift-note{font-size:12px;color:#657898;line-height:1.7}
-/* News uses readable, less abstract artwork */
-.kp-inner-page .lp-news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.kp-inner-page .lp-news-card{display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.kp-inner-page .lp-news-art{display:block;height:170px;overflow:hidden;background:#dfedff}
+.kp-inner-page .lp-gift-visual img{display:block;width:140px;height:150px;max-width:100%;object-fit:contain;filter:drop-shadow(0 8px 10px #b69b6c22)}
+.kp-inner-page .lp-gift-copy{padding:24px;min-width:0}
+.kp-inner-page .lp-gift-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:10px;line-height:1.6;color:#8c6ab3}
+.kp-inner-page .lp-gift-meta small{font-size:10px;color:#a17a45}
+.kp-inner-page .lp-gift-copy h3{margin:10px 0 7px;font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:24px;line-height:1.2;color:var(--page-ink)}
+.kp-inner-page .lp-gift-copy p{margin:0;color:var(--page-copy);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.kp-inner-page .lp-gift-rewards{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.kp-inner-page .lp-gift-rewards span{border:1px solid #e6e2ee;background:#f8f5fc;color:#796296;font-size:10px;border-radius:7px;padding:5px 8px;line-height:1.5}
+.kp-inner-page .lp-gift-code-line{display:flex;align-items:center;gap:10px;margin-top:18px;padding:10px 10px 10px 13px;background:#f5f3fa;border:1px dashed #d8cbe9;border-radius:11px;min-width:0}
+.kp-inner-page .lp-gift-code-line code{flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere;overflow:visible;text-overflow:clip;font-size:12px;line-height:1.6;color:#7250ac;font-weight:700}
+.kp-inner-page .lp-gift-code-line button{flex:none;min-height:36px;padding:8px 11px;border:0;border-radius:8px;background:#7659c7;color:#fff;font-size:10px;font-weight:700;cursor:pointer}
+.kp-inner-page .lp-empty-state{display:flex;align-items:center;justify-content:center;gap:22px;min-height:220px;padding:35px;border:1px dashed #d9d2e6;border-radius:22px;background:linear-gradient(135deg,#fffaf0,#f7f3ff);text-align:left}
+.kp-inner-page .lp-empty-state>span{width:60px;height:60px;flex:none;border:1px solid #e5d6ba;border-radius:18px;background:#fff6e1;color:#a27b3b;font-size:30px}
+.kp-inner-page .lp-empty-state h3{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:29px;color:var(--page-ink);line-height:1.25}
+.kp-inner-page .lp-empty-state p{max-width:430px;font-size:13px;line-height:1.8;color:var(--page-copy)}
+.kp-inner-page .lp-empty-state a{color:#7659b0;font-weight:700}
+.kp-inner-page .lp-gift-note{font-size:11px;color:#7d7b8c;line-height:1.8;margin:22px 0 0;text-align:left}
+/* News cards show real availability and useful links, without invented dates. */
+.kp-inner-page .lp-news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.kp-inner-page .lp-news-card{display:flex;flex-direction:column;overflow:hidden}
+.kp-inner-page .lp-news-art{display:block;position:relative;height:210px;background:linear-gradient(135deg,#eee9fc,#f8f2ec);overflow:hidden}
 .kp-inner-page .lp-news-art::before,.kp-inner-page .lp-news-art::after{display:none}
-.kp-inner-page .lp-news-art img{width:100%;height:100%;object-fit:cover}
-.kp-inner-page .lp-news-art img.lp-news-character{object-fit:contain;background:radial-gradient(circle,#fffde7,#dceeff)}
-.kp-inner-page .lp-news-copy{display:flex;flex-direction:column;flex:1;padding:22px;min-width:0}
-.kp-inner-page .lp-news-copy>span{font-size:11px;color:#5c4be4;font-weight:900}
-.kp-inner-page .lp-news-copy h3{margin:9px 0;font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:22px;line-height:1.3;color:#26395f;min-height:0}
-.kp-inner-page .lp-news-copy p{font-size:13px;color:#63799a;line-height:1.75;min-height:0}
-.kp-inner-page .lp-news-copy a{margin-top:auto;padding-top:13px;font-size:13px;font-weight:800}
-/* Community is a clean information card, not a disconnected dark neon banner */
-.kp-inner-page .lp-community-card{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);align-items:center;min-height:365px;overflow:hidden;background:linear-gradient(125deg,#e5f5ff,#f8fbff 63%,#ececff);color:#263b63}
-.kp-inner-page .lp-community-art{position:relative;min-height:365px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.9),transparent 67%)}
-.kp-inner-page .lp-community-art img{display:block;max-width:95%;width:280px;height:330px;object-fit:contain;filter:drop-shadow(0 13px 15px rgba(61,84,143,.22))}
-.kp-inner-page .lp-community-copy{padding:30px 38px 30px 12px;min-width:0;text-align:left}
-.kp-inner-page .lp-community-copy h2{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:clamp(25px,3.1vw,37px);line-height:1.26;color:#263b63;letter-spacing:0}
-.kp-inner-page .lp-community-copy h2 em{color:#5449e6}
-.kp-inner-page .lp-community-copy>p{font-size:14px;color:#5d7192;line-height:1.75}
-.kp-inner-page .lp-community-copy>small{display:block;font-size:11px;color:#7a86a0;line-height:1.6}
-.kp-inner-page .lp-community-actions{display:flex;flex-wrap:wrap;gap:10px}
-.kp-inner-page .lp-community-actions .lp-button{background:linear-gradient(115deg,#7560fc,#4559eb);color:#fff!important;font-size:13px}
-.kp-inner-page .lp-community-support{color:#594ce2!important;font-size:13px;font-weight:800}
+.kp-inner-page .lp-news-art img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.kp-inner-page .lp-news-art img.lp-news-character{object-fit:contain;padding:13px;background:none}
+.kp-inner-page .lp-news-card:hover .lp-news-art img{transform:scale(1.035)}
+.kp-inner-page .lp-news-card:nth-child(3) .lp-news-art{background:radial-gradient(circle,#ffeac0,#fff8ec)}
+.kp-inner-page .lp-news-copy{display:flex;flex:1;flex-direction:column;padding:25px;min-width:0}
+.kp-inner-page .lp-news-copy>span{font-size:9px;letter-spacing:.1em;font-weight:800;color:#8969ae}
+.kp-inner-page .lp-news-copy h3{min-height:0;font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:25px;line-height:1.2;color:var(--page-ink);margin:12px 0}
+.kp-inner-page .lp-news-copy p{min-height:0;margin:0 0 22px;font-size:12px;line-height:1.8;color:var(--page-copy)}
+.kp-inner-page .lp-news-copy a{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:15px;border-top:1px solid #eeebf3;font-size:12px;color:#7151b3;font-weight:700;text-decoration:none}
+/* Community and introduction use the same light surfaces and readable text. */
+.kp-inner-page .lp-community-card{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center;min-height:350px;overflow:hidden;border:1px solid #ddd9eb;border-radius:24px;background:linear-gradient(120deg,#eee9ff,#f4f5ff 55%,#edf8ff);box-shadow:0 12px 35px #65507f08;color:var(--page-ink)}
+.kp-inner-page .lp-community-art{display:grid;place-items:center;min-height:330px;position:relative;overflow:hidden;background:none}
+.kp-inner-page .lp-community-art>span{display:none}
+.kp-inner-page .lp-community-art img{display:block;max-width:100%;width:360px;height:330px;object-fit:contain;filter:drop-shadow(0 14px 16px #75649926)}
+.kp-inner-page .lp-community-copy{min-width:0;padding:35px 40px 35px 10px}
+.kp-inner-page .lp-community-copy h2{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:40px;line-height:1.1;color:var(--page-ink);margin:0;letter-spacing:-.02em}
+.kp-inner-page .lp-community-copy h2 em{color:#7656cb}
+.kp-inner-page .lp-community-copy>p{margin:17px 0 0;font-size:14px;line-height:1.8;color:var(--page-copy);max-width:460px}
+.kp-inner-page .lp-community-copy>small{display:block;margin-top:18px;color:#787489;font-size:10px;line-height:1.7}
+.kp-inner-page .lp-community-actions{display:flex;align-items:center;flex-wrap:wrap;gap:18px;margin-top:24px}
+.kp-inner-page .lp-community-actions .lp-button{background:#526fe3;color:#fff;font-size:13px;min-height:48px;border-radius:12px;box-shadow:0 8px 16px #536fdf25}
+.kp-inner-page .lp-community-support{color:#7257aa;font-size:12px;font-weight:700;border-bottom:1px solid #c3b2de}
+.kp-inner-page .lp-feature-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px}
+.kp-inner-page .lp-feature-strip article{padding:26px}
+.kp-inner-page .lp-feature-strip b{display:inline-flex;color:#a093b9;font-size:12px;font-weight:600}
+.kp-inner-page .lp-feature-strip h3{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:24px;line-height:1.3;margin:10px 0 8px;color:var(--page-ink)}
+.kp-inner-page .lp-feature-strip p{margin:0;font-size:12px;line-height:1.85;color:var(--page-copy)}
+.kp-inner-page .lp-feature-strip a,.kp-inner-page .lp-mini-feature a{color:#7555b6}
+.kp-inner-page .lp-adventure-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr);grid-template-rows:repeat(2,minmax(155px,auto));gap:20px}
+.kp-inner-page .lp-adventure-card-large{position:relative;display:flex;align-items:center;grid-row:span 2;min-height:360px;padding:32px;background:linear-gradient(130deg,#f6f3ff,#edf4ff);border:1px solid #dfd8ef;border-radius:24px;overflow:hidden}
+.kp-inner-page .lp-adventure-copy{position:relative;z-index:1;max-width:63%;min-width:0}
+.kp-inner-page .lp-card-label{color:#8064a6;font-size:10px;font-weight:800;letter-spacing:.1em}
+.kp-inner-page .lp-adventure-copy h3{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;color:var(--page-ink);font-size:33px;line-height:1.18;margin:12px 0}
+.kp-inner-page .lp-adventure-copy p{font-size:13px;line-height:1.8;color:var(--page-copy);margin-bottom:20px}
+.kp-inner-page .lp-adventure-copy>a{display:inline-flex;align-items:center;gap:15px;padding:12px 16px;border-radius:11px;background:#7657cb;color:#fff;font-size:12px;font-weight:700;text-decoration:none}
+.kp-inner-page .lp-adventure-card>img{position:absolute;right:-20px;bottom:14px;width:48%;max-width:310px;height:290px;object-fit:contain}
+.kp-inner-page .lp-mini-feature{display:flex;gap:16px;align-items:center;padding:25px}
+.kp-inner-page .lp-mini-feature>span{display:grid;place-items:center;flex:none;width:46px;height:46px;border-radius:14px;background:#f1edf9;color:#8563b9;font-size:22px}
+.kp-inner-page .lp-mini-feature h3{margin:0 0 7px;color:var(--page-ink);font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:24px;line-height:1.2}
+.kp-inner-page .lp-mini-feature p{margin:0;color:var(--page-copy);font-size:12px;line-height:1.8}
 @media(max-width:1120px){
  .landing-page .lp-nav{height:70px}
- .landing-page .lp-menu-toggle{display:block;order:2;margin-left:auto}
- .landing-page .lp-links{
-   position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:90;
-   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;
-   padding:10px;border:1px solid #d4e4f7;border-radius:15px;
-   background:rgba(255,255,255,.99);box-shadow:0 12px 33px rgba(42,79,137,.16);
-   opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);
-   transition:opacity .18s,transform .18s,visibility .18s
- }
- .landing-page .lp-links.is-open{opacity:1;visibility:visible;pointer-events:auto;transform:none}
- .landing-page .lp-links a{font-size:13px;padding:12px;border-radius:9px;white-space:normal}
- .landing-page .lp-links a:hover{background:#eff4ff}
- .landing-page .lp-links a::after{display:none}
- .landing-page .lp-nav-actions{order:1}
+ .landing-page .lp-menu-toggle{display:block;order:2;margin-left:0;flex:none}
+ .landing-page .lp-nav-actions{order:1;margin-left:auto}
  .landing-page .lp-download-nav{display:none}
  .landing-page .lp-nav-login,.landing-page .lp-nav-account{display:inline-flex}
+ .landing-page .lp-links{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:90;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:10px;border:1px solid #dcd7e7;border-radius:15px;background:#fff;box-shadow:0 12px 30px #40345022;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .18s,transform .18s,visibility .18s}
+ .landing-page .lp-links.is-open{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+ .landing-page .lp-links a{font-size:13px;padding:12px;border-radius:9px;white-space:normal}
+ .landing-page .lp-links a:hover{background:#f3effa}
+ .landing-page .lp-links a::after{display:none}
  .kp-inner-page .lp-download-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .kp-inner-page .lp-news-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .kp-inner-page .lp-news-card:last-child{grid-column:span 2}
+ .kp-inner-page .lp-gift-grid{grid-template-columns:1fr}
+ .kp-inner-page .lp-news-copy{padding:20px}
+ .kp-inner-page .lp-news-copy h3{font-size:23px}
 }
 @media(max-width:820px){
- .kp-inner-page .lp-inner-hero-grid{grid-template-columns:minmax(0,1fr) 220px;gap:20px}
+ .kp-inner-page .lp-inner-hero-grid{grid-template-columns:minmax(0,1fr) 230px;gap:25px}
  .kp-inner-page .lp-inner-emblem{height:230px}
- .kp-inner-page .lp-inner-emblem img{height:205px}
+ .kp-inner-page .lp-inner-emblem img{height:215px}
+ .kp-inner-page .lp-inner-emblem--guardian img{width:195px;height:195px}
+ .kp-inner-page .lp-news-grid{grid-template-columns:1fr}
+ .kp-inner-page .lp-news-card{display:grid;grid-template-columns:200px minmax(0,1fr)}
+ .kp-inner-page .lp-news-art{height:100%;min-height:210px}
  .kp-inner-page .lp-adventure-grid{grid-template-columns:1fr;grid-template-rows:auto}
  .kp-inner-page .lp-adventure-card-large{grid-row:auto}
- .kp-inner-page .lp-gift-grid{grid-template-columns:1fr}
- .kp-inner-page .lp-community-card{grid-template-columns:1fr}
- .kp-inner-page .lp-community-art{min-height:240px}
- .kp-inner-page .lp-community-art img{height:250px}
- .kp-inner-page .lp-community-copy{padding:16px 24px 30px;text-align:center}
- .kp-inner-page .lp-community-actions{justify-content:center}
  .kp-inner-page .lp-feature-strip{grid-template-columns:1fr}
+ .kp-inner-page .lp-community-card{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ .kp-inner-page .lp-community-copy{padding:28px 24px 28px 0}
+ .kp-inner-page .lp-community-copy h2{font-size:33px}
+ .kp-inner-page .lp-community-art img{height:280px}
+ .landing-page .lp-inner-cta .lp-container{flex-direction:column;align-items:flex-start}
 }
 @media(max-width:600px){
- .landing-page .lp-inner-cta .lp-container{align-items:flex-start;flex-direction:column}
- .landing-page .lp-inner-cta .lp-container>div:last-child{width:100%}
+ .kp-inner-page .lp-container{width:calc(100% - 28px)}
+ .landing-page .lp-brand-mark{width:126px;height:50px}
+ .landing-page .lp-nav{height:65px;gap:7px}
+ .landing-page .lp-menu-toggle{width:39px;height:39px;padding:8px}
+ .landing-page .lp-nav-login,.landing-page .lp-nav-account{min-height:37px;padding:8px 9px;font-size:10px}
+ .kp-inner-page .lp-inner-hero{padding-top:18px}
+ .kp-inner-page .lp-inner-hero-grid{grid-template-columns:minmax(0,1fr) 108px;gap:14px;padding-block:8px 23px}
+ .kp-inner-page .lp-inner-back{font-size:10px;margin-bottom:18px}
+ .kp-inner-page .lp-inner-hero .lp-section-kicker{font-size:9px}
+ .kp-inner-page .lp-inner-hero h1{font-size:34px;margin-bottom:12px;line-height:1.1;overflow-wrap:normal}
+ .kp-inner-page .lp-inner-hero p{font-size:11px;line-height:1.7}
+ .kp-inner-page .lp-inner-emblem{height:170px}
+ .kp-inner-page .lp-inner-emblem::before{inset:25px 0}
+ .kp-inner-page .lp-inner-emblem img{width:100%;height:170px;max-width:100%}
+ .kp-inner-page .lp-inner-emblem--guardian img{height:auto;aspect-ratio:1;border-radius:17px}
+ .kp-inner-page .lp-inner-emblem--news img{height:130px;border-width:3px;border-radius:13px}
+ .kp-inner-page .lp-page-tabs{gap:3px;padding-bottom:12px}
+ .kp-inner-page .lp-page-tabs a{font-size:10px;min-height:37px;padding:9px 13px}
+ .kp-inner-page .lp-inner-content{padding:28px 0 40px}
+ .kp-inner-page .lp-content-heading{align-items:flex-start;gap:12px;flex-direction:column;margin-bottom:20px}
+ .kp-inner-page .lp-content-heading h2{font-size:28px}
+ .kp-inner-page .lp-content-heading p{font-size:11px}
+ .kp-inner-page .lp-download-grid{grid-template-columns:1fr;gap:14px}
+ .kp-inner-page .lp-download-card{display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;padding:22px}
+ .kp-inner-page .lp-platform-icon{width:53px;height:53px;border-radius:14px;font-size:23px}
+ .kp-inner-page .lp-download-card>a,.kp-inner-page .lp-download-disabled{grid-column:1 / -1}
+ .kp-inner-page .lp-download-card h3{font-size:26px}
+ .kp-inner-page .lp-safe-note{padding:20px;align-items:flex-start}
+ .kp-inner-page .lp-safe-note>span{display:none}
+ .kp-inner-page .lp-gift-card{grid-template-columns:1fr}
+ .kp-inner-page .lp-gift-visual{min-height:120px;border-right:0;border-bottom:1px dashed #e7d9c7}
+ .kp-inner-page .lp-gift-visual img{width:140px;height:120px}
+ .kp-inner-page .lp-gift-copy{padding:22px}
+ .kp-inner-page .lp-empty-state{padding:25px;align-items:flex-start;gap:13px;min-height:200px}
+ .kp-inner-page .lp-empty-state>span{width:37px;height:37px;border-radius:12px;font-size:22px}
+ .kp-inner-page .lp-empty-state h3{font-size:25px}
+ .kp-inner-page .lp-empty-state p{font-size:12px}
+ .kp-inner-page .lp-news-card{display:flex}
+ .kp-inner-page .lp-news-art{height:180px;min-height:0}
+ .kp-inner-page .lp-news-copy{padding:23px}
+ .kp-inner-page .lp-community-card{grid-template-columns:1fr}
+ .kp-inner-page .lp-community-art{min-height:230px}
+ .kp-inner-page .lp-community-art img{height:230px;width:260px}
+ .kp-inner-page .lp-community-copy{padding:0 25px 28px}
+ .kp-inner-page .lp-community-copy h2{font-size:34px}
+ .kp-inner-page .lp-community-copy>p{font-size:13px}
+ .kp-inner-page .lp-community-actions{gap:16px}
+ .kp-inner-page .lp-adventure-card-large{padding:26px;align-items:flex-start;min-height:0}
+ .kp-inner-page .lp-adventure-copy{max-width:100%;padding-bottom:190px}
+ .kp-inner-page .lp-adventure-copy h3{font-size:30px}
+ .kp-inner-page .lp-adventure-card>img{width:215px;max-width:75%;height:200px;bottom:0;right:5px}
+ .kp-inner-page .lp-mini-feature{padding:22px}
+ .kp-inner-page .lp-feature-strip article{padding:23px}
+ .landing-page .lp-inner-cta .lp-container>div:last-child{width:100%;flex-wrap:wrap}
  .landing-page .lp-inner-cta .lp-button{flex:1}
  .landing-page .lp-footer-main{align-items:flex-start;flex-direction:column;padding:20px 0}
  .landing-page .lp-footer-bottom{align-items:flex-start;flex-direction:column;gap:8px;padding:15px 0}
- .kp-inner-page .lp-container{width:calc(100% - 24px)}
- .landing-page .lp-brand-mark{width:126px;height:50px}
- .landing-page .lp-menu-toggle{width:41px;height:41px}
- .landing-page .lp-nav{height:65px;gap:7px}
- .landing-page .lp-nav-login,.landing-page .lp-nav-account{min-height:37px;padding:8px 9px;font-size:10px}
- .kp-inner-page .lp-inner-hero{padding:33px 0 40px}
- .kp-inner-page .lp-inner-hero-grid{grid-template-columns:1fr;gap:24px}
- .kp-inner-page .lp-inner-back{margin:0 0 22px}
- .kp-inner-page .lp-inner-hero h1{font-size:clamp(33px,9vw,45px);margin-bottom:10px}
- .kp-inner-page .lp-inner-hero p{font-size:13px;line-height:1.72}
- .kp-inner-page .lp-inner-emblem{max-width:100%;height:182px;margin:0 auto}
- .kp-inner-page .lp-inner-emblem img{height:176px;max-width:82%}
- .kp-inner-page .lp-inner-emblem--gift img{height:190px}
- .kp-inner-page .lp-inner-content{padding:28px 0 48px}
- .kp-inner-page .lp-adventure-card-large{min-height:350px;padding:22px}
- .kp-inner-page .lp-adventure-copy{max-width:100%;padding-bottom:142px}
- .kp-inner-page .lp-adventure-copy h3{font-size:25px}
- .kp-inner-page .lp-adventure-card>img{width:150px;max-width:42%;height:180px}
- .kp-inner-page .lp-mini-feature{padding:19px}
- .kp-inner-page .lp-download-grid,.kp-inner-page .lp-news-grid{grid-template-columns:1fr}
- .kp-inner-page .lp-download-card{display:flex;gap:10px;padding:18px}
- .kp-inner-page .lp-news-card:last-child{grid-column:auto}
- .kp-inner-page .lp-gift-card{grid-template-columns:1fr}
- .kp-inner-page .lp-gift-visual{min-height:140px}
- .kp-inner-page .lp-gift-visual img{height:160px}
- .kp-inner-page .lp-community-copy{padding:16px 18px 27px}
- .kp-inner-page .lp-safe-note{align-items:flex-start;padding:15px}
 }
 @media(prefers-reduced-motion:reduce){
- .kp-inner-page .lp-adventure-card,.kp-inner-page .lp-download-card,
- .kp-inner-page .lp-news-card,.kp-inner-page .lp-gift-card{transition:none!important}
- .kp-inner-page .lp-adventure-card:hover,.kp-inner-page .lp-download-card:hover,
- .kp-inner-page .lp-news-card:hover,.kp-inner-page .lp-gift-card:hover{transform:none}
-}
-
-/* Artwork-led fantasy finish shared by every public subpage. */
-.kp-inner-page .lp-inner-hero{
-  background:linear-gradient(125deg,#d9f1ff 0%,#e9edff 54%,#fff0cf 100%)
-}
-.kp-inner-page .lp-inner-hero::before{
-  opacity:.27;
-  -webkit-mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.8) 68%,transparent 100%);
-  mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.8) 68%,transparent 100%)
-}
-.kp-inner-page .lp-inner-hero::after{
-  background:
-    radial-gradient(ellipse at 78% 22%,rgba(255,255,255,.58),transparent 39%),
-    linear-gradient(90deg,rgba(242,251,255,.92),rgba(241,248,255,.72) 52%,rgba(242,245,255,.35))
-}
-.kp-inner-page .lp-inner-hero h1{color:#243354;text-shadow:0 2px rgba(255,255,255,.55)}
-.kp-inner-page .lp-inner-hero h1 em{color:#7355d8}
-.kp-inner-page .lp-section-kicker{color:#a36a16;letter-spacing:.11em}
-.kp-inner-page .lp-inner-emblem{
-  border:1px solid rgba(255,255,255,.9);border-radius:30px;
-  background:radial-gradient(circle at 50% 42%,#fff 0%,#eef6ff 57%,#e5ebff 100%);
-  box-shadow:0 22px 52px rgba(57,85,145,.17),inset 0 0 0 8px rgba(255,255,255,.36)
-}
-.kp-inner-page .lp-inner-emblem::before{border-color:rgba(193,145,53,.34)}
-.kp-inner-page .lp-inner-emblem--guardian img{
-  width:252px;height:252px;max-width:90%;object-fit:cover;border-radius:23px;
-  box-shadow:0 12px 27px rgba(49,67,115,.18);filter:none
-}
-.kp-inner-page .lp-inner-content{
-  background:
-    radial-gradient(ellipse at 12% 0%,rgba(201,230,255,.4),transparent 34%),
-    linear-gradient(180deg,#f2f8ff 0%,#fbfdff 42%,#fff 100%)
-}
-.kp-inner-page .lp-adventure-card-large{
-  background:linear-gradient(130deg,#f7fbff 0%,#e6f3ff 57%,#fff3dd 100%)
-}
-.kp-inner-page .lp-adventure-card-large::after{
-  position:absolute;inset:12px;border:1px solid rgba(255,255,255,.68);border-radius:15px;content:"";pointer-events:none
-}
-.kp-inner-page .lp-adventure-card>img{filter:drop-shadow(0 15px 17px rgba(42,69,117,.22))}
-.kp-inner-page .lp-feature-strip article,
-.kp-inner-page .lp-download-card,
-.kp-inner-page .lp-gift-card,
-.kp-inner-page .lp-news-card{
-  border-color:rgba(207,224,244,.95);
-  box-shadow:0 14px 34px rgba(48,80,132,.09)
-}
-.kp-inner-page .lp-download-card.is-ready{background:linear-gradient(155deg,#fff 0%,#f1fbf6 100%)}
-.kp-inner-page .lp-download-card:not(.is-ready){background:linear-gradient(155deg,#fff 0%,#fffaf0 100%)}
-.kp-inner-page .lp-platform-icon{box-shadow:0 9px 20px rgba(66,95,153,.12)}
-.kp-inner-page .lp-gift-visual{background:radial-gradient(circle at 50% 44%,#fff7dc,#f1f0ff 72%,#e6f3ff)}
-.kp-inner-page .lp-gift-code-line code{color:#4b3eb7;font-weight:800;letter-spacing:.05em}
-.kp-inner-page .lp-news-card:nth-child(1) .lp-news-art{background:linear-gradient(135deg,#eeeaff,#fff4dc)}
-.kp-inner-page .lp-news-card:nth-child(2) .lp-news-art{background:linear-gradient(135deg,#dff6ff,#e7edff)}
-.kp-inner-page .lp-news-card:nth-child(3) .lp-news-art{background:linear-gradient(135deg,#fff3d7,#f2e8ff)}
-.kp-inner-page .lp-community-card{
-  background:
-    radial-gradient(circle at 12% 22%,rgba(255,229,159,.24),transparent 28%),
-    linear-gradient(125deg,#4a53ae 0%,#6157c7 52%,#428dbd 100%)
-}
-.kp-inner-page .lp-community-art img{filter:drop-shadow(0 20px 19px rgba(25,34,86,.26))}
-.kp-inner-page .lp-inner-cta{background:linear-gradient(120deg,#fff1d6 0%,#e8efff 54%,#dff5ff 100%)}
-.kp-inner-page .lp-inner-cta .lp-section-kicker{color:#986414}
-.kp-inner-page .lp-inner-cta .lp-button-primary{background:linear-gradient(135deg,#eeb74a,#df8d27);box-shadow:0 12px 26px rgba(198,127,30,.22)}
-.kp-inner-page .lp-footer{background:#f6faff}
-@media(max-width:820px){
- .kp-inner-page .lp-inner-emblem--guardian img{width:194px;height:194px}
-}
-@media(max-width:600px){
- .kp-inner-page .lp-inner-emblem--guardian img{width:170px;height:170px;max-width:90%}
- .kp-inner-page .lp-inner-hero::before{-webkit-mask-image:none;mask-image:none;opacity:.2}
- .kp-inner-page .lp-inner-hero::after{background:linear-gradient(180deg,rgba(242,251,255,.9),rgba(241,248,255,.68))}
+ .kp-inner-page :is(.lp-download-card,.lp-gift-card,.lp-news-card),.kp-inner-page .lp-news-art img{transition:none}
+ .kp-inner-page :is(.lp-download-card,.lp-gift-card,.lp-news-card):hover,.kp-inner-page .lp-news-card:hover .lp-news-art img{transform:none}
 }
