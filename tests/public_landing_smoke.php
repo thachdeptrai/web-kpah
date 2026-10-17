@@ -31,6 +31,8 @@ landing_assert(strpos($shell,'aria-current="page"')!==false,'active navigation i
 landing_assert(strpos($shell,'function kp_public_nav_icon')!==false,'six public routes use local illustrated navigation icons');
 landing_assert(strpos($shell,'assets/css/nav-modern.css')!==false,'modern navigation stylesheet is wired into shared header');
 landing_assert(strpos($shell,'lp-nav-label')!==false,'navigation labels remain visible and accessible');
+landing_assert(strpos($shell,'class="lp-download-nav"')===false,'duplicate header download button removed');
+landing_assert(strpos($shell,"'download' => ['/tai-game', 'Tải game']")!==false,'single download destination remains in main navigation');
 $navigation=landing_read('assets/css/nav-modern.css');
 foreach (['home','about','download','giftcode','news','community'] as $key) {
     landing_assert(strpos($shell,"'".$key."'")!==false,'navigation destination retained '.$key);

@@ -64,7 +64,7 @@ function kp_public_page_start(string $title, string $active, string $description
         <nav class="lp-links" id="lp-menu" aria-label="Điều hướng chính">
             <?php foreach ($links as $key => $link): ?><a data-nav="<?= kp_e($key) ?>"<?= $active === $key ? ' class="is-active" aria-current="page"' : '' ?> href="<?= kp_e($link[0]) ?>"><?= kp_public_nav_icon($key) ?><span class="lp-nav-label"><?= kp_e($link[1]) ?></span></a><?php endforeach; ?>
         </nav>
-        <div class="lp-nav-actions"><a class="lp-download-nav" href="/tai-game">▣ <span>Tải game</span></a><a class="<?= $loggedIn ? 'lp-nav-account' : 'lp-nav-login' ?>" href="<?= $loggedIn ? '/tai-khoan' : '/dang-nhap' ?>"><?= $loggedIn ? '<span>◎</span>Tài khoản' : 'Đăng nhập' ?></a></div>
+        <div class="lp-nav-actions"><a class="<?= $loggedIn ? 'lp-nav-account' : 'lp-nav-login' ?>" href="<?= $loggedIn ? '/tai-khoan' : '/dang-nhap' ?>"><?= $loggedIn ? '<span>◎</span>Tài khoản' : 'Đăng nhập' ?></a></div>
     </div>
 </header>
 <main id="noi-dung">
