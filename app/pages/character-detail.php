@@ -39,6 +39,7 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 <?php else: ?>
 <section class="ci-summary" aria-label="Chỉ số nhân vật">
 <?php foreach (['lastLv'=>'Cấp độ','xp'=>'Kinh nghiệm','gold'=>'Xu','luong'=>'Lượng','luonglock'=>'Lượng khóa','hp'=>'HP','mp'=>'MP'] as $field=>$label): ?>
+<?php if (in_array($field, ['hp','mp'], true) && (float)($character[$field] ?? 0) <= 0) continue; ?>
 <div><span><?= kp_e($label) ?></span><strong><?= kp_e(kp_player_format($character[$field] ?? 0)) ?></strong></div>
 <?php endforeach; ?>
 </section>
