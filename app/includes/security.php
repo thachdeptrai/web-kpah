@@ -30,6 +30,11 @@ function kp_safe_url($url)
     if (preg_match('/[\\x00-\\x1F\\x7F\\\\]/', $url)) {
         return '';
     }
+    // WHATWG navigation treats backslashes like slashes for http(s) URLs.
+    // Never accept a disguised external redirect or embedded control bytes.
+    if (strpos($url, chr(92)) !== false || preg_match('/[\x00-\x20\x7f]/', $url)) {
+        return '';
+    }
     if (preg_match('#^https?://#i', $url)) {
         return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
     }
