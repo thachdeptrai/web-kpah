@@ -67,6 +67,35 @@ function kp_topup_write_file($path, array $data) {
         throw new RuntimeException('Không thể hoàn tất ghi lịch sử giao dịch.');
     }
 }
+
+/** Global public visibility for the Top nạp ranking (defaults on for upgrades). */
+function kp_topnap_enabled(): bool {
+    if(array_key_exists('kp_topnap_enabled_cache',$GLOBALS))return (bool)$GLOBALS['kp_topnap_enabled_cache'];
+    try {
+        $path=kp_topup_root().'/topnap-visibility.json';
+        if(!is_file($path))return $GLOBALS['kp_topnap_enabled_cache']=true;
+        $data=json_decode((string)@file_get_contents($path),true);
+        // A corrupt setting must not accidentally publish the ranking.
+        return $GLOBALS['kp_topnap_enabled_cache']=(is_array($data)&&array_key_exists('enabled',$data)?$data['enabled']===true:false);
+    }catch(Throwable $e){
+        if(function_exists('kp_log'))kp_log('Top nạp visibility unavailable',$e);
+        return $GLOBALS['kp_topnap_enabled_cache']=false;
+    }
+}
+function kp_topnap_set_enabled(bool $enabled): void {
+    $path=kp_topup_root().'/topnap-visibility.json';
+    $lock=@fopen($path.'.lock','c+');
+    if(!$lock)throw new RuntimeException('Không thể khóa cấu hình Top nạp.');
+    try{
+        if(!flock($lock,LOCK_EX))throw new RuntimeException('Không thể khóa cấu hình Top nạp.');
+        kp_topup_write_file($path,['enabled'=>$enabled,'updated_at'=>date('c')]);
+        $GLOBALS['kp_topnap_enabled_cache']=$enabled;
+    }finally{
+        @flock($lock,LOCK_UN);
+        fclose($lock);
+    }
+}
+
 function kp_topup_with_record($type, $id, callable $callback) {
     $path = kp_topup_path($type, $id);
     $fh = @fopen($path . '.lock', 'c+');

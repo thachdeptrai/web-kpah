@@ -2,6 +2,7 @@
 require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/player_portal.php';
 require_once __DIR__.'/../includes/dashboard_data.php';
+require_once __DIR__.'/../includes/rankings.php';
 $user=kp_player_account();
 $username=(string)$user['username'];
 $dashboard=kp_dashboard_data((int)$user['id']);
@@ -45,11 +46,11 @@ kp_player_head('Tổng quan tài khoản','home',$user);
             <strong><?= $walletReady?kp_player_format($dashboard['vnd']).'đ':'—' ?></strong>
             <small>Dùng số dư để đổi mốc Lượng <span aria-hidden="true">↗</span></small>
         </a>
-        <a href="/bang-xep-hang?type=nap" class="pd-stat-card">
+        <?php if(kp_topnap_enabled()): ?><a href="/bang-xep-hang?type=nap" class="pd-stat-card"><?php else: ?><article class="pd-stat-card"><?php endif; ?>
             <span class="pd-stat-top"><span>Tổng đã nạp</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_art('receipt') ?></span></span>
             <strong><?= $totalReady?kp_player_format($dashboard['tongnap']).'đ':'—' ?></strong>
-            <small>Không tính tiền khuyến mãi <span aria-hidden="true">↗</span></small>
-        </a>
+            <small>Không tính tiền khuyến mãi <?php if(kp_topnap_enabled()): ?><span aria-hidden="true">↗</span><?php endif; ?></small>
+        <?php if(kp_topnap_enabled()): ?></a><?php else: ?></article><?php endif; ?>
         <a href="/diem-tich-luy" class="pd-stat-card">
             <span class="pd-stat-top"><span>Point tích lũy</span><span class="pd-stat-symbol" aria-hidden="true"><?= kp_player_icon_art('gift') ?></span></span>
             <strong><?= $pointsReady?kp_player_format($dashboard['points']):'—' ?></strong>
@@ -169,7 +170,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     <div class="portal-quick-links">
         <a href="/vi-vnd"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('wallet') ?></span> Ví VNĐ & đổi mốc <span aria-hidden="true">↗</span></a>
         <a href="/diem-tich-luy"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('points') ?></span> Point tích lũy & đổi quà <span aria-hidden="true">↗</span></a>
-        <a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp VNĐ <span aria-hidden="true">↗</span></a>
+        <?php if(kp_topnap_enabled()): ?><a href="/bang-xep-hang?type=nap"><span aria-hidden="true">♛</span> Top nạp VNĐ <span aria-hidden="true">↗</span></a><?php endif; ?>
         <a href="/giftcode-cua-toi"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('gift') ?></span> Giftcode của tôi <span aria-hidden="true">↗</span></a>
         <a href="/thong-bao"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('bell') ?></span> Trung tâm thông báo <span aria-hidden="true">↗</span></a>
         <a href="/theo-doi-don-nap"><span class="portal-quick-art" aria-hidden="true"><?= kp_player_icon_art('receipt') ?></span> Theo dõi đơn nạp <span aria-hidden="true">↗</span></a>

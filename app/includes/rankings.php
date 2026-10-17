@@ -6,6 +6,7 @@
  * Labels are descriptive, not claims about server-side reward rules.
  */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/topup_core.php';
 
 function kp_rankings_catalog()
 {
@@ -254,7 +255,10 @@ function kp_rankings_fetch($type)
 {
     $catalog=kp_rankings_catalog();
     if (!isset($catalog[$type])) throw new InvalidArgumentException('Loại bảng xếp hạng không hợp lệ.');
-    if($type==='nap')return kp_rankings_topnap();
+    if($type==='nap'){
+        if(!kp_topnap_enabled())throw new RuntimeException('Bảng Top nạp hiện đang tắt.');
+        return kp_rankings_topnap();
+    }
     $st=kp_db()->query($catalog[$type]['sql']);
     return $st->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -267,6 +271,7 @@ function kp_rankings_available()
 {
     $available=[];
     foreach(kp_rankings_catalog() as $key=>$category){
+        if($key==='nap'&&!kp_topnap_enabled())continue;
         try {
             if($key==='nap'){
                 if(kp_rankings_topnap())$available[$key]=$category;

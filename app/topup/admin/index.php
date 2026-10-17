@@ -2,7 +2,18 @@
 require __DIR__ . '/../../includes/bootstrap.php';
 require_once __DIR__ . '/../../includes/topup_core.php';
 require_once __DIR__ . '/../_layout.php';
-$admin=kp_topup_admin();$orders=kp_topup_recent('orders',null,500);$grants=kp_topup_recent('grants',null,500);
+$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$notice='';$topNapEnabled=kp_topnap_enabled();
+if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
+ try{
+  if(!kp_admin_csrf_valid($_POST['csrf']??null))throw new RuntimeException('Phiên bảo mật đã hết hạn. Tải lại trang.');
+  if(($_POST['action']??'')!=='topnap_visibility')throw new RuntimeException('Thao tác không hợp lệ.');
+  $topNapEnabled=($_POST['enabled']??'')==='1';
+  kp_topnap_set_enabled($topNapEnabled);
+  kp_log('top nap visibility changed by admin #'.(int)$admin['id'].' enabled='.($topNapEnabled?'1':'0'));
+  $notice=$topNapEnabled?'Đã bật Top nạp. Nút và hạng mục Top nạp sẽ hiển thị trên website.':'Đã tắt Top nạp. Nút và hạng mục Top nạp đã được ẩn trên website.';
+ }catch(Throwable $e){kp_log('top nap visibility update failed',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không lưu được cấu hình Top nạp.';$topNapEnabled=kp_topnap_enabled();}
+}
+$orders=kp_topup_recent('orders',null,500);$grants=kp_topup_recent('grants',null,500);
 $pending=0;foreach($orders as $o){if(in_array($o['status'],['needs_review','crediting','wallet_crediting','verified_pending_delivery','submitting'],true))$pending++;}
 $bankCount=0;$bankAttention=0;$bankPaid=0;
 try {
@@ -12,6 +23,11 @@ try {
 
 kp_topup_page_start('Quản lý nạp','index',(string)$admin['username'],true);?>
 <section class="tp-hero"><span class="tp-kicker"><i></i> ADMIN / NẠP TÀI NGUYÊN</span><h1>Quản lý nạp <em>tách riêng.</em></h1><p class="tp-lead">Tỷ lệ nạp, cộng tài nguyên và đối soát — mỗi mục ở một nơi.</p></section>
+<?php if($error): ?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><?php endif;?>
+<?php if($notice): ?><div class="tp-alert good" role="status"><?=kp_e($notice)?></div><?php endif;?>
+<section class="tp-section"><div class="tp-panel"><div class="tp-panel-head"><div><span class="tp-eyebrow">HIỂN THỊ WEBSITE</span><h2>Top nạp</h2></div><span class="tp-chip"><?=$topNapEnabled?'ĐANG BẬT':'ĐANG TẮT'?></span></div>
+<p class="tp-muted">Khi tắt, liên kết Top nạp bị ẩn khỏi menu nạp, bảng xếp hạng và các lối tắt tài khoản. Trang Top nạp cũng không còn hiển thị trực tiếp.</p>
+<form method="post" class="tp-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="topnap_visibility"><label class="tp-field tp-farmer-offline"><input type="checkbox" name="enabled" value="1" class="tp-farmer-checkbox" <?=$topNapEnabled?'checked':''?>><span>Bật hiển thị Top nạp cho người chơi</span></label><button type="submit" class="tp-button">Lưu cài đặt Top nạp ↗</button></form></div></section>
 <section class="tp-section"><div class="tp-summary tp-mb-22"><div><small>Yêu cầu thẻ đang lưu</small><strong><?= count($orders) ?></strong></div><div><small>Yêu cầu cần chú ý</small><strong><?= $pending ?></strong></div><div><small>Lượt cộng thủ công gần đây</small><strong><?= count($grants) ?></strong></div><div><small>Đơn payOS</small><strong><?= $bankCount ?></strong></div><div><small>Đơn payOS cần đối soát</small><strong><?= $bankAttention ?></strong></div></div>
 <div class="tp-grid"><a class="tp-card" href="/quan-tri/ty-le"><span class="tp-icon">⚙</span><h3>Tỷ lệ & thưởng bank</h3><p>Chỉnh % cộng VNĐ khi chuyển khoản, bật tặng Điểm nông dân và cấu hình các mức quy đổi.</p><span class="tp-card-cta">Chỉnh thưởng <strong>↗</strong></span></a>
 <a class="tp-card" href="/quan-tri/cong-tai-nguyen"><span class="tp-icon purple">✦</span><h3>Cộng tài nguyên</h3><p>Chọn nhân vật đã thoát game, nhập số cần cộng và xác nhận.</p><span class="tp-card-cta">Cộng thủ công <strong>↗</strong></span></a>
