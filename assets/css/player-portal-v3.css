@@ -147,7 +147,7 @@ body.portal-page:before{
  padding:clamp(27px,3.3vw,46px);
  border:1px solid rgba(255,255,255,.94);border-radius:24px;
  background:linear-gradient(92deg,#fff 0%,#f2faff 48%,rgba(226,245,255,.73) 74%,rgba(221,245,255,.25)),
- url("/assets/img/portal-sky-vista.webp") right 44%/auto 145% no-repeat,
+ url("/assets/img/portal-sky-vista.webp?v=20261017-2") right 44%/auto 145% no-repeat,
  linear-gradient(120deg,#e3f8ff,#d2eaff);
  box-shadow:0 20px 42px rgba(38,95,174,.14);
 }
@@ -408,7 +408,7 @@ body.portal-page:before{
  .portal-page .mini-avatar{width:33px;height:33px;border-radius:10px}
  .portal-page .portal-hero{
   min-height:0;margin:15px 0 20px;padding:24px 18px;border-radius:18px;
-  background:linear-gradient(90deg,#fff 0%,#eff9ff 90%),url("/assets/img/portal-sky-vista.webp") right center/cover;
+  background:linear-gradient(90deg,#fff 0%,#eff9ff 90%),url("/assets/img/portal-sky-vista.webp?v=20261017-2") right center/cover;
  }
  .portal-page .portal-hero h1{font-size:clamp(27px,6.8vw,35px)}
  .portal-page .portal-hero p{font-size:12px;line-height:1.75}
@@ -775,12 +775,12 @@ body.portal-page:before{
 .portal-page .portal-dashboard-hero{
  background:
   linear-gradient(90deg,#fff 0%,rgba(244,251,255,.97) 38%,rgba(236,248,255,.48) 70%,rgba(232,246,255,.12)),
-  url("/assets/img/portal-adventurer.webp") right 8% center/auto 94% no-repeat,
-  url("/assets/img/portal-sky-vista.webp") center 52%/cover no-repeat,#e8f7ff;
+  url("/assets/img/portal-adventurer.webp?v=20261017-2") right 8% center/auto 94% no-repeat,
+  url("/assets/img/portal-sky-vista.webp?v=20261017-2") center 52%/cover no-repeat,#e8f7ff;
 }
 @media(max-width:600px){
  .portal-page .portal-dashboard-hero{
-  background:linear-gradient(90deg,rgba(255,255,255,.96),rgba(240,249,255,.91)),url("/assets/img/portal-sky-vista.webp") center/cover no-repeat;
+  background:linear-gradient(90deg,rgba(255,255,255,.96),rgba(240,249,255,.91)),url("/assets/img/portal-sky-vista.webp?v=20261017-2") center/cover no-repeat;
  }
 }
 
