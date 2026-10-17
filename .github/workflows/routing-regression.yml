@@ -1,9 +1,9 @@
 name: Routes and account regression
 on:
   push:
-    paths: ['app/**', 'config/**', 'index.php', '.htaccess', 'tests/**', '.github/workflows/routing-regression.yml']
+    paths: ['app/**', 'config/**', 'index.php', '.htaccess', 'assets/css/**', 'assets/js/**', 'assets/img/**', 'tests/**', '.github/workflows/routing-regression.yml']
   pull_request:
-    paths: ['app/**', 'config/**', 'index.php', '.htaccess', 'tests/**', '.github/workflows/routing-regression.yml']
+    paths: ['app/**', 'config/**', 'index.php', '.htaccess', 'assets/css/**', 'assets/js/**', 'assets/img/**', 'tests/**', '.github/workflows/routing-regression.yml']
   workflow_dispatch:
 permissions:
   contents: read
