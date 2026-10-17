@@ -179,7 +179,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
         <a href="/thong-bao"><span aria-hidden="true">◉</span> Trung tâm thông báo <span aria-hidden="true">↗</span></a>
         <a href="/theo-doi-don-nap"><span aria-hidden="true">◷</span> Theo dõi đơn nạp <span aria-hidden="true">↗</span></a>
         <a href="/lich-su-bao-mat"><span aria-hidden="true">◇</span> Lịch sử bảo mật <span aria-hidden="true">↗</span></a>
-        <a href="/#dien-dan"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
+        <a href="/cong-dong"><span aria-hidden="true">♧</span> Cộng đồng <span aria-hidden="true">↗</span></a>
     </div>
 </section>
 <?php kp_player_foot(); ?>

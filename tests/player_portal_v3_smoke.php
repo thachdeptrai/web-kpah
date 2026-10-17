@@ -36,4 +36,6 @@ pp_ok(strpos($profile,'/api/user-profile')!==false && strpos($profile,'/api/chan
 pp_ok(strpos($script,'profile-form')!==false && strpos($script,'change-password-form')!==false,'profile interaction preserved');
 pp_ok(strpos($characters,'kp_player_characters')!==false &&
       strpos($characters,'kp_e($charName)')!==false,'owned character output escaped');
+$dashboard=file_get_contents(KP_ROOT.'/app/pages/home.php');
+pp_ok(strpos($dashboard,'href="/cong-dong"')!==false && strpos($dashboard,'href="/#dien-dan"')===false,'dashboard community shortcut reaches actual community page');
 echo "Player Portal v3 contract smoke PASS\n";
