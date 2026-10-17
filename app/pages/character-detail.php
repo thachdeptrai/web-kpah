@@ -38,7 +38,7 @@ kp_player_head('Hồ sơ nhân vật','characters',$user,true);
 <div class="ci-empty">Nhân vật không tồn tại hoặc không thuộc tài khoản đang đăng nhập.</div>
 <?php else: ?>
 <section class="ci-summary" aria-label="Chỉ số nhân vật">
-<?php foreach (['lastLv'=>'Cấp độ','xp'=>'Kinh nghiệm','gold'=>'Xu','luong'=>'Lượng','luonglock'=>'Lượng khóa','hp'=>'HP','mp'=>'MP','strength'=>'Sức mạnh','agitity'=>'Nhanh nhẹn','spirit'=>'Tinh thần','dexterity'=>'Khéo léo','luck'=>'May mắn'] as $field=>$label): ?>
+<?php foreach (['lastLv'=>'Cấp độ','xp'=>'Kinh nghiệm','gold'=>'Xu','luong'=>'Lượng','luonglock'=>'Lượng khóa','hp'=>'HP','mp'=>'MP'] as $field=>$label): ?>
 <div><span><?= kp_e($label) ?></span><strong><?= kp_e(kp_player_format($character[$field] ?? 0)) ?></strong></div>
 <?php endforeach; ?>
 </section>

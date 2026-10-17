@@ -6,6 +6,14 @@ function inv_assert($condition, $description) {
     if (!$condition) { fwrite(STDERR, "FAIL: ".$description."\n"); exit(1); }
 }
 $raw = '0,1,1,200,2000,5,12,0,0|0,15,1,1,0>5,123,1,100,100,0,1|0,0,0>INVALID>6,456,1,10,10,0,1|0,0';
+$detail = file_get_contents(KP_ROOT . '/app/pages/character-detail.php');
+$portalCss = file_get_contents(KP_ROOT . '/assets/css/player-portal-v3.css');
+foreach (['strength','agitity','spirit','dexterity','luck'] as $unusedStat) {
+    inv_assert(strpos($detail, "'".$unusedStat."' =>") === false, 'omit zero-only stat '.$unusedStat);
+}
+inv_assert(strpos($portalCss, 'center 48%/cover no-repeat') !== false &&
+    strpos($portalCss, 'right 44%/auto 145%') === false,
+    'hero vista fills the surface with a blended overlay, without a pasted rectangle');
 $items = kp_inventory_parse($raw);
 inv_assert(count($items) === 2, 'invalid game items rejected');
 inv_assert($items[0]['class'] === 0 && $items[0]['template_id'] === 1, 'correct Item.getDBInfo offsets');
