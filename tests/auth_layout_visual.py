@@ -57,6 +57,18 @@ JS=r"""JSON.stringify((()=>{
 
  const storyLogo=$('.kp-auth-story__logo');
  fail(!storyLogo||!storyLogo.complete||storyLogo.naturalWidth===0,'story logo unavailable');
+ const isCompact=location.pathname==='/dang-ky'||location.pathname==='/quen-mat-khau';
+ if(isCompact&&document.body.classList.contains('kp-auth-v4')){
+   const imageHeight=story?.height??0;
+   if(innerWidth<=820)fail(imageHeight>250,'compact auth artwork too tall on mobile: '+imageHeight);
+   if(innerWidth>=960)fail(imageHeight>715,'compact auth artwork stretches beyond intended cap: '+imageHeight);
+   if(location.pathname==='/dang-ky'&&innerWidth>=960){
+     const f=$('#reg-form>fieldset.fields');
+     const columns=f?getComputedStyle(f).gridTemplateColumns.split(' ').filter(Boolean):[];
+     fail(columns.length!==2,'register not arranged in two desktop columns');
+   }
+   if(innerWidth>=1200)fail(form&&form.height>1020,'compact auth form too tall on desktop: '+form.height);
+ }
  const btns=[...document.querySelectorAll('form input:not([type=hidden]):not([type=checkbox])')].filter(input=>!input.closest('.hp') && getComputedStyle(input).visibility !== 'hidden');
  btns.forEach((input,i)=>{const t=input.getBoundingClientRect();
    fail(t.right>innerWidth+2||t.left<0,'input outside viewport '+i)});
