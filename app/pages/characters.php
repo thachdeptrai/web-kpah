@@ -82,7 +82,7 @@ kp_player_head('Nhân vật của tôi','characters',$user,true);
                                         <span class="char-ui-caption">TÊN NHÂN VẬT</span>
                                         <h3><?= kp_e($charName) ?></h3>
                                         <p class="char-ui-clan">
-                                            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 1.8 16.4 5.2v7.2L10 18l-6.4-5.6V5.2L10 1.8Z M10 6v7m-3.5-3.5h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                            <span class="char-ui-clan-art" aria-hidden="true"><?= kp_player_icon_art('shield') ?></span>
                                             <?= $clanName !== '' ? kp_e($clanName) : 'Chưa gia nhập bang hội' ?>
                                         </p>
                                     </div>
@@ -93,29 +93,29 @@ kp_player_head('Nhân vật của tôi','characters',$user,true);
                                 </div>
                                 <dl class="char-ui-stats">
                                     <div class="char-ui-stat char-ui-stat--xp">
-                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">✧</span> Kinh nghiệm</dt>
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true"><?= kp_player_icon_art('points') ?></span> Kinh nghiệm</dt>
                                         <dd><?= $numberFormat($character['xp'] ?? 0) ?></dd>
                                     </div>
                                     <div class="char-ui-stat char-ui-stat--gold">
-                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">●</span> Xu</dt>
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true"><?= kp_player_icon_art('wallet') ?></span> Xu</dt>
                                         <dd><?= $numberFormat($character['gold'] ?? 0) ?></dd>
                                     </div>
                                     <div class="char-ui-stat char-ui-stat--silver">
-                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">◆</span> Lượng</dt>
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true"><?= kp_player_icon_art('points') ?></span> Lượng</dt>
                                         <dd><?= $numberFormat($character['luong'] ?? 0) ?></dd>
                                     </div>
                                     <div class="char-ui-stat char-ui-stat--locked">
-                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">◇</span> Lượng khóa</dt>
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true"><?= kp_player_icon_art('shield') ?></span> Lượng khóa</dt>
                                         <dd><?= $numberFormat($character['luonglock'] ?? 0) ?></dd>
                                     </div>
                                     <div class="char-ui-stat char-ui-stat--farmer">
-                                        <dt><span class="char-ui-stat-icon" aria-hidden="true">✧</span> Điểm nông dân</dt>
+                                        <dt><span class="char-ui-stat-icon" aria-hidden="true"><?= kp_player_icon_art('points') ?></span> Điểm nông dân</dt>
                                         <dd><?= ($character['diemNongDan'] ?? null) === null ? '—' : $numberFormat($character['diemNongDan']) ?></dd>
                                     </div>
                                 </dl>
                                 <div class="char-ui-card-bottom">
                                     <span class="char-ui-last">
-                                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.2" stroke="currentColor" stroke-width="1.5"/><path d="M10 5.8v4.7l3.1 1.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                        <span class="char-ui-time-art" aria-hidden="true"></span>
                                         <?= $lastSeen !== '' ? 'Đăng nhập gần nhất: ' . kp_e($lastSeen) : 'Chưa có lịch sử đăng nhập' ?>
                                     </span>
                                     <a class="char-ui-view-inventory" href="/nhan-vat/chi-tiet?name=<?= rawurlencode($charName) ?>">Xem trang bị & túi đồ ↗</a>

@@ -42,4 +42,7 @@ $art=pp_read('assets/css/player-art-icons.css');
 pp_ok(strpos($art,'kpah-player-icon-atlas.png')!==false,'portal includes custom illustrated raster sprite');
 pp_ok(strpos($base,'player-art-icons.css')!==false,'original illustrated icon CSS loaded by shared portal shell');
 pp_ok(strpos($dashboard,'kp_player_icon_art')!==false,'dashboard uses bespoke raster illustrations');
+pp_ok(strpos($characters,'char-ui-clan-art')!==false,'character guild badge uses custom fantasy icon');
+pp_ok(strpos($characters,'char-ui-stat-icon')!==false && strpos($characters,"kp_player_icon_art('points')")!==false,'character currencies use custom painted icons');
+pp_ok(strpos($characters,'char-ui-time-art')!==false,'recent activity uses CSS illustration instead of inline SVG icon');
 echo "Player Portal v3 contract smoke PASS\n";
