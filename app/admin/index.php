@@ -33,6 +33,7 @@ try {
 <link rel="stylesheet" href="/assets/css/admin-home.css?v=<?= (int)@filemtime(KP_ROOT . '/assets/css/admin-home.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head>
 <body>
 <header class="topbar">

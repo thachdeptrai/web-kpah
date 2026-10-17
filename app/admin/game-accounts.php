@@ -151,10 +151,11 @@ $banClass=function(int $ban): string {return $ban===0?'ok':($ban===1?'banned':'s
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Quản lý tài khoản game & nhân vật · NGHIỆN KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin-home.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin-home.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-home.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-game-accounts.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-game-accounts.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head><body>
 <header class="topbar">
 <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.webp" width="50" height="50" alt=""></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Tài khoản & nhân vật</strong></span></a>

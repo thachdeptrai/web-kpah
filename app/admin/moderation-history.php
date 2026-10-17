@@ -81,6 +81,7 @@ $fmt=function($value): string{return number_format((int)$value,0,',','.');};
 <link rel="stylesheet" href="/assets/css/admin-game-accounts.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-game-accounts.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-moderation-history.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-moderation-history.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head><body class="kp-admin-redesign">
 <header class="topbar kp-admin-topbar">
  <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.webp" alt="" width="44" height="44"></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Lịch sử thao tác</strong></span></a>

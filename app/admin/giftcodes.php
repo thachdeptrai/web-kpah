@@ -131,9 +131,10 @@ try {
 ?><!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>Quản lý Giftcode · NGHIỆN KPAH</title>
-<link rel="stylesheet" href="/assets/css/giftcodes.css?v=1">
+<link rel="stylesheet" href="/assets/css/giftcodes.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/giftcodes.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head><body class="gc-admin">
 <header class="gc-top"><a href="/quan-tri">← Quản trị</a><strong>NGHIỆN KPAH · GIFTCODE</strong><span><?= kp_e($admin['username']) ?></span></header>
 <?php kp_admin_nav('giftcodes','admin'); ?>

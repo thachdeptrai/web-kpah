@@ -133,10 +133,11 @@ $format=function($v): string{
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Giám sát Điểm nông dân · KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin-home.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin-home.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-home.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-farmer.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-farmer.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head><body>
 <header class="topbar">
   <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.webp" width="50" height="50" alt=""></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Điểm nông dân</strong></span></a>

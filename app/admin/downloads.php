@@ -67,10 +67,11 @@ $platforms = kp_game_platforms();
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Quản lý tải game · NGHIỆN KPAH</title>
-<link rel="stylesheet" href="/assets/css/admin.css?v=1">
+<link rel="stylesheet" href="/assets/css/admin.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-downloads.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-downloads.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head><body>
 <header><div class="brand"><div class="brand-mark"><img src="/assets/img/emblem.webp" width="50" height="50" alt=""></div><div class="brand-copy"><span class="eyebrow">NGHIỆN KPAH · QUẢN TRỊ</span><h1>Quản lý bản tải game</h1></div></div>
 <div class="head-right"><a class="logout" href="/">Xem trang chủ ↗</a><span><?= kp_e($admin['username']) ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div></header>

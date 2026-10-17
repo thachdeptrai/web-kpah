@@ -48,6 +48,7 @@ header('Content-Type: text/html; charset=utf-8');
 <link rel="stylesheet" href="/assets/css/topup.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/topup.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head><body class="tp-page tp-admin"><main class="tp-content kp-key-users-content">
 <?php kp_admin_nav('key-users','admin');?>
 <section class="tp-hero"><span class="tp-kicker"><i></i> QUẢN TRỊ / PHÂN QUYỀN</span><h1>Tài khoản <em>role key.</em></h1><p class="tp-lead">Cấp quyền tạo mã giới thiệu nhưng không được xem giao dịch, ví, danh sách admin hoặc thay đổi cấu hình.</p></section>

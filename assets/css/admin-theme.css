@@ -1,0 +1,120 @@
+/* Shared light fantasy theme for every admin screen. Load after page styles. */
+:root{color-scheme:light;--admin-ink:#28344b;--admin-muted:#687792;--admin-line:#dce5f1;--admin-paper:rgba(255,255,255,.91);--admin-blue:#5278c7;--admin-violet:#7565c7;--admin-gold:#b78232;--admin-green:#267d62;--admin-red:#b84f62}
+html{min-height:100%;background:#edf4fb}
+body:not(.kp-admin-login-page),body.kp-admin-login-page{
+  min-height:100vh;color:var(--admin-ink);font-family:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif;
+  background:radial-gradient(ellipse at 12% 0%,rgba(255,255,255,.98),transparent 37%),radial-gradient(ellipse at 88% 13%,rgba(199,225,255,.74),transparent 32%),linear-gradient(160deg,#f7faff 0%,#edf4fb 55%,#f7f3ff 100%);
+  -webkit-font-smoothing:antialiased
+}
+body:not(.kp-admin-login-page)::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.52;background:radial-gradient(circle at 80% 12%,#fff 0 1px,transparent 2px),radial-gradient(circle at 18% 28%,#fff 0 1px,transparent 2px);background-size:48px 48px,67px 67px;mask-image:linear-gradient(#000,transparent 78%)}
+body:not(.kp-admin-login-page)>header,body:not(.kp-admin-login-page)>header.topbar,.gc-top{
+  position:relative;z-index:40;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  width:100%;max-width:none;min-height:76px;margin:0;padding:12px max(20px,calc((100% - 1320px)/2));
+  color:var(--admin-ink);background:rgba(255,255,255,.86);border-bottom:1px solid rgba(190,207,228,.78);
+  box-shadow:0 8px 30px rgba(45,75,120,.07);backdrop-filter:blur(16px)
+}
+body:not(.kp-admin-login-page)>header .brand,body:not(.kp-admin-login-page)>header .head-right{color:var(--admin-muted)}
+body:not(.kp-admin-login-page)>header .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+body:not(.kp-admin-login-page)>header .brand-icon,body:not(.kp-admin-login-page)>header .brand-mark{display:grid;place-items:center;width:48px;height:48px;overflow:hidden;border:1px solid #d6e2f3;border-radius:15px;background:linear-gradient(145deg,#fff,#e9f2ff);box-shadow:0 7px 18px rgba(77,116,177,.13)}
+body:not(.kp-admin-login-page)>header .brand-icon img,body:not(.kp-admin-login-page)>header .brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
+body:not(.kp-admin-login-page)>header .brand small,body:not(.kp-admin-login-page)>header .brand .eyebrow{display:block;margin:0 0 3px;color:#7184aa;font-size:9px;font-weight:800;letter-spacing:.12em}
+body:not(.kp-admin-login-page)>header .brand strong,body:not(.kp-admin-login-page)>header .brand h1{display:block;margin:0;color:#263651;font:700 clamp(16px,1.7vw,21px)/1.25 "Philosopher","Be Vietnam Pro",system-ui,sans-serif;letter-spacing:0}
+body:not(.kp-admin-login-page)>header .top-actions,body:not(.kp-admin-login-page)>header .head-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0;flex-wrap:wrap;color:var(--admin-muted);font-size:12px}
+body:not(.kp-admin-login-page)>header .secure{display:inline-flex;align-items:center;gap:7px;color:#267d62}
+body:not(.kp-admin-login-page)>header .secure i{width:7px;height:7px;border-radius:50%;background:#45aa80;box-shadow:0 0 0 4px rgba(69,170,128,.13)}
+body:not(.kp-admin-login-page)>header .user{padding:7px 10px;border:1px solid #e0e7f1;border-radius:99px;color:#40516d;background:#f7f9fd}
+body:not(.kp-admin-login-page) a{color:#526fb4}
+body:not(.kp-admin-login-page) a:hover{color:#354e91}
+body:not(.kp-admin-login-page)>header .logout{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;border:1px solid #dbe4f0;border-radius:11px;background:#fff;color:#50627e;font-weight:750}
+body:not(.kp-admin-login-page)>header .logout:hover{border-color:#aebfe0;background:#f4f7ff;color:#344b85}
+body:not(.kp-admin-login-page) :is(.shell,.wrap,.kp-key-users-content,.gc-shell){position:relative;z-index:1}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading){color:var(--admin-ink)}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading) :is(h1,h2){color:#273753}
+body:not(.kp-admin-login-page) :is(.welcome,.hero,.gc-heading) p,body:not(.kp-admin-login-page) :is(.section-heading,.panel-heading) p{color:var(--admin-muted)}
+body:not(.kp-admin-login-page) :is(.eyebrow,.section-kicker,.section-heading .eyebrow){color:#6c78ac}
+body:not(.kp-admin-login-page) :is(.metric,.stat,.action-card,.panel,.card,.gc-panel,.gc-code,.gam-panel,.dl-card,.tp-panel,.farmer-hot-card){color:var(--admin-ink);border-color:var(--admin-line);background:var(--admin-paper);box-shadow:0 12px 32px rgba(49,78,122,.075)}
+body:not(.kp-admin-login-page) :is(.metric,.stat,.action-card,.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel,.farmer-hot-card) :is(h2,h3,strong){color:#2d3d59}
+body:not(.kp-admin-login-page) :is(.metric-top,.metric small,.stat-label,.stat-note,.muted,.mini,.empty,.gam-muted,.gam-hint,.gam-footer,.farmer-caption,.dl-field small,.dl-guide,.tp-muted){color:var(--admin-muted)}
+body:not(.kp-admin-login-page) :is(.metric-icon,.action-icon,.dl-platform-icon,.gam-avatar){border-color:#dce5f3;background:linear-gradient(145deg,#f4f7ff,#eaf1ff);color:#637ac0}
+body:not(.kp-admin-login-page) :is(.metric strong,.stat-value){color:#283953;font-variant-numeric:tabular-nums}
+body:not(.kp-admin-login-page) :is(.live,.admin-count,.farmer-readonly,.gam-readonly){border:1px solid #c9e7d9;background:#edf9f3;color:#267657}
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap){border:1px solid #e0e7f1;border-radius:13px;background:#fff}
+body:not(.kp-admin-login-page) table{color:#35445d}
+body:not(.kp-admin-login-page) :is(th, .gam-audit th){color:#687892;background:#f2f6fc;border-bottom:1px solid #e2e9f2}
+body:not(.kp-admin-login-page) :is(td,.gam-audit td){border-bottom-color:#e9eef5;color:#3f4e66}
+body:not(.kp-admin-login-page) tbody tr:hover{background:#f4f7fd}
+body:not(.kp-admin-login-page) :is(.username,.gam-account-main strong,.gam-char-header strong,.gc-code summary strong,.gc-panel h2,.gam-section-head h2,.gam-facts strong,.gam-char-stats strong,.gam-bulk-overview strong,.gam-bulk-target strong){color:#2c3b56}
+body:not(.kp-admin-login-page) :is(.id,.gam-account-main small,.gam-section-head>small,.gam-facts span,.gam-char-stats span,.gam-char-sub,.gam-bulk-target small,.gc-heading p,.gc-panel>p){color:#718098}
+body:not(.kp-admin-login-page) :is(input:not([type=checkbox]):not([type=radio]),select,textarea,.search,.tp-input){color:#2f3e57;background:#fff;border:1px solid #cfd9e8;border-radius:10px}
+body:not(.kp-admin-login-page) :is(input,select,textarea)::placeholder{color:#98a4b7}
+body:not(.kp-admin-login-page) :is(input,select,textarea):focus{border-color:#8298d2;box-shadow:0 0 0 3px rgba(108,130,194,.14);outline:0}
+body:not(.kp-admin-login-page) :is(label,.gc-form label,.gc-filters label,.farmer-field span,.gam-search label,.gam-mod-form label){color:#4d5d76}
+body:not(.kp-admin-login-page) :is(button,.submit,.dl-save,.farmer-apply,.gam-search-buttons button,.gc-form button,.gc-filters button,.tp-button){border:1px solid transparent;border-radius:10px;background:linear-gradient(120deg,#7187cf,#7a70c6);color:#fff;box-shadow:0 7px 15px rgba(93,105,178,.18);font-family:inherit}
+body:not(.kp-admin-login-page) :is(button,.submit,.dl-save,.farmer-apply,.gam-search-buttons button,.gc-form button,.gc-filters button,.tp-button):hover{filter:brightness(1.04);transform:translateY(-1px)}
+body:not(.kp-admin-login-page) :is(button.secondary,.secondary,.gam-search-buttons a,.gam-pages a,.farmer-pagination a,.farmer-filter-mini a,.gc-filters a,.tp-button-secondary,.dl-preview,.farmer-reset){color:#526ba8;border:1px solid #d4deed;background:#f7f9fd}
+body:not(.kp-admin-login-page) :is(.tag,.pill,.gam-pill,.farmer-pill,.tp-badge){border-color:#d6e6dc;background:#eff8f2;color:#36785e}
+body:not(.kp-admin-login-page) :is(.pill.off,.gam-pill.banned,.farmer-pill.farmer-bad){border-color:#f0d4da;background:#fff2f3;color:#a94759}
+body:not(.kp-admin-login-page) :is(.gam-pill.special,.farmer-pill.farmer-warning,.dl-upload-warning){border-color:#eedfbe;background:#fff9eb;color:#8c672a}
+body:not(.kp-admin-login-page) :is(.notice,.gc-alert.gc-ok,.gam-alert.success,.tp-alert.good){border:1px solid #c9e7d8;background:#eff9f3;color:#286d52}
+body:not(.kp-admin-login-page) :is(.error,.gc-alert.gc-error,.gam-alert.danger,.tp-alert.bad){border:1px solid #efd1d7;background:#fff2f4;color:#a34355}
+body:not(.kp-admin-login-page) :is(.alert,.gam-alert.warning){border:1px solid #efdfbd;background:#fff9ed;color:#82632f}
+body:not(.kp-admin-login-page) code{color:#5c62a0;background:#f1f2fb;border-radius:5px;padding:.1em .3em}
+body:not(.kp-admin-login-page) :is(.gam-account-item,.gam-char,.gam-facts>div,.gam-char-stats>div,.gam-bulk-item,.gam-bulk-target-list,.gam-action-box,.gam-bulk-pick,.dl-toggle,.dl-file-status,.dl-progress,.dl-savebar,.farmer-monitor-status,.farmer-chart-box){border-color:#e0e7f1;background:#f8faff;color:#3a4962;box-shadow:none}
+body:not(.kp-admin-login-page) :is(.gam-account-item:hover,.gam-account-item.selected,.gam-bulk-target:hover,.gam-bulk-target:has(input:checked)){border-color:#c7d3eb;background:#f0f4ff}
+body:not(.kp-admin-login-page) :is(.gam-action-box>summary,.gam-bulk-pick legend,.gam-bulk-tools button,.gam-bulk-target em){color:#4d5f7d}
+body:not(.kp-admin-login-page) :is(.gam-mod-form button.danger,.gam-mod-form button.safe,.gam-bulk-form>button.safe){color:#fff}
+body:not(.kp-admin-login-page) .dl-switch{background:#c8d2e2}
+body:not(.kp-admin-login-page) .dl-toggle input:checked+.dl-switch{background:#5a9d7d}
+body:not(.kp-admin-login-page) .dl-progress progress{accent-color:#7187cf}
+body:not(.kp-admin-login-page) .farmer-chart .farmer-bar{fill:#7e83cc}
+body:not(.kp-admin-login-page) .farmer-chart .farmer-grid{stroke:#d9e1ee}
+body:not(.kp-admin-login-page) .farmer-chart .farmer-axis-label{fill:#73819a}
+body:not(.kp-admin-login-page) .farmer-score,body:not(.kp-admin-login-page) .farmer-history-rate{color:#5d66a9}
+body:not(.kp-admin-login-page) footer,body:not(.kp-admin-login-page) .gam-footer{color:#8491a7}
+body:not(.kp-admin-login-page) :focus-visible{outline:2px solid #7187cf;outline-offset:2px}
+
+.kp-admin-nav.kp-admin-nav-v2{--an-edge:#dce5f1;--an-text:#30415e;--an-muted:#76849b;position:relative;z-index:35;border:1px solid #dce5f1;border-radius:16px;background:rgba(255,255,255,.92);box-shadow:0 10px 28px rgba(49,78,122,.08);color:#30415e}
+.kp-admin-nav-brand-mark{width:44px;height:44px;overflow:hidden;border:1px solid #dce5f1;border-radius:13px;background:linear-gradient(145deg,#fff,#eaf1ff);box-shadow:0 5px 14px rgba(77,116,177,.12)}
+.kp-admin-nav-brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
+.kp-admin-nav-brand-copy strong{color:#344565;font-family:"Philosopher","Be Vietnam Pro",system-ui,sans-serif;font-size:14px;letter-spacing:.02em}
+.kp-admin-nav-brand-copy small{color:#8090a9}
+.kp-admin-nav-v2 .kp-admin-nav-item{color:#596983}
+.kp-admin-nav-v2 .kp-admin-nav-item:hover,.kp-admin-nav-v2 .kp-admin-nav-dropdown[open]>.kp-admin-nav-item{background:#f3f6fc;border-color:#e2e8f2;color:#344b78}
+.kp-admin-nav-v2 .kp-admin-nav-item.is-active,.kp-admin-nav-v2 .kp-admin-nav-popover-link.is-active,.kp-admin-nav-v2 .kp-admin-nav-mobile-link.is-active{background:#eff2ff;border-color:#d5dcf4;color:#555eaa}
+.kp-admin-nav-popover,.kp-admin-nav-mobile-panel{border:1px solid #dce5f1;border-radius:14px;background:#fff;box-shadow:0 18px 45px rgba(49,78,122,.16)}
+.kp-admin-nav-popover-heading,.kp-admin-nav-mobile-group-title{color:#7785a0}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link,.kp-admin-nav-v2 .kp-admin-nav-mobile-link{color:#53627b}
+.kp-admin-nav-v2 .kp-admin-nav-popover-link:hover,.kp-admin-nav-v2 .kp-admin-nav-mobile-link:hover{background:#f5f7fc;color:#354c7b}
+.kp-admin-nav-v2 .kp-admin-nav-exit{border-color:#dce5f1;color:#596983;background:#fff}
+.kp-admin-nav-v2 .kp-admin-nav-exit:hover{border-color:#c6d2e5;color:#3e5687;background:#f6f8fc}
+.kp-admin-nav-mobile-toggle{border-color:#d9e2f0;background:#f4f7fd;color:#435777}
+.kp-admin-nav-hamburger i{background:#6579ad}
+.kp-admin-nav-mobile-title small{color:#7f8ca2}
+.kp-admin-nav-mobile-heading strong{color:#35445f}
+.kp-admin-nav-mobile-heading span{color:#687aa7}
+.kp-admin-nav-mobile-bottom{border-top-color:#e6ebf3}
+.kp-admin-nav-v2 .kp-admin-nav-mobile-bottom a{border-color:#dce5f1;color:#566680}
+.tp-page.tp-admin{min-height:100vh;background:transparent;color:var(--admin-ink)}
+.tp-page.tp-admin .tp-header{position:relative;min-height:70px;padding:12px 20px;border:1px solid #dce5f1;border-radius:16px;background:rgba(255,255,255,.9);box-shadow:0 8px 24px rgba(49,78,122,.07);color:#53627b}
+.tp-page.tp-admin .tp-user{color:#53627b}
+.tp-page.tp-admin .tp-user i{background:#49a982;box-shadow:0 0 0 4px rgba(73,169,130,.12)}
+.tp-page.tp-admin :is(.tp-hero,.tp-section){color:var(--admin-ink)}
+.tp-page.tp-admin .tp-hero{padding:clamp(20px,3vw,34px);border:1px solid #dce5f1;border-radius:20px;background:linear-gradient(125deg,rgba(255,255,255,.96),rgba(238,244,255,.91));box-shadow:0 14px 36px rgba(49,78,122,.08)}
+.tp-page.tp-admin :is(.tp-hero h1,.tp-panel h2){color:#2d3d59}
+.tp-page.tp-admin .tp-panel{border:1px solid #dce5f1;background:rgba(255,255,255,.92);box-shadow:0 12px 32px rgba(49,78,122,.07)}
+.tp-page.tp-admin .tp-panel :is(h2,strong){color:#2d3d59}
+.tp-page.tp-admin :is(.tp-field,.tp-field span){color:#4d5d76}
+.tp-page.tp-admin :is(.tp-alert,.tp-badge){border-radius:11px}
+.tp-page.tp-admin .tp-footer{color:#8491a7}
+.tp-page.tp-admin .tp-hero{color:var(--admin-ink)}
+.tp-page.tp-admin :is(.tp-kicker,.tp-lead,.tp-muted){color:var(--admin-muted)}
+.kp-admin-login-page{--admin-text:#293951;--admin-muted:#728099;--admin-line:#dce5f1;--admin-void:#eef4fb;--admin-night:#f7faff;--admin-gold:#6579bd;--admin-gold-hi:#5269ae;--admin-moon:#52627d}
+.kp-admin-login-page .kp-admin-login-scene{opacity:.2;filter:saturate(.55)}
+.kp-admin-login-page :is(.kp-auth-header,.kp-admin-login-card){border-color:#dce5f1;background:rgba(255,255,255,.88);box-shadow:0 20px 60px rgba(49,78,122,.11);color:#31415b}
+.kp-admin-login-page :is(.kp-admin-login-intro h1,.kp-admin-login-card h2,.kp-admin-login-card strong){color:#2c3b55}
+.kp-admin-login-page :is(.kp-admin-login-intro p,.kp-admin-login-security,.kp-admin-login-foot,.kp-auth-footer){color:#728099}
+.kp-admin-login-page :is(input:not([type=checkbox]),select){color:#2f3e57;background:#fff;border-color:#cfd9e8}
+.kp-admin-login-page button{color:#fff;background:linear-gradient(120deg,#7187cf,#7a70c6)}
+.kp-admin-login-page .error{border-color:#efd1d7;background:#fff2f4;color:#a34355}
+@media(max-width:600px){body:not(.kp-admin-login-page)>header,body:not(.kp-admin-login-page)>header.topbar,.gc-top{padding:12px 14px}body:not(.kp-admin-login-page)>header .brand-icon,body:not(.kp-admin-login-page)>header .brand-mark{width:42px;height:42px}}
+@media(prefers-reduced-motion:reduce){body:not(.kp-admin-login-page) *,body:not(.kp-admin-login-page) *::before,body:not(.kp-admin-login-page) *::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}

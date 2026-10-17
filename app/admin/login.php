@@ -88,6 +88,7 @@ $csrf = kp_csrf_token();
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-login.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-login.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
+<link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
 </head>
 <body class="kp-admin-login-page">
 <div class="kp-admin-login-scene" aria-hidden="true"></div>
