@@ -286,3 +286,24 @@
  .kp-home-page .home-shortcuts>span{grid-column:1}
  .kp-home-page .home-community-actions{flex-wrap:wrap}
 }
+
+
+/* Use the existing local Zalo logo for the homepage community icons. */
+.kp-home-page .home-player>span.home-zalo-badge{
+ background:#fff;border-color:#dce9ff;color:inherit;
+ box-shadow:0 4px 12px rgba(0,104,255,.1)
+}
+.kp-home-page .home-player .home-zalo-badge img{
+ display:block;width:28px;height:28px;max-width:100%;object-fit:contain
+}
+.kp-home-page .home-community-actions .home-button-zalo{
+ display:inline-flex;align-items:center;justify-content:center;
+ gap:10px;min-width:0
+}
+.kp-home-page .home-community-actions .home-zalo-action-icon{
+ display:block;width:25px;height:25px;flex:none;object-fit:contain;
+ padding:2px;border-radius:7px;background:#fff
+}
+@media(max-width:360px){
+ .kp-home-page .home-community-actions .home-button-zalo{gap:8px;padding-inline:12px}
+}

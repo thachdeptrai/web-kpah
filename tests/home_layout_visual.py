@@ -82,6 +82,18 @@ JS = r"""JSON.stringify((() => {
       'main logo is not centered in hero');
   add(innerWidth>=1024 && brandBox && brandBox.width<500,'desktop main logo is too small');
   add(brandBox && brandBox.width>innerWidth,'main logo overflows mobile viewport');
+  const communityBadge=pick('.home-community .home-player .home-zalo-badge img');
+  const communityButton=pick('.home-community-actions .home-button-zalo');
+  const buttonIcon=pick('.home-community-actions .home-zalo-action-icon');
+  add(!communityBadge || !buttonIcon || !communityButton,'homepage community Zalo icons missing');
+  for(const icon of [communityBadge,buttonIcon]){
+    if(!icon)continue;
+    add(!icon.getAttribute('src')?.endsWith('/assets/img/zalo-official.svg'),'incorrect Zalo logo image');
+    add(!icon.complete||icon.naturalWidth===0,'Zalo logo failed to load');
+    const box=icon.getBoundingClientRect();
+    add(box.width<20||box.width>32||box.right>innerWidth+2,'Zalo logo size/position invalid');
+  }
+  add(communityButton&&new URL(communityButton.href).pathname!=='/cong-dong','community route changed');
   const img=pick('.home-hero-scene');
   add(!img || !img.complete || img.naturalWidth===0,'hero scene asset not loaded');
   return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,issues,

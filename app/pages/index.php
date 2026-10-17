@@ -93,11 +93,11 @@ kp_public_page_start('Trang chủ','home','NGHIỆN KPAH — cổng thông tin, 
                         <h3>Nhóm người chơi KPAH</h3>
                         <p>Hỏi cách chơi, tìm bang hội và trao đổi kinh nghiệm trong nhóm Zalo.</p>
                         <?php if ($heroes): ?>
-                        <div class="home-player"><span aria-hidden="true">✦</span><div><small>CHIẾN BINH NỔI BẬT</small><strong><?= kp_e($heroes[0]['name']) ?></strong></div></div>
+                        <div class="home-player"><span class="home-zalo-badge" aria-hidden="true"><img src="/assets/img/zalo-official.svg" width="28" height="28" alt="" loading="eager" decoding="async"></span><div><small>CHIẾN BINH NỔI BẬT</small><strong><?= kp_e($heroes[0]['name']) ?></strong></div></div>
                         <?php else: ?>
-                        <div class="home-player"><span aria-hidden="true">✦</span><div><small>NHÓM ZALO</small><strong>Hỏi đáp cùng người chơi</strong></div></div>
+                        <div class="home-player"><span class="home-zalo-badge" aria-hidden="true"><img src="/assets/img/zalo-official.svg" width="28" height="28" alt="" loading="eager" decoding="async"></span><div><small>NHÓM ZALO</small><strong>Hỏi đáp cùng người chơi</strong></div></div>
                         <?php endif; ?>
-                        <div class="home-community-actions"><a class="home-button home-button-primary" href="/cong-dong">Xem cộng đồng <span aria-hidden="true">↗</span></a><a class="home-text-link" href="/bang-xep-hang">Bảng xếp hạng →</a></div>
+                        <div class="home-community-actions"><a class="home-button home-button-primary home-button-zalo" href="/cong-dong"><img class="home-zalo-action-icon" src="/assets/img/zalo-official.svg" width="24" height="24" alt="" aria-hidden="true" loading="eager" decoding="async">Xem cộng đồng</a><a class="home-text-link" href="/bang-xep-hang">Bảng xếp hạng →</a></div>
                     </div>
                 </article>
             </div>
