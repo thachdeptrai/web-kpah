@@ -755,6 +755,8 @@ body.portal-page:before{
 .portal-page :is(.ci-item,.uc-record,.lb-list-row,.char-ui-stat) :is(strong,small,code){overflow-wrap:anywhere}
 @media(max-width:680px){
  body.portal-page .side-rail.portal-rail .portal-nav-list{min-width:0;max-width:100%;overflow-x:auto!important;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:7px;-webkit-overflow-scrolling:touch}
+ body.portal-page .side-rail.portal-rail .portal-nav-list:not(.is-open){display:none!important}
+ body.portal-page .side-rail.portal-rail .portal-nav-list.is-open{display:flex!important}
  body.portal-page .side-rail.portal-rail .portal-nav-list .rail-icon{min-height:44px!important;scroll-snap-align:start;white-space:nowrap}
  body.portal-page .portal-main{box-sizing:border-box;padding-bottom:30px!important}
  body.portal-page .portal-top{flex-wrap:wrap;gap:8px}
