@@ -148,7 +148,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <a class="home-skip-link" href="#portal-content">Đến nội dung chính</a>
 <aside class="side-rail portal-rail" aria-label="Điều hướng tài khoản">
     <a class="rail-logo portal-rail-logo" href="/tai-khoan" aria-label="KPAH — trang tài khoản">
-        <img src="/assets/img/kpah-logo-fantasy.svg" width="166" height="64" alt="NGHIỆN KPAH">
+        <img src="/assets/img/kpah-logo-main.webp" width="166" height="64" alt="NGHIỆN KPAH">
         <span>PLAYER PORTAL</span>
     </a>
     <div class="rail-line" aria-hidden="true"></div>
