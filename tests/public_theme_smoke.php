@@ -18,6 +18,7 @@ $homeCss=theme_read('assets/css/home-layout.css');
 theme_assert(strpos($shell,"' kp-inner-page'")!==false,'separate inner page scope');
 theme_assert(strpos($shell,'/assets/css/public-pages-v2.css?v=')!==false,'shared public CSS in shell');
 theme_assert(strpos($shell,'/assets/css/home-layout.css?v=')!==false,'home-only CSS still loaded');
+theme_assert(strpos($shell,'/assets/css/brand-system.css?v=')!==false,'shared brand typography and contrast layer loaded');
 theme_assert(strpos($shell,'treasure-chest-fantasy.webp')!==false,'subpage hero supports detailed treasure');
 theme_assert(strpos($shell,"'about' =>")!==false &&
     strpos($shell,"'download' =>")!==false &&

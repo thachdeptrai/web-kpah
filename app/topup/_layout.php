@@ -1,10 +1,11 @@
 <?php
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/../includes/admin_nav.php';
+require_once __DIR__.'/../includes/player_portal.php';
 function kp_topup_art_icon(string $name): string {
     static $allowed = ['dashboard','user','gamepad','trophy','wallet','gift','bell','receipt','shield','logout','points','bank'];
     if (!in_array($name,$allowed,true)) return '';
-    return '<span class="kp-art-icon kp-art-icon--'.$name.'" aria-hidden="true"></span>';
+    return kp_player_icon_svg($name);
 }
 function kp_topup_page_start($title, $active, $username = '', $admin = false) {
     kp_send_security_headers(true);
@@ -19,12 +20,15 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#eef7ff"><meta name="robots" content="noindex,nofollow">
 <title><?= kp_e($title) ?> · KPAH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&amp;family=Baloo+2:wght@600;700;800&amp;display=swap">
 <link rel="stylesheet" href="/assets/css/user-center.css?v=1">
 <link rel="stylesheet" href="/assets/css/topup.css?v=<?= (int) @filemtime(KP_ROOT . '/assets/css/topup.css') ?>">
 <?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>"><?php endif;?>
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <?php if(!$admin):?><link rel="stylesheet" href="/assets/css/topup-player-light.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/topup-player-light.css') ?>"><?php endif;?>
+<link rel="stylesheet" href="/assets/css/brand-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/brand-system.css') ?>">
 </head>
 <body class="tp-page<?= $admin ? ' tp-admin' : '' ?>">
 <div class="tp-shell">

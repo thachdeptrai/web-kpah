@@ -49,7 +49,7 @@ check(strpos($layout,'if($admin): ?><span class="tp-brand-mark"')!==false,true,'
 check(strpos($layout,'function kp_topup_art_icon')!==false,true,'topup uses bespoke KPAH icon art');
 check(strpos($overview,'kp_topup_art_icon')!==false,true,'topup overview replaces industrial unicode glyphs');
 check(strpos($theme,'body.tp-page:not(.tp-admin)')!==false,true,'player theme scoped away from admin');
-check(strpos($theme,'kpah-player-icon-atlas.png')!==false,true,'topup uses original PNG fantasy icon atlas');
+check(strpos($theme,'kp-art-icon')!==false&&strpos($theme,'kpah-player-icon-atlas.png')===false,true,'topup uses custom scalable vector icons');
 $posBank=strpos($layout,"'/nap-ngan-hang','Ngân hàng','bank'");
 $posCard=strpos($layout,"'/nap-the','Nạp thẻ','card'");
 check($posBank!==false&&$posCard!==false&&$posBank<$posCard,true,'bank first in player topup navigation');

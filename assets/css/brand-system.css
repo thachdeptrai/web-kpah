@@ -1,0 +1,13 @@
+/* KPAH visual identity layer: consistent Vietnamese typography, contrast and icon weight. */
+:root{--kp-brand-ink:#20345c;--kp-brand-copy:#4e6387;--kp-brand-muted:#7184a2;--kp-brand-display:"Baloo 2","Be Vietnam Pro",system-ui,sans-serif;--kp-brand-ui:"Be Vietnam Pro",system-ui,sans-serif}
+body.landing-page,body.home-page.portal-page,body.tp-page{font-family:var(--kp-brand-ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body.landing-page :is(h1,h2,h3,h4,.lp-brand strong,.lp-section-kicker),body.home-page.portal-page :is(.portal-hero h1,.portal-section-heading h2,.pd-heading h2,.portal-action-copy strong,.ci-section-title),body.tp-page :is(h1,h2,h3,.tp-brand>b,.tp-card h3){font-family:var(--kp-brand-display);font-optical-sizing:auto;letter-spacing:-.018em}
+body.landing-page :is(p,.lp-links a,.lp-nav-login,.lp-nav-account,.lp-button),body.home-page.portal-page :is(p,.rail-icon,.portal-quick-links a,.pd-panel,.ci-section),body.tp-page :is(p,a,button,label,.tp-nav-link,.tp-card){font-family:var(--kp-brand-ui)}
+body.landing-page :is(.lp-lead,.lp-section-heading>p,.lp-adventure-copy p,.lp-download-card p,.lp-inner-hero p){color:#4f6281}
+body.home-page.portal-page :is(.portal-hero p,.portal-section-heading>p,.portal-action-copy>span,.pd-panel p,.uc-record p){color:#526888}
+body.tp-page :is(.tp-lead,.tp-card p,.tp-aside-note){color:#536783}
+body.landing-page :is(.lp-links a,.lp-nav-login,.lp-nav-account),body.home-page.portal-page :is(.portal-nav-label,.home-breadcrumb,.portal-top),body.tp-page :is(.tp-nav-link,.tp-breadcrumb){font-weight:650}
+body.landing-page :is(a,button),body.home-page.portal-page :is(a,button),body.tp-page :is(a,button){-webkit-tap-highlight-color:transparent}
+body.landing-page :is(a,button):focus-visible,body.home-page.portal-page :is(a,button):focus-visible,body.tp-page :is(a,button):focus-visible{outline:3px solid rgba(94,91,232,.52);outline-offset:3px}
+::selection{color:#fff;background:#6656dc}
+@media(prefers-reduced-motion:reduce){body.landing-page *,body.home-page.portal-page *,body.tp-page *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

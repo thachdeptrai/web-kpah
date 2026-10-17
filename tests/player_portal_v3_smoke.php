@@ -18,7 +18,7 @@ pp_ok(strpos($base,'function kp_player_account()')!==false &&
       'authenticated user ownership guard intact');
 pp_ok(strpos($base,'player-portal-v3.css?v=')!==false,'v3 last-layer styles loaded with cache busting');
 pp_ok(strpos($base,'aria-label="Các chức năng tài khoản"')!==false,'accessible labelled navigation');
-pp_ok(strpos($base,'function kp_player_icon_art')!==false,'fixed original raster icon library');
+pp_ok(strpos($base,'function kp_player_icon_svg')!==false && strpos($base,'<svg class="kp-art-icon')!==false,'original crisp vector icon library');
 foreach(['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/giftcode-cua-toi','/thong-bao','/theo-doi-don-nap','/lich-su-bao-mat','/api/logout'] as $route)
  pp_ok(strpos($base,$route)!==false,"existing portal route $route");
 pp_ok(strpos($css,'background:linear-gradient(180deg,rgba(214,240,255')!==false,'bright player palette');
@@ -49,7 +49,7 @@ pp_ok(strpos($rankHero,"kp_player_icon_art('trophy')")!==false && strpos($rankHe
 pp_ok(strpos($css,'.portal-page .podium-card{')!==false && strpos($css,'.portal-page .lb-lower{')!==false,'leaderboard podium and table use light concept styling');
 pp_ok(strpos($css,'.portal-page .ci-section{')!==false && strpos($inventoryCss,'.ci-section')!==false,'character inventory receives light concept overrides');
 $art=pp_read('assets/css/player-art-icons.css');
-pp_ok(strpos($art,'kpah-player-icon-atlas.png')!==false,'portal includes custom illustrated raster sprite');
+pp_ok(strpos($art,'.kp-art-icon{')!==false && strpos($art,'drop-shadow')!==false,'portal styles custom scalable icons');
 pp_ok(strpos($base,'player-art-icons.css')!==false,'original illustrated icon CSS loaded by shared portal shell');
 pp_ok(strpos($dashboard,'kp_player_icon_art')!==false,'dashboard uses bespoke raster illustrations');
 pp_ok(strpos($characters,'char-ui-clan-art')!==false,'character guild badge uses custom fantasy icon');

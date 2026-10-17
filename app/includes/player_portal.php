@@ -78,15 +78,28 @@ function kp_player_format($value)
     return number_format((float)$value,0,',','.');
 }
 
-/**
- * Original KPAH illustrations (raster PNG atlas, not third-party SVG glyphs).
- * Names come exclusively from the fixed server-side navigation and dashboard.
- */
-function kp_player_icon_art(string $name): string {
+/** Original KPAH vector icons. Names come from fixed server-side templates only. */
+function kp_player_icon_svg(string $name): string {
     static $allowed = ['dashboard','user','gamepad','trophy','wallet','gift','bell','receipt','shield','logout','points','bank'];
     if (!in_array($name,$allowed,true)) return '';
-    return '<span class="kp-art-icon kp-art-icon--'.$name.'" aria-hidden="true"></span>';
+    $icons = [
+        'dashboard' => '<path d="M3.5 13.2a8.5 8.5 0 1 1 17 0v5.3a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M7 13.5h3l1.4-3.2 2.2 6.1 1.5-3H18"/><path d="M8 4.7 6.8 3.5M16 4.7l1.2-1.2"/>',
+        'user' => '<circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.5-4.1 3-6.2 7.5-6.2s7 2.1 7.5 6.2"/><path d="m17.5 6.2 1.1 1.1 2-2"/>',
+        'gamepad' => '<path d="M7.5 8.5h9a4.5 4.5 0 0 1 4.3 5.8l-1.2 3.9a2.7 2.7 0 0 1-4.5 1.1L13.5 18h-3l-1.6 1.3a2.7 2.7 0 0 1-4.4-1.1l-1.2-3.9a4.5 4.5 0 0 1 4.2-5.8Z"/><path d="M8 11v4m-2-2h4m6.5-1h.1m2 2h.1"/>',
+        'trophy' => '<path d="M8 4h8v4.5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v2a4 4 0 0 0 4 4M16 6h3.5v2a4 4 0 0 1-4 4M12 12.5V17m-4 3h8m-7-3h6l1 3H8z"/>',
+        'wallet' => '<path d="M4.5 6.5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-13a3 3 0 0 1-3-3v-12a2 2 0 0 1 2-2h13"/><path d="M20.5 11h-5a2.5 2.5 0 0 0 0 5h5"/><path d="M15.5 13.5h.1"/>',
+        'gift' => '<path d="M3.5 10h17v10a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 20zM2.5 7h19v4h-19zM12 7v14.5"/><path d="M12 7H8.7a2.2 2.2 0 1 1 2.1-2.8L12 7Zm0 0h3.3a2.2 2.2 0 1 0-2.1-2.8L12 7Z"/>',
+        'bell' => '<path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/><path d="M12 2v1"/>',
+        'receipt' => '<path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8z"/><path d="M9 8h6m-6 4h6m-6 4h3"/>',
+        'shield' => '<path d="M12 2.8 20 6v5.3c0 5-3 8-8 10-5-2-8-5-8-10V6z"/><path d="m8.5 12 2.2 2.2 4.8-5"/>',
+        'logout' => '<path d="M10 4H5.5A2.5 2.5 0 0 0 3 6.5v11A2.5 2.5 0 0 0 5.5 20H10"/><path d="M14 7l5 5-5 5m5-5H8"/>',
+        'points' => '<path d="m12 2.8 2.4 5 5.5.8-4 3.9.9 5.5-4.8-2.6-4.8 2.6.9-5.5-4-3.9 5.5-.8z"/><circle cx="19" cy="19" r="2.5"/>',
+        'bank' => '<path d="m3 8 9-5 9 5v2H3zM4.5 10v8m5-8v8m5-8v8m5-8v8M3 18h18v3H3z"/><path d="M2 8h20"/>',
+    ];
+    $shape = $icons[$name];
+    return '<svg class="kp-art-icon kp-art-icon--'.$name.'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g>'.$shape.'</g></svg>';
 }
+function kp_player_icon_art(string $name): string { return kp_player_icon_svg($name); }
 
 function kp_player_head($title,$active,array $user,$withCharacters=false)
 {
@@ -133,6 +146,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <link rel="stylesheet" href="/assets/css/player-portal-v3.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-portal-v3.css') ?>">
 <link rel="stylesheet" href="/assets/css/player-art-icons.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/player-art-icons.css') ?>">
+<link rel="stylesheet" href="/assets/css/brand-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/brand-system.css') ?>">
 </head>
 <body class="home-page portal-page">
 <a class="home-skip-link" href="#portal-content">Đến nội dung chính</a>

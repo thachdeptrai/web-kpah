@@ -62,8 +62,7 @@ body.tp-page:not(.tp-admin) :is(a,button,input,select,textarea):focus-visible{
 }
 .tp-page:not(.tp-admin) .kp-art-icon{
  display:inline-block;flex:none;width:26px;height:26px;vertical-align:middle;
- background-image:url('/assets/img/kpah-player-icon-atlas.png');
- background-size:400% 300%;background-repeat:no-repeat;
+ overflow:visible;stroke:currentColor;filter:drop-shadow(0 2px 3px rgba(57,85,163,.2));
 }
 .tp-page:not(.tp-admin) .kp-art-icon--dashboard{background-position:0% 0%}
 .tp-page:not(.tp-admin) .kp-art-icon--user{background-position:33.3333% 0%}
