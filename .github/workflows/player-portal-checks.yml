@@ -89,7 +89,7 @@ jobs:
               print(path,'valid WebP artwork')
           path='assets/img/kpah-player-icon-atlas.png'
           data=open(path,'rb').read()
-          assert data[:8]==b'\\x89PNG\\r\\n\\x1a\\n', 'custom icon atlas is not PNG'
+          assert data[:8]==bytes([137,80,78,71,13,10,26,10]), 'custom icon atlas is not PNG'
           width,height=struct.unpack('>II',data[16:24])
           assert (width,height)==(256,192), (width,height)
           print(path,'valid original PNG icon atlas')
