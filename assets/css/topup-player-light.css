@@ -194,6 +194,40 @@ body.tp-page:not(.tp-admin) :is(a,button,input,select,textarea):focus-visible{
 .tp-page:not(.tp-admin) .tp-select{color-scheme:light}
 .tp-page:not(.tp-admin) .tp-check{color:#5a708f;line-height:1.7}
 .tp-page:not(.tp-admin) .tp-check input{accent-color:#735fe2}
+.tp-page:not(.tp-admin) .vnd-exchange-warning{
+ display:grid;grid-template-columns:50px minmax(0,1fr);align-items:start;gap:15px;
+ margin:18px 0 20px;padding:20px 21px;
+ border:2px solid #e3a63c;border-radius:16px;
+ background:linear-gradient(125deg,#fff4d8 0%,#fff9e9 62%,#fff 100%);
+ box-shadow:0 10px 26px rgba(166,112,25,.12)
+}
+.tp-page:not(.tp-admin) .vnd-exchange-warning-mark{
+ display:grid;place-items:center;width:48px;height:48px;border-radius:15px;
+ background:#e5a335;color:#fff;font-size:31px;font-weight:900;line-height:1;
+ box-shadow:0 6px 14px rgba(160,103,20,.2)
+}
+.tp-page:not(.tp-admin) .vnd-exchange-warning-copy h3{
+ margin:0 0 8px;color:#74430b;font-size:clamp(16px,2vw,19px);
+ font-weight:900;line-height:1.35;letter-spacing:-.015em
+}
+.tp-page:not(.tp-admin) .vnd-exchange-warning-copy p{
+ margin:0;color:#684f2d;font-size:13px;line-height:1.7
+}
+.tp-page:not(.tp-admin) .vnd-exchange-warning-copy p+p{margin-top:7px}
+.tp-page:not(.tp-admin) .vnd-exchange-warning-copy strong{color:#6e3908;font-weight:900}
+.tp-page:not(.tp-admin) .vnd-exchange-confirm{
+ padding:13px 15px;border:1px solid #d8a144;border-radius:12px;
+ background:#fff8e8;color:#63430f;font-weight:800
+}
+.tp-page:not(.tp-admin) .vnd-exchange-confirm input{
+ width:20px;height:20px;margin-top:1px;accent-color:#b97517
+}
+@media(max-width:580px){
+ .tp-page:not(.tp-admin) .vnd-exchange-warning{grid-template-columns:38px minmax(0,1fr);gap:11px;margin:15px 0;padding:15px 13px;border-radius:13px}
+ .tp-page:not(.tp-admin) .vnd-exchange-warning-mark{width:38px;height:38px;border-radius:12px;font-size:25px}
+ .tp-page:not(.tp-admin) .vnd-exchange-warning-copy p{font-size:12px}
+ .tp-page:not(.tp-admin) .vnd-exchange-confirm{padding:11px}
+}
 .tp-page:not(.tp-admin) .tp-button{
  min-height:47px;border:1px solid #6354d8;border-radius:11px;
  background:linear-gradient(110deg,#7864ec,#536de6);
