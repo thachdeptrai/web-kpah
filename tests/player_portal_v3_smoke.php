@@ -45,7 +45,7 @@ pp_ok(strpos($css,'portal-sky-vista.webp')!==false && strpos($css,'portal-advent
 pp_ok(is_file($root.'/assets/img/portal-sky-vista.webp') && is_file($root.'/assets/img/portal-adventurer.webp') && !is_file($root.'/assets/img/portal-sky-vista.png') && !is_file($root.'/assets/img/portal-adventurer.png'),'optimized WebP portal artwork replaces old PNGs');
 $rankHeroStart=strpos($rankings,'<section class="portal-hero leaderboard-hero">');
 $rankHero=$rankHeroStart===false?'':substr($rankings,$rankHeroStart,strpos($rankings,'</section>',$rankHeroStart)-$rankHeroStart);
-pp_ok(strpos($rankHero,"kp_player_icon_art('trophy')")!==false && strpos($rankHero,'rank-guardian.webp')===false && strpos($rankings,'rank-guardian.webp')!==false,'leaderboard masthead uses a trophy while podium keeps its own heroes');
+pp_ok(strpos($rankHero,'lb-hero-crest')!==false && strpos($rankHero,'<svg viewBox="0 0 160 160"')!==false && strpos($rankHero,'rank-guardian.webp')===false && strpos($rankings,'rank-guardian.webp')!==false,'leaderboard masthead uses its custom crest while podium keeps its own heroes');
 pp_ok(strpos($css,'.portal-page .podium-card{')!==false && strpos($css,'.portal-page .lb-lower{')!==false,'leaderboard podium and table use light concept styling');
 pp_ok(strpos($css,'.portal-page .ci-section{')!==false && strpos($inventoryCss,'.ci-section')!==false,'character inventory receives light concept overrides');
 $art=pp_read('assets/css/player-art-icons.css');

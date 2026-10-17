@@ -33,8 +33,25 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     </div>
     <div class="lb-hero-mark" aria-hidden="true">
         <span class="lb-orbit lb-orbit-1"></span><span class="lb-orbit lb-orbit-2"></span>
-        <span class="lb-hero-trophy"><?= kp_player_icon_art('trophy') ?></span>
-        <span class="lb-hero-sparks">✦</span>
+        <span class="lb-hero-crest">
+            <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="rankCrestGold" x1="25" y1="20" x2="130" y2="142" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF4BD"/><stop offset=".48" stop-color="#F6C65E"/><stop offset="1" stop-color="#D7862F"/></linearGradient>
+                    <linearGradient id="rankCrestBlue" x1="40" y1="39" x2="121" y2="120" gradientUnits="userSpaceOnUse"><stop stop-color="#A9E8FF"/><stop offset="1" stop-color="#6486EF"/></linearGradient>
+                    <filter id="rankCrestShadow" x="15" y="12" width="130" height="139" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#8262C2" flood-opacity=".24"/></filter>
+                </defs>
+                <circle cx="80" cy="79" r="63" stroke="#9BB9EE" stroke-opacity=".48" stroke-width="1.5" stroke-dasharray="2 7"/>
+                <circle cx="80" cy="79" r="51" fill="#FFFFFF" fill-opacity=".52" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="2"/>
+                <g filter="url(#rankCrestShadow)">
+                    <path d="M80 27 94 54l30 5-21 22 4 31-27-14-27 14 4-31-21-22 30-5 14-27Z" fill="url(#rankCrestGold)" stroke="#FFF8DC" stroke-width="3" stroke-linejoin="round"/>
+                    <path d="m80 47 8 16 18 3-13 13 2 18-15-8-15 8 2-18-13-13 18-3 8-16Z" fill="url(#rankCrestBlue)" stroke="#FFF" stroke-opacity=".9" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="m80 58 4 8 9 1-6.5 6.5 1.5 9-8-4.2-8 4.2 1.5-9L67 67l9-1 4-8Z" fill="#FFF8D9"/>
+                </g>
+                <path d="m31 39 3 6 6 1-4.5 4.5 1 6.5-5.5-3-5.5 3 1-6.5L22 46l6-1 3-6Z" fill="#FFF" fill-opacity=".94"/>
+                <circle cx="127" cy="105" r="4" fill="#F5B84E"/><circle cx="39" cy="111" r="2.5" fill="#7DA9F1"/>
+            </svg>
+        </span>
+        <span class="lb-hero-sparks">✧</span>
     </div>
 </section>
 
