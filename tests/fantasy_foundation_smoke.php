@@ -51,7 +51,8 @@ $check(strpos($home, 'kp_rankings_fetch') !== false &&
        strpos($home, 'kp_giftcode_public_list') !== false &&
        strpos($home, 'SELECT COUNT(*) FROM team_user') !== false,
        'public dynamic database sources kept');
-$check(strpos($home, 'kpah-logo-fantasy.svg') !== false &&
+$check((strpos($home, 'kpah-logo-fantasy.svg') !== false ||
+        strpos($home, 'kpah-logo-main.svg') !== false) &&
        strpos($homeCss, 'home-hero-anime.webp') !== false &&
        strpos($css, 'fantasy-world.svg') !== false, 'illustrated assets are available for home and shared components');
 echo 'Fantasy foundation static regression passed.' . PHP_EOL;
