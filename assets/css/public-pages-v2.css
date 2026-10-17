@@ -252,22 +252,8 @@
  .kp-inner-page :is(.lp-download-card,.lp-gift-card,.lp-news-card):hover,.kp-inner-page .lp-news-card:hover .lp-news-art img{transform:none}
 }
 
-/* Platform marks: Font Awesome Free 7.3.1 Brands, SIL OFL 1.1.
-   Source: FortAwesome/Font-Awesome. License stored beside the local font. */
-@font-face{
- font-family:"KpPlatformBrands";font-style:normal;font-weight:400;font-display:block;
- src:url("/assets/fonts/platform-brands-7.3.1.woff2") format("woff2");
- unicode-range:U+F179-F17B,U+F4E4;
-}
-.kp-inner-page .lp-platform-brand{
- display:block;font-family:"KpPlatformBrands";font-size:34px;font-weight:400;
- font-style:normal;font-variant:normal;line-height:1;text-transform:none;
- -webkit-font-smoothing:antialiased;
-}
-.kp-inner-page .lp-platform-android .lp-platform-brand::before{content:"\f17b"}
-.kp-inner-page .lp-platform-windows .lp-platform-brand::before{content:"\f17a"}
-.kp-inner-page .lp-platform-java .lp-platform-brand::before{content:"\f4e4"}
-.kp-inner-page .lp-platform-ios .lp-platform-brand::before{content:"\f179"}
+/* Local brand SVGs avoid runtime webfont failures and provide crisp platform marks. */
+.kp-inner-page .lp-platform-brand{display:block;width:36px;height:36px;object-fit:contain;flex:none}
 .kp-inner-page .lp-community-actions .lp-button-zalo,
 .kp-inner-page .lp-community-actions .lp-button-zalo:visited{
  color:#fff;background:#355bd2;text-shadow:none;
@@ -276,4 +262,4 @@
 .kp-inner-page .lp-community-actions .lp-button-zalo:focus-visible{
  color:#fff;background:#294bb6;
 }
-@media(max-width:600px){.kp-inner-page .lp-platform-brand{font-size:29px}}
+@media(max-width:600px){.kp-inner-page .lp-platform-brand{width:30px;height:30px}}

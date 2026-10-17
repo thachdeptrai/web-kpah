@@ -43,9 +43,11 @@ JS=r"""JSON.stringify((()=>{
  const marks=[...document.querySelectorAll('.lp-platform-brand')];
  if(location.pathname==='/tai-game'){
   add(marks.length!==4,'expected four platform icons');
-  add(!document.fonts.check('400 34px "KpPlatformBrands"', '\uf17b\uf17a\uf4e4\uf179'),'platform icon font failed to load');
-  const expected=['\uf17b','\uf17a','\uf4e4','\uf179'];
-  marks.forEach((el,i)=>add(!getComputedStyle(el,'::before').content.includes(expected[i]),'wrong platform icon '+i));
+  const expected=['android','windows','java','apple'];
+  marks.forEach((img,i)=>{
+   add(!img.getAttribute('src')?.endsWith('/assets/img/platform-'+expected[i]+'.svg'),'wrong platform icon '+i);
+   add(!img.complete||img.naturalWidth===0,'broken platform SVG '+i);
+  });
  }
  if(location.pathname==='/cong-dong'){
   const button=document.querySelector('.lp-button-zalo');
