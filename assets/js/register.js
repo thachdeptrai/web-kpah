@@ -324,15 +324,16 @@
 
             if (!json.ok) {
                 showAlert('error', 'Chưa xác minh được email', json.message || 'Vui lòng thử lại.');
+                if (window.KpUI) window.KpUI.toast({type:'error',title:'Chưa xác minh được email',message:json.message || 'Vui lòng thử lại.'});
                 if (json.errors) {
                     Object.keys(json.errors).forEach(function (k) { setError(k, json.errors[k]); });
                 }
                 return;
             }
 
-            hideAlert();
             button.classList.add('is-done');
-            showAlert('info', 'Thông báo', successText || json.message || 'Thành công.');
+            hideAlert();
+            if (window.KpUI) window.KpUI.toast({type:'success',title:'Yêu cầu thành công',message:successText || json.message || 'Đã gửi mã xác minh.'});
 
             if (endpoint === cfg.emailCodeEndpoint) {
                 startEmailResendCountdown(60);
@@ -441,6 +442,7 @@
             : first ? 'Chưa tạo được tài khoản'
             : 'Có lỗi xảy ra';
         showAlert(type, title, json.message || 'Vui lòng thử lại.');
+        if (window.KpUI) window.KpUI.toast({type:type === 'warn' ? 'warning' : 'error',title:title,message:json.message || 'Vui lòng thử lại.'});
 
         // Giữ lại dữ liệu hợp lệ, xoá mật khẩu; mã CAPTCHA đã bị huỷ nên đổi ảnh mới.
         clearSecrets();
@@ -454,9 +456,7 @@
         el.formView.hidden = true;
         el.successView.hidden = false;
         el.successTitle.focus();
-        if (window.KpUI && typeof window.KpUI.toast === 'function') {
-            window.KpUI.toast({ type: 'success', title: 'Tạo tài khoản thành công', message: 'Bạn có thể đăng nhập và bắt đầu hành trình.' });
-        }
+        if (window.KpUI && typeof window.KpUI.toast === 'function') window.KpUI.toast({type:'success',title:'Tạo tài khoản thành công',message:'Bạn có thể đăng nhập và bắt đầu hành trình.'});
         window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
 

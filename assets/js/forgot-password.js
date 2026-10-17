@@ -9,9 +9,7 @@
     feedback.className = 'form-feedback ' + (good ? 'is-good' : 'is-bad');
     feedback.setAttribute('role', good ? 'status' : 'alert');
     feedback.setAttribute('aria-live', good ? 'polite' : 'assertive');
-    if (good && window.KpUI && typeof window.KpUI.toast === 'function') {
-      window.KpUI.toast({ type: 'success', title: 'Yêu cầu thành công', message: message });
-    }
+    if (window.KpUI && typeof window.KpUI.toast === 'function') window.KpUI.toast({type:good?'success':'error',title:good?'Yêu cầu thành công':'Yêu cầu chưa thành công',message:message});
   }
   function request(data) {
     return fetch(form.dataset.endpoint, { method: 'POST', credentials: 'same-origin', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })

@@ -24,7 +24,7 @@ $home = $read('app/pages/index.php');
 $landing = $read('assets/css/landing.css');
 $homeCss = $read('assets/css/home-layout.css');
 foreach (['--kpf-gradient:', '--kpf-space-', '--kpf-radius-', '--kpf-shadow', '.kpf-hero', '.kpf-card', '.kpf-btn', '.kpf-input',
-          '.kpf-table', '.kpf-badge', '.kpf-tab', '.kpf-stat', '.kpf-portal', '.kpf-admin-panel', '.kpf-modal', '.kpf-toast', 'prefers-reduced-motion'] as $token) {
+          '.kpf-table', '.kpf-badge', '.kpf-tab', '.kpf-stat', '.kpf-portal', '.kpf-admin-panel', '.kpf-modal', 'prefers-reduced-motion'] as $token) {
     $check(strpos($css, $token) !== false, 'foundation CSS provides ' . $token);
 }
 foreach (['window.KpFantasy', 'KpUI.toast', 'data-kpf-tabs', 'data-kpf-nav-toggle', 'data-kpf-modal-open', 'data-kpf-reveal', 'data-label'] as $token) {
@@ -36,6 +36,16 @@ foreach (['app/includes/public_landing.php', 'app/includes/player_portal.php', '
           'app/pages/forgot-password.php', 'app/admin/login.php'] as $template) {
     $check(strpos($read($template), '/assets/js/fantasy-foundation.js') !== false, 'JS enabled in ' . $template);
 }
+$sharedToast=$read('assets/js/ui-system.js');
+$foundationJs=$read('assets/js/fantasy-foundation.js');
+$foundationCss=$read('assets/css/fantasy-foundation.css');
+$uiCss=$read('assets/css/ui-system.css');
+$check(strpos($sharedToast,'window.kpToast = toastCompat')!==false &&
+       strpos($foundationJs,'window.KpUI.toast(options)')!==false,
+       'legacy toast APIs delegate to one KpUI renderer');
+$check(strpos($foundationCss,'.kpf-toast-region')===false &&
+       strpos($uiCss,'.kp-ui-toast-region')!==false,
+       'toast styling has one canonical CSS region');
 foreach (['assets/img/auth-login-adventure.webp', 'assets/img/auth-recovery-adventure.webp', 'assets/img/auth-register-adventure.webp', 'assets/img/emblem.webp', 'assets/img/fantasy-world.webp', 'assets/img/favicon.webp', 'assets/img/rank-archer.webp', 'assets/img/rank-guardian.webp', 'assets/img/rank-sorcerer.webp', 'assets/img/scene.webp', 'assets/img/treasure-chest-fantasy.webp'] as $asset) {
     $drawing = $read($asset);
     $check(substr($drawing, 0, 4) === 'RIFF' && substr($drawing, 8, 4) === 'WEBP',

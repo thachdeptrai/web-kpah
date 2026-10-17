@@ -52,9 +52,8 @@ function kp_topup_page_end() { ?>
 <footer class="tp-footer"><span>KPAH · TÀI NGUYÊN TRONG GAME</span><span>Kiểm tra kỹ thông tin trước khi xác nhận</span></footer>
 </main></div>
 <?php if(!empty($_SESSION['kp_toast']) && is_array($_SESSION['kp_toast'])): $toast=$_SESSION['kp_toast']; unset($_SESSION['kp_toast']); ?>
-<div hidden data-toast-type="<?=kp_e($toast['type']??'success')?>" data-toast-title="<?=kp_e($toast['title']??'')?>" data-toast-message="<?=kp_e($toast['message']??'')?>"></div>
+<div hidden data-ui-toast="<?=kp_e($toast['type']??'success')?>" data-ui-toast-title="<?=kp_e($toast['title']??'')?>" data-ui-toast-message="<?=kp_e($toast['message']??'')?>"></div>
 <?php endif;?>
-<script src="/assets/js/toast.js?v=1" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 <script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body></html>

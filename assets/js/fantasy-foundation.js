@@ -11,49 +11,8 @@
   }
   function toast(options) {
     options = options || {};
-    // The existing KpUI toast is the canonical engine. Do not duplicate stacks.
-    if (window.KpUI && typeof window.KpUI.toast === 'function') {
-      return window.KpUI.toast(options);
-    }
-    var type = ['success', 'error', 'warning', 'info'].indexOf(options.type) >= 0 ? options.type : 'info';
-    var root = doc.querySelector('.kpf-toast-region');
-    if (!root) {
-      root = doc.createElement('div');
-      root.className = 'kpf-toast-region';
-      root.setAttribute('role', 'region');
-      root.setAttribute('aria-label', 'Thông báo');
-      doc.body.appendChild(root);
-    }
-    var node = doc.createElement('section');
-    node.className = 'kpf-toast kpf-toast--' + type;
-    node.setAttribute('role', type === 'error' ? 'alert' : 'status');
-    var icon = doc.createElement('span');
-    icon.setAttribute('aria-hidden', 'true');
-    icon.textContent = ({success:'✓', error:'!', warning:'⚠', info:'i'})[type];
-    var content = doc.createElement('div');
-    content.className = 'kpf-toast__text';
-    var heading = doc.createElement('b');
-    heading.textContent = String(options.title || 'Thông báo');
-    var message = doc.createElement('p');
-    message.textContent = String(options.message || '');
-    content.appendChild(heading);
-    content.appendChild(message);
-    var close = doc.createElement('button');
-    close.type = 'button';
-    close.className = 'kpf-toast__close';
-    close.setAttribute('aria-label', 'Đóng thông báo');
-    close.textContent = '×';
-    function dismiss() { if (node.parentNode) node.parentNode.removeChild(node); }
-    close.addEventListener('click', dismiss);
-    node.appendChild(icon);
-    node.appendChild(content);
-    node.appendChild(close);
-    root.appendChild(node);
-    var ms = Math.min(12000, Math.max(2000, Number(options.duration) || 4000));
-    var timer = window.setTimeout(dismiss, ms);
-    node.addEventListener('mouseenter', function () { window.clearTimeout(timer); });
-    node.addEventListener('mouseleave', function () { timer = window.setTimeout(dismiss, 1400); });
-    return node;
+    if (window.KpUI && typeof window.KpUI.toast === 'function') return window.KpUI.toast(options);
+    return null;
   }
   function busy(button, enabled, label) {
     if (!button) return;

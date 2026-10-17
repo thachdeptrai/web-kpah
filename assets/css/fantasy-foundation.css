@@ -148,15 +148,8 @@
 .kpf-modal__head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid var(--kpf-line)}
 .kpf-modal__body{padding:24px}
 .kpf-modal__foot{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:9px;padding:17px 24px;border-top:1px solid var(--kpf-line);background:#f8fbff}
-/* Small independent native toast style, JS delegates to KpUI when present */
-.kpf-toast-region{position:fixed;z-index:1200;right:max(18px,env(safe-area-inset-right));top:max(18px,env(safe-area-inset-top));bottom:auto;display:grid;gap:10px;width:min(calc(100vw - 36px),350px);pointer-events:none}
-.kpf-toast{position:relative;display:flex;gap:10px;padding:14px 15px;border:1px solid #b8d2eb;border-left:5px solid var(--kpf-blue);border-radius:var(--kpf-radius-sm);background:#fff;color:var(--kpf-ink);box-shadow:var(--kpf-shadow-float);pointer-events:auto;animation:kpf-enter .25s var(--kpf-ease) both}
-.kpf-toast--success{border-left-color:var(--kpf-mint);background:#f2fff8}.kpf-toast--warning{border-left-color:var(--kpf-amber);background:#fffaf0}.kpf-toast--error{border-left-color:var(--kpf-rose);background:#fff6f7}
-.kpf-toast__text{flex:1;min-width:0}.kpf-toast__text b{display:block;font-size:.93rem}.kpf-toast__text p{margin:4px 0 0;color:var(--kpf-text);font-size:.84rem;line-height:1.5}
-.kpf-toast__close{align-self:start;border:0;background:none;font-size:1.2rem;color:var(--kpf-muted);cursor:pointer}
 [data-kpf-reveal]{transition:opacity var(--kpf-slow) ease,transform var(--kpf-slow) var(--kpf-ease)}
 [data-kpf-reveal].kpf-pending{opacity:0;transform:translateY(18px)}
-@keyframes kpf-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media (max-width:1050px){
  .kpf-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .kpf-hero{gap:18px}
@@ -188,7 +181,6 @@
  .kpf-stat__label{font-size:.73rem}
  .kpf-panel__body{padding:16px 12px}
  .kpf-modal__body{padding:18px}
- .kpf-toast-region{right:max(12px,env(safe-area-inset-right));left:auto;top:max(12px,env(safe-area-inset-top));bottom:auto;width:min(350px,calc(100vw - 24px))}
 }
 @media (prefers-reduced-motion:reduce){
  .kpf-scope *,.kpf-scope *::before,.kpf-scope *::after,[data-kpf-reveal]{animation:none!important;transition:none!important;scroll-behavior:auto!important}

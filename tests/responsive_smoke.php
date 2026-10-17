@@ -125,8 +125,6 @@ foreach($familyStyles as $file=>$checks){
 /* All notification engines must anchor top-right, including compact screens. */
 $toastStyles = [
  'assets/css/ui-system.css' => '.kp-ui-toast-region',
- 'assets/css/fantasy-foundation.css' => '.kpf-toast-region',
- 'assets/css/user-center.css' => '.kp-toast-stack',
 ];
 foreach ($toastStyles as $file => $selector) {
  $css=read_layout($file);

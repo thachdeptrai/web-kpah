@@ -41,6 +41,8 @@
     region.setAttribute('role', 'region');
     region.setAttribute('aria-label', 'Thông báo');
     region.setAttribute('aria-live', 'polite');
+    region.setAttribute('aria-relevant', 'additions');
+    region.setAttribute('aria-atomic', 'false');
     doc.body.appendChild(region);
     return region;
   }
@@ -56,13 +58,18 @@
     if (!node || node.dataset.removing === '1') return;
     node.dataset.removing = '1';
     node.classList.add('is-leaving');
-    window.setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, reduceMotion ? 20 : 240);
+    window.setTimeout(function () {
+      if (node.parentNode) node.parentNode.removeChild(node);
+      var region = one('.kp-ui-toast-region');
+      if (region && !region.children.length) region.remove();
+    }, reduceMotion ? 20 : 240);
   }
 
   function showToast(options) {
     options = options || {};
     var type = ['success', 'error', 'warning', 'info'].indexOf(options.type) >= 0 ? options.type : 'info';
-    var duration = Math.max(1800, Math.min(Number(options.duration) || 4200, 12000));
+    var duration = Math.max(1800, Math.min(Number(options.duration) || 4800, 12000));
+    var messageText = safeText(options.message);
     var node = doc.createElement('article');
     node.className = 'kp-ui-toast kp-ui-toast--' + type;
     node.setAttribute('role', type === 'error' ? 'alert' : 'status');
@@ -77,9 +84,9 @@
     var title = doc.createElement('strong');
     title.textContent = safeText(options.title || (type === 'success' ? 'Thành công' : type === 'error' ? 'Thất bại' : type === 'warning' ? 'Lưu ý' : 'Thông báo'));
     var message = doc.createElement('p');
-    message.textContent = safeText(options.message);
+    message.textContent = messageText;
     copy.appendChild(title);
-    if (message.textContent) copy.appendChild(message);
+    if (messageText) copy.appendChild(message);
 
     var close = doc.createElement('button');
     close.type = 'button';
@@ -91,14 +98,21 @@
     node.appendChild(icon);
     node.appendChild(copy);
     node.appendChild(close);
-    toastRegion().appendChild(node);
+
+    // Limit visible stack size on smaller screens. Oldest messages exit first.
+    var region = toastRegion();
+    while (region.children.length >= 5) removeToast(region.firstElementChild);
+    region.appendChild(node);
 
     var timer = window.setTimeout(function () { removeToast(node); }, duration);
     node.addEventListener('mouseenter', function () { window.clearTimeout(timer); });
-    node.addEventListener('mouseleave', function () {
-      timer = window.setTimeout(function () { removeToast(node); }, 1200);
-    });
+    node.addEventListener('mouseleave', function () { timer = window.setTimeout(function () { removeToast(node); }, duration); });
     return node;
+  }
+
+  function toastCompat(type, title, message, duration) {
+    if (type && typeof type === 'object') return showToast(type);
+    return showToast({type:type,title:title,message:message,duration:duration});
   }
 
   function openModal(target) {
@@ -233,6 +247,10 @@
       });
       source.remove();
     });
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('expired') === '1') {
+      showToast({type:'error',title:'Phiên đã hết hạn',message:'Vui lòng đăng nhập lại để tiếp tục.'});
+    }
   }
 
   function boot() {
@@ -251,6 +269,9 @@
     closeModal: closeModal,
     activateTab: activateTab
   });
+  // Compatibility for older AJAX forms; new code should use KpUI.toast({...}).
+  window.kpToast = toastCompat;
+  window.KpFantasy = Object.freeze({toast:function (options) { return showToast(options); }});
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();

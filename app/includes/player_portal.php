@@ -191,11 +191,10 @@ function kp_player_foot($withProfileJs=false)
     </footer>
 </main>
 <?php if(!empty($_SESSION['kp_toast']) && is_array($_SESSION['kp_toast'])): $toast=$_SESSION['kp_toast']; unset($_SESSION['kp_toast']); ?>
-<div data-toast-type="<?=kp_e($toast['type']??'success')?>" data-toast-title="<?=kp_e($toast['title']??'')?>" data-toast-message="<?=kp_e($toast['message']??'')?> " hidden></div>
+<div data-ui-toast="<?=kp_e($toast['type']??'success')?>" data-ui-toast-title="<?=kp_e($toast['title']??'')?>" data-ui-toast-message="<?=kp_e($toast['message']??'')?>" hidden></div>
 <?php endif;?>
 <?php if($withProfileJs): ?><script src="/assets/js/user-home.js?v=2" defer></script><?php endif; ?>
 <script src="/assets/js/player-mobile-nav.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/player-mobile-nav.js') ?>" defer></script>
-<script src="/assets/js/toast.js?v=1" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>
 <script src="/assets/js/fantasy-foundation.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/fantasy-foundation.js') ?>" defer></script>
 </body></html>
