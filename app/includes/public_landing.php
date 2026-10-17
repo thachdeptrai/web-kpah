@@ -30,7 +30,6 @@ function kp_public_page_start(string $title, string $active, string $description
     $links = [
         'home' => ['/', 'Trang chủ'],
         'about' => ['/gioi-thieu', 'Giới thiệu'],
-        'download' => ['/tai-game', 'Tải game'],
         'giftcode' => ['/giftcode', 'Giftcode'],
         'news' => ['/tin-tuc', 'Tin tức'],
         'community' => ['/cong-dong', 'Cộng đồng'],
@@ -64,7 +63,7 @@ function kp_public_page_start(string $title, string $active, string $description
         <nav class="lp-links" id="lp-menu" aria-label="Điều hướng chính">
             <?php foreach ($links as $key => $link): ?><a data-nav="<?= kp_e($key) ?>"<?= $active === $key ? ' class="is-active" aria-current="page"' : '' ?> href="<?= kp_e($link[0]) ?>"><?= kp_public_nav_icon($key) ?><span class="lp-nav-label"><?= kp_e($link[1]) ?></span></a><?php endforeach; ?>
         </nav>
-        <div class="lp-nav-actions"><a class="<?= $loggedIn ? 'lp-nav-account' : 'lp-nav-login' ?>" href="<?= $loggedIn ? '/tai-khoan' : '/dang-nhap' ?>"><?= $loggedIn ? '<span>◎</span>Tài khoản' : 'Đăng nhập' ?></a></div>
+        <div class="lp-nav-actions"><a class="lp-download-nav<?= $active === 'download' ? ' is-active' : '' ?>" href="/tai-game"<?= $active === 'download' ? ' aria-current="page"' : '' ?>><?= kp_public_nav_icon('download') ?><span class="lp-download-label">Tải game</span></a><a class="<?= $loggedIn ? 'lp-nav-account' : 'lp-nav-login' ?>" href="<?= $loggedIn ? '/tai-khoan' : '/dang-nhap' ?>"><?= $loggedIn ? '<span>◎</span>Tài khoản' : 'Đăng nhập' ?></a></div>
     </div>
 </header>
 <main id="noi-dung">

@@ -34,7 +34,7 @@ JS=r"""JSON.stringify((()=>{
  add(title&&art&&Math.min(title.right,art.right)-Math.max(title.x,art.x)>2
    &&Math.min(title.bottom,art.bottom)-Math.max(title.y,art.y)>2,'title overlaps hero illustration');
  const menuLinks=[...document.querySelectorAll('#lp-menu>a')];
- add(menuLinks.length!==6,'not all six modern navigation icons exist');
+ add(menuLinks.length!==5,'expected five menu links; download is a CTA');
  menuLinks.forEach((a,i)=>{
    const icon=a.querySelector('.lp-nav-icon');
    const content=icon?.querySelector('svg,img');
@@ -46,6 +46,17 @@ JS=r"""JSON.stringify((()=>{
      add(rect.width<32||rect.height<32||rect.width>38,'desktop navigation icon outside balanced size '+i);
    }
  });
+ const download=document.querySelector('.lp-nav-actions .lp-download-nav');
+ const signin=document.querySelector('.lp-nav-actions .lp-nav-login,.lp-nav-actions .lp-nav-account');
+ add(!download||!signin,'header must show download CTA next to login');
+ add(menuLinks.some(a=>new URL(a.href).pathname==='/tai-game'),'duplicate download menu item');
+ if(download&&signin){
+   const d=download.getBoundingClientRect(),l=signin.getBoundingClientRect();
+   add(getComputedStyle(download).display==='none'||d.width<90||d.right>innerWidth+2,
+      'download CTA invisible or clipped');
+   add(d.right>l.left+2||Math.abs((d.top+d.bottom)/2-(l.top+l.bottom)/2)>10,
+      'download CTA not beside login');
+ }
  if(innerWidth>1240){
    const menu=document.querySelector('#lp-menu')?.getBoundingClientRect();
    const auth=document.querySelector('.lp-nav-actions')?.getBoundingClientRect();

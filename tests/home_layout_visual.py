@@ -68,8 +68,8 @@ JS = r"""JSON.stringify((() => {
     add(overlap(navParts[i].bbox,navParts[j].bbox),
        navParts[i].selector+' overlaps '+navParts[j].selector);
   const navLinks=[...document.querySelectorAll('#lp-menu>a')];
-  add(navLinks.length!==6,'expected six illustrated public navigation links');
-  const paths=['/','/gioi-thieu','/tai-game','/giftcode','/tin-tuc','/cong-dong'];
+  add(navLinks.length!==5,'expected five menu links and one download CTA');
+  const paths=['/','/gioi-thieu','/giftcode','/tin-tuc','/cong-dong'];
   navLinks.forEach((a,i)=>{
     add(new URL(a.href).pathname!==paths[i],'public navigation route changed at '+i);
     const icon=a.querySelector('.lp-nav-icon');
@@ -83,6 +83,18 @@ JS = r"""JSON.stringify((() => {
       add(box.width<32||box.height<32||box.width>38,'desktop navigation icon size outside balanced range at '+i);
     }
   });
+  const download=pick('.lp-nav-actions .lp-download-nav');
+  const login=pick('.lp-nav-actions .lp-nav-login,.lp-nav-actions .lp-nav-account');
+  add(!download||!login,'download CTA must be beside account button');
+  add(document.querySelectorAll('a[href="/tai-game"]').length<1,'download link missing');
+  add(navLinks.some(a=>new URL(a.href).pathname==='/tai-game'),'download duplicate inside menu');
+  if(download&&login){
+    const d=download.getBoundingClientRect(),l=login.getBoundingClientRect();
+    add(getComputedStyle(download).display==='none','download CTA hidden');
+    add(d.width<90||d.height<37||d.right>innerWidth+2,'download CTA too small or offscreen');
+    add(d.right>l.left+2||Math.abs((d.top+d.bottom)/2-(l.top+l.bottom)/2)>10,'download CTA not beside login');
+    add(!download.textContent.includes('Tải game'),'download CTA label missing');
+  }
   if(innerWidth>1240){
     const nav=rect('#lp-menu'),auth=rect('.lp-nav-actions');
     add(nav&&auth&&nav.right>auth.left+2,'desktop navigation overlaps account actions');

@@ -90,3 +90,55 @@
  .landing-page .lp-links>a,
  .landing-page .lp-links>a .lp-nav-icon{border:1px solid CanvasText}
 }
+
+
+/* One prominent download CTA beside sign-in; no duplicate item in the main menu. */
+.landing-page .lp-nav-actions{display:flex;align-items:center;gap:9px;flex:none}
+.landing-page .lp-nav-actions .lp-download-nav{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ width:auto;min-width:0;min-height:42px;gap:7px;padding:0 14px;
+ border:1px solid #ebbe53;border-radius:11px;
+ color:#684509!important;
+ background:linear-gradient(135deg,#ffe9a7,#ffd06c);
+ box-shadow:0 3px 9px rgba(172,123,25,.12);
+ text-decoration:none;font-size:12px;font-weight:800;line-height:1.35;
+ white-space:nowrap
+}
+.landing-page .lp-nav-actions .lp-download-nav:hover,
+.landing-page .lp-nav-actions .lp-download-nav:focus-visible,
+.landing-page .lp-nav-actions .lp-download-nav.is-active{
+ color:#573706!important;background:#ffda7a;border-color:#e9b64a
+}
+.landing-page .lp-nav-actions .lp-download-nav .lp-nav-icon{
+ display:grid;place-items:center;flex:none;
+ width:19px;height:19px;padding:0;border:0;background:none;
+ box-shadow:none;color:currentColor;overflow:visible
+}
+.landing-page .lp-nav-actions .lp-download-nav .lp-nav-icon svg{
+ display:block;width:19px;height:19px;stroke:currentColor
+}
+.landing-page .lp-nav-actions .lp-download-nav .lp-download-label{
+ display:inline!important;white-space:nowrap;
+ font-size:12px;font-weight:800;line-height:1.35
+}
+@media(max-width:430px){
+ /* Two tidy rows keep both full CTA labels readable on narrow phones. */
+ .landing-page .lp-nav{
+  height:auto;min-height:104px;
+  flex-wrap:wrap;align-content:center;row-gap:3px;
+  padding-block:7px
+ }
+ .landing-page .lp-brand{order:0}
+ .landing-page .lp-menu-toggle{order:1;margin-left:auto}
+ .landing-page .lp-nav-actions{
+  order:2;width:100%;margin:0;
+  justify-content:center;gap:8px
+ }
+ .landing-page .lp-nav-actions .lp-download-nav{
+  min-height:39px;padding-inline:15px
+ }
+ .landing-page .lp-nav-actions .lp-nav-login,
+ .landing-page .lp-nav-actions .lp-nav-account{
+  min-height:39px;padding:9px 14px;font-size:12px
+ }
+}
