@@ -30,29 +30,32 @@ home_check(strpos($shell, '/assets/css/ui-system.css?v=') < strpos($shell, '/ass
 home_check(strpos($layout, '.kp-home-page .lp-header') !== false &&
     strpos($layout, 'position:sticky') !== false,
     'header participates in normal flow instead of covering hero');
-home_check(strpos($layout, '.kp-home-page .lp-home-hero') !== false &&
-    strpos($layout, 'height:auto') !== false,
-    'hero grows with content');
-home_check(strpos($layout, '.kp-home-page .lp-home-stage::after{content:none') !== false,
-    'extra artwork gradient layer removed');
-home_check(strpos($layout, 'mask-image:none') !== false,
-    'old masked artwork composite removed');
-home_check(strpos($layout, '.kp-home-page .lp-menu-toggle{display:block') !== false,
+home_check(strpos($home, 'class="home-hero-scene"') !== false &&
+    strpos($home, 'fetchpriority="high"') !== false,
+    'hero artwork is an eager image separate from the content field');
+home_check(strpos($home, 'aria-labelledby="home-title"') !== false &&
+    strpos($home, 'id="home-title"') !== false,
+    'hero has a visible accessible heading');
+home_check(strpos($layout, 'min-height:650px') !== false &&
+    strpos($layout, '; height:650px') === false,
+    'hero uses a minimum height and grows with content');
+$compactLayout = preg_replace('/\\s+/', '', $layout);
+home_check(strpos($compactLayout, '.kp-home-page.lp-menu-toggle{display:block') !== false,
     'tablet/mobile uses collapsed menu');
 home_check(strpos($layout, '.kp-home-page .lp-links.is-open') !== false &&
     strpos($layout, 'pointer-events:auto') !== false,
     'collapsed menu retains click behavior');
-home_check(strpos($layout, '.kp-home-page .lp-quest-grid{grid-template-columns:1fr') !== false,
-    'mobile cards form a single column');
-home_check(strpos($layout, '.kp-home-page .lp-home-stats{grid-template-columns:repeat(2,minmax(0,1fr))') !== false,
+home_check(strpos($compactLayout, '.kp-home-page.home-adventure-grid{grid-template-columns:1fr') !== false,
+    'mobile adventure cards form a single column');
+home_check(strpos($compactLayout, '.kp-home-page.home-stats{grid-template-columns:repeat(2,minmax(0,1fr))') !== false,
     'mobile stats become two columns');
-home_check(strpos($layout, '.kp-home-page .lp-home-destinations{grid-template-columns:repeat(2,minmax(0,1fr))') !== false,
+home_check(strpos($compactLayout, '.kp-home-page.home-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))') !== false,
     'mobile quick links become two columns');
 home_check(strpos($landing, '2026 fantasy quest home: deliberately after legacy landing rules.') === false,
     'conflicting appended homepage overrides have been removed');
-home_check(strpos($home, 'lp-home-summary') !== false &&
-    strpos($home, 'lp-quest-grid') !== false &&
-    strpos($home, 'lp-home-destinations') !== false,
+home_check(strpos($home, 'home-stats') !== false &&
+    strpos($home, 'home-adventure-grid') !== false &&
+    strpos($home, 'home-shortcuts') !== false,
     'current homepage modules retained');
 home_check(strpos($home, 'kp_rankings_fetch') !== false &&
     strpos($home, 'kp_giftcode_public_list') !== false,

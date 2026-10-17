@@ -49,8 +49,8 @@ foreach (['app/includes/public_landing.php', 'app/pages/login.php', 'app/pages/r
     $check(strpos($read($template), 'kpah-logo-main.webp') !== false,
         'shared WEBP logo used in ' . $template);
 }
-foreach (['Khởi đầu hành trình', 'Kho báu phiêu lưu', 'Đi cùng đồng đội'] as $label) {
-    $check(strpos($home, $label) !== false, 'quest feature ' . $label);
+foreach (['home-start', 'home-treasure', 'home-community'] as $label) {
+    $check(strpos($home, $label) !== false, 'adventure feature ' . $label);
 }
 foreach (['Top Sức mạnh', 'Nhân vật nổi bật', 'Khám phá KPAH'] as $label) {
     $check(strpos($home, $label) === false, 'removed legacy home section ' . $label);
@@ -59,7 +59,7 @@ $check(strpos($home, 'kp_rankings_fetch') !== false &&
        strpos($home, 'kp_giftcode_public_list') !== false &&
        strpos($home, 'SELECT COUNT(*) FROM team_user') !== false,
        'public dynamic database sources kept');
-$check(strpos($home, 'kpah-logo-main.webp') !== false &&
-       strpos($homeCss, 'home-hero-anime.webp') !== false &&
+$check(strpos($read('app/includes/public_landing.php'), 'kpah-logo-main.webp') !== false &&
+       strpos($home, 'home-hero-anime.webp') !== false &&
        strpos($css, 'fantasy-world.webp') !== false, 'illustrated assets are available for home and shared components');
 echo 'Fantasy foundation static regression passed.' . PHP_EOL;

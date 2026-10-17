@@ -53,7 +53,7 @@ for path in ['/','/dang-nhap','/dang-ky','/quen-mat-khau','/quan-tri/dang-nhap']
     clean_page(guest,path)
 landing_body=clean_page(guest,'/')
 check('href="/tai-game"' in landing_body,'landing links to download page')
-check('lp-home-destinations' in landing_body,'landing has focused destination cards')
+check('home-shortcuts' in landing_body,'landing has focused destination cards')
 for public_path in ('/gioi-thieu','/tai-game','/giftcode','/tin-tuc','/cong-dong'):
     check('href="'+public_path+'"' in landing_body,'landing links to '+public_path)
 download_body=clean_page(guest,'/tai-game')

@@ -32,7 +32,7 @@ theme_assert(strpos($css,'.kp-inner-page .lp-community-card')!==false,'community
 theme_assert(strpos($css,'@media(max-width:600px)')!==false,'mobile subpage layout');
 theme_assert(strpos($css,'prefers-reduced-motion')!==false,'motion accessibility');
 theme_assert(strpos($home, 'treasure-chest-fantasy.webp')!==false &&
-    strpos($homeCss, 'lp-treasure-illustration')!==false, 'home artwork CSS and HTML connected');
+    strpos($homeCss, 'home-treasure>img')!==false, 'home artwork CSS and HTML connected');
 theme_assert(strpos($home, 'lp-quest-chest')===false,'emoji gift box removed');
 $gift=theme_read('app/pages/giftcodes-public.php');
 theme_assert(strpos($gift,'treasure-chest-fantasy.webp')!==false,'giftcode listing shows treasure illustration');

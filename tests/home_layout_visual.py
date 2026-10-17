@@ -41,10 +41,10 @@ JS = r"""JSON.stringify((() => {
     Math.min(a.bottom,b.bottom) - Math.max(a.top,b.top) > 2;
   const issues=[];
   const add=(condition,message)=>{if (condition) issues.push(message);};
-  const header=rect('.lp-header'), hero=rect('.lp-home-hero'), summary=rect('.lp-home-summary'),
-        quests=rect('.lp-quest-grid'), shortcuts=rect('.lp-home-destinations'),
-        logo=rect('.lp-home-logo-heading'), subtitle=rect('.lp-home-subtitle'),
-        actions=rect('.lp-home-actions');
+  const header=rect('.lp-header'), hero=rect('.home-hero'), summary=rect('.home-stats'),
+        quests=rect('.home-discover'), shortcuts=rect('.home-shortcuts'),
+        logo=rect('.home-hero h1'), subtitle=rect('.home-hero-copy>p'),
+        actions=rect('.home-actions');
   add(!document.body.classList.contains('kp-home-page'),'missing homepage scope');
   add(!pick('link[href*="home-layout.css"]'),'missing isolated CSS');
   add(document.documentElement.scrollWidth > innerWidth+2,
@@ -54,10 +54,10 @@ JS = r"""JSON.stringify((() => {
   add(hero && summary && hero.bottom > summary.top+2,'hero overlaps statistics');
   add(summary && quests && summary.bottom > quests.top+2,'stats/events overlaps quests');
   add(quests && shortcuts && quests.bottom > shortcuts.top+2,'quests overlaps shortcuts');
-  add(logo && subtitle && logo.bottom > subtitle.top+2,'hero logo overlaps subtitle');
+  add(logo && subtitle && logo.bottom > subtitle.top+2,'hero heading overlaps subtitle');
   add(subtitle && actions && subtitle.bottom > actions.top+2,'subtitle overlaps actions');
-  const stats = [...document.querySelectorAll('.lp-home-stats article')].map(e=>e.getBoundingClientRect());
-  const cards = [...document.querySelectorAll('.lp-quest-card')].map(e=>e.getBoundingClientRect());
+  const stats = [...document.querySelectorAll('.home-stat')].map(e=>e.getBoundingClientRect());
+  const cards = [...document.querySelectorAll('.home-panel')].map(e=>e.getBoundingClientRect());
   for(let i=0;i<stats.length;i++)for(let j=i+1;j<stats.length;j++)
     add(overlap(stats[i],stats[j]),'stat '+i+' overlaps '+j);
   for(let i=0;i<cards.length;i++)for(let j=i+1;j<cards.length;j++)
@@ -69,8 +69,15 @@ JS = r"""JSON.stringify((() => {
        navParts[i].selector+' overlaps '+navParts[j].selector);
   const headerStyle=pick('.lp-header')?getComputedStyle(pick('.lp-header')).position:'';
   add(headerStyle!=='sticky','expected sticky header but got '+headerStyle);
-  const img=pick('.lp-home-logo');
-  add(!img || !img.complete || img.naturalWidth===0,'hero logo asset not loaded');
+  const statCount = document.querySelectorAll('.home-stat').length;
+  const cardCount = document.querySelectorAll('.home-panel').length;
+  add(statCount !== 4, 'expected four statistic blocks, got '+statCount);
+  add(cardCount !== 4, 'expected four feature panels, got '+cardCount);
+  document.querySelectorAll('.home-panel img').forEach(img => {
+    add(!img.complete || img.naturalWidth === 0, 'feature artwork failed: '+img.getAttribute('src'));
+  });
+  const img=pick('.home-hero-scene');
+  add(!img || !img.complete || img.naturalWidth===0,'hero scene asset not loaded');
   return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,issues,
     heights:{header:header?.height,hero:hero?.height,summary:summary?.height,
       cards:quests?.height,shortcuts:shortcuts?.height},
@@ -152,13 +159,19 @@ def main():
                             time.sleep(.2)
                             try:
                                 state=dev.eval("document.readyState")
-                                present=dev.eval("!!document.querySelector('.lp-home-destinations')")
+                                present=dev.eval("!!document.querySelector('.home-shortcuts')")
                                 if state=="complete" and present:
                                     break
                             except (RuntimeError,TypeError):
                                 continue
                         else:
                             raise RuntimeError(f"Homepage did not load at {width}px")
+                        # Load lazy artwork throughout the page before checking its dimensions.
+                        dev.eval("document.querySelectorAll('.home-panel img').forEach(img => img.loading = 'eager')")
+                        for _ in range(50):
+                            if dev.eval("Array.from(document.querySelectorAll('.home-panel img')).every(img => img.complete)"):
+                                break
+                            time.sleep(.1)
                         time.sleep(.6)
                         data=json.loads(dev.eval(JS))
                         shot=dev.call("Page.captureScreenshot",{
