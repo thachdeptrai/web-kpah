@@ -1,0 +1,32 @@
+rules:
+  - id: kpah-php-eval-superglobal
+    languages: [php]
+    severity: ERROR
+    message: Never execute directly from an HTTP request.
+    patterns:
+      - pattern: eval($CODE);
+      - metavariable-pattern:
+          metavariable: $CODE
+          pattern-either:
+            - pattern: $_GET[...]
+            - pattern: $_POST[...]
+            - pattern: $_REQUEST[...]
+  - id: kpah-php-unserialize-untrusted
+    languages: [php]
+    severity: ERROR
+    message: Do not unserialize request-controlled data; use JSON with validation.
+    pattern-either:
+      - pattern: unserialize($_POST[...])
+      - pattern: unserialize($_GET[...])
+      - pattern: unserialize($_REQUEST[...])
+  - id: kpah-php-shell-request-input
+    languages: [php]
+    severity: ERROR
+    message: Never pass HTTP request input directly to a shell.
+    pattern-either:
+      - pattern: shell_exec($_GET[...])
+      - pattern: shell_exec($_POST[...])
+      - pattern: system($_GET[...])
+      - pattern: system($_POST[...])
+      - pattern: exec($_GET[...])
+      - pattern: exec($_POST[...])
