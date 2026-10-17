@@ -313,3 +313,11 @@ body.kp-auth-v4 .kp-auth-story__visual>img.kp-auth-story__keyart{
  body.kp-auth-v4 .stage>.brand.kp-auth-story{height:185px;min-height:0}
  body.kp-auth-v4:is(.kp-auth-register,.kp-auth-recovery) .stage>.brand.kp-auth-story{height:180px;min-height:0}
 }
+
+
+/* Login uses a more specific legacy 155px rule; retain a usable image frame. */
+@media(max-width:360px){
+ body.kp-auth-page.kp-auth-v4.kp-auth-login .stage>.brand.kp-auth-story{
+  height:185px;min-height:0
+ }
+}
