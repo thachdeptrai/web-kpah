@@ -40,6 +40,24 @@ JS=r"""JSON.stringify((()=>{
  }
  const images=[...document.querySelectorAll('.lp-inner-emblem img')];
  for(const img of images) add(!img.complete||img.naturalWidth===0,'broken hero artwork');
+ const marks=[...document.querySelectorAll('.lp-platform-brand')];
+ if(location.pathname==='/tai-game'){
+  add(marks.length!==4,'expected four platform icons');
+  add(!document.fonts.check('400 34px "KpPlatformBrands"', '\uf17b\uf17a\uf4e4\uf179'),'platform icon font failed to load');
+  const expected=['\uf17b','\uf17a','\uf4e4','\uf179'];
+  marks.forEach((el,i)=>add(!getComputedStyle(el,'::before').content.includes(expected[i]),'wrong platform icon '+i));
+ }
+ if(location.pathname==='/cong-dong'){
+  const button=document.querySelector('.lp-button-zalo');
+  add(!button,'Zalo button missing');
+  if(button){
+   const style=getComputedStyle(button);
+   const lum=value=>{const rgb=value.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4)});
+    return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
+   const fg=lum(style.color),bg=lum(style.backgroundColor);
+   add((Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)<4.5,'Zalo text contrast below 4.5:1');
+  }
+ }
  const bodyStyle=getComputedStyle(document.body);
  return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
   issues,heroHeight:hero?.height,contentTop:content?.y,
@@ -75,6 +93,10 @@ def main():
                                     continue
                             else:
                                 failures.append((route,width,["page not ready"]));continue
+                            for _ in range(30):
+                                if dev.eval("document.fonts.status === 'loaded'"):
+                                    break
+                                time.sleep(.1)
                             time.sleep(.23)
                             data=json.loads(dev.eval(JS))
                             png=dev.call("Page.captureScreenshot",{"format":"png","fromSurface":True})
