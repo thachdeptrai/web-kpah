@@ -27,7 +27,7 @@ function kp_public_page_start(string $title, string $active, string $description
     <meta name="description" content="<?= kp_e($description) ?>">
     <meta name="robots" content="index,follow">
     <title><?= kp_e($title) ?> · NGHIỆN KPAH</title>
-    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+    <link rel="icon" type="image/webp" href="/assets/img/favicon.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&amp;display=swap">
@@ -59,11 +59,11 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
     // all real content, URLs and data; do not change its API contract.
     global $kp_public_active;
     $artByPage = [
-        'about' => ['/assets/img/rank-archer.svg', 'archer'],
-        'download' => ['/assets/img/rank-guardian.svg', 'guardian'],
-        'giftcode' => ['/assets/img/treasure-chest-fantasy.svg', 'gift'],
-        'news' => ['/assets/img/fantasy-world.svg', 'news'],
-        'community' => ['/assets/img/rank-sorcerer.svg', 'sorcerer'],
+        'about' => ['/assets/img/rank-archer.webp', 'archer'],
+        'download' => ['/assets/img/rank-guardian.webp', 'guardian'],
+        'giftcode' => ['/assets/img/treasure-chest-fantasy.webp', 'gift'],
+        'news' => ['/assets/img/fantasy-world.webp', 'news'],
+        'community' => ['/assets/img/rank-sorcerer.webp', 'sorcerer'],
     ];
     $art = $artByPage[$kp_public_active ?? ''] ?? ['/assets/img/kpah-logo-main.webp', 'logo'];
     ?><section class="lp-inner-hero" aria-label="<?= kp_e($kicker) ?>">

@@ -37,7 +37,7 @@ kp_public_page_start('Bước vào thế giới phiêu lưu','home','NGHIỆN KP
             <article class="lp-quest-card lp-quest-treasure">
                 <div class="lp-quest-card-head"><span class="lp-quest-mark lp-quest-gem" aria-hidden="true">✦</span><div><span class="lp-quest-kicker">BÍ MẬT TỪ THẾ GIỚI KPAH</span><h2>Kho báu phiêu lưu</h2></div></div>
                 <p class="lp-quest-description">Mở chiếc rương bí ẩn, nhận mã thưởng và chuẩn bị cho cuộc phiêu lưu tiếp theo.</p>
-                <div class="lp-quest-treasure-art" aria-hidden="true"><img class="lp-treasure-illustration" src="/assets/img/treasure-chest-fantasy.svg" alt="" width="640" height="460" loading="lazy" decoding="async"></div>
+                <div class="lp-quest-treasure-art" aria-hidden="true"><img class="lp-treasure-illustration" src="/assets/img/treasure-chest-fantasy.webp" alt="" width="640" height="460" loading="lazy" decoding="async"></div>
                 <div class="lp-quest-meta"><strong><?= count($codes) ?></strong><span>mã quà đang mở</span></div>
                 <a class="lp-quest-link" href="/giftcode">Mở kho quà <span aria-hidden="true">↗</span></a>
             </article>

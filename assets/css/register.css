@@ -71,7 +71,7 @@ h1, h2, p { margin: 0; }
     position: fixed; inset: 0; z-index: -1;
     background:
         linear-gradient(90deg, rgba(11, 10, 22, .78) 0%, rgba(11, 10, 22, .35) 55%, rgba(11, 10, 22, .15) 100%),
-        url("../img/scene.svg") center bottom / cover no-repeat,
+        url("../img/scene.webp") center bottom / cover no-repeat,
         var(--void);
 }
 .scene canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -363,7 +363,7 @@ dialog::backdrop { background: rgba(5, 4, 14, .72); -webkit-backdrop-filter: blu
     .rules { display: none; }
     .scene { background:
         linear-gradient(180deg, rgba(11, 10, 22, .55) 0%, rgba(11, 10, 22, .25) 100%),
-        url("../img/scene.svg") 62% bottom / cover no-repeat, var(--void); }
+        url("../img/scene.webp") 62% bottom / cover no-repeat, var(--void); }
 }
 
 @media (max-width: 480px) {

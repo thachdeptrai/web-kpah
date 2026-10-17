@@ -18,7 +18,7 @@ body.home-page.portal-page{
 }
 body.portal-page:before{
  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
- background:url("/assets/img/fantasy-world.svg") top center/cover no-repeat;
+ background:url("/assets/img/fantasy-world.webp") top center/cover no-repeat;
  opacity:.1;
 }
 .portal-page *,.portal-page *:before,.portal-page *:after{box-sizing:border-box}

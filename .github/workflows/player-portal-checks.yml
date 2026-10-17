@@ -22,7 +22,7 @@ on:
       - 'assets/css/character-inventory.css'
       - 'app/includes/rankings.php'
       - 'assets/css/player-portal.css'
-      - 'assets/img/rank-*.svg'
+      - 'assets/img/rank-*.webp'
       - 'tests/rankings_smoke.php'
       - '.github/workflows/player-portal-checks.yml'
   pull_request:
@@ -46,7 +46,7 @@ on:
       - 'assets/css/character-inventory.css'
       - 'app/includes/rankings.php'
       - 'assets/css/player-portal.css'
-      - 'assets/img/rank-*.svg'
+      - 'assets/img/rank-*.webp'
       - 'tests/rankings_smoke.php'
   workflow_dispatch:
 
@@ -81,7 +81,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
-          for path in ('assets/img/rank-guardian.svg','assets/img/rank-sorcerer.svg','assets/img/rank-archer.svg'):
+          for path in ('assets/img/rank-guardian.webp','assets/img/rank-sorcerer.webp','assets/img/rank-archer.webp'):
               root=ET.parse(path).getroot()
               assert root.tag.endswith('svg')
               print(path,'valid SVG')

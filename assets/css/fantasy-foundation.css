@@ -43,7 +43,7 @@
 }
 .kpf-shell{width:min(calc(100% - 36px),1360px);margin-inline:auto;min-width:0}
 .kpf-world{position:relative;isolation:isolate;overflow:hidden;background:var(--kpf-gradient-sky)}
-.kpf-world::before{position:absolute;inset:0;z-index:-2;content:"";background:url("/assets/img/fantasy-world.svg") center top/cover no-repeat;opacity:.9;pointer-events:none}
+.kpf-world::before{position:absolute;inset:0;z-index:-2;content:"";background:url("/assets/img/fantasy-world.webp") center top/cover no-repeat;opacity:.9;pointer-events:none}
 .kpf-world::after{position:absolute;inset:0;z-index:-1;content:"";background:linear-gradient(180deg,rgba(233,248,255,0) 36%,rgba(244,251,255,.78) 80%,#f6fbff);pointer-events:none}
 .kpf-world--soft::before{opacity:.24;filter:saturate(.68)}
 .kpf-world--soft::after{background:linear-gradient(180deg,rgba(247,252,255,.69),rgba(247,252,255,.93))}
@@ -73,7 +73,7 @@
 .kpf-admin-panel__toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 /* Hero / decorative art */
 .kpf-hero{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);align-items:center;gap:36px;min-height:440px;padding:48px clamp(18px,4vw,60px);overflow:hidden;border-radius:var(--kpf-radius-xl);background:radial-gradient(circle at 85% 18%,#fff9df 0,transparent 30%),var(--kpf-gradient-sky)}
-.kpf-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/assets/img/fantasy-world.svg") center 35%/cover no-repeat;opacity:.58}
+.kpf-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/assets/img/fantasy-world.webp") center 35%/cover no-repeat;opacity:.58}
 .kpf-hero__content{position:relative;z-index:1}
 .kpf-hero__art{display:grid;place-items:center;min-width:0}
 .kpf-hero__art img{width:min(100%,520px);height:auto;filter:drop-shadow(0 18px 32px rgba(42,83,135,.14))}

@@ -13,7 +13,7 @@ body.kp-auth-page.kp-auth-v2{
   position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
     linear-gradient(180deg,rgba(218,240,255,.35) 0%,rgba(234,248,255,.76) 60%,#eff9ff 100%),
-    url("/assets/img/fantasy-world.svg") center 25%/cover no-repeat,#e5f7ff;
+    url("/assets/img/fantasy-world.webp") center 25%/cover no-repeat,#e5f7ff;
 }
 .kp-auth-v2 .scene::before,.kp-auth-v2 .scene::after{display:none}
 .kp-auth-v2 .scene canvas{display:none}

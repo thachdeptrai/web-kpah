@@ -17,7 +17,7 @@
 .landing-page .lp-menu-toggle{display:none;flex:none;margin:0}
 /* Footer and the action strip belong to every public route */
 .landing-page .lp-inner-cta{position:relative;isolation:isolate;overflow:hidden;padding:48px 0;background:linear-gradient(135deg,#e5f5ff,#eeefff 70%,#fff4db)}
-.landing-page .lp-inner-cta::before{position:absolute;inset:0;z-index:-1;content:"";background:url("/assets/img/fantasy-world.svg") center 55%/cover no-repeat;opacity:.14;pointer-events:none}
+.landing-page .lp-inner-cta::before{position:absolute;inset:0;z-index:-1;content:"";background:url("/assets/img/fantasy-world.webp") center 55%/cover no-repeat;opacity:.14;pointer-events:none}
 .landing-page .lp-inner-cta .lp-container{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .landing-page .lp-inner-cta h2{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:clamp(23px,3vw,34px);line-height:1.2;color:#253b63;letter-spacing:0}
 .landing-page .lp-inner-cta .lp-container>div:last-child{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -37,7 +37,7 @@
 }
 .kp-inner-page .lp-inner-hero::before{
   content:"";position:absolute;inset:0;z-index:-2;
-  background:url("/assets/img/fantasy-world.svg") center 42%/cover no-repeat;opacity:.57
+  background:url("/assets/img/fantasy-world.webp") center 42%/cover no-repeat;opacity:.57
 }
 .kp-inner-page .lp-inner-hero::after{
   content:"";position:absolute;inset:0;z-index:-1;

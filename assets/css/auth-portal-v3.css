@@ -15,7 +15,7 @@ body.kp-auth-page.kp-auth-v3 {
 .kp-auth-v3 .scene{
   position:fixed;inset:0;z-index:0;pointer-events:none;
   background:linear-gradient(180deg,rgba(223,244,255,.58),rgba(255,255,255,.79)),
-      url("/assets/img/fantasy-world.svg") center top/cover no-repeat;
+      url("/assets/img/fantasy-world.webp") center top/cover no-repeat;
 }
 .kp-auth-v3 .stage,.kp-auth-v3 .login-stage,.kp-auth-v3 .recovery-stage{
   position:relative;z-index:1;

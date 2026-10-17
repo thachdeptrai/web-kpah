@@ -35,7 +35,7 @@ kp_player_head('Tổng quan tài khoản','home',$user);
     </div>
     <div class="portal-hero-emblem" aria-hidden="true">
         <span class="portal-emblem-ring"></span>
-        <img src="/assets/img/rank-guardian.svg" alt="" width="220" height="248" loading="lazy">
+        <img src="/assets/img/rank-guardian.webp" alt="" width="220" height="248" loading="lazy">
         <span class="portal-emblem-label">KPAH · LEGENDS</span>
     </div>
 </section>

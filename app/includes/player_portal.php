@@ -128,7 +128,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
 <meta name="theme-color" content="#eef7ff">
 <meta name="robots" content="noindex,nofollow">
 <title><?= kp_e($title) ?> · <?= kp_e($app) ?></title>
-<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/webp" href="/assets/img/favicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;family=Cinzel:wght@700;900&amp;display=swap">

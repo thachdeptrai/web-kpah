@@ -6,7 +6,7 @@ Cung cấp nền tảng game UI fantasy/anime sáng có thể tái sử dụng �
 
 **Assets mới**
 
-- `assets/img/fantasy-world.svg`: background vector nhiều lớp (trời, mây, đảo nổi, đình, thác, foliage, petals), không nhúng chữ/nút hay mockup tĩnh.
+- `assets/img/fantasy-world.webp`: ảnh WEBP nhiều lớp (trời, mây, đảo nổi, đình, thác, foliage, petals), không nhúng chữ/nút hay mockup tĩnh.
 - `assets/img/kpah-logo-main.webp`: logo minh họa fantasy raster, nền trong suốt, dùng thống nhất ở hero, header và footer.
 - `assets/css/fantasy-foundation.css`: namespace `kpf-`, token `--kpf-*`.
 - `assets/js/fantasy-foundation.js`: namespace `window.KpFantasy`, không trùng sự kiện `data-ui-*` cũ.
@@ -28,7 +28,7 @@ Cung cấp nền tảng game UI fantasy/anime sáng có thể tái sử dụng �
 | Radius | `--kpf-radius-xs/sm/md/lg/xl/pill` |
 | Shadow/motion | `--kpf-shadow-sm`, `--kpf-shadow`, `--kpf-shadow-float`, `--kpf-fast/normal/slow`, `--kpf-ease` |
 
-Typography dùng Be Vietnam Pro cho text và Baloo 2 (kèm fallback) cho title lớn, ưu tiên cỡ 14–16px trên các component mới. Không dùng font tùy chỉnh đẩy file nặng vào repo. Logo chữ dùng styling vector gradient/outline riêng.
+Typography dùng Be Vietnam Pro cho text và Baloo 2 (kèm fallback) cho title lớn, ưu tiên cỡ 14–16px trên các component mới. Không dùng font tùy chỉnh đẩy file nặng vào repo. Logo thương hiệu dùng ảnh WEBP; chữ tiêu đề tiếp tục dùng typography của giao diện.
 
 ## Reusable components
 
@@ -84,7 +84,7 @@ KpFantasy.setBusy(button, false);
 2. **Quà chờ chủ nhân** — count giftcode live, liên kết `/giftcode`.
 3. **Đi cùng đồng đội** — cộng đồng, tên nhân vật trong ranking khi có dữ liệu, giữ route `/bang-xep-hang`.
 
-Banner chính lấy logo vector mới; nền sky SVG với phần anime nhân vật WebP cũ blend nhẹ; chữ thống kê/sự kiện và navigation tăng cỡ. **Không hard-code thống kê 1.285 / 52.316 / 8.731 / 127 của ảnh mẫu**. Dữ liệu lấy từ PHP như trước.
+Banner chính dùng logo WEBP; nền sky WEBP với phần anime nhân vật WebP cũ blend nhẹ; chữ thống kê/sự kiện và navigation tăng cỡ. **Không hard-code thống kê 1.285 / 52.316 / 8.731 / 127 của ảnh mẫu**. Dữ liệu lấy từ PHP như trước.
 
 ## Migration discipline
 

@@ -18,7 +18,7 @@ $homeCss=theme_read('assets/css/home-layout.css');
 theme_assert(strpos($shell,"' kp-inner-page'")!==false,'separate inner page scope');
 theme_assert(strpos($shell,'/assets/css/public-pages-v2.css?v=')!==false,'shared public CSS in shell');
 theme_assert(strpos($shell,'/assets/css/home-layout.css?v=')!==false,'home-only CSS still loaded');
-theme_assert(strpos($shell,'treasure-chest-fantasy.svg')!==false,'subpage hero supports detailed treasure');
+theme_assert(strpos($shell,'treasure-chest-fantasy.webp')!==false,'subpage hero supports detailed treasure');
 theme_assert(strpos($shell,"'about' =>")!==false &&
     strpos($shell,"'download' =>")!==false &&
     strpos($shell,"'giftcode' =>")!==false &&
@@ -31,11 +31,11 @@ theme_assert(strpos($css,'.kp-inner-page .lp-news-card')!==false,'news card rede
 theme_assert(strpos($css,'.kp-inner-page .lp-community-card')!==false,'community card redesigned');
 theme_assert(strpos($css,'@media(max-width:600px)')!==false,'mobile subpage layout');
 theme_assert(strpos($css,'prefers-reduced-motion')!==false,'motion accessibility');
-theme_assert(strpos($home, 'treasure-chest-fantasy.svg')!==false &&
+theme_assert(strpos($home, 'treasure-chest-fantasy.webp')!==false &&
     strpos($homeCss, 'lp-treasure-illustration')!==false, 'home artwork CSS and HTML connected');
 theme_assert(strpos($home, 'lp-quest-chest')===false,'emoji gift box removed');
 $gift=theme_read('app/pages/giftcodes-public.php');
-theme_assert(strpos($gift,'treasure-chest-fantasy.svg')!==false,'giftcode listing shows treasure illustration');
+theme_assert(strpos($gift,'treasure-chest-fantasy.webp')!==false,'giftcode listing shows treasure illustration');
 foreach(['kp_giftcode_public_list','data-gift-code','limit_use','giftcode','luongLock'] as $key) {
     theme_assert(strpos($gift,$key)!==false,'giftcode backend/copy contract preserved: '.$key);
 }

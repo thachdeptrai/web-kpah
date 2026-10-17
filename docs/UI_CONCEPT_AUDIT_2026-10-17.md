@@ -52,7 +52,7 @@
 - `assets/css/login.css`, `recovery.css`: giữ các trạng thái/form đặc thù, chuyển phần skin sang auth tokens.
 - `assets/css/user-auth.css`: không thấy link nạp trong các shell đã kiểm; rà toàn bộ references bằng grep trước khi đánh dấu orphan và xóa ở một task cleanup sau.
 
-**Tài nguyên hiện có:** `assets/img/home-hero-anime.webp`, `emblem.svg`, `scene.svg`, `rank-guardian.svg`, `rank-archer.svg`, `rank-sorcerer.svg`, `favicon.svg`; game inventory image lấy từ `/res/icon/{id}.png`. Kiểm tra asset sử dụng lại để tránh dùng 1 ảnh lặp cho mọi card; các sprite game có thể không nằm trong Git tree (res hiện chủ yếu là thư mục gitignored).
+**Tài nguyên hiện có:** `assets/img/home-hero-anime.webp`, `emblem.webp`, `scene.webp`, `rank-guardian.webp`, `rank-archer.webp`, `rank-sorcerer.webp`, `favicon.webp`; game inventory image lấy từ `/res/icon/{id}.png`. Kiểm tra asset sử dụng lại để tránh dùng 1 ảnh lặp cho mọi card; các sprite game có thể không nằm trong Git tree (res hiện chủ yếu là thư mục gitignored).
 
 ## C. JS quyết định
 

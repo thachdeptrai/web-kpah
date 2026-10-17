@@ -40,7 +40,7 @@ function kp_admin_nav($active = 'home', $role = null)
     ?>
 <nav class="kp-admin-nav kp-admin-nav-v2" aria-label="Điều hướng quản trị">
   <a class="kp-admin-nav-brand" href="<?= kp_e($base) ?>" aria-label="KPAH - <?= $role === 'key' ? 'Mã giới thiệu' : 'Tổng quan quản trị' ?>">
-    <span class="kp-admin-nav-brand-mark" aria-hidden="true"><img src="/assets/img/emblem.svg" width="40" height="40" alt=""></span>
+    <span class="kp-admin-nav-brand-mark" aria-hidden="true"><img src="/assets/img/emblem.webp" width="40" height="40" alt=""></span>
     <span class="kp-admin-nav-brand-copy"><strong>NGHIỆN KPAH</strong><small><?= $role === 'key' ? 'QUẢN LÝ MÃ · KEY' : 'TRUNG TÂM QUẢN TRỊ' ?></small></span>
   </a>
 

@@ -26,13 +26,13 @@ body.kp-auth-v4 .kp-auth-story__visual{
  background-position:center,center;background-size:cover,contain
 }
 body.kp-auth-v4.kp-auth-login .kp-auth-story__visual{
- background-image:url('/assets/img/auth-login-art.webp'),url('/assets/img/auth-login-adventure.svg')
+ background-image:url('/assets/img/auth-login-art.webp'),url('/assets/img/auth-login-adventure.webp')
 }
 body.kp-auth-v4.kp-auth-register .kp-auth-story__visual{
- background-image:url('/assets/img/auth-register-art.webp'),url('/assets/img/auth-register-adventure.svg')
+ background-image:url('/assets/img/auth-register-art.webp'),url('/assets/img/auth-register-adventure.webp')
 }
 body.kp-auth-v4.kp-auth-recovery .kp-auth-story__visual{
- background-image:url('/assets/img/auth-recovery-art.webp'),url('/assets/img/auth-recovery-adventure.svg')
+ background-image:url('/assets/img/auth-recovery-art.webp'),url('/assets/img/auth-recovery-adventure.webp')
 }
 body.kp-auth-v4 .kp-auth-story__visual>img{display:none}
 body.kp-auth-v4 .kp-auth-story .rules{display:none!important}
@@ -46,7 +46,7 @@ body.kp-auth-v4 .control input{font-size:16px}
 body.kp-auth-v4 .kp-auth-topbar{max-width:1390px}
 body.kp-auth-v4 .scene{
  background:linear-gradient(180deg,rgba(214,237,255,.4),rgba(234,249,255,.8)),
- url('/assets/img/fantasy-world.svg') center top/cover no-repeat
+ url('/assets/img/fantasy-world.webp') center top/cover no-repeat
 }
 @media(max-width:1080px){
  body.kp-auth-v4 .stage,

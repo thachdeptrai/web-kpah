@@ -34,7 +34,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
   <p class="tp-aside-note">KPAH · ĐÚNG TÀI KHOẢN, ĐÚNG TÀI NGUYÊN</p>
 </aside>
 <main class="tp-content">
-<header class="tp-header"><div class="tp-breadcrumb"><?php if($admin): ?><img class="kp-topup-admin-emblem" src="/assets/img/emblem.svg" width="36" height="36" alt="">NGHIỆN KPAH<?php else: ?>KPAH<?php endif; ?> <span>/</span> <?= $admin ? 'QUẢN TRỊ' : 'NẠP TÀI NGUYÊN' ?> <span>/</span> <?= kp_e($title) ?></div><div class="tp-user"><i></i><?= kp_e($username) ?></div></header>
+<header class="tp-header"><div class="tp-breadcrumb"><?php if($admin): ?><img class="kp-topup-admin-emblem" src="/assets/img/emblem.webp" width="36" height="36" alt="">NGHIỆN KPAH<?php else: ?>KPAH<?php endif; ?> <span>/</span> <?= $admin ? 'QUẢN TRỊ' : 'NẠP TÀI NGUYÊN' ?> <span>/</span> <?= kp_e($title) ?></div><div class="tp-user"><i></i><?= kp_e($username) ?></div></header>
 <?php if($admin) kp_admin_nav($active,'admin'); ?>
 <?php
 }

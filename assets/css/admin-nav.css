@@ -210,7 +210,7 @@ body:not(.kp-admin-login-page){
   --bg:#0b0a16;--panel:rgba(25,20,48,.86);--line:rgba(207,214,255,.16);
   --text:#ece8fb;--muted:#aaa6cd;--violet:#e2b45a;--cyan:#f6dc9b;
   --an-gold:#e2b45a;--an-gold-hi:#f6dc9b;--an-moon:#cfd6ff;
-  background:linear-gradient(90deg,rgba(11,10,22,.88),rgba(11,10,22,.55) 60%,rgba(11,10,22,.73)),url("../img/scene.svg") center bottom/cover fixed no-repeat,#0b0a16;
+  background:linear-gradient(90deg,rgba(11,10,22,.88),rgba(11,10,22,.55) 60%,rgba(11,10,22,.73)),url("../img/scene.webp") center bottom/cover fixed no-repeat,#0b0a16;
   color:#ece8fb;
 }
 body:not(.kp-admin-login-page)::before{
@@ -279,7 +279,7 @@ body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap){border-color:rgba(
 body:not(.kp-admin-login-page) :is(input,select,textarea):focus-visible{outline:2px solid #e2b45a;outline-offset:2px}
 body:not(.kp-admin-login-page) .kp-admin-nav-v2 a:focus-visible,
 body:not(.kp-admin-login-page)>header a:focus-visible{outline:2px solid #f6dc9b;outline-offset:3px}
-.tp-page.tp-admin{background:linear-gradient(90deg,rgba(11,10,22,.9),rgba(11,10,22,.65)),url("../img/scene.svg") center bottom/cover fixed no-repeat,#0b0a16}
+.tp-page.tp-admin{background:linear-gradient(90deg,rgba(11,10,22,.9),rgba(11,10,22,.65)),url("../img/scene.webp") center bottom/cover fixed no-repeat,#0b0a16}
 .tp-page.tp-admin .tp-header{border-bottom:1px solid rgba(246,220,155,.18)}
 .tp-page.tp-admin .tp-breadcrumb{color:#e7c989}
 .tp-page.tp-admin .tp-user{color:#ece8fb}

@@ -74,7 +74,7 @@ $fmt=function($value): string{return number_format((int)$value,0,',','.');};
 ?><!doctype html><html lang="vi"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/img/favicon.webp" type="image/webp">
 <title>Lịch sử thao tác · NGHIỆN KPAH Admin</title>
 <link rel="stylesheet" href="/assets/css/admin-home.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-home.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-nav.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-nav.css') ?>">
@@ -83,7 +83,7 @@ $fmt=function($value): string{return number_format((int)$value,0,',','.');};
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 </head><body class="kp-admin-redesign">
 <header class="topbar kp-admin-topbar">
- <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.svg" alt="" width="44" height="44"></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Lịch sử thao tác</strong></span></a>
+ <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.webp" alt="" width="44" height="44"></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Lịch sử thao tác</strong></span></a>
  <div class="top-actions"><span class="secure"><i></i> Kết nối bảo mật</span><span class="user"><?= kp_e($admin['username']) ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
 </header>
 <?php kp_admin_nav('mod-history','admin'); ?>

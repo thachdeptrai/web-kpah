@@ -34,7 +34,7 @@ $canSubmit = $isOpen;
     <meta name="description" content="Tạo tài khoản để đăng nhập vào game <?= kp_e($appName) ?>.">
     <meta name="robots" content="noindex,follow">
     <meta name="theme-color" content="#eef7ff">
-    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+    <link rel="icon" type="image/webp" href="/assets/img/favicon.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
@@ -93,7 +93,7 @@ $canSubmit = $isOpen;
         <p class="lead">Tạo tài khoản an toàn và sẵn sàng bước vào vùng đất <?= kp_e($appName) ?>.</p>
         </div>
         <figure class="kp-auth-story__visual" aria-label="Nữ chiến binh sẵn sàng khám phá thế giới">
-            <img src="/assets/img/auth-register-adventure.svg" width="760" height="710" alt="" loading="eager" decoding="async">
+            <img src="/assets/img/auth-register-adventure.webp" width="760" height="710" alt="" loading="eager" decoding="async">
         </figure>
 
         <ul class="rules">

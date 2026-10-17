@@ -292,7 +292,7 @@ body.kp-auth-page {
   .kp-auth-page .panel-inner,.kp-auth-page .control input,.kp-auth-page .btn { border:1px solid CanvasText; }
 }
 /* Light illustrated foundation and larger legible auth text. No behavior changes. */
-.kp-auth-page .scene{background:linear-gradient(180deg,rgba(231,247,255,.25),rgba(250,253,255,.75)),url("/assets/img/fantasy-world.svg") center top/cover no-repeat,#ebf8ff}
+.kp-auth-page .scene{background:linear-gradient(180deg,rgba(231,247,255,.25),rgba(250,253,255,.75)),url("/assets/img/fantasy-world.webp") center top/cover no-repeat,#ebf8ff}
 .kp-auth-page .kp-auth-logo img{width:152px;height:59px;max-width:34vw;padding:0;border:0;border-radius:0;background:none;box-shadow:none;filter:drop-shadow(0 5px 8px rgba(67,83,124,.17))}
 .kp-auth-page .kp-auth-logo strong{display:none}
 .kp-auth-page .kp-auth-links a{font-size:.91rem}

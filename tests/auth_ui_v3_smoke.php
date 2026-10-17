@@ -11,9 +11,9 @@ v3check(strpos($css,'background:none!important')!==false,'legacy cropped backgro
 v3check(strpos($css,'url("/assets/img/home-hero-anime.webp")')===false,'no reused homepage photo');
 v3check(strpos($css,'max-width:480px')!==false&&strpos($css,'max-width:820px')!==false,'mobile & tablet layouts');
 foreach ([
- 'login'=>['app/pages/login.php','auth-login-adventure.svg','/dang-nhap'],
- 'register'=>['app/pages/register.php','auth-register-adventure.svg','/dang-ky'],
- 'recovery'=>['app/pages/forgot-password.php','auth-recovery-adventure.svg','/quen-mat-khau']
+ 'login'=>['app/pages/login.php','auth-login-adventure.webp','/dang-nhap'],
+ 'register'=>['app/pages/register.php','auth-register-adventure.webp','/dang-ky'],
+ 'recovery'=>['app/pages/forgot-password.php','auth-recovery-adventure.webp','/quen-mat-khau']
 ] as $name=>$config) {
  [$page,$art,$route]=$config;
  $html=v3file($page);
@@ -25,9 +25,7 @@ foreach ([
  v3check(strpos($html,'/assets/img/'.$art)!==false,"$name unique new image");
  v3check(substr_count($html,'<figure class="kp-auth-story__visual"')===1,"$name one illustration");
  v3check(strpos($html,'name="csrf"')!==false,"$name CSRF untouched");
- v3check(strpos($img,'<svg ')!==false&&strpos($img,'</svg>')!==false,"$name independent SVG");
- v3check(strpos($img,'viewBox="0 0 760 710"')!==false,"$name full-scene artwork");
- v3check(!preg_match('~<text\b|<foreignObject\b|<image\b~i',$img),"$name has no embedded text, HTML or cropped image");
+ v3check(substr($img,0,4)==='RIFF'&&substr($img,8,4)==='WEBP',"$name artwork is WEBP");
 }
 $login=v3file('app/pages/login.php');
 $register=v3file('app/pages/register.php');

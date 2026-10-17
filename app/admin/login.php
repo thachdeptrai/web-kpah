@@ -80,7 +80,7 @@ $csrf = kp_csrf_token();
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#eef7ff">
-<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="icon" type="image/webp" href="/assets/img/favicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Cinzel:wght@700;900&amp;family=Philosopher:wght@700&amp;display=swap">
@@ -93,14 +93,14 @@ $csrf = kp_csrf_token();
 <div class="kp-admin-login-scene" aria-hidden="true"></div>
 <header class="kp-auth-header">
   <a class="kp-auth-brand" href="/" aria-label="NGHIỆN KPAH - Trang chủ">
-    <img src="/assets/img/emblem.svg" width="46" height="46" alt="">
+    <img src="/assets/img/emblem.webp" width="46" height="46" alt="">
     <span><strong>NGHIỆN KPAH</strong><small>CỔNG QUẢN TRỊ</small></span>
   </a>
   <a href="/" class="kp-auth-return">← Trở về trang chủ</a>
 </header>
 <main class="kp-admin-login-stage">
  <section class="kp-admin-login-intro" aria-labelledby="admin-login-title">
-  <div class="kp-admin-login-emblem" aria-hidden="true"><img src="/assets/img/emblem.svg" width="360" height="360" alt=""></div>
+  <div class="kp-admin-login-emblem" aria-hidden="true"><img src="/assets/img/emblem.webp" width="360" height="360" alt=""></div>
   <div class="kp-admin-login-kicker"><i></i> NGHIỆN KPAH / ADMIN ACCESS</div>
   <h1 id="admin-login-title">Trung tâm <em>quản trị.</em></h1>
   <p>Đăng nhập an toàn để quản lý người chơi, nhân vật và các hoạt động vận hành game.</p>

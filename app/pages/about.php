@@ -8,7 +8,7 @@ kp_public_page_hero('THẾ GIỚI NGHIỆN KPAH','Một server,<br><em>vạn câ
 ?>
 <section class="lp-section lp-inner-content"><div class="lp-container">
     <div class="lp-adventure-grid">
-        <article class="lp-adventure-card lp-adventure-card-large" data-landing-reveal><div class="lp-adventure-copy"><span class="lp-card-label">HÀNH TRÌNH TUỔI THƠ</span><h3>Khám phá, trưởng thành<br>và trở thành huyền thoại</h3><p>Từ nhiệm vụ đầu tiên tới những trận chiến bang hội, mỗi lựa chọn đều tạo nên dấu ấn riêng của bạn.</p><a href="/dang-ky">Bắt đầu hành trình <span>→</span></a></div><img src="/assets/img/rank-archer.svg" width="220" height="247" alt="Nữ cung thủ KPAH" loading="lazy"></article>
+        <article class="lp-adventure-card lp-adventure-card-large" data-landing-reveal><div class="lp-adventure-copy"><span class="lp-card-label">HÀNH TRÌNH TUỔI THƠ</span><h3>Khám phá, trưởng thành<br>và trở thành huyền thoại</h3><p>Từ nhiệm vụ đầu tiên tới những trận chiến bang hội, mỗi lựa chọn đều tạo nên dấu ấn riêng của bạn.</p><a href="/dang-ky">Bắt đầu hành trình <span>→</span></a></div><img src="/assets/img/rank-archer.webp" width="220" height="247" alt="Nữ cung thủ KPAH" loading="lazy"></article>
         <article class="lp-mini-feature lp-mini-feature-blue" data-landing-reveal><span>⚔</span><div><h3>Tranh tài đỉnh cao</h3><p>Leo hạng, đấu trường và những trận chiến cần cả kỹ năng lẫn đồng đội.</p></div></article>
         <article class="lp-mini-feature lp-mini-feature-gold" data-landing-reveal><span>♛</span><div><h3>Bang hội gắn kết</h3><p>Tìm chiến hữu, xây cộng đồng và cùng nhau làm nên kỳ tích.</p></div></article>
     </div>
