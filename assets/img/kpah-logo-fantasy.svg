@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 292" role="img" aria-labelledby="logo-title logo-desc">
+<title id="logo-title">NGHIỆN KPAH — Hành trình tuổi thơ</title><desc id="logo-desc">Biểu trưng fantasy vàng đồng, mái đình nổi, thanh gỗ và những viên pha lê xanh</desc>
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#e8fdff"/><stop offset=".52" stop-color="#6cceff"/><stop offset="1" stop-color="#1874bf"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fffbd2"/><stop offset=".23" stop-color="#ffe75a"/><stop offset=".52" stop-color="#ffb521"/><stop offset=".76" stop-color="#ee8305"/><stop offset="1" stop-color="#af4b03"/></linearGradient>
+ <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#aa5d28"/><stop offset=".45" stop-color="#71351b"/><stop offset="1" stop-color="#3b1a19"/></linearGradient>
+ <linearGradient id="leaves" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b5f251"/><stop offset=".48" stop-color="#45bf4b"/><stop offset="1" stop-color="#136c52"/></linearGradient>
+ <filter id="shadow" x="-20%" y="-35%" width="140%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#3c211d" flood-opacity=".48"/></filter>
+ <filter id="shine" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4"/></filter>
+</defs>
+<g filter="url(#shadow)">
+ <g stroke="#295841" stroke-width="5" stroke-linejoin="round">
+  <path d="M96 111 54 84 104 88 86 42 146 86 180 50 190 110" fill="url(#leaves)"/>
+  <path d="M596 111 668 48 658 91 713 62 683 116 729 112 676 152" fill="url(#leaves)"/>
+  <path d="M160 99 190 37 229 61 262 21 301 57 352 27 395 57 446 19 495 61 555 38 591 100" fill="url(#sky)"/>
+ </g>
+ <path d="M188 91 208 54 224 92 M271 67 270 26 299 68 M459 71 456 30 488 79 M530 90 537 53 554 97" stroke="#eafaff" stroke-width="13" stroke-linecap="round"/>
+ <path d="M273 96 287 63 311 63 324 96Z M311 65 300 46 293 65 M452 97 471 61 490 96Z" fill="#f9b93f" stroke="#713b1a" stroke-width="7" stroke-linejoin="round"/>
+ <path d="M247 75 299 36 350 75Z M423 77 474 39 529 77Z" fill="#fda637" stroke="#713b1a" stroke-width="8" stroke-linejoin="round"/>
+ <path d="M235 75h129l-8 16H244Z M410 77h130l-11 17H423Z" fill="#6d2919" stroke="#47221d" stroke-width="5"/>
+ <path d="M108 173q-28-16-60-9l17-29 53 14 20-20 23 29M615 151q29-35 73-22l-8 25 45 9-29 25-75-14" fill="url(#leaves)" stroke="#24543e" stroke-width="7" stroke-linejoin="round"/>
+ <path d="M88 176q290-32 584 1l-17 38q-275-28-544 0Z" fill="url(#wood)" stroke="#46271d" stroke-width="10"/>
+ <path d="M103 206q274 31 553 0l-20 49q-266 25-508-1Z" fill="#6b331d" stroke="#3a241b" stroke-width="9"/>
+ <text x="380" y="187" text-anchor="middle" font-family="'Arial Black','DejaVu Sans',sans-serif" font-weight="1000" font-size="83" textLength="601" lengthAdjust="spacingAndGlyphs" paint-order="stroke fill" stroke="#59250e" stroke-width="17" stroke-linejoin="round" fill="url(#gold)">NGHIỆN KPAH</text>
+ <text x="380" y="187" text-anchor="middle" font-family="'Arial Black','DejaVu Sans',sans-serif" font-weight="1000" font-size="83" textLength="601" lengthAdjust="spacingAndGlyphs" fill="none" stroke="#fff7b1" stroke-width="1.8" stroke-linejoin="round">NGHIỆN KPAH</text>
+ <path d="M116 217q268 22 525 0" fill="none" stroke="#e7a051" stroke-width="3" opacity=".7"/>
+ <text x="380" y="245" text-anchor="middle" font-family="'Arial Black','DejaVu Sans',sans-serif" font-weight="900" font-size="37" textLength="403" lengthAdjust="spacingAndGlyphs" stroke="#382019" stroke-width="6" paint-order="stroke fill" fill="#fff4db">HÀNH TRÌNH TUỔI THƠ</text>
+</g>
+<g fill="#fff4b0" stroke="#af6a12" stroke-width="2"><path d="M130 25 137 40 151 45 137 50 130 67 124 50 109 45 124 40Z"/><path d="M625 32 631 47 647 53 631 59 625 74 619 59 604 53 619 47Z"/><path d="M685 90 691 104 706 110 691 115 685 131 679 115 665 110 679 104Z"/></g>
+</svg>
