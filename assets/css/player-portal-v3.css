@@ -448,3 +448,267 @@ body.portal-page:before{
  .portal-page :is(.pd-stat-card,.portal-action-card,.portal-rail .rail-icon){transition:none!important}
  .portal-page :is(.pd-stat-card,.portal-action-card,.portal-rail .rail-icon):hover{transform:none}
 }
+
+
+/* Profile, account contact & password security — all controls remain native forms. */
+.portal-page .account-section .section-heading{
+ display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;
+ gap:14px;margin:0 0 16px;padding:0
+}
+.portal-page .account-section .section-heading h2{
+ color:#27437e;font-size:clamp(22px,2.3vw,29px)
+}
+.portal-page .account-section .section-heading .kicker{
+ color:#6253db;font-size:10px;margin:0 0 5px
+}
+.portal-page .account-section .section-heading>p{
+ margin:0;color:#7184a5;font-size:11px
+}
+.portal-page .profile-layout{
+ display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);
+ gap:17px;align-items:start
+}
+.portal-page :is(.profile-card,.security-card){
+ min-width:0;padding:clamp(20px,2.5vw,30px);
+ border:1px solid #dce7fa;border-radius:20px;
+ background:linear-gradient(145deg,#fff,#f9fbff);
+ box-shadow:var(--pp-shadow);color:#2f4c83
+}
+.portal-page .profile-card:before{height:4px;left:25px;border-radius:0 0 8px 8px;background:#7961ed}
+.portal-page .card-index{font-size:10px;color:#6c5be3}
+.portal-page .card-heading h3{color:#294578;font-size:21px}
+.portal-page .edit-symbol{color:#6657e2}
+.portal-page .profile-identity{
+ display:flex;align-items:center;flex-wrap:wrap;gap:13px;
+ margin:19px 0 22px;padding:15px 17px;
+ border:1px solid #d9e8fb;border-radius:15px;
+ background:linear-gradient(125deg,#eff6ff,#fff 65%)
+}
+.portal-page .big-avatar{
+ flex:none;width:58px;height:58px;border-radius:18px;
+ border:2px solid #fff;background:linear-gradient(145deg,#8d73ff,#3c7efa);
+ box-shadow:0 6px 14px #5675bc30;color:#fff;
+ font:850 24px "Be Vietnam Pro",sans-serif
+}
+.portal-page .profile-identity strong{color:#29477f;font-size:15px}
+.portal-page .profile-identity .identity-copy span{color:#7187a8;font-size:11px}
+.portal-page .identity-tag{
+ padding:6px 9px;border:1px solid #cde5fa;border-radius:9px;
+ background:#fff;color:#5769d5;font-size:9px
+}
+.portal-page .profile-card form{gap:14px}
+.portal-page :is(.profile-card,.security-card) label{
+ display:block;margin:0 0 7px;
+ color:#395780;font-size:12px;font-weight:800
+}
+.portal-page :is(.profile-card,.security-card) input:not([type=hidden]){
+ width:100%;min-width:0;height:46px;max-width:100%;
+ border:1px solid #d2e0f4;border-radius:11px;
+ outline:none;background:#fbfdff;color:#2c4575;
+ padding:0 13px;font:600 14px "Be Vietnam Pro",sans-serif;
+ transition:border-color .18s,box-shadow .18s
+}
+.portal-page :is(.profile-card,.security-card) input::placeholder{color:#92a4bd;font-weight:500}
+.portal-page :is(.profile-card,.security-card) input:focus{
+ border-color:#8774f1;background:#fff;box-shadow:0 0 0 4px #7664ef20
+}
+.portal-page .field-note{
+ color:#7187a8;font-size:11px;line-height:1.65;margin-top:7px
+}
+.portal-page #profile-form .input-with-action{display:flex;gap:9px;align-items:stretch}
+.portal-page #profile-form .input-with-action input{flex:1;min-width:0}
+.portal-page #profile-form .input-with-action button{
+ flex:none;max-width:min(47%,240px);padding:9px 13px;
+ min-height:44px;border:1px solid #cbd8ff;border-radius:10px;
+ background:linear-gradient(145deg,#f1f0ff,#fff);
+ color:#5a4ddc;font:800 11px/1.45 "Be Vietnam Pro",sans-serif;
+ white-space:normal;cursor:pointer
+}
+.portal-page #profile-form .input-with-action button:hover{border-color:#a3aaff;background:#e9e8ff}
+.portal-page #profile-form .input-with-action button:disabled{opacity:.56}
+.portal-page .form-feedback:not(:empty){
+ padding:12px 14px;border-radius:11px;line-height:1.6;font-size:12px
+}
+.portal-page .form-feedback.is-good{
+ background:#ebfff5;border:1px solid #9ce0bf;color:#117851
+}
+.portal-page .form-feedback.is-bad{
+ background:#fff0f4;border:1px solid #f3b5c4;color:#a82f52
+}
+.portal-page .profile-form-footer{
+ display:flex;align-items:center;justify-content:space-between;gap:13px;margin-top:5px
+}
+.portal-page .form-lock{color:#6e85a7;font-size:10px;line-height:1.65}
+.portal-page .form-lock span{color:#6556e3}
+.portal-page .save-button{
+ display:inline-flex;justify-content:center;gap:14px;align-items:center;
+ min-height:46px;padding:12px 18px;border:1px solid #7063f3;border-radius:11px;
+ color:#fff;background:linear-gradient(110deg,#8961fa,#456ced);
+ box-shadow:0 9px 19px #615ddb30;
+ font:800 12px "Be Vietnam Pro",sans-serif;cursor:pointer
+}
+.portal-page .save-button:hover{filter:brightness(1.06);box-shadow:0 12px 23px #615ddb38}
+.portal-page .save-button:disabled{opacity:.56;cursor:wait}
+.portal-page .security-card{
+ background:linear-gradient(155deg,#f3f1ff,#fff 34%,#f9fcff 90%);
+ border-color:#e0dcff
+}
+.portal-page .security-overline{font-size:10px;color:#6455ce}
+.portal-page .security-status{
+ padding:5px 9px;border-radius:999px;background:#e8fdf3;
+ border:1px solid #b7ebd2;color:#0c9368;font-size:10px
+}
+.portal-page .security-status i{background:#19b783}
+.portal-page .security-card>.kicker{margin:19px 0 7px;font-size:10px;color:#5e54da}
+.portal-page .security-card h3{
+ color:#2b4580;font-size:clamp(21px,2vw,27px);line-height:1.3
+}
+.portal-page .security-description{
+ margin:9px 0 15px;color:#7385a4;font-size:12px;line-height:1.8
+}
+.portal-page .security-row{padding:13px 0;border-color:#e2e9f8;font-size:11px}
+.portal-page .security-row span{color:#6c83a5}
+.portal-page .security-row b{color:#375682;font-size:11px}
+.portal-page .password-change{
+ padding-top:19px;margin-top:16px;border-color:#e1e8fa
+}
+.portal-page .password-change h4{color:#2c4783;font-size:18px}
+.portal-page .password-help{color:#7b8dac;font-size:11px;margin:10px 0 16px}
+.portal-page .password-key{
+ background:#eee9ff;color:#6c54e4;border-color:#dcd4ff
+}
+.portal-page .security-link{
+ color:#5b5dcf;border-color:#dfe9f8;font-size:12px
+}
+.portal-page .security-footnote{color:#7e90ae;font-size:10px}
+.portal-page .security-footnote span{color:#8068ee}
+.portal-page .portal-return{margin:24px 0}
+.portal-page .portal-return a{
+ font-size:12px;font-weight:800;color:#5a5cdb
+}
+
+/* Character inventory/list: bright character dossiers with separate metadata. */
+.portal-page .characters-section{
+ --char-gold:#5f5adb;--char-cream:#28457a;--char-muted:#7788a6;
+ padding:0 0 28px
+}
+.portal-page .characters-intro{
+ border-bottom-color:#d5e4f9;margin-bottom:20px;padding-bottom:19px
+}
+.portal-page .characters-eyebrow{color:#5d56d6}
+.portal-page .characters-intro h2{color:#29447c;font-size:clamp(27px,3vw,38px)}
+.portal-page .characters-intro h2 em{color:#6454e3}
+.portal-page .characters-intro-note{color:#7388a8}
+.portal-page .characters-count{
+ border:1px solid #d0dbff;border-radius:15px;
+ background:linear-gradient(115deg,#f1f1ff,#fff);color:#5e57d8
+}
+.portal-page .characters-count-number{color:#6556e0}
+.portal-page .characters-count-copy{color:#7180a7}
+.portal-page .characters-section .char-ui-card,
+.portal-page .characters-section .char-ui-card--featured{
+ background:linear-gradient(144deg,#fff,#f5faff);
+ border:1px solid #dce8f8;border-radius:20px;
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .characters-section .char-ui-card--featured{
+ background:linear-gradient(135deg,#f3f2ff,#fff 40%,#f2faff);
+ border-color:#d1cbff
+}
+.portal-page .characters-section .char-ui-card:hover{
+ border-color:#b8c9ff;box-shadow:0 15px 30px #7497d32d
+}
+.portal-page .char-ui-card-top{
+ border-bottom:1px solid #e4ecf7;background:#f8faff;
+}
+.portal-page .char-ui-index,.portal-page .char-ui-top-mark{color:#625bcd}
+.portal-page .char-ui-portrait{
+ border:1px solid #ccdafe;
+ background:radial-gradient(circle at 50% 35%,#e5edff,#f6f8ff 65%,#ebf5ff)
+}
+.portal-page .char-ui-crest{color:#8da6e6;opacity:.55}
+.portal-page .char-ui-avatar{
+ color:#4b52bb;background:linear-gradient(130deg,#dee8ff,#ece5ff);
+ border-color:#cbd8f9
+}
+.portal-page .char-ui-portrait-foot{color:#7b86bc}
+.portal-page .char-ui-caption{color:#6c5ed5}
+.portal-page .characters-section .char-ui-identity h3{color:#27467e}
+.portal-page .char-ui-clan{color:#7185a6}
+.portal-page .char-ui-level{
+ border-color:#d7defe;background:#eaeafe;color:#6257d6
+}
+.portal-page .char-ui-level :is(span,strong){color:#5950cc}
+.portal-page .char-ui-stat{
+ background:#f6f9ff;border:1px solid #e1eafa;border-radius:12px
+}
+.portal-page .char-ui-stat dt{color:#7689a7}
+.portal-page .char-ui-stat dd{color:#284678}
+.portal-page .char-ui-card-bottom{border-color:#e2e9f9}
+.portal-page .char-ui-last{color:#7185a5}
+.portal-page .char-ui-empty{
+ border:1px dashed #b7cbfb;border-radius:18px;
+ background:linear-gradient(145deg,#fff,#f3f8ff);color:#7185a2
+}
+.portal-page .char-ui-empty-seal{
+ border-color:#d8ddff;background:#eeeaff;color:#7059e7
+}
+.portal-page .char-ui-empty h3{color:#29457c}
+.portal-page .char-ui-empty p{color:#7387a4}
+/* Secondary account records such as notifications, giftcodes and order tracker. */
+.portal-page .uc-heading h1{color:#2a467e}
+.portal-page .uc-heading>span{color:#5b53d6}
+.portal-page .uc-heading p,.portal-page .uc-note{color:#7588a8}
+.portal-page .uc-record{
+ background:#fff;border:1px solid #d9e5f8;border-radius:16px;
+ box-shadow:var(--pp-shadow)
+}
+.portal-page .uc-record.uc-unread{border-left:4px solid #7560ed}
+.portal-page .uc-record strong{color:#304d83}
+.portal-page .uc-record small,.portal-page .uc-record p{color:#7488a7}
+.portal-page .uc-record a{color:#544ede}
+.portal-page .uc-tags span{
+ background:#f0efff;border:1px solid #d9d7ff;color:#6055d6
+}
+.portal-page .uc-alert{
+ background:#fff1f3;color:#a33954;border-color:#f2bdc9
+}
+.portal-page .uc-empty{
+ border:1px dashed #c8d7f5;border-radius:15px;color:#7285a4;background:#fff
+}
+.portal-page .uc-progress span{color:#6880a5;border-color:#d9e7f8}
+.portal-page .uc-progress span.is-done{color:#10865f;border-color:#a6e3c6;background:#effff6}
+.portal-page .uc-actions button{background:#615aeb;color:#fff}
+
+/* Accessibility / small screens */
+@media(max-width:1180px){
+ .portal-page .profile-layout{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+ .portal-page .profile-layout{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ .portal-page .top-logout{
+  display:inline-flex;min-height:34px;padding:6px 8px;
+  border-radius:9px;background:#fff;font-size:10px
+ }
+ .portal-page .profile-identity{padding:12px}
+ .portal-page .identity-tag{margin-left:0}
+ .portal-page :is(.profile-card,.security-card){padding:18px;border-radius:17px}
+ .portal-page #profile-form .input-with-action{flex-direction:column}
+ .portal-page #profile-form .input-with-action button{max-width:100%;min-height:41px}
+ .portal-page .profile-form-footer{flex-direction:column;align-items:stretch}
+ .portal-page .profile-form-footer .save-button{width:100%}
+ .portal-page .characters-intro{align-items:flex-start;flex-direction:column;gap:12px}
+ .portal-page .characters-count{min-height:0}
+}
+@media(max-width:380px){
+ .portal-page .top-logout{padding:6px;font-size:9px}
+ .portal-page .home-breadcrumb{max-width:48%;overflow:hidden}
+ .portal-page .home-breadcrumb>span:last-child{max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media(forced-colors:active){
+ .portal-page :is(.pd-panel,.pd-stat-card,.profile-card,.security-card,.portal-action-card,.char-ui-card){
+  border:1px solid CanvasText
+ }
+}
