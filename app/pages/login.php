@@ -17,7 +17,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     } elseif ($username === '' || $password === '') {
         $error = 'Nhập đầy đủ tên tài khoản và mật khẩu.';
     } else {
-        list($allowed, $retry) = kp_rate_limit('user_login', kp_client_ip().'|'.strtolower($username), 8, 900, true);
+        // Three independent budgets stop password spraying across user names,
+        // distributed guessing of one account, and repeated guesses on a pair.
+        // Storage errors fail closed in kp_rate_limit().
+        $ip = kp_client_ip();
+        $identity = strtolower($username);
+        list($ipAllowed, $ipRetry) = kp_rate_limit('user_login_ip', $ip, 80, 900, true);
+        list($nameAllowed, $nameRetry) = kp_rate_limit('user_login_identity', $identity, 20, 900, true);
+        list($pairAllowed, $pairRetry) = kp_rate_limit('user_login', $ip.'|'.$identity, 8, 900, true);
+        $allowed = $ipAllowed && $nameAllowed && $pairAllowed;
+        $retry = max($ipRetry, $nameRetry, $pairRetry);
         if (!$allowed) {
             $error = 'Bạn thử quá nhiều lần. Hãy thử lại sau '.max(1, (int)ceil($retry / 60)).' phút.';
         } else {
