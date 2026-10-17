@@ -9,6 +9,7 @@ on:
       - 'app/topup/**'
       - 'tests/admin_security_smoke.php'
       - 'tests/admin_csrf_smoke.php'
+      - 'tests/security_auth_url_smoke.php'
       - 'tests/downloads_smoke.php'
       - 'tests/giftcodes_smoke.php'
       - 'tests/giftcode_builder_smoke.php'
@@ -26,6 +27,7 @@ on:
       - 'app/topup/**'
       - 'tests/admin_security_smoke.php'
       - 'tests/admin_csrf_smoke.php'
+      - 'tests/security_auth_url_smoke.php'
       - 'tests/downloads_smoke.php'
       - 'tests/giftcodes_smoke.php'
       - 'tests/giftcode_builder_smoke.php'
@@ -58,6 +60,8 @@ jobs:
             xargs -0 -n1 php -l
       - name: Admin MFA and rate limit regression tests
         run: php tests/admin_security_smoke.php
+      - name: Login spray and URL safety regression
+        run: php tests/security_auth_url_smoke.php
       - name: Admin session and CSRF regression tests
         run: php tests/admin_csrf_smoke.php
       - name: Game download security and toggles smoke tests
