@@ -1,5 +1,5 @@
 /* Shared light fantasy theme for every admin screen. Load after page styles. */
-:root{color-scheme:light;--admin-ink:#28344b;--admin-muted:#687792;--admin-line:#dce5f1;--admin-paper:rgba(255,255,255,.91);--admin-blue:#5278c7;--admin-violet:#7565c7;--admin-gold:#b78232;--admin-green:#267d62;--admin-red:#b84f62}
+:root{color-scheme:light;--admin-ink:#28344b;--admin-muted:#687792;--admin-line:#dce5f1;--admin-paper:rgba(255,255,255,.91);--admin-blue:#5278c7;--admin-violet:#7565c7;--admin-gold:#b78232;--admin-green:#267d62;--admin-red:#b84f62;--bg:#edf4fb;--panel:#fff;--line:#dce5f1;--text:#28344b;--muted:#687792;--violet:#7565c7;--cyan:#5278c7;--green:#267d62;--red:#b84f62;--gold:#9a702f;--gold2:#805d27;--border:#dce5f1;--surface:#fff;--surface2:#f4f7fc}
 html{min-height:100%;background:#edf4fb}
 body:not(.kp-admin-login-page),body.kp-admin-login-page{
   min-height:100vh;color:var(--admin-ink);font-family:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif;
@@ -104,6 +104,33 @@ body:not(.kp-admin-login-page) :focus-visible{outline:2px solid #7187cf;outline-
 .tp-page.tp-admin .tp-panel{border:1px solid #dce5f1;background:rgba(255,255,255,.92);box-shadow:0 12px 32px rgba(49,78,122,.07)}
 .tp-page.tp-admin .tp-panel :is(h2,strong){color:#2d3d59}
 .tp-page.tp-admin :is(.tp-field,.tp-field span){color:#4d5d76}
+.tp-page.tp-admin :is(.tp-card,.tp-payment-panel){border-color:#dce5f1;background:linear-gradient(145deg,#fff,#f5f8fd);box-shadow:0 12px 32px rgba(49,78,122,.075);color:#3c4c66}
+.tp-page.tp-admin .tp-card::before{background:linear-gradient(90deg,#7386ce,#92b7d8)}
+.tp-page.tp-admin .tp-card h3{color:#2d3d59}
+.tp-page.tp-admin .tp-card p{color:#687792}
+.tp-page.tp-admin .tp-card-cta,.tp-page.tp-admin .tp-support{color:#526fb4}
+.tp-page.tp-admin .tp-card-cta strong{background:#eef2ff;color:#596bb0}
+.tp-page.tp-admin :is(.tp-summary>div,.tp-step){border-color:#e0e7f1;background:#f7f9fd;color:#465670}
+.tp-page.tp-admin .tp-summary small,.tp-page.tp-admin .tp-step span{color:#718098}
+.tp-page.tp-admin .tp-summary strong{color:#596bb0}
+.tp-page.tp-admin .tp-step b{color:#34445f}
+.tp-page.tp-admin .tp-step-number,.tp-page.tp-admin :is(.tp-kicker,.tp-eyebrow){color:#6579b7}
+.tp-page.tp-admin .tp-chip{border-color:#dce5f1;background:#f4f7fc;color:#596bb0}
+.tp-page.tp-admin :is(.tp-table-wrap,.tp-payment-stage){border-color:#e0e7f1;background:#fff}
+.tp-page.tp-admin .tp-table{color:#3f4e66}
+.tp-page.tp-admin .tp-table th{border-bottom:1px solid #e2e9f2;background:#f2f6fc;color:#687892}
+.tp-page.tp-admin .tp-table td{border-bottom-color:#e9eef5;color:#3f4e66}
+.tp-page.tp-admin .tp-pill{border-color:#dce5f1;background:#f4f7fc;color:#5c6980}
+.tp-page.tp-admin .tp-pill.applied,.tp-page.tp-admin .tp-pill.queued{border-color:#c9e7d8;background:#eff9f3;color:#286d52}
+.tp-page.tp-admin .tp-pill.failed,.tp-page.tp-admin .tp-pill.needs_review,.tp-page.tp-admin .tp-pill.crediting{border-color:#efd1d7;background:#fff2f4;color:#a34355}
+.tp-page.tp-admin :is(.tp-input,.tp-select,.tp-textarea){border-color:#cfd9e8;background:#fff;color:#2f3e57;color-scheme:light}
+.tp-page.tp-admin :is(.tp-input,.tp-select,.tp-textarea)::placeholder{color:#98a4b7}
+.tp-page.tp-admin .tp-check{color:#4d5d76}
+.tp-page.tp-admin .tp-check input,.tp-page.tp-admin .tp-farmer-checkbox{accent-color:#6579b7}
+.tp-page.tp-admin .tp-button-secondary{border-color:#d4deed;background:#f7f9fd;color:#526ba8}
+.tp-page.tp-admin .tp-alert.warning{border-color:#efdfbd;background:#fff9ed;color:#82632f}
+.tp-page.tp-admin .tp-alert.good{border-color:#c9e7d8;background:#eff9f3;color:#286d52}
+.tp-page.tp-admin .tp-alert.bad{border-color:#efd1d7;background:#fff2f4;color:#a34355}
 .tp-page.tp-admin :is(.tp-alert,.tp-badge){border-radius:11px}
 .tp-page.tp-admin .tp-footer{color:#8491a7}
 .tp-page.tp-admin .tp-hero{color:var(--admin-ink)}
