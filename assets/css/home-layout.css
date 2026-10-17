@@ -1,322 +1,230 @@
-/* NGHIỆN KPAH — Home layout v2
-   Isolated to body.kp-home-page. Loaded AFTER shared styles, never on auth/admin/topup.
-   Layouts are content-driven: no fixed hero/card heights and no negative margins. */
-.kp-home-page{--home-ink:#233759;--home-muted:#62779a;--home-line:#d9e7fa}
-.kp-home-page .lp-container{width:min(calc(100% - 40px),1320px);max-width:1320px}
-.kp-home-page .lp-header{
-  position:sticky;inset:auto;top:0;z-index:80;
-  background:rgba(248,252,255,.94);
-  border-bottom:1px solid rgba(192,216,243,.9);
-  box-shadow:0 5px 22px rgba(39,80,145,.07);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
+/* Homepage presentation. Loaded only for the public home route, after shared styles. */
+.kp-home-page {
+  --home-ink:#243758; --home-muted:#586b89; --home-purple:#6551de;
+  --home-line:#dce6f2; --home-display:"Baloo 2","Be Vietnam Pro",sans-serif;
+  background:#f6f9ff; color:var(--home-ink);
 }
-.kp-home-page .lp-nav{position:relative;display:flex;align-items:center;justify-content:space-between;gap:15px;height:78px;min-width:0}
-.kp-home-page .lp-brand{display:flex;align-items:center;flex:none;gap:0;min-width:0}
-.kp-home-page .lp-brand-mark{display:block;flex:none;width:156px;height:61px;min-width:0;background:none;border:0;border-radius:0;box-shadow:none}
-.kp-home-page .lp-brand-mark img{display:block;width:100%;height:100%;max-width:100%;object-fit:contain;padding:0;filter:drop-shadow(0 3px 3px rgba(60,83,137,.17))}
-.kp-home-page .lp-brand > span:not(.lp-brand-mark){display:none}
-.kp-home-page .lp-links{display:flex;align-items:center;justify-content:center;flex:1;min-width:0;gap:clamp(8px,1.25vw,19px);margin:0}
-.kp-home-page .lp-links a{flex:none;display:inline-flex;align-items:center;gap:5px;color:#425a83;font-size:12px;font-weight:760;white-space:nowrap}
-.kp-home-page .lp-links a.is-active{color:#463de4}
-.kp-home-page .lp-links a span{font-size:13px}
-.kp-home-page .lp-nav-actions{display:flex;align-items:center;gap:9px;flex:none;min-width:0}
-.kp-home-page .lp-download-nav{display:inline-flex;min-height:41px;padding:0 12px;font-size:12px;white-space:nowrap}
-.kp-home-page .lp-download-nav span{display:inline}
-.kp-home-page .lp-nav-account,.kp-home-page .lp-nav-login{display:inline-flex;justify-content:center;align-items:center;min-height:41px;padding:9px 12px;font-size:12px;font-weight:800;white-space:nowrap}
-.kp-home-page .lp-menu-toggle{display:none;flex:none;margin:0}
-/* Artwork is a SINGLE landscape image. Remove the previous masked overlay. */
-.kp-home-page .lp-home-stage{
-  isolation:isolate;position:relative;min-height:0;height:auto;
-  overflow:hidden;padding:0 0 clamp(36px,5vw,72px);
-  background-color:#e9f7ff;
-  background-image:url("../img/home-hero-anime.webp");
-  background-size:cover;background-repeat:no-repeat;background-position:center top
+.kp-home-page .lp-container { width:min(calc(100% - 48px),1240px); max-width:1240px }
+.kp-home-page :is(.home-content,.home-hero) h1,
+.kp-home-page :is(.home-content,.home-hero) h2,
+.kp-home-page :is(.home-content,.home-hero) h3 {
+  font-family:var(--home-display); font-weight:800; letter-spacing:-.025em;
+  color:var(--home-ink); margin:0; line-height:1.12; text-wrap:balance;
 }
-.kp-home-page .lp-home-stage::before{
-  content:"";position:absolute;z-index:0;inset:0;pointer-events:none;
-  opacity:1;filter:none;
-  -webkit-mask-image:none;mask-image:none;
-  background:linear-gradient(180deg,rgba(225,246,255,.12) 0%,rgba(239,249,255,.17) 31%,rgba(239,249,255,.71) 62%,#eaf7ff 88%)
+.kp-home-page .home-content a,.kp-home-page .home-hero a { text-decoration:none }
+.kp-home-page .home-content em,.kp-home-page .home-hero em { font-style:normal; color:var(--home-purple) }
+.kp-home-page .lp-header { background:rgba(250,253,255,.94); border-bottom:1px solid #e2eaf3; box-shadow:0 4px 24px #314e7d08 }
+.kp-home-page .lp-nav { height:78px; gap:20px }
+.kp-home-page .lp-brand-mark { width:150px; height:60px }
+.kp-home-page .lp-links a { font-size:12px; font-weight:700 }
+.kp-home-page .lp-links a.is-active { color:var(--home-purple) }
+.kp-home-page .lp-nav-login,.kp-home-page .lp-nav-account { border-radius:12px; background:#eeebff; color:#5140bb }
+.kp-home-page .lp-download-nav { border-radius:12px }
+/* Keep the landscape in its own scene so the page length cannot crop its characters. */
+.kp-home-page .home-hero { position:relative; isolation:isolate; overflow:hidden; background:#d6edff }
+.kp-home-page .home-hero-scene { position:absolute; z-index:-3; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 48% }
+.kp-home-page .home-hero::before { content:""; position:absolute; inset:0; z-index:-2; background:radial-gradient(ellipse 33% 65% at 50% 46%,rgba(244,251,255,.96),rgba(239,249,255,.76) 52%,rgba(238,249,255,.07) 100%) }
+.kp-home-page .home-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg,#ebf7ff0a 55%,#f6f9ff) }
+.kp-home-page .home-hero-inner { display:grid; place-items:center; min-height:650px; padding-block:80px 100px }
+.kp-home-page .home-hero-copy { width:min(100%,660px); text-align:center }
+.kp-home-page .home-eyebrow { display:block; color:#61579c; font-size:10px; line-height:1.6; font-weight:800; letter-spacing:.15em }
+.kp-home-page .home-hero-eyebrow { display:inline-flex; padding:9px 15px; border:1px solid #fff; border-radius:999px; background:rgba(255,255,255,.82); box-shadow:0 4px 16px #3453850d; font-size:10px; letter-spacing:.13em }
+.kp-home-page .home-hero h1 { margin:23px 0 18px; font-size:clamp(40px,4.65vw,66px); line-height:1.08; text-shadow:0 3px 24px #fff }
+.kp-home-page .home-hero h1 em { color:#6350c9 }
+.kp-home-page .home-hero-copy>p { margin:0; color:#374f71; font-size:15px; line-height:1.85; font-weight:500 }
+.kp-home-page .home-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:28px }
+.kp-home-page .home-button { display:inline-flex; align-items:center; justify-content:center; gap:24px; min-height:49px; padding:13px 21px; border:1px solid transparent; border-radius:13px; font-size:13px; line-height:1.5; font-weight:800; transition:transform .2s,box-shadow .2s,background .2s }
+.kp-home-page .home-button-primary { background:linear-gradient(125deg,#7460ed,#5c48d6); color:#fff; box-shadow:0 8px 20px #6551de30,inset 0 1px 0 #ffffff40 }
+.kp-home-page .home-button-white { background:rgba(255,255,255,.95); color:#493b8c; border-color:#ded8f1; box-shadow:0 6px 16px #4b579512 }
+.kp-home-page .home-button:hover { transform:translateY(-2px); box-shadow:0 12px 24px #6551de25 }
+.kp-home-page .home-button span { font-size:19px; font-weight:500; line-height:1 }
+.kp-home-page .home-explore { display:inline-flex; align-items:center; gap:10px; margin-top:27px; padding:8px; color:#465d78; font-size:11px; font-weight:600 }
+.kp-home-page .home-explore span { display:grid; place-items:center; width:24px; height:24px; border:1px solid #92a9c380; border-radius:50% }
+/* Calm content field, readable numbers, and a deliberate rhythm between sections. */
+.kp-home-page .home-content { position:relative; padding-bottom:62px; background:radial-gradient(ellipse at 0 30%,#e9edff80,transparent 50%),#f6f9ff }
+.kp-home-page .home-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); padding:23px 12px; border:1px solid #e0e7f1; border-radius:20px; background:#fff; box-shadow:0 10px 35px #344e7a08 }
+.kp-home-page .home-stat { display:flex; align-items:center; justify-content:center; gap:16px; min-width:0; padding:3px 18px }
+.kp-home-page .home-stat+.home-stat { border-left:1px solid #e9edf5 }
+.kp-home-page .home-stat>div { min-width:0 }
+.kp-home-page .home-stat strong { display:block; font-family:var(--home-display); font-size:31px; line-height:1.15; font-weight:800; color:var(--home-ink); font-variant-numeric:tabular-nums; overflow-wrap:anywhere }
+.kp-home-page .home-stat div>span { display:block; margin-top:5px; color:var(--home-muted); font-size:11px; line-height:1.5 }
+.kp-home-page .home-stat-dot { flex:none; width:9px; height:9px; border-radius:50%; background:#3eaa89; box-shadow:0 0 0 7px #e9f8f2 }
+.kp-home-page .home-stat-symbol { display:grid; place-items:center; flex:none; width:39px; height:39px; border-radius:12px; background:#f2efff; color:#7968c8; font-size:23px }
+.kp-home-page .home-stat-gift .home-stat-symbol { background:#fff4dc; color:#a87827 }
+.kp-home-page .home-stat-gift:hover { background:#faf8ff; border-radius:12px }
+.kp-home-page .home-stat b { margin-left:5px; color:var(--home-purple) }
+.kp-home-page .home-discover { padding-top:70px; scroll-margin-top:100px }
+.kp-home-page .home-section-heading { display:flex; align-items:end; justify-content:space-between; gap:25px; margin-bottom:28px }
+.kp-home-page .home-section-heading h2 { margin-top:10px; max-width:610px; font-size:clamp(29px,3.2vw,40px); line-height:1.16 }
+.kp-home-page .home-text-link { display:inline-flex; align-items:center; gap:13px; color:#594aa7; font-size:12px; font-weight:700; line-height:1.6; padding-block:8px }
+.kp-home-page .home-text-link:hover { color:#35248c; text-decoration:underline; text-underline-offset:4px }
+.kp-home-page .home-panel { min-width:0; overflow:hidden; border:1px solid var(--home-line); border-radius:24px; background:#fff; box-shadow:0 9px 30px #344e7a06 }
+.kp-home-page .home-label { display:inline-block; font-size:10px; line-height:1.6; font-weight:800; letter-spacing:.1em; color:#6452b4 }
+.kp-home-page .home-panel h3 { margin-top:12px; font-size:36px }
+.kp-home-page .home-adventure-grid { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(0,1fr); gap:24px }
+.kp-home-page .home-start { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); position:relative; background:linear-gradient(140deg,#fff 15%,#f1efff) }
+.kp-home-page .home-start-copy { position:relative; z-index:1; padding:34px 0 34px 34px; min-width:0 }
+.kp-home-page .home-start-copy>p { margin:15px 0 18px; max-width:330px; color:var(--home-muted); font-size:13px; line-height:1.85 }
+.kp-home-page .home-steps { list-style:none; padding:0; margin:0 0 26px; display:grid; gap:0 }
+.kp-home-page .home-steps li { display:flex; align-items:center; gap:11px; padding:11px 0; border-bottom:1px solid #e3e2f3 }
+.kp-home-page .home-steps li>span { font-size:10px; color:#7b6bb2; font-weight:700; font-variant-numeric:tabular-nums }
+.kp-home-page .home-steps a { flex:1; display:flex; align-items:center; justify-content:space-between; gap:8px; color:#3b4768; font-size:12px; line-height:1.6; font-weight:600 }
+.kp-home-page .home-steps a:hover { color:var(--home-purple) }
+.kp-home-page .home-steps b { font-weight:500; color:#9584c5 }
+.kp-home-page .home-start-art { position:relative; align-self:stretch; display:flex; align-items:center; justify-content:center; isolation:isolate; min-width:0; padding-block:15px 34px }
+.kp-home-page .home-start-art img { position:relative; width:128%; max-width:none; height:auto; object-fit:contain; filter:drop-shadow(0 18px 15px #69589820); transform:translateX(-1%); pointer-events:none }
+.kp-home-page .home-art-orbit { position:absolute; z-index:-1; width:92%; aspect-ratio:1; border:1px solid #d2c8f1; border-radius:50%; box-shadow:0 0 0 18px #ece6fc55,0 0 0 36px #e7e0f733; background:radial-gradient(circle,#fff,#e5ddfa) }
+.kp-home-page .home-art-caption { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); width:max-content; max-width:92%; padding:8px 13px; border:1px solid #fff; border-radius:999px; background:#ffffffd9; color:#756599; font-size:10px; text-align:center; line-height:1.5 }
+.kp-home-page .home-treasure { display:flex; flex-direction:column; align-items:center; padding:32px; background:radial-gradient(ellipse at 50% 56%,#ffedbb,#fffbf1 65%); border-color:#eee3ca; text-align:center }
+.kp-home-page .home-treasure .home-label { color:#987330 }
+.kp-home-page .home-treasure h3 { color:#684c34; font-size:32px }
+.kp-home-page .home-treasure>img { display:block; width:245px; height:210px; object-fit:contain; margin:6px auto 0; filter:drop-shadow(0 10px 15px #956e3826); transition:transform .35s }
+.kp-home-page .home-treasure:hover>img { transform:translateY(-5px) rotate(-2deg) }
+.kp-home-page .home-gift-count { margin:0 0 18px; color:#8a6c44; font-size:12px }
+.kp-home-page .home-gift-count strong { font-family:var(--home-display); font-size:30px; color:#a86a1e; vertical-align:middle; margin-right:4px }
+.kp-home-page .home-treasure .home-button { margin-top:auto; width:100%; border-color:#ead9b8; color:#77552e; gap:12px }
+.kp-home-page .home-connect-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; margin-top:24px }
+.kp-home-page .home-news { padding:30px }
+.kp-home-page .home-panel-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px }
+.kp-home-page .home-panel-heading h3 { font-size:28px; margin-top:6px }
+.kp-home-page .home-round-link { display:grid; place-items:center; width:42px; height:42px; flex:none; border:1px solid #e3e5ef; border-radius:50%; color:#61528c; font-size:20px }
+.kp-home-page .home-round-link:hover { background:#f2eeff }
+.kp-home-page .home-news-list { list-style:none; margin:0; padding:0 }
+.kp-home-page .home-news-list li+li { border-top:1px solid #edf0f5 }
+.kp-home-page .home-news-list a { display:flex; align-items:center; gap:15px; padding:20px 0 }
+.kp-home-page .home-news-number { display:grid; place-items:center; width:40px; height:44px; flex:none; border-radius:11px; background:#f1effb; color:#8474b3; font-size:12px; font-weight:700 }
+.kp-home-page .home-news-list li:nth-child(2) .home-news-number { background:#edf6fb; color:#5b8ba2 }
+.kp-home-page .home-news-list li:nth-child(3) .home-news-number { background:#fff4e3; color:#ad844a }
+.kp-home-page .home-news-list h4 { margin:0; font-size:13px; font-weight:700; color:#354562; line-height:1.6 }
+.kp-home-page .home-news-list p { margin:4px 0 0; color:var(--home-muted); font-size:11px; line-height:1.65 }
+.kp-home-page .home-news-list a:hover h4 { color:var(--home-purple) }
+.kp-home-page .home-news-arrow { margin-left:auto; padding-left:8px; color:#8c82a8; font-size:19px }
+.kp-home-page .home-community { position:relative; isolation:isolate; background:#eaf5f8 }
+.kp-home-page .home-community::before { content:""; position:absolute; z-index:-2; inset:0; background:url("/assets/img/home-hero-anime.webp") 78% center/cover no-repeat; opacity:.36 }
+.kp-home-page .home-community::after { content:""; position:absolute; z-index:-1; inset:0; background:linear-gradient(100deg,#edf7fc 18%,#edf7fcdb 55%,#edf7fc44) }
+.kp-home-page .home-community-copy { padding:32px; max-width:470px }
+.kp-home-page .home-community h3 { font-size:34px }
+.kp-home-page .home-community-copy>p { max-width:350px; margin:15px 0 20px; color:#50667f; font-size:13px; line-height:1.85 }
+.kp-home-page .home-player { display:flex; align-items:center; gap:11px; margin-bottom:21px }
+.kp-home-page .home-player>span { display:grid; place-items:center; flex:none; width:37px; height:37px; border:1px solid #fff; border-radius:12px; color:#92713c; background:#fff8e6; font-size:23px }
+.kp-home-page .home-player div { min-width:0 }
+.kp-home-page .home-player small { display:block; font-size:8px; letter-spacing:.1em; font-weight:700; color:#60798d; line-height:1.6 }
+.kp-home-page .home-player strong { display:block; font-size:12px; line-height:1.8; color:#384e69; overflow-wrap:anywhere }
+.kp-home-page .home-community-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px }
+.kp-home-page .home-shortcuts { display:flex; align-items:center; gap:24px; margin-top:30px; padding:22px 25px; border:1px solid #e2e9f3; border-radius:16px; background:#ffffffb3 }
+.kp-home-page .home-shortcuts>span { margin-right:auto; font-size:12px; color:#6d7c93 }
+.kp-home-page .home-shortcuts a { display:flex; align-items:center; gap:15px; font-size:12px; font-weight:700; color:#42516d; padding-block:6px }
+.kp-home-page .home-shortcuts b { font-size:15px; font-weight:400; color:#9185b7 }
+.kp-home-page .home-shortcuts a:hover { color:var(--home-purple) }
+.kp-home-page .lp-inner-cta { padding-block:58px; border-top:1px solid #e4e9f3; background:linear-gradient(120deg,#edeaff,#eef8ff) }
+.kp-home-page .lp-inner-cta .lp-section-kicker { color:#6958ac }
+.kp-home-page .lp-inner-cta h2 { max-width:650px; font-size:34px }
+.kp-home-page .lp-inner-cta h2 em { color:var(--home-purple) }
+.kp-home-page .lp-inner-cta .lp-button-glass { color:#554590; background:#fff; border-color:#dcd8ee }
+.kp-home-page .lp-footer { background:#fcfdff }
+@media(min-width:1700px) {
+  .kp-home-page .home-hero-inner { min-height:720px }
 }
-.kp-home-page .lp-home-stage::after{content:none;display:none}
-.kp-home-page .lp-home-cloud{display:none}
-.kp-home-page .lp-home-hero{
-  position:relative;z-index:1;box-sizing:border-box;
-  display:flex;align-items:center;justify-content:center;
-  width:min(calc(100% - 32px),1320px);
-  height:auto;min-height:clamp(345px,38vw,475px);
-  padding:clamp(30px,4vw,60px) 16px clamp(40px,5.6vw,74px);
-  text-align:center
+@media(max-width:1120px) {
+  .kp-home-page .lp-nav { height:70px; gap:12px }
+  .kp-home-page .lp-menu-toggle { display:block; order:2; margin-left:0; flex:none }
+  .kp-home-page .lp-nav-actions { order:1; margin-left:auto }
+  .kp-home-page .lp-download-nav { display:none }
+  .kp-home-page .lp-nav-login,.kp-home-page .lp-nav-account { display:inline-flex }
+  .kp-home-page .lp-links { position:absolute; z-index:90; inset:calc(100% + 6px) 0 auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; padding:10px; border:1px solid #dbe4f2; border-radius:15px; background:#fff; box-shadow:0 15px 35px #29436b20; opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-8px); transition:opacity .2s,transform .2s,visibility .2s }
+  .kp-home-page .lp-links.is-open { opacity:1; visibility:visible; pointer-events:auto; transform:none }
+  .kp-home-page .lp-links a { padding:12px; border-radius:9px; font-size:13px; white-space:normal }
+  .kp-home-page .lp-links a:hover { background:#f3f1fc }
+  .kp-home-page .lp-links a::after { display:none }
+  .kp-home-page .home-hero-inner { min-height:580px }
+  .kp-home-page .home-adventure-grid { grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:18px }
+  .kp-home-page .home-start-copy { padding:27px 0 27px 27px }
+  .kp-home-page .home-panel h3 { font-size:30px }
+  .kp-home-page .home-treasure { padding:27px 22px }
+  .kp-home-page .home-connect-grid { gap:18px; margin-top:18px }
+  .kp-home-page .home-community-actions { gap:8px 14px }
 }
-.kp-home-page .lp-home-title{display:flex;flex-direction:column;align-items:center;min-width:0;max-width:100%;filter:none;transform:none}
-.kp-home-page .lp-home-title .lp-home-logo-heading{
-  display:block;position:relative;width:min(100%,540px);max-width:540px;
-  margin:0;padding:0;transform:none;line-height:1
+@media(max-width:800px) {
+  .kp-home-page .lp-container { width:calc(100% - 32px) }
+  .kp-home-page .home-hero-inner { min-height:550px; padding-block:65px 85px }
+  .kp-home-page .home-hero::before { background:radial-gradient(ellipse 55% 75% at 50% 45%,#f4fbfff5,#f0f9ffb0 60%,#f0f9ff22) }
+  .kp-home-page .home-hero h1 { font-size:clamp(39px,6.5vw,52px) }
+  .kp-home-page .home-hero-copy>p { font-size:14px }
+  .kp-home-page .home-stats { padding:16px 6px }
+  .kp-home-page .home-stat { gap:10px; padding-inline:10px }
+  .kp-home-page .home-stat-symbol { display:none }
+  .kp-home-page .home-stat strong { font-size:27px }
+  .kp-home-page .home-stat div>span { font-size:10px }
+  .kp-home-page .home-section-heading { align-items:start; flex-direction:column; gap:10px }
+  .kp-home-page .home-discover { padding-top:48px }
+  .kp-home-page .home-adventure-grid { grid-template-columns:1fr }
+  .kp-home-page .home-start-art img { width:110%; max-width:390px }
+  .kp-home-page .home-start-copy { padding:30px 0 30px 30px }
+  .kp-home-page .home-treasure { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); text-align:left; align-items:center; padding:28px 30px; gap:8px 20px }
+  .kp-home-page .home-treasure>img { grid-column:2; grid-row:1 / span 3; width:100%; height:220px; margin:0 }
+  .kp-home-page .home-treasure .home-button { grid-column:1; width:max-content; max-width:100%; margin:0; font-size:12px; gap:8px }
+  .kp-home-page .home-gift-count { margin:0 }
+  .kp-home-page .home-connect-grid { grid-template-columns:1fr }
+  .kp-home-page .home-community-copy { max-width:100%; padding:30px }
+  .kp-home-page .home-community::before { background-position:center 55% }
+  .kp-home-page .home-community::after { background:linear-gradient(90deg,#edf7fc 10%,#edf7fcd9 55%,#edf7fc22) }
+  .kp-home-page .home-shortcuts { flex-wrap:wrap; gap:15px 26px; padding:22px }
+  .kp-home-page .home-shortcuts>span { flex-basis:100% }
+  .kp-home-page .lp-inner-cta .lp-container { flex-direction:column; align-items:flex-start }
+  .kp-home-page .lp-inner-cta h2 { font-size:30px }
 }
-.kp-home-page .lp-home-title .lp-home-logo-heading::before,.kp-home-page .lp-home-title .lp-home-logo-heading::after{display:none;content:none}
-.kp-home-page .lp-home-logo{display:block;width:100%;max-width:100%;height:auto;max-height:none;object-fit:contain;filter:drop-shadow(0 9px 13px rgba(36,54,98,.3))}
-.kp-home-page .lp-home-subtitle{
-  max-width:660px;margin:6px 0 0;padding:7px 15px;
-  border-radius:999px;background:rgba(250,253,255,.88);
-  color:#243e6a;font-size:clamp(12px,1.15vw,15px);
-  font-weight:800;line-height:1.55;letter-spacing:0;
-  box-shadow:0 5px 24px rgba(34,73,126,.1);
-  text-shadow:none
+@media(max-width:480px) {
+  .kp-home-page .lp-nav { height:66px; gap:8px }
+  .kp-home-page .lp-brand-mark { width:124px; height:52px }
+  .kp-home-page .lp-nav-login,.kp-home-page .lp-nav-account { padding:8px 10px; min-height:39px; font-size:11px }
+  .kp-home-page .lp-menu-toggle { width:39px; height:39px; padding:8px }
+  .kp-home-page .home-hero-inner { min-height:510px; padding-block:53px 72px }
+  .kp-home-page .home-hero-scene { object-position:51% center }
+  .kp-home-page .home-hero-eyebrow { font-size:8px; letter-spacing:.06em; padding:8px 12px }
+  .kp-home-page .home-hero h1 { margin-top:20px; font-size:clamp(33px,9.2vw,44px); letter-spacing:-.035em }
+  .kp-home-page .home-hero-copy>p { font-size:12px }
+  .kp-home-page .home-actions { gap:9px; margin-top:24px }
+  .kp-home-page .home-actions .home-button { flex:1; padding:12px 10px; gap:9px; font-size:11px; min-height:48px }
+  .kp-home-page .home-explore { margin-top:20px; font-size:10px }
+  .kp-home-page .home-stats { grid-template-columns:repeat(2,minmax(0,1fr)); padding:9px; border-radius:17px }
+  .kp-home-page .home-stat { justify-content:flex-start; padding:15px; min-height:81px }
+  .kp-home-page .home-stat:nth-child(3) { border-left:0 }
+  .kp-home-page .home-stat:nth-child(n+3) { border-top:1px solid #e9edf5 }
+  .kp-home-page .home-stat-dot { margin-right:5px }
+  .kp-home-page .home-stat strong { font-size:26px }
+  .kp-home-page .home-stat div>span { font-size:10px }
+  .kp-home-page .home-section-heading h2 { font-size:30px }
+  .kp-home-page .home-panel { border-radius:20px }
+  .kp-home-page .home-start { grid-template-columns:1fr }
+  .kp-home-page .home-start-copy { padding:26px 24px 0 }
+  .kp-home-page .home-start-copy>p { max-width:none }
+  .kp-home-page .home-start-art { min-height:250px; padding:5px 20px 30px; overflow:hidden }
+  .kp-home-page .home-start-art img { width:280px; max-width:100%; height:255px; object-fit:contain; transform:none }
+  .kp-home-page .home-art-orbit { width:210px }
+  .kp-home-page .home-art-caption { bottom:17px }
+  .kp-home-page .home-start .home-button { width:100% }
+  .kp-home-page .home-steps a { font-size:12px }
+  .kp-home-page .home-treasure { padding:24px; gap:10px; grid-template-columns:1fr }
+  .kp-home-page .home-treasure>div { text-align:center }
+  .kp-home-page .home-treasure>img { grid-column:1; grid-row:auto; height:190px }
+  .kp-home-page .home-treasure .home-gift-count { text-align:center }
+  .kp-home-page .home-treasure .home-button { width:100% }
+  .kp-home-page .home-news,.kp-home-page .home-community-copy { padding:24px }
+  .kp-home-page .home-panel-heading h3 { font-size:26px }
+  .kp-home-page .home-news-list a { gap:11px; padding-block:18px }
+  .kp-home-page .home-news-number { width:32px; height:37px; font-size:10px }
+  .kp-home-page .home-news-list h4 { font-size:12px }
+  .kp-home-page .home-news-list p { font-size:10px }
+  .kp-home-page .home-news-arrow { padding:0; font-size:16px }
+  .kp-home-page .home-community-copy>p { font-size:12px }
+  .kp-home-page .home-shortcuts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; padding:22px }
+  .kp-home-page .home-shortcuts>span { grid-column:1 / -1 }
+  .kp-home-page .home-shortcuts a { justify-content:space-between; font-size:11px }
+  .kp-home-page .home-content { padding-bottom:40px }
+  .kp-home-page .lp-inner-cta { padding-block:40px }
+  .kp-home-page .lp-inner-cta h2 { font-size:28px }
 }
-.kp-home-page .lp-home-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:20px}
-.kp-home-page .lp-home-actions .lp-button{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-width:150px;min-height:46px;padding:11px 20px;
-  border-radius:12px;font-size:14px;font-weight:800;line-height:1.35
+@media(prefers-reduced-motion:reduce) {
+  .kp-home-page .home-button,.kp-home-page .home-treasure>img { transition:none }
+  .kp-home-page .home-button:hover,.kp-home-page .home-treasure:hover>img { transform:none }
 }
-.kp-home-page .lp-home-dashboard{position:relative;z-index:2;min-width:0}
-.kp-home-page .lp-home-summary{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(318px,.85fr);gap:15px;align-items:stretch}
-.kp-home-page .lp-home-stats,.kp-home-page .lp-event-card,.kp-home-page .lp-quest-card{
-  border:1px solid rgba(211,228,247,.95);
-  background:rgba(255,255,255,.95);box-shadow:0 10px 30px rgba(35,76,137,.11);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
-}
-.kp-home-page .lp-home-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:12px;border-radius:17px}
-.kp-home-page .lp-home-stats article{display:flex;align-items:center;justify-content:flex-start;gap:11px;min-width:0;min-height:70px;padding:10px}
-.kp-home-page .lp-home-stats article+article{border-left:1px solid #e6eefb}
-.kp-home-page .lp-home-stats article>div{display:flex;flex-direction:column;min-width:0;gap:2px}
-.kp-home-page .lp-home-stats .lp-stat-icon{display:grid;place-items:center;flex:none;width:43px;height:43px;font-size:21px;border-radius:12px}
-.kp-home-page .lp-home-stats strong{font-size:clamp(16px,1.4vw,21px);line-height:1.25;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.kp-home-page .lp-home-stats small{margin:0;color:#697e9e;font-size:10px;font-weight:800;line-height:1.4;letter-spacing:.01em}
-.kp-home-page .lp-event-card{display:flex;flex-direction:column;min-width:0;padding:16px 19px;border-radius:17px}
-.kp-home-page .lp-event-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.kp-home-page .lp-event-head strong{color:#25395e;font-size:14px}
-.kp-home-page .lp-event-head strong span{padding:3px 6px;font-size:9px;white-space:nowrap}
-.kp-home-page .lp-event-head a{font-size:11px;white-space:nowrap}
-.kp-home-page .lp-event-card ul{display:grid;gap:10px;margin:12px 0 0;padding:0}
-.kp-home-page .lp-event-card li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:start;gap:8px;min-width:0}
-.kp-home-page .lp-event-card li>span{font-size:12px;line-height:1.5}
-.kp-home-page .lp-event-card li>a{color:#3a5279;font-size:11px;line-height:1.55;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
-.kp-home-page .lp-event-card li>small{color:#6f80a0;font-size:10px;line-height:1.6;white-space:nowrap}
-.kp-home-page .lp-quest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;align-items:stretch;margin-top:15px;min-width:0}
-.kp-home-page .lp-quest-card{
-  position:relative;display:flex;flex-direction:column;gap:0;
-  min-width:0;min-height:0;height:auto;overflow:hidden;
-  padding:22px;border-radius:17px;
-  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease
-}
-.kp-home-page .lp-quest-card:hover{transform:translateY(-3px);border-color:#b5cff7;box-shadow:0 16px 32px rgba(55,92,160,.15)}
-.kp-home-page .lp-quest-card-head{display:flex;align-items:center;gap:12px;min-width:0}
-.kp-home-page .lp-quest-card-head>div{min-width:0}
-.kp-home-page .lp-quest-mark{display:grid;place-items:center;flex:none;width:45px;height:45px;border:1px solid #d4e0fc;border-radius:13px;background:linear-gradient(135deg,#eff8ff,#e9edff);font-size:24px;line-height:1}
-.kp-home-page .lp-quest-kicker{display:block;color:#6758db;font-size:10px;line-height:1.5;font-weight:850;letter-spacing:.045em}
-.kp-home-page .lp-quest-card h2{margin:2px 0 0;font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:clamp(19px,1.8vw,24px);line-height:1.22;letter-spacing:0;color:#243960;font-weight:800;overflow-wrap:anywhere}
-.kp-home-page .lp-quest-description{margin:13px 0 17px;line-height:1.65;font-size:12.5px;color:#596f90}
-.kp-home-page .lp-quest-steps{display:grid;gap:8px;margin:0 0 16px;padding:0;list-style:none}
-.kp-home-page .lp-quest-steps li{display:flex;align-items:center;gap:10px;min-width:0;padding:9px;border-radius:10px;background:#f3f8ff;border:1px solid #e0ebf9}
-.kp-home-page .lp-quest-steps li>span{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:9px;background:#e1e7ff;color:#4a42d7;font-size:12px;font-weight:850}
-.kp-home-page .lp-quest-steps li>div{min-width:0}
-.kp-home-page .lp-quest-steps strong{display:block;color:#293d60;font-size:12px;line-height:1.35}
-.kp-home-page .lp-quest-steps small{display:block;margin-top:2px;color:#6d80a0;font-size:10px;line-height:1.45;overflow-wrap:anywhere}
-.kp-home-page .lp-quest-link{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  align-self:flex-start;min-height:41px;margin-top:auto;padding:10px 15px;
-  border-radius:10px;border:1px solid #5744ee;
-  background:linear-gradient(115deg,#7459fc,#4652ed);color:#fff!important;
-  text-decoration:none;font-size:12px;font-weight:800;line-height:1.35
-}
-.kp-home-page .lp-quest-link:hover{filter:brightness(1.07)}
-.kp-home-page .lp-quest-treasure{background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(252,249,255,.96))}
-.kp-home-page .lp-quest-treasure-art{position:relative;display:grid;place-items:center;flex:1;min-height:100px;margin-bottom:3px}
-.kp-home-page .lp-quest-glow{position:absolute;width:180px;height:92px;max-width:85%;background:radial-gradient(ellipse,rgba(255,219,146,.65),transparent 70%);pointer-events:none}
-.kp-home-page .lp-quest-chest{position:relative;font-size:73px;line-height:1;filter:drop-shadow(0 8px 9px rgba(151,104,31,.2))}
-.kp-home-page .lp-quest-star{position:absolute;color:#ec9f15;font-size:23px;pointer-events:none}
-.kp-home-page .lp-quest-star.star-a{left:25%;top:5%}
-.kp-home-page .lp-quest-star.star-b{right:27%;top:23%}
-.kp-home-page .lp-quest-star.star-c{left:35%;bottom:8%}
-.kp-home-page .lp-quest-meta{display:flex;align-items:center;justify-content:center;gap:9px;margin:0 0 17px;color:#667b98;font-size:11px}
-.kp-home-page .lp-quest-meta strong{color:#d67a15;font-weight:900;font-size:27px;font-variant-numeric:tabular-nums}
-.kp-home-page .lp-quest-community{background:linear-gradient(160deg,rgba(255,255,255,.97),rgba(242,250,255,.96))}
-.kp-home-page .lp-quest-community-art{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;min-height:95px;margin:2px 0 8px}
-.kp-home-page .lp-quest-community-art span{display:grid;place-items:center;flex:none;width:57px;height:57px;border-radius:16px;background:#e9f3ff;font-size:29px;transform:none}
-.kp-home-page .lp-quest-community-art span:nth-child(2){background:#fff1d7;width:66px;height:66px;font-size:33px;transform:translateY(-5px)}
-.kp-home-page .lp-quest-community-art span:nth-child(3){background:#e6fbf1}
-.kp-home-page .lp-quest-highlight{margin:0 0 17px;color:#5b7191;font-size:11px;line-height:1.6}
-.kp-home-page .lp-quest-highlight strong{color:#4e42cc}
-.kp-home-page .lp-quest-community-actions{display:flex;align-items:center;flex-wrap:wrap;gap:11px;margin-top:auto}
-.kp-home-page .lp-quest-community-actions .lp-quest-link{margin-top:0}
-.kp-home-page .lp-quest-secondary{color:#4d48d6!important;font-size:11px;font-weight:800;text-decoration:none}
-.kp-home-page .lp-quest-secondary:hover{text-decoration:underline}
-.kp-home-page .lp-home-destinations{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:15px;min-width:0}
-.kp-home-page .lp-home-destinations a{min-width:0;min-height:73px;display:grid;grid-template-columns:38px minmax(0,1fr);align-content:center;align-items:center;gap:2px 10px;padding:12px;border:1px solid #d9e5f6;border-radius:13px;background:rgba(255,255,255,.93);box-shadow:0 7px 18px rgba(43,81,139,.07);text-decoration:none}
-.kp-home-page .lp-home-destinations span{grid-row:span 2;display:grid;place-items:center;width:38px;height:38px;font-size:20px;border-radius:11px;background:#ebf0ff;color:#5043d7}
-.kp-home-page .lp-home-destinations b{display:block;color:#293c63;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
-.kp-home-page .lp-home-destinations small{display:block;color:#6980a0;font-size:10px;line-height:1.4;overflow-wrap:anywhere}
-/* 1120px is the actual point where navigation stops fitting. */
-@media(max-width:1120px){
- .kp-home-page .lp-nav{height:70px}
- .kp-home-page .lp-menu-toggle{display:block;order:2;margin-left:auto}
- .kp-home-page .lp-links{
-   position:absolute;z-index:90;top:calc(100% + 6px);left:0;right:0;
-   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;
-   padding:10px;border:1px solid #d6e5f5;border-radius:15px;
-   background:rgba(255,255,255,.99);box-shadow:0 13px 34px rgba(40,83,149,.17);
-   opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);
-   transition:opacity .2s,transform .2s,visibility .2s
- }
- .kp-home-page .lp-links.is-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
- .kp-home-page .lp-links a{font-size:13px;padding:11px;border-radius:9px;white-space:normal}
- .kp-home-page .lp-links a:hover{background:#f1f5ff}
- .kp-home-page .lp-links a::after{display:none}
- .kp-home-page .lp-nav-actions{order:1;gap:8px}
- .kp-home-page .lp-download-nav{display:none}
- .kp-home-page .lp-nav-login,.kp-home-page .lp-nav-account{display:inline-flex}
- .kp-home-page .lp-home-summary{grid-template-columns:1fr}
- .kp-home-page .lp-home-stats article{justify-content:center}
- .kp-home-page .lp-quest-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .kp-home-page .lp-quest-community{grid-column:span 2}
- .kp-home-page .lp-home-destinations{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:760px){
- .kp-home-page .lp-container{width:calc(100% - 28px)}
- .kp-home-page .lp-nav{height:66px;gap:8px}
- .kp-home-page .lp-brand-mark{width:136px;height:56px}
- .kp-home-page .lp-menu-toggle{width:42px;height:42px;padding:9px}
- .kp-home-page .lp-nav-login,.kp-home-page .lp-nav-account{min-height:39px;padding:8px 10px;font-size:11px}
- .kp-home-page .lp-home-stage{padding-bottom:30px;background-position:center top;background-size:auto 640px;background-color:#eaf7ff}
- .kp-home-page .lp-home-stage::before{background:linear-gradient(180deg,rgba(231,247,255,.2),rgba(240,249,255,.74) 56%,#eaf7ff 80%)}
- .kp-home-page .lp-home-hero{width:calc(100% - 20px);min-height:0;padding:35px 12px 35px}
- .kp-home-page .lp-home-title .lp-home-logo-heading{width:min(100%,390px)}
- .kp-home-page .lp-home-logo{filter:drop-shadow(0 6px 8px rgba(36,54,98,.25))}
- .kp-home-page .lp-home-subtitle{max-width:350px;font-size:12px;line-height:1.6;border-radius:12px}
- .kp-home-page .lp-home-actions{gap:9px;margin-top:14px}
- .kp-home-page .lp-home-actions .lp-button{min-width:130px;min-height:43px;padding:9px 13px;font-size:12px}
- .kp-home-page .lp-home-stats{grid-template-columns:repeat(2,minmax(0,1fr));padding:8px}
- .kp-home-page .lp-home-stats article{min-height:70px;justify-content:flex-start;padding:9px;gap:8px}
- .kp-home-page .lp-home-stats article:nth-child(3){border-left:0;border-top:1px solid #e6eefb}
- .kp-home-page .lp-home-stats article:nth-child(4){border-top:1px solid #e6eefb}
- .kp-home-page .lp-event-card{padding:14px}
- .kp-home-page .lp-quest-grid{grid-template-columns:1fr}
- .kp-home-page .lp-quest-community{grid-column:auto}
- .kp-home-page .lp-quest-card{padding:18px}
- .kp-home-page .lp-quest-card h2{font-size:22px}
- .kp-home-page .lp-quest-treasure-art{min-height:95px}
- .kp-home-page .lp-home-destinations{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:425px){
- .kp-home-page .lp-container{width:calc(100% - 20px)}
- .kp-home-page .lp-nav{gap:7px}
- .kp-home-page .lp-brand-mark{width:112px;height:48px}
- .kp-home-page .lp-nav-login,.kp-home-page .lp-nav-account{min-height:36px;padding:7px 8px;font-size:10px}
- .kp-home-page .lp-menu-toggle{width:40px;height:40px}
- .kp-home-page .lp-home-hero{padding:24px 8px 28px}
- .kp-home-page .lp-home-title .lp-home-logo-heading{width:min(100%,310px)}
- .kp-home-page .lp-home-subtitle{font-size:11px;padding:7px 10px}
- .kp-home-page .lp-home-actions .lp-button{min-width:0;flex:1;padding:10px 8px}
- .kp-home-page .lp-home-stats article{gap:7px;padding:8px 5px}
- .kp-home-page .lp-home-stats .lp-stat-icon{width:33px;height:33px;font-size:17px}
- .kp-home-page .lp-home-stats strong{font-size:14px}
- .kp-home-page .lp-home-stats small{font-size:9px}
- .kp-home-page .lp-home-destinations{gap:9px}
- .kp-home-page .lp-home-destinations a{gap:2px 7px;padding:10px 8px;grid-template-columns:32px minmax(0,1fr)}
- .kp-home-page .lp-home-destinations span{width:32px;height:32px;font-size:17px}
- .kp-home-page .lp-home-destinations b{font-size:11px}
- .kp-home-page .lp-home-destinations small{font-size:9px}
- .kp-home-page .lp-home-destinations a:last-child{grid-column:span 2}
-}
-@media(prefers-reduced-motion:reduce){
- .kp-home-page .lp-quest-card{transition:none}
- .kp-home-page .lp-quest-card:hover{transform:none}
-}
-
-/* Homepage typography and panels tuned to the illustrated game world. */
-.kp-home-page .lp-home-subtitle{font-size:clamp(13px,1.25vw,16px);letter-spacing:.015em}
-.kp-home-page .lp-home-actions .lp-button{min-height:49px;border-radius:999px;font-size:14px}
-.kp-home-page .lp-home-stats,.kp-home-page .lp-event-card,.kp-home-page .lp-quest-card{
-  border-color:rgba(204,220,242,.96);border-radius:20px;
-  box-shadow:0 15px 38px rgba(39,72,128,.13)
-}
-.kp-home-page .lp-home-stats{padding:14px}
-.kp-home-page .lp-home-stats article{min-height:78px;padding:12px 14px}
-.kp-home-page .lp-home-stats strong{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:21px;font-weight:800;color:#26385d}
-.kp-home-page .lp-home-stats small{font-size:10px;letter-spacing:.07em}
-.kp-home-page .lp-event-card{padding:19px 21px}
-.kp-home-page .lp-event-head strong{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:16px;color:#283958}
-.kp-home-page .lp-event-head strong span{font-size:9px;padding:3px 7px;border-radius:999px}
-.kp-home-page .lp-event-head a{font-size:11px}
-.kp-home-page .lp-event-card ul{gap:9px;margin-top:14px}
-.kp-home-page .lp-event-card li>a{font-size:11px}
-.kp-home-page .lp-event-card li>small{font-size:9px}
-.kp-home-page .lp-quest-card{padding:23px;background:linear-gradient(150deg,rgba(255,255,255,.98),rgba(244,249,255,.96))}
-.kp-home-page .lp-quest-start{background:linear-gradient(150deg,#fff 0%,#eff6ff 100%)}
-.kp-home-page .lp-quest-treasure{background:linear-gradient(150deg,#fff 0%,#fff7e7 54%,#f4efff 100%)}
-.kp-home-page .lp-quest-community{background:linear-gradient(150deg,#fff 0%,#edf8ff 58%,#f1f2ff 100%)}
-.kp-home-page .lp-quest-card h2{font-size:clamp(22px,2vw,27px);color:#25385e}
-.kp-home-page .lp-quest-description{font-size:14px;line-height:1.75}
-.kp-home-page .lp-quest-link{min-height:44px;padding-inline:18px;box-shadow:0 9px 20px rgba(88,73,210,.16)}
-.kp-home-page .lp-home-destinations a{min-height:78px;border-radius:16px;background:rgba(255,255,255,.96);transition:transform .2s,box-shadow .2s,border-color .2s}
-.kp-home-page .lp-home-destinations a:hover{transform:translateY(-3px);border-color:#bac9f7;box-shadow:0 14px 26px rgba(49,73,143,.13)}
-.kp-home-page .lp-home-destinations b{font-size:13px}
-.kp-home-page .lp-home-destinations small{font-size:10px}
-@media(max-width:760px){
- .kp-home-page .lp-home-stats{padding:8px}
- .kp-home-page .lp-home-stats article{min-height:72px;padding:10px}
- .kp-home-page .lp-home-stats strong{font-size:18px}
- .kp-home-page .lp-event-card{padding:16px}
- .kp-home-page .lp-quest-card{padding:20px}
- .kp-home-page .lp-home-destinations a{min-height:72px}
-}
-@media(prefers-reduced-motion:reduce){
- .kp-home-page .lp-home-destinations a{transition:none}
- .kp-home-page .lp-home-destinations a:hover{transform:none}
-}
-
-
-/* Refined reward showcase: hand-drawn SVG, zero emoji placeholders */
-.kp-home-page .lp-quest-treasure{
-  position:relative;
-  background:linear-gradient(148deg,#fff 0%,#fffaf0 62%,#f2f0ff 100%);
-  border-color:#e7d8ec
-}
-.kp-home-page .lp-quest-treasure::before{
-  content:"";position:absolute;right:-70px;top:-90px;width:270px;height:270px;
-  border-radius:50%;background:radial-gradient(circle,rgba(255,207,130,.2),transparent 72%);
-  pointer-events:none
-}
-.kp-home-page .lp-quest-treasure .lp-quest-gem{
-  color:#7851dc;border-color:#e6d2ff;
-  background:linear-gradient(135deg,#f9ecff,#e8e9ff);
-  font-family:Georgia,serif;font-size:24px
-}
-.kp-home-page .lp-quest-treasure-art{
-  display:grid;place-items:center;flex:1;
-  min-height:160px;max-height:none;margin:1px 0 0;overflow:visible;position:relative
-}
-.kp-home-page .lp-treasure-illustration{
-  display:block;position:relative;width:min(100%,282px);
-  height:auto;max-height:195px;object-fit:contain;
-  filter:drop-shadow(0 11px 11px rgba(79,78,133,.13));
-  animation:kpf-treasure-float 6s ease-in-out infinite
-}
-.kp-home-page .lp-quest-treasure .lp-quest-meta{
-  display:flex;align-items:baseline;justify-content:center;gap:8px;
-  min-height:35px;margin:0 0 15px
-}
-.kp-home-page .lp-quest-treasure .lp-quest-meta strong{
-  color:#d48021;font-size:clamp(24px,2.5vw,29px)
-}
-.kp-home-page .lp-quest-treasure .lp-quest-meta span{font-size:12px}
-@keyframes kpf-treasure-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media(max-width:760px){
- .kp-home-page .lp-quest-treasure-art{min-height:145px}
- .kp-home-page .lp-treasure-illustration{max-height:175px}
-}
-@media(prefers-reduced-motion:reduce){
- .kp-home-page .lp-treasure-illustration{animation:none}
-}
-/* Display type and copy sizing tuned for the fantasy artwork */
-.kp-home-page .lp-quest-card h2{
-  font-family:"Baloo 2","Be Vietnam Pro",sans-serif;
-  font-size:clamp(21px,1.9vw,26px);
-  font-weight:800;letter-spacing:0;line-height:1.2
-}
-.kp-home-page .lp-quest-description{font-size:14px;line-height:1.7}
-.kp-home-page .lp-quest-steps strong{font-size:13px}
-.kp-home-page .lp-quest-steps small{font-size:11px}
-.kp-home-page .lp-quest-link{border-radius:999px}
-.kp-home-page .lp-quest-card{border-radius:20px}
