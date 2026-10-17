@@ -53,6 +53,15 @@ JS=r"""JSON.stringify((()=>{
   const button=document.querySelector('.lp-button-zalo');
   add(!button,'Zalo button missing');
   if(button){
+   const icon=button.querySelector('img.lp-zalo-icon');
+   add(!icon,'Official Zalo app icon missing');
+   if(icon){
+    add(!icon.getAttribute('src')?.endsWith('/assets/img/zalo-official.svg'),'wrong Zalo icon source');
+    add(!icon.complete||icon.naturalWidth===0,'broken Zalo logo asset');
+    const box=icon.getBoundingClientRect();
+    add(box.left<0||box.right>innerWidth+2,'Zalo logo clipped on mobile');
+   }
+   add(!button.href.startsWith('https://zalo.me/'),'Zalo group link changed');
    const style=getComputedStyle(button);
    const lum=value=>{const rgb=value.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:Math.pow((v+.055)/1.055,2.4)});
     return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};

@@ -93,9 +93,6 @@ $canSubmit = $isOpen;
         <p class="lead">Tạo tài khoản an toàn và sẵn sàng bước vào vùng đất <?= kp_e($appName) ?>.</p>
         </div>
         <figure class="kp-auth-story__visual" aria-label="Nữ chiến binh sẵn sàng khám phá thế giới">
-            <?php if (is_file(KP_ROOT . '/assets/img/auth-register-art.webp')): ?>
-            <img class="kp-auth-story__keyart" src="/assets/img/auth-register-art.webp" alt="" loading="eager" decoding="async" fetchpriority="high">
-            <?php endif; ?>
             <img src="/assets/img/auth-register-adventure.webp" width="800" height="731" alt="" loading="eager" decoding="async">
         </figure>
 

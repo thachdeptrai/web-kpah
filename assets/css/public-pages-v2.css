@@ -296,3 +296,23 @@
  .kp-inner-page .lp-gift-code-line{flex-wrap:wrap}
  .kp-inner-page .lp-gift-code-line button{width:100%}
 }
+
+
+/* Zalo CTA: actual Zalo app logo, not a decorative glyph. */
+.kp-inner-page .lp-community-actions .lp-button-zalo{
+ display:inline-flex;align-items:center;justify-content:center;gap:11px;
+ padding-inline:18px;font-weight:800;line-height:1.5
+}
+.kp-inner-page .lp-community-actions .lp-button-zalo .lp-zalo-icon{
+ display:block;width:27px;height:27px;flex:none;object-fit:contain;
+ padding:2px;border-radius:8px;background:#fff;
+ box-shadow:0 1px 5px rgba(23,41,102,.17)
+}
+.kp-inner-page .lp-community-actions .lp-button-zalo>span{
+ color:#fff;font-size:13px;font-weight:800;line-height:1.4
+}
+@media(max-width:480px){
+ .kp-inner-page .lp-community-actions .lp-button-zalo{
+  min-height:48px;padding:10px 15px
+ }
+}
