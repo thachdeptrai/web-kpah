@@ -24,14 +24,8 @@ function kp_safe_url($url)
     if ($url === '') {
         return '';
     }
-    // Browsers interpret backslashes as slashes in special URLs. For example
-    // two leading backslashes resolve to an external authority despite not
-    // matching a naive "//" check. Reject controls and backslashes outright.
-    if (preg_match('/[\\x00-\\x1F\\x7F\\\\]/', $url)) {
-        return '';
-    }
-    // WHATWG navigation treats backslashes like slashes for http(s) URLs.
-    // Never accept a disguised external redirect or embedded control bytes.
+    // Reject disguised external destinations and whitespace/control bytes in links.
+    // WHATWG URL handling may normalize backslashes into authority separators.
     if (strpos($url, chr(92)) !== false || preg_match('/[\x00-\x20\x7f]/', $url)) {
         return '';
     }
