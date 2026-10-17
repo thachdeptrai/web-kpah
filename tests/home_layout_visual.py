@@ -76,20 +76,6 @@ JS = r"""JSON.stringify((() => {
   document.querySelectorAll('.home-panel img').forEach(img => {
     add(!img.complete || img.naturalWidth === 0, 'feature artwork failed: '+img.getAttribute('src'));
   });
-  const zaloArtwork=pick('.home-community-brand img');
-  const zaloButton=pick('.home-button-zalo');
-  const zaloIcon=pick('.home-button-zalo .home-zalo-icon');
-  add(!zaloArtwork||!zaloIcon||!zaloButton,'homepage Zalo artwork/button missing');
-  for(const image of [zaloArtwork,zaloIcon]){
-    if(!image)continue;
-    add(!image.src.endsWith('/assets/img/zalo-official.svg'),'homepage uses wrong Zalo image');
-    add(!image.complete||image.naturalWidth===0,'homepage Zalo icon could not load');
-    const bounds=image.getBoundingClientRect();
-    add(bounds.left < -2 || bounds.right > innerWidth + 2,'homepage Zalo icon offscreen');
-  }
-  add(zaloButton&&new URL(zaloButton.href).pathname!=='/cong-dong','community link changed');
-  add(overlap(rect('.home-community-copy'),rect('.home-community-brand')),
-      'homepage Zalo artwork overlaps community content');
   const brand=pick('.home-hero-logo'), brandBox=rect('.home-logo-heading');
   add(!brand || !brand.complete || brand.naturalWidth===0,'large center logo missing or not loaded');
   add(brandBox && hero && Math.abs((brandBox.left+brandBox.right)/2-(hero.left+hero.right)/2)>3,

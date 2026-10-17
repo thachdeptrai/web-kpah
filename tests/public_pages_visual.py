@@ -50,16 +50,6 @@ JS=r"""JSON.stringify((()=>{
   });
  }
  if(location.pathname==='/cong-dong'){
-  const logo=document.querySelector('.lp-community-zalo-art');
-  const heroLogo=document.querySelector('.lp-inner-emblem--zalo img');
-  for(const image of [logo,heroLogo]){
-    add(!image,'community large Zalo brand image missing');
-    if(!image)continue;
-    add(!image.getAttribute('src')?.endsWith('/assets/img/zalo-official.svg'),'wrong community brand image');
-    add(!image.complete||image.naturalWidth===0,'broken community Zalo brand image');
-    const pos=image.getBoundingClientRect();
-    add(pos.left < -2 || pos.right > innerWidth + 2,'community brand image offscreen');
-  }
   const button=document.querySelector('.lp-button-zalo');
   add(!button,'Zalo button missing');
   if(button){
@@ -77,6 +67,16 @@ JS=r"""JSON.stringify((()=>{
     return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};
    const fg=lum(style.color),bg=lum(style.backgroundColor);
    add((Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)<4.5,'Zalo text contrast below 4.5:1');
+  }
+ }
+ if(location.pathname==='/gioi-thieu'){
+  const icon=document.querySelector('.lp-mini-feature-gold .lp-about-zalo-icon');
+  add(!icon,'introduction community card Zalo icon missing');
+  if(icon){
+   add(!icon.src.endsWith('/assets/img/zalo-official.svg'),'introduction Zalo icon asset wrong');
+   add(!icon.complete||icon.naturalWidth===0,'introduction Zalo icon failed to load');
+   const r=icon.getBoundingClientRect();
+   add(r.width>34||r.width<24||r.right>innerWidth+2,'introduction Zalo icon incorrect mobile sizing');
   }
  }
  const bodyStyle=getComputedStyle(document.body);
