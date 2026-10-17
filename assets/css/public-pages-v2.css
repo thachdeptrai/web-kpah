@@ -270,3 +270,76 @@
  .kp-inner-page .lp-adventure-card:hover,.kp-inner-page .lp-download-card:hover,
  .kp-inner-page .lp-news-card:hover,.kp-inner-page .lp-gift-card:hover{transform:none}
 }
+
+/* Artwork-led fantasy finish shared by every public subpage. */
+.kp-inner-page .lp-inner-hero{
+  background:linear-gradient(125deg,#d9f1ff 0%,#e9edff 54%,#fff0cf 100%)
+}
+.kp-inner-page .lp-inner-hero::before{
+  opacity:.27;
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.8) 68%,transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.8) 68%,transparent 100%)
+}
+.kp-inner-page .lp-inner-hero::after{
+  background:
+    radial-gradient(ellipse at 78% 22%,rgba(255,255,255,.58),transparent 39%),
+    linear-gradient(90deg,rgba(242,251,255,.92),rgba(241,248,255,.72) 52%,rgba(242,245,255,.35))
+}
+.kp-inner-page .lp-inner-hero h1{color:#243354;text-shadow:0 2px rgba(255,255,255,.55)}
+.kp-inner-page .lp-inner-hero h1 em{color:#7355d8}
+.kp-inner-page .lp-section-kicker{color:#a36a16;letter-spacing:.11em}
+.kp-inner-page .lp-inner-emblem{
+  border:1px solid rgba(255,255,255,.9);border-radius:30px;
+  background:radial-gradient(circle at 50% 42%,#fff 0%,#eef6ff 57%,#e5ebff 100%);
+  box-shadow:0 22px 52px rgba(57,85,145,.17),inset 0 0 0 8px rgba(255,255,255,.36)
+}
+.kp-inner-page .lp-inner-emblem::before{border-color:rgba(193,145,53,.34)}
+.kp-inner-page .lp-inner-emblem--guardian img{
+  width:252px;height:252px;max-width:90%;object-fit:cover;border-radius:23px;
+  box-shadow:0 12px 27px rgba(49,67,115,.18);filter:none
+}
+.kp-inner-page .lp-inner-content{
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(201,230,255,.4),transparent 34%),
+    linear-gradient(180deg,#f2f8ff 0%,#fbfdff 42%,#fff 100%)
+}
+.kp-inner-page .lp-adventure-card-large{
+  background:linear-gradient(130deg,#f7fbff 0%,#e6f3ff 57%,#fff3dd 100%)
+}
+.kp-inner-page .lp-adventure-card-large::after{
+  position:absolute;inset:12px;border:1px solid rgba(255,255,255,.68);border-radius:15px;content:"";pointer-events:none
+}
+.kp-inner-page .lp-adventure-card>img{filter:drop-shadow(0 15px 17px rgba(42,69,117,.22))}
+.kp-inner-page .lp-feature-strip article,
+.kp-inner-page .lp-download-card,
+.kp-inner-page .lp-gift-card,
+.kp-inner-page .lp-news-card{
+  border-color:rgba(207,224,244,.95);
+  box-shadow:0 14px 34px rgba(48,80,132,.09)
+}
+.kp-inner-page .lp-download-card.is-ready{background:linear-gradient(155deg,#fff 0%,#f1fbf6 100%)}
+.kp-inner-page .lp-download-card:not(.is-ready){background:linear-gradient(155deg,#fff 0%,#fffaf0 100%)}
+.kp-inner-page .lp-platform-icon{box-shadow:0 9px 20px rgba(66,95,153,.12)}
+.kp-inner-page .lp-gift-visual{background:radial-gradient(circle at 50% 44%,#fff7dc,#f1f0ff 72%,#e6f3ff)}
+.kp-inner-page .lp-gift-code-line code{color:#4b3eb7;font-weight:800;letter-spacing:.05em}
+.kp-inner-page .lp-news-card:nth-child(1) .lp-news-art{background:linear-gradient(135deg,#eeeaff,#fff4dc)}
+.kp-inner-page .lp-news-card:nth-child(2) .lp-news-art{background:linear-gradient(135deg,#dff6ff,#e7edff)}
+.kp-inner-page .lp-news-card:nth-child(3) .lp-news-art{background:linear-gradient(135deg,#fff3d7,#f2e8ff)}
+.kp-inner-page .lp-community-card{
+  background:
+    radial-gradient(circle at 12% 22%,rgba(255,229,159,.24),transparent 28%),
+    linear-gradient(125deg,#4a53ae 0%,#6157c7 52%,#428dbd 100%)
+}
+.kp-inner-page .lp-community-art img{filter:drop-shadow(0 20px 19px rgba(25,34,86,.26))}
+.kp-inner-page .lp-inner-cta{background:linear-gradient(120deg,#fff1d6 0%,#e8efff 54%,#dff5ff 100%)}
+.kp-inner-page .lp-inner-cta .lp-section-kicker{color:#986414}
+.kp-inner-page .lp-inner-cta .lp-button-primary{background:linear-gradient(135deg,#eeb74a,#df8d27);box-shadow:0 12px 26px rgba(198,127,30,.22)}
+.kp-inner-page .lp-footer{background:#f6faff}
+@media(max-width:820px){
+ .kp-inner-page .lp-inner-emblem--guardian img{width:194px;height:194px}
+}
+@media(max-width:600px){
+ .kp-inner-page .lp-inner-emblem--guardian img{width:170px;height:170px;max-width:90%}
+ .kp-inner-page .lp-inner-hero::before{-webkit-mask-image:none;mask-image:none;opacity:.2}
+ .kp-inner-page .lp-inner-hero::after{background:linear-gradient(180deg,rgba(242,251,255,.9),rgba(241,248,255,.68))}
+}

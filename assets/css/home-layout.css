@@ -224,6 +224,48 @@
  .kp-home-page .lp-quest-card:hover{transform:none}
 }
 
+/* Homepage typography and panels tuned to the illustrated game world. */
+.kp-home-page .lp-home-subtitle{font-size:clamp(13px,1.25vw,16px);letter-spacing:.015em}
+.kp-home-page .lp-home-actions .lp-button{min-height:49px;border-radius:999px;font-size:14px}
+.kp-home-page .lp-home-stats,.kp-home-page .lp-event-card,.kp-home-page .lp-quest-card{
+  border-color:rgba(204,220,242,.96);border-radius:20px;
+  box-shadow:0 15px 38px rgba(39,72,128,.13)
+}
+.kp-home-page .lp-home-stats{padding:14px}
+.kp-home-page .lp-home-stats article{min-height:78px;padding:12px 14px}
+.kp-home-page .lp-home-stats strong{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:21px;font-weight:800;color:#26385d}
+.kp-home-page .lp-home-stats small{font-size:10px;letter-spacing:.07em}
+.kp-home-page .lp-event-card{padding:19px 21px}
+.kp-home-page .lp-event-head strong{font-family:"Baloo 2","Be Vietnam Pro",sans-serif;font-size:16px;color:#283958}
+.kp-home-page .lp-event-head strong span{font-size:9px;padding:3px 7px;border-radius:999px}
+.kp-home-page .lp-event-head a{font-size:11px}
+.kp-home-page .lp-event-card ul{gap:9px;margin-top:14px}
+.kp-home-page .lp-event-card li>a{font-size:11px}
+.kp-home-page .lp-event-card li>small{font-size:9px}
+.kp-home-page .lp-quest-card{padding:23px;background:linear-gradient(150deg,rgba(255,255,255,.98),rgba(244,249,255,.96))}
+.kp-home-page .lp-quest-start{background:linear-gradient(150deg,#fff 0%,#eff6ff 100%)}
+.kp-home-page .lp-quest-treasure{background:linear-gradient(150deg,#fff 0%,#fff7e7 54%,#f4efff 100%)}
+.kp-home-page .lp-quest-community{background:linear-gradient(150deg,#fff 0%,#edf8ff 58%,#f1f2ff 100%)}
+.kp-home-page .lp-quest-card h2{font-size:clamp(22px,2vw,27px);color:#25385e}
+.kp-home-page .lp-quest-description{font-size:14px;line-height:1.75}
+.kp-home-page .lp-quest-link{min-height:44px;padding-inline:18px;box-shadow:0 9px 20px rgba(88,73,210,.16)}
+.kp-home-page .lp-home-destinations a{min-height:78px;border-radius:16px;background:rgba(255,255,255,.96);transition:transform .2s,box-shadow .2s,border-color .2s}
+.kp-home-page .lp-home-destinations a:hover{transform:translateY(-3px);border-color:#bac9f7;box-shadow:0 14px 26px rgba(49,73,143,.13)}
+.kp-home-page .lp-home-destinations b{font-size:13px}
+.kp-home-page .lp-home-destinations small{font-size:10px}
+@media(max-width:760px){
+ .kp-home-page .lp-home-stats{padding:8px}
+ .kp-home-page .lp-home-stats article{min-height:72px;padding:10px}
+ .kp-home-page .lp-home-stats strong{font-size:18px}
+ .kp-home-page .lp-event-card{padding:16px}
+ .kp-home-page .lp-quest-card{padding:20px}
+ .kp-home-page .lp-home-destinations a{min-height:72px}
+}
+@media(prefers-reduced-motion:reduce){
+ .kp-home-page .lp-home-destinations a{transition:none}
+ .kp-home-page .lp-home-destinations a:hover{transform:none}
+}
+
 
 /* Refined reward showcase: hand-drawn SVG, zero emoji placeholders */
 .kp-home-page .lp-quest-treasure{

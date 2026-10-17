@@ -60,7 +60,7 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
     global $kp_public_active;
     $artByPage = [
         'about' => ['/assets/img/rank-archer.webp', 'archer', 560, 700],
-        'download' => ['/assets/img/rank-guardian.webp', 'guardian', 672, 840],
+        'download' => ['/assets/img/rank-guardian.webp?v=20261017-2', 'guardian', 800, 800],
         'giftcode' => ['/assets/img/treasure-chest-fantasy.webp', 'gift', 800, 731],
         'news' => ['/assets/img/fantasy-world.webp', 'news', 1600, 600],
         'community' => ['/assets/img/rank-sorcerer.webp', 'sorcerer', 560, 700],
@@ -75,7 +75,7 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
                 <p><?= kp_e($copy) ?></p>
             </div>
             <div class="lp-inner-emblem lp-inner-emblem--<?= kp_e($art[1]) ?>" aria-hidden="true">
-                <img src="<?= kp_e($art[0]) ?>" width="<?= (int) $art[2] ?>" height="<?= (int) $art[3] ?>" alt="" decoding="async">
+                <img src="<?= kp_e($art[0]) ?>" width="<?= (int) $art[2] ?>" height="<?= (int) $art[3] ?>" alt="" loading="eager" decoding="async">
             </div>
         </div>
     </section><?php
