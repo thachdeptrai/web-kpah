@@ -105,7 +105,7 @@ $version = trim((string)kp_config('app.version', ''));
         <p class="lead">Đăng nhập để tiếp tục chuyến phiêu lưu trong thế giới <?= kp_e($appName) ?>.</p>
         </div>
         <figure class="kp-auth-story__visual" aria-label="Chiến binh trở lại vùng đất tuổi thơ">
-            <img src="/assets/img/auth-login-adventure.webp" width="760" height="710" alt="" loading="eager" decoding="async">
+            <img src="/assets/img/auth-login-adventure.webp" width="800" height="667" alt="" loading="eager" decoding="async">
         </figure>
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span><strong>Tài khoản:</strong> nhập đúng tên tài khoản đã đăng ký.</span></li>

@@ -33,7 +33,7 @@ kp_player_head('Bảng xếp hạng','rankings',$user);
     </div>
     <div class="lb-hero-mark" aria-hidden="true">
         <span class="lb-orbit lb-orbit-1"></span><span class="lb-orbit lb-orbit-2"></span>
-        <img src="/assets/img/rank-guardian.webp" alt="" width="200" height="225" loading="eager">
+        <img src="/assets/img/rank-guardian.webp" alt="" width="200" height="250" loading="eager">
         <span class="lb-hero-sparks">✦</span>
     </div>
 </section>
@@ -79,7 +79,7 @@ $rankGroups=[
             <div class="podium-stage">
                 <div class="podium-halo" aria-hidden="true"><span></span><span></span></div>
                 <div class="podium-avatar">
-                    <img src="<?= kp_e([1=>'assets/img/rank-guardian.webp',2=>'assets/img/rank-sorcerer.webp',3=>'assets/img/rank-archer.webp'][$rank]) ?>" alt="" width="220" height="247" loading="<?= $rank===1?'eager':'lazy' ?>">
+                    <img src="<?= kp_e([1=>'assets/img/rank-guardian.webp',2=>'assets/img/rank-sorcerer.webp',3=>'assets/img/rank-archer.webp'][$rank]) ?>" alt="" width="220" height="275" loading="<?= $rank===1?'eager':'lazy' ?>">
                 </div>
                 <span class="podium-rank-badge">#<?= $rank ?></span>
                 <span class="podium-spark podium-spark-a" aria-hidden="true">✦</span>

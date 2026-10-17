@@ -36,7 +36,7 @@ foreach (['app/includes/public_landing.php', 'app/includes/player_portal.php', '
           'app/pages/forgot-password.php', 'app/admin/login.php'] as $template) {
     $check(strpos($read($template), '/assets/js/fantasy-foundation.js') !== false, 'JS enabled in ' . $template);
 }
-foreach (['assets/img/fantasy-world.webp', 'assets/img/treasure-chest-fantasy.webp'] as $asset) {
+foreach (['assets/img/auth-login-adventure.webp', 'assets/img/auth-recovery-adventure.webp', 'assets/img/auth-register-adventure.webp', 'assets/img/emblem.webp', 'assets/img/fantasy-world.webp', 'assets/img/favicon.webp', 'assets/img/rank-archer.webp', 'assets/img/rank-guardian.webp', 'assets/img/rank-sorcerer.webp', 'assets/img/scene.webp', 'assets/img/treasure-chest-fantasy.webp'] as $asset) {
     $drawing = $read($asset);
     $check(substr($drawing, 0, 4) === 'RIFF' && substr($drawing, 8, 4) === 'WEBP',
         'generated artwork is WEBP ' . $asset);

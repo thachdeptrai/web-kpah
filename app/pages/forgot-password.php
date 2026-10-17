@@ -69,7 +69,7 @@ $version = trim((string) kp_config('app.version', ''));
         <p class="lead">Xác minh tài khoản và sớm trở lại cùng những chiến hữu của bạn.</p>
         </div>
         <figure class="kp-auth-story__visual" aria-label="Chiến binh tìm lại hành trình">
-            <img src="/assets/img/auth-recovery-adventure.webp" width="760" height="710" alt="" loading="eager" decoding="async">
+            <img src="/assets/img/auth-recovery-adventure.webp" width="800" height="640" alt="" loading="eager" decoding="async">
         </figure>
         <ul class="rules">
             <li><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span><strong>Xác minh email:</strong> mã được gửi tới email đã liên kết với tài khoản.</span></li>
