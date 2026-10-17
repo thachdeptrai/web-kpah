@@ -22,7 +22,7 @@ except ImportError as e:
 BASE = os.environ.get("KPAH_TEST_URL", "http://127.0.0.1:8089").rstrip("/")
 SCREENSHOTS = Path("artifacts/home-layout")
 SCREENSHOTS.mkdir(parents=True, exist_ok=True)
-WIDTHS = [320, 375, 768, 1024, 1440]
+WIDTHS = [320, 375, 768, 1024, 1200, 1241, 1280, 1440]
 HEIGHT = 1080
 
 JS = r"""JSON.stringify((() => {
@@ -67,6 +67,29 @@ JS = r"""JSON.stringify((() => {
   for(let i=0;i<navParts.length;i++)for(let j=i+1;j<navParts.length;j++)
     add(overlap(navParts[i].bbox,navParts[j].bbox),
        navParts[i].selector+' overlaps '+navParts[j].selector);
+  const navLinks=[...document.querySelectorAll('#lp-menu>a')];
+  add(navLinks.length!==6,'expected six illustrated public navigation links');
+  const paths=['/','/gioi-thieu','/tai-game','/giftcode','/tin-tuc','/cong-dong'];
+  navLinks.forEach((a,i)=>{
+    add(new URL(a.href).pathname!==paths[i],'public navigation route changed at '+i);
+    const icon=a.querySelector('.lp-nav-icon');
+    const art=icon?.querySelector('svg,img');
+    add(!icon||!art||!a.querySelector('.lp-nav-label'),'navigation icon/label missing at '+i);
+    if(art?.tagName.toLowerCase()==='img'){
+      add(!art.complete||art.naturalWidth===0,'Zalo navigation logo not loaded');
+    }
+    if(innerWidth>1240&&icon){
+      const box=icon.getBoundingClientRect();
+      add(box.width<36||box.height<36,'desktop navigation icon is too small at '+i);
+    }
+  });
+  if(innerWidth>1240){
+    const nav=rect('#lp-menu'),auth=rect('.lp-nav-actions');
+    add(nav&&auth&&nav.right>auth.left+2,'desktop navigation overlaps account actions');
+  }else{
+    const toggle=pick('.lp-menu-toggle');
+    add(!visible(toggle),'collapsed nav lacks a visible menu toggle');
+  }
   const headerStyle=pick('.lp-header')?getComputedStyle(pick('.lp-header')).position:'';
   add(headerStyle!=='sticky','expected sticky header but got '+headerStyle);
   const statCount = document.querySelectorAll('.home-stat').length;

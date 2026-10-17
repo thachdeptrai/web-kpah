@@ -14,7 +14,7 @@ from home_layout_visual import CDP, wait_for_remote_debugging
 
 BASE=os.environ.get("KPAH_TEST_URL","http://127.0.0.1:8089").rstrip("/")
 ROUTES=["gioi-thieu","tai-game","giftcode","tin-tuc","cong-dong"]
-WIDTHS=[320,375,768,1440]
+WIDTHS=[320,375,768,1200,1241,1280,1440]
 RESULT_DIR=Path("artifacts/home-layout")
 RESULT_DIR.mkdir(parents=True,exist_ok=True)
 
@@ -33,6 +33,27 @@ JS=r"""JSON.stringify((()=>{
  add(hero&&content&&hero.bottom>content.y+2,'hero overlaps content');
  add(title&&art&&Math.min(title.right,art.right)-Math.max(title.x,art.x)>2
    &&Math.min(title.bottom,art.bottom)-Math.max(title.y,art.y)>2,'title overlaps hero illustration');
+ const menuLinks=[...document.querySelectorAll('#lp-menu>a')];
+ add(menuLinks.length!==6,'not all six modern navigation icons exist');
+ menuLinks.forEach((a,i)=>{
+   const icon=a.querySelector('.lp-nav-icon');
+   const content=icon?.querySelector('svg,img');
+   add(!icon||!content||!a.querySelector('.lp-nav-label'),'missing navigation icon/label '+i);
+   if(content?.tagName.toLowerCase()==='img')
+     add(!content.complete||content.naturalWidth===0,'missing community Zalo logo');
+   if(innerWidth>1240&&icon){
+     const rect=icon.getBoundingClientRect();
+     add(rect.width<36||rect.height<36,'desktop navigation icon too small '+i);
+   }
+ });
+ if(innerWidth>1240){
+   const menu=document.querySelector('#lp-menu')?.getBoundingClientRect();
+   const auth=document.querySelector('.lp-nav-actions')?.getBoundingClientRect();
+   add(menu&&auth&&menu.right>auth.left+2,'navigation collides with account buttons');
+ }else{
+   add(getComputedStyle(document.querySelector('.lp-menu-toggle')).display==='none',
+       'compact navigation toggle is missing');
+ }
  const anchors=[...document.querySelectorAll('.lp-download-card,.lp-gift-card,.lp-news-card,.lp-feature-strip article,.lp-mini-feature')];
  for(const [i,el] of anchors.entries()){
   const r=el.getBoundingClientRect();

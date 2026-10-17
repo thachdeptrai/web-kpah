@@ -28,4 +28,13 @@ $downloads=landing_read('app/pages/downloads-public.php');
 landing_assert(strpos($downloads,'kp_game_download_catalog')!==false && strpos($downloads,"'/tai-game/tep?nen-tang='")!==false,'download catalog and protected file route retained');
 $shell=landing_read('app/includes/public_landing.php');
 landing_assert(strpos($shell,'aria-current="page"')!==false,'active navigation is accessible');
+landing_assert(strpos($shell,'function kp_public_nav_icon')!==false,'six public routes use local illustrated navigation icons');
+landing_assert(strpos($shell,'assets/css/nav-modern.css')!==false,'modern navigation stylesheet is wired into shared header');
+landing_assert(strpos($shell,'lp-nav-label')!==false,'navigation labels remain visible and accessible');
+$navigation=landing_read('assets/css/nav-modern.css');
+foreach (['home','about','download','giftcode','news','community'] as $key) {
+    landing_assert(strpos($shell,"'".$key."'")!==false,'navigation destination retained '.$key);
+}
+landing_assert(strpos($navigation,'width:39px;height:39px')!==false,'desktop navigation icon container is enlarged');
+landing_assert(strpos($navigation,'max-width:1240px')!==false && strpos($navigation,'max-width:430px')!==false,'tablet and narrow phone navigation layouts exist');
 echo "PASS: public landing page split\n";

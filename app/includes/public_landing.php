@@ -6,17 +6,34 @@ function kp_public_community_url(): string
     return 'https://zalo.me/g/zmyedl5en7sldmd9el1z';
 }
 
+/** Decorative, local icons for the six public navigation destinations. */
+function kp_public_nav_icon(string $key): string
+{
+    if ($key === 'community') {
+        return '<span class="lp-nav-icon" aria-hidden="true"><img src="/assets/img/zalo-official.svg" width="26" height="26" alt="" decoding="async"></span>';
+    }
+    $paths = [
+        'home' => '<path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21v-7h6v7"/>',
+        'about' => '<path d="m12 2 2.25 6.75L21 11l-6.75 2.25L12 20l-2.25-6.75L3 11l6.75-2.25z"/><path d="m19.5 18 .5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z"/>',
+        'download' => '<path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+        'giftcode' => '<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18"/><path d="M12 9H8.5A2.5 2.5 0 1 1 11 6.5L12 9Zm0 0h3.5A2.5 2.5 0 1 0 13 6.5L12 9Z"/>',
+        'news' => '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h4"/>',
+    ];
+    $shape = $paths[$key] ?? $paths['home'];
+    return '<span class="lp-nav-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round" focusable="false">' . $shape . '</svg></span>';
+}
+
 function kp_public_page_start(string $title, string $active, string $description): void
 {
     $loggedIn = !empty($_SESSION['kp_user_id']);
     $GLOBALS['kp_public_active'] = $active;
     $links = [
-        'home' => ['/', '⌂', 'Trang chủ'],
-        'about' => ['/gioi-thieu', '✦', 'Giới thiệu'],
-        'download' => ['/tai-game', '▣', 'Tải game'],
-        'giftcode' => ['/giftcode', '♢', 'Giftcode'],
-        'news' => ['/tin-tuc', '◉', 'Tin tức'],
-        'community' => ['/cong-dong', '♧', 'Cộng đồng'],
+        'home' => ['/', 'Trang chủ'],
+        'about' => ['/gioi-thieu', 'Giới thiệu'],
+        'download' => ['/tai-game', 'Tải game'],
+        'giftcode' => ['/giftcode', 'Giftcode'],
+        'news' => ['/tin-tuc', 'Tin tức'],
+        'community' => ['/cong-dong', 'Cộng đồng'],
     ];
     ?><!doctype html>
 <html lang="vi">
@@ -36,6 +53,7 @@ function kp_public_page_start(string $title, string $active, string $description
     <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
     <link rel="stylesheet" href="/assets/css/public-pages-v2.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/public-pages-v2.css') ?>">
     <?php if ($active === 'home'): ?><link rel="stylesheet" href="/assets/css/home-layout.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/home-layout.css') ?>"><?php endif; ?>
+    <link rel="stylesheet" href="/assets/css/nav-modern.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/nav-modern.css') ?>">
 </head>
 <body class="landing-page public-inner-page<?= $active === 'home' ? ' kp-home-page' : ' kp-inner-page' ?>">
 <a class="lp-skip" href="#noi-dung">Đi đến nội dung chính</a>
@@ -44,7 +62,7 @@ function kp_public_page_start(string $title, string $active, string $description
         <a class="lp-brand" href="/" aria-label="NGHIỆN KPAH — Trang chủ"><span class="lp-brand-mark"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="NGHIỆN KPAH"></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a>
         <button class="lp-menu-toggle" type="button" aria-expanded="false" aria-controls="lp-menu" data-landing-menu><span></span><span></span><span></span><b class="lp-sr-only">Mở menu</b></button>
         <nav class="lp-links" id="lp-menu" aria-label="Điều hướng chính">
-            <?php foreach ($links as $key => $link): ?><a<?= $active === $key ? ' class="is-active" aria-current="page"' : '' ?> href="<?= kp_e($link[0]) ?>"><span><?= kp_e($link[1]) ?></span> <?= kp_e($link[2]) ?></a><?php endforeach; ?>
+            <?php foreach ($links as $key => $link): ?><a data-nav="<?= kp_e($key) ?>"<?= $active === $key ? ' class="is-active" aria-current="page"' : '' ?> href="<?= kp_e($link[0]) ?>"><?= kp_public_nav_icon($key) ?><span class="lp-nav-label"><?= kp_e($link[1]) ?></span></a><?php endforeach; ?>
         </nav>
         <div class="lp-nav-actions"><a class="lp-download-nav" href="/tai-game">▣ <span>Tải game</span></a><a class="<?= $loggedIn ? 'lp-nav-account' : 'lp-nav-login' ?>" href="<?= $loggedIn ? '/tai-khoan' : '/dang-nhap' ?>"><?= $loggedIn ? '<span>◎</span>Tài khoản' : 'Đăng nhập' ?></a></div>
     </div>
