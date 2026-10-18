@@ -10,6 +10,7 @@ on:
       - 'tests/admin_security_smoke.php'
       - 'tests/admin_csrf_smoke.php'
       - 'tests/safe_url_security_smoke.php'
+      - 'tests/client_api_transport_security_smoke.php'
       - 'tests/security_auth_url_smoke.php'
       - 'tests/downloads_smoke.php'
       - 'tests/giftcodes_smoke.php'
@@ -29,6 +30,7 @@ on:
       - 'tests/admin_security_smoke.php'
       - 'tests/admin_csrf_smoke.php'
       - 'tests/safe_url_security_smoke.php'
+      - 'tests/client_api_transport_security_smoke.php'
       - 'tests/security_auth_url_smoke.php'
       - 'tests/downloads_smoke.php'
       - 'tests/giftcodes_smoke.php'
@@ -68,6 +70,8 @@ jobs:
         run: php tests/admin_csrf_smoke.php
       - name: Reject disguised external and control-character URLs
         run: php tests/safe_url_security_smoke.php
+      - name: Client JS and API transport security guard
+        run: php tests/client_api_transport_security_smoke.php
       - name: Game download security and toggles smoke tests
         run: php tests/downloads_smoke.php
       - name: Giftcode metadata and visibility smoke tests
