@@ -15,6 +15,33 @@
 - Chặn đường dẫn source map; thêm `nosniff`, `Cross-Origin-Resource-Policy: same-origin`, `Referrer-Policy: no-referrer` cho static JavaScript khi `mod_headers` được bật.
 - Không minify tại PHP request; tránh tăng tải và dependency mới trên VPS Windows Server.
 
+## Khi mở trực tiếp đường dẫn JavaScript (kiểu ảnh mẫu)
+
+Trên **Apache** có Fetch Metadata headers, yêu cầu GET dạng điều hướng
+(`Sec-Fetch-Mode: navigate`, `Sec-Fetch-Dest: document`) tới
+`/assets/js/<ten>.js` được nội bộ chuyển tới
+`app/pages/js-navigation-preview.php`. Đường dẫn trình duyệt không đổi.
+
+- Nội dung hiển thị có banner cảnh báo và `window.__KPAH_PAYLOAD__ = "..."`,
+  chứa **ciphertext AES-256-GCM của file JS**. Mỗi request sinh khóa và nonce
+  ngẫu nhiên; khóa dùng một lần **không được gửi**. Response có dạng
+  `text/plain` và `no-store`, chỉ phục vụ việc hiển thị, không thể dùng
+  làm JS thực thi.
+- Tải qua thẻ `<script src>` (`Sec-Fetch-Dest: script`) hoặc request không
+  có Fetch Metadata vẫn nhận bản JS minify chạy bình thường. Truy cập trực tiếp
+  `/assets/js-dist/` bị Apache từ chối; source map cũng bị từ chối.
+- **Không phải DRM, chống copy hoặc bảo mật source:** Fetch Metadata có thể
+  giả lập ngoài trình duyệt và code được phân phối cho trình duyệt vẫn có thể
+  trích xuất. Repo GitHub có thể đọc source. Đừng cất bất kỳ secret nào vào JS.
+- Phụ thuộc `openssl` của PHP cho preview. PHP thiếu OpenSSL sẽ chỉ khiến
+  phần *xem trực tiếp* trả 503; việc nạp `<script>` vẫn do Apache xử lý.
+- PHP built-in server không hỗ trợ rewrite `.htaccess`, nên phần hiển thị
+  cảnh báo chỉ áp dụng cho Apache; điều này **không** thay đổi route, API hay
+  phương thức truyền payload JSON.
+
+Kiểm thử GitHub Actions trên Apache yêu cầu cùng URL trả **bản xem đã mã hóa**
+cho `document/navigate`, nhưng trả **JS minify chạy được** cho `script/no-cors`.
+
 ## API response
 
 `kp_send_security_headers(false)` áp dụng cho response phi HTML:
@@ -29,7 +56,7 @@ Những header này **không mã hóa JSON**. Chúng là cơ chế chống cache
 
 1. GitHub Actions: xem kết quả **Build and publish minified browser JavaScript**, **Security regression checks**, **PHP and JS syntax checks**, và **Routes and account regression**.
 2. Trên Apache/XAMPP cần bật `mod_rewrite`, `AllowOverride` và (để có static headers) `mod_headers`. Khi pull nên lấy commit build JS mới nhất cùng bản sửa Apache; có thể kiểm tra trực tiếp nội dung minified và tương tác trang.
-3. Truy cập URL /assets/js/ui-system.js trả về bản minify nếu `assets/js-dist/ui-system.js` có trên VPS. File vẫn có thể bị xem/đọc bởi người dùng, đó là giới hạn của trình duyệt.
+3. Mở trực tiếp URL `/assets/js/ui-system.js` trên Chrome/Edge (request `document/navigate`) để xem banner và ciphertext. Khi website tải cùng URL dưới dạng `script`, response vẫn phải là bản minify. Kiểm tra bằng GitHub Actions Apache regression; khả năng trích xuất JS vẫn tồn tại.
 4. Bảo đảm HTTPS tới **cả người dùng và origin**, khuyến nghị Cloudflare **Full (strict)**. Không ép `HTTPS`/forwarded-proto theo request khi chưa xác định proxy tin cậy, để tránh vòng lặp redirect hoặc tin header giả mạo.
 5. Kiểm thử PHP offline: `php tests/client_api_transport_security_smoke.php`; kiểm tra response thực từ staging vì PHP built-in server không thực thi `.htaccess`.
 
