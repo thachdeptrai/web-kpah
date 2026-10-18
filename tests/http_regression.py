@@ -131,6 +131,27 @@ check(c.cookies._cookies is not None,'session cookie jar populated')
 status,h,b=c.request('/admin/login.php',{'csrf':admin_token,'username':'routeadmin','password':'FixtureAdmin123'})
 check(status==302 and h.get('Location')=='/quan-tri','admin form survives player login')
 check({'KPAHREG','KPAHADMIN'}.issubset({cookie.name for cookie in c.cookies}),'distinct admin/player cookies')
+
+# Direct URLs and DevTools parameter edits must not grant access to another
+# account's character; a player-only session cannot access Admin endpoints.
+other=Client()
+other_token=csrf(other.request('/dang-nhap')[2])
+status,h,b=other.request('/dang-nhap',{
+    'csrf':other_token,'username':'otherplayer','password':'FixturePass123'})
+check(status==302 and h.get('Location')=='/tai-khoan','second fixture user logs in')
+check(other.request('/nhan-vat/chi-tiet?name=OtherHero')[0]==200,
+      'second user may inspect owned character')
+status,h,b=other.request('/nhan-vat/chi-tiet?name=FixtureHero')
+check(status==404 and '1200' not in b,'second user cannot read other account inventory')
+status,h,b=c.request('/nhan-vat/chi-tiet?name=OtherHero')
+check(status==404 and 'Không tìm thấy nhân vật' in b,'first user denied other account inventory')
+for route in ('/quan-tri','/quan-tri/cong-vnd','/quan-tri/giftcode','/quan-tri/diem-tich-luy'):
+    status,headers,body=other.request(route)
+    check(status in (302,403) and ('FixtureHero' not in body),
+          'player session cannot reach admin route '+route)
+status,headers,body=other.request('/quan-tri/cong-vnd',{'csrf':'bad','amount':'1000000'})
+check(status in (302,403),'player cannot POST admin wallet adjustment')
+
 for endpoint in ('/api/payos-status?code=invalid', '/api/card-fees?telco=invalid&amount=10000'):
     status,headers,body=c.request(endpoint)
     check(status==422 and json.loads(body).get('ok') is False,
