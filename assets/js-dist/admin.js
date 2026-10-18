@@ -1,0 +1,1 @@
+!function(){"use strict";var e=document.getElementById("code-search");if(e){var t=e.closest("section");t&&e.addEventListener("input",function(){var n=e.value.trim().toLowerCase();t.querySelectorAll("tbody tr").forEach(function(e){e.hidden=!e.textContent.toLowerCase().includes(n)})})}}();

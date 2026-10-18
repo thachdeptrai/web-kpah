@@ -1,0 +1,1 @@
+"use strict";!function(t){t.KpUI&&"function"==typeof t.KpUI.toast&&(t.kpToast=function(o,e,n,p){return"object"==typeof o?t.KpUI.toast(o):t.KpUI.toast({type:o,title:e,message:n,duration:p})})}(window);

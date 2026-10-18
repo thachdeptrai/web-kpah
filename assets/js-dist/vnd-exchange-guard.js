@@ -1,0 +1,1 @@
+!function(){"use strict";var t=document.getElementById("vnd-exchange-form"),e=document.getElementById("vnd-exchange-button");if(t&&e){var n=!1;t.addEventListener("submit",function(i){n?i.preventDefault():t.checkValidity()&&(n=!0,e.disabled=!0,e.textContent="Đang đổi mốc…",e.setAttribute("aria-busy","true"))})}}();

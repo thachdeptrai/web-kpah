@@ -1,0 +1,1 @@
+!function(){"use strict";var t=document.getElementById("bank-create-form"),e=document.getElementById("bank-create-button");if(t&&e){var n=!1;t.addEventListener("submit",function(a){n?a.preventDefault():t.checkValidity()&&(n=!0,e.disabled=!0,e.textContent="Đang tạo QR, vui lòng chờ…",e.setAttribute("aria-busy","true"))})}}();

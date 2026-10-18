@@ -1,0 +1,1 @@
+!function(){"use strict";document.querySelectorAll(".point-redeem-form").forEach(function(e){var t=!1;e.addEventListener("submit",function(n){if(t)n.preventDefault();else if(e.checkValidity()){t=!0;var i=e.querySelector("button");i&&(i.disabled=!0,i.textContent="Đang gửi yêu cầu…")}})})}();
