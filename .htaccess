@@ -5,7 +5,7 @@ RewriteEngine On
 
 # Source maps/debug bundles must never be served from the public webroot.
 # The original client JavaScript itself remains visible to the browser.
-RewriteRule "\\.(?:map|js\\.map)$" - [F,END,NC]
+RewriteRule "\.(?:map|js\.map)$" - [F,END,NC]
 
 # Stop accidental exposure of Git internals, logs, SQL dumps and diagnostics.
 # Apache 2.4 / mod_rewrite; applies before public routes.
@@ -36,7 +36,7 @@ RewriteRule ^(?:robots\.txt|sitemap\.xml)$ - [END]
 # This is obfuscation, NOT encryption or an authorization boundary.
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteCond %{DOCUMENT_ROOT}/assets/js-dist/$1 -f
-RewriteRule ^assets/js/([A-Za-z0-9_-]+\\.js)$ assets/js-dist/$1 [END]
+RewriteRule ^assets/js/([A-Za-z0-9_-]+\.js)$ assets/js-dist/$1 [END]
 
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^assets/.*\.(?:css|js|svg|png|jpe?g|gif|webp|ico|ttf|woff2?)$ - [END,NC]
@@ -56,7 +56,7 @@ RewriteRule ^ index.php [END,QSA]
 
 # Apply static JS response protections even though these files bypass PHP.
 <IfModule mod_headers.c>
-  <FilesMatch "(?i)\\.(?:js|mjs)$">
+  <FilesMatch "(?i)\.(?:js|mjs)$">
     Header always set X-Content-Type-Options "nosniff"
     Header always set Cross-Origin-Resource-Policy "same-origin"
     Header always set Referrer-Policy "no-referrer"
