@@ -11,10 +11,10 @@ if ($method === 'GET' || $method === 'HEAD') {
     ?><!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Đăng xuất tài khoản · KPAH</title>
-<link rel="stylesheet" href="/assets/css/login.css"></head>
-<body><main style="max-width:420px;margin:12vh auto;padding:24px;background:#fff;border:1px solid #d9e3ef;border-radius:16px">
+<link rel="stylesheet" href="/assets/css/logout-confirm.css"></head>
+<body><main class="kp-logout-confirm">
 <h1>Đăng xuất tài khoản</h1><p>Bạn có chắc chắn muốn kết thúc phiên đăng nhập hiện tại?</p>
-<form method="post" action=""><input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
+<form class="kp-logout-actions" method="post" action=""><input type="hidden" name="csrf" value="<?= kp_e($csrf) ?>">
 <button type="submit">Xác nhận đăng xuất</button>
 <a href="/tai-khoan">Quay lại</a></form></main></body></html><?php
     exit;
