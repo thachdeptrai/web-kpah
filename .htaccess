@@ -35,13 +35,14 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^\.well-known/acme-challenge/[A-Za-z0-9_-]+$ - [END]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^(?:robots\.txt|sitemap\.xml)$ - [END]
-# A direct top-level browser navigation gets a display-only encrypted preview.
-# Actual script requests (Sec-Fetch-Dest: script) and legacy requests remain
-# executable. Fetch Metadata headers can be forged: this is presentation only.
+# A top-level navigation shows encrypted display text. Some proxies/older
+# clients omit Fetch Metadata: Accept:text/html is the navigation fallback.
+# Never rewrite a real <script> fetch. These headers are not authentication.
 RewriteCond %{REQUEST_METHOD} ^GET$ [NC]
-RewriteCond %{HTTP:Sec-Fetch-Mode} ^navigate$ [NC]
-RewriteCond %{HTTP:Sec-Fetch-Dest} ^document$ [NC]
 RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{HTTP:Sec-Fetch-Dest} !^script$ [NC]
+RewriteCond %{HTTP:Sec-Fetch-Mode} ^navigate$ [NC,OR]
+RewriteCond %{HTTP:Accept} "(^|,)[[:space:]]*text/html([,;]|$)" [NC]
 RewriteRule ^assets/js/([A-Za-z0-9_-]+\.js)$ index.php?__kpah_js_preview=$1 [END]
 
 # Serve tested, minified JavaScript at the same URL when a compiled
