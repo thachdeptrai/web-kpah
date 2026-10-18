@@ -45,8 +45,23 @@ if os.environ.get('KPAH_EXPECT_APACHE_JS') == '1':
     status,headers,body=Client().request('/assets/js/ui-system.js')
     check(status==200,'Apache serves JavaScript at original asset URL')
     check(body.strip()==expected.strip(),'Apache serves the tested minified JavaScript, not original source')
+    status,headers,body=Client().request('/assets/js/ui-system.js',headers={
+        'Sec-Fetch-Dest':'script','Sec-Fetch-Mode':'no-cors'})
+    check(status==200 and body.strip()==expected.strip(),'Browser script loading still receives executable minified JavaScript')
+    status,headers,body=Client().request('/assets/js/ui-system.js?v=1',headers={
+        'Sec-Fetch-Dest':'document','Sec-Fetch-Mode':'navigate'})
+    check(status==200 and '[KPAH_PROTECTED_PAYLOAD_CIPHER]' in body
+          and 'window.__KPAH_PAYLOAD__ = ' in body,
+          'Direct JavaScript URL navigation displays encrypted preview')
+    check(headers.get('Content-Type','').startswith('text/plain')
+          and 'no-store' in headers.get('Cache-Control',''),
+          'Preview is non-executable text and is not cached')
+    check('NGHIEN KPAH UI Foundation' not in body and body.strip()!=expected.strip(),
+          'Preview does not expose minified or source JavaScript text')
     status,headers,body=Client().request('/assets/js/ui-system.js.map')
     check(status in (403,404),'Apache denies JavaScript source maps')
+    status,headers,body=Client().request('/assets/js-dist/ui-system.js')
+    check(status==403,'Apache blocks direct access to compiled asset path')
 catalog=json.loads(subprocess.check_output([PHP,'-r','echo json_encode(require '+repr(str(ROOT/'config/routes.php'))+');'],text=True))
 guest=Client()
 for old,new in catalog['aliases'].items():
