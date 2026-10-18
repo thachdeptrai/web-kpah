@@ -56,6 +56,7 @@ if os.environ.get('KPAH_EXPECT_APACHE_JS') == '1':
     check(headers.get('Content-Type','').startswith('text/plain')
           and 'no-store' in headers.get('Cache-Control',''),
           'Preview is non-executable text and is not cached')
+    preview_body=body
     status,headers,body=Client().request('/assets/js/ui-system.js?fallback=1',headers={
         'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9'})
     check(status==200 and '[KPAH_PROTECTED_PAYLOAD_CIPHER]' in body,
@@ -64,7 +65,7 @@ if os.environ.get('KPAH_EXPECT_APACHE_JS') == '1':
         'Sec-Fetch-Dest':'script','Sec-Fetch-Mode':'no-cors','Accept':'text/html'})
     check(status==200 and body.strip()==expected.strip(),
           'Explicit script fetch is executable even with a spoofed HTML Accept')
-    check('NGHIEN KPAH UI Foundation' not in body and body.strip()!=expected.strip(),
+    check('NGHIEN KPAH UI Foundation' not in preview_body and preview_body.strip()!=expected.strip(),
           'Preview does not expose minified or source JavaScript text')
     status,headers,body=Client().request('/assets/js/ui-system.js.map')
     check(status in (403,404),'Apache denies JavaScript source maps')
