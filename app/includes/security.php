@@ -182,6 +182,31 @@ function kp_session_start()
 /* CSRF                                                                */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Resolve a player's session for JSON/AJAX endpoints. Unlike checking only
+ * kp_user_id, this rejects expired sessions and accounts banned after login.
+ *
+ * Requires bootstrap.php (PDO and session already initialized). DB failures
+ * bubble up so callers return 503, never silently accept stale sessions.
+ */
+function kp_player_api_user_id()
+{
+    $id = (int) ($_SESSION['kp_user_id'] ?? 0);
+    $last = (int) ($_SESSION['kp_user_last_seen'] ?? 0);
+    if ($id <= 0 || $last <= 0 || time() - $last > 1800) {
+        unset($_SESSION['kp_user_id'], $_SESSION['kp_user_username'], $_SESSION['kp_user_last_seen']);
+        return 0;
+    }
+    $st = kp_db()->prepare('SELECT id FROM team_user WHERE id=? AND ban=0 LIMIT 1');
+    $st->execute([$id]);
+    if (!$st->fetchColumn()) {
+        unset($_SESSION['kp_user_id'], $_SESSION['kp_user_username'], $_SESSION['kp_user_last_seen']);
+        return 0;
+    }
+    $_SESSION['kp_user_last_seen'] = time();
+    return $id;
+}
+
 function kp_csrf_token()
 {
     if (empty($_SESSION['kp_csrf']) || !is_string($_SESSION['kp_csrf'])) {
