@@ -3,6 +3,10 @@ Options -Indexes -MultiViews
 DirectoryIndex index.php
 RewriteEngine On
 
+# Only the stable /assets/js/*.js URL is public. Do not expose a second
+# direct URL for the minified distribution (script consumers use an internal rewrite).
+RewriteRule ^assets/js-dist(?:/|$) - [F,END,NC]
+
 # Source maps/debug bundles must never be served from the public webroot.
 # The original client JavaScript itself remains visible to the browser.
 RewriteRule "\.(?:map|js\.map)$" - [F,END,NC]
@@ -31,6 +35,15 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^\.well-known/acme-challenge/[A-Za-z0-9_-]+$ - [END]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^(?:robots\.txt|sitemap\.xml)$ - [END]
+# A direct top-level browser navigation gets a display-only encrypted preview.
+# Actual script requests (Sec-Fetch-Dest: script) and legacy requests remain
+# executable. Fetch Metadata headers can be forged: this is presentation only.
+RewriteCond %{REQUEST_METHOD} ^GET$ [NC]
+RewriteCond %{HTTP:Sec-Fetch-Mode} ^navigate$ [NC]
+RewriteCond %{HTTP:Sec-Fetch-Dest} ^document$ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^assets/js/([A-Za-z0-9_-]+\\.js)$ app/pages/js-navigation-preview.php?asset=$1 [END]
+
 # Serve tested, minified JavaScript at the same URL when a compiled
 # counterpart is deployed. Fall back to source if build has not been published.
 # This is obfuscation, NOT encryption or an authorization boundary.
