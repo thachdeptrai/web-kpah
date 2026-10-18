@@ -97,6 +97,7 @@ jobs:
       - name: HTTP regression
         env:
           KPAH_TEST_SESSION_FIXTURE: ${{ matrix.server == 'cli' && '1' || '0' }}
+          KPAH_EXPECT_APACHE_JS: ${{ matrix.server == 'apache' && '1' || '0' }}
         run: |
           set -euo pipefail
           for attempt in $(seq 1 20); do
