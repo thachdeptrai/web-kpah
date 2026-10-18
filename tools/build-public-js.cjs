@@ -29,7 +29,7 @@ async function build() {
       sourceMap: false
     });
     if (!result.code || result.code.length < 10) throw new Error('Unsafe empty minification result: '+name);
-    const temp = path.join(output, name+'.build');
+    const temp = path.join(output, name+'.tmp.js');
     fs.writeFileSync(temp, result.code+'\n', 'utf8');
     execFileSync(process.execPath, ['--check', temp], { stdio:'pipe' });
     fs.renameSync(temp, path.join(output, name));
