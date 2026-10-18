@@ -42,7 +42,7 @@ RewriteCond %{REQUEST_METHOD} ^GET$ [NC]
 RewriteCond %{HTTP:Sec-Fetch-Mode} ^navigate$ [NC]
 RewriteCond %{HTTP:Sec-Fetch-Dest} ^document$ [NC]
 RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^assets/js/([A-Za-z0-9_-]+\.js)$ app/pages/js-navigation-preview.php?asset=$1 [END]
+RewriteRule ^assets/js/([A-Za-z0-9_-]+\.js)$ index.php?__kpah_js_preview=$1 [END]
 
 # Serve tested, minified JavaScript at the same URL when a compiled
 # counterpart is deployed. Fall back to source if build has not been published.
