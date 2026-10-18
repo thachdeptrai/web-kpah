@@ -99,8 +99,16 @@ function kp_send_security_headers($isPage)
         header('Strict-Transport-Security: max-age=31536000');
     }
     header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()');
-    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0');
     header('Pragma: no-cache');
+    // JSON/API replies remain browser-readable for the authenticated user, but
+    // must not be embedded cross-origin or cached by a shared intermediary.
+    if (!$isPage) {
+        header('Vary: Cookie', false);
+        header('Cross-Origin-Resource-Policy: same-origin');
+        header('X-Robots-Tag: noindex, nofollow, noarchive');
+        header("Content-Security-Policy: default-src 'none'; base-uri 'none'; frame-ancestors 'none'");
+    }
     if ($isPage) {
         $bankPage = (parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) === '/nap-ngan-hang');
         $scripts = $bankPage ? "script-src 'self' https://cdn.payos.vn; " : "script-src 'self'; ";
