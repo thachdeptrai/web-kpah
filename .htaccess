@@ -73,5 +73,10 @@ RewriteRule ^ index.php [END,QSA]
     Header always set X-Content-Type-Options "nosniff"
     Header always set Cross-Origin-Resource-Policy "same-origin"
     Header always set Referrer-Policy "no-referrer"
+    # The same JS URL responds differently to a script fetch vs. navigation.
+    # Don't allow a shared cache/CDN to mix these variants.
+    Header always set Cache-Control "private, no-store, max-age=0"
+    Header always merge Vary "Sec-Fetch-Dest"
+    Header always merge Vary "Sec-Fetch-Mode"
   </FilesMatch>
 </IfModule>
