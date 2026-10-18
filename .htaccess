@@ -31,6 +31,13 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^\.well-known/acme-challenge/[A-Za-z0-9_-]+$ - [END]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^(?:robots\.txt|sitemap\.xml)$ - [END]
+# Serve tested, minified JavaScript at the same URL when a compiled
+# counterpart is deployed. Fall back to source if build has not been published.
+# This is obfuscation, NOT encryption or an authorization boundary.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{DOCUMENT_ROOT}/assets/js-dist/$1 -f
+RewriteRule ^assets/js/([A-Za-z0-9_-]+\\.js)$ assets/js-dist/$1 [END]
+
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^assets/.*\.(?:css|js|svg|png|jpe?g|gif|webp|ico|ttf|woff2?)$ - [END,NC]
 # Game icon copies are read-only image assets. Never execute or download code/config from res/.
