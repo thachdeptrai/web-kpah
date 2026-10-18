@@ -30,6 +30,7 @@ Trên **Apache** có Fetch Metadata headers, yêu cầu GET dạng điều hư�
 - Tải qua thẻ `<script src>` (`Sec-Fetch-Dest: script`) hoặc request không
   có Fetch Metadata vẫn nhận bản JS minify chạy bình thường. Truy cập trực tiếp
   `/assets/js-dist/` bị Apache từ chối; source map cũng bị từ chối.
+- **Cache:** vì cùng một URL có hai dạng response, Apache đặt `Cache-Control: private, no-store` và `Vary: Sec-Fetch-Dest, Sec-Fetch-Mode` cho JS. Nếu Cloudflare có Cache Rules/Page Rules ép cache JS hoặc "Cache Everything", hãy thêm rule **Bypass cache** cho `/assets/js/*` và xóa cache cũ sau khi triển khai để tránh nhầm bản preview với script thực thi.
 - **Không phải DRM, chống copy hoặc bảo mật source:** Fetch Metadata có thể
   giả lập ngoài trình duyệt và code được phân phối cho trình duyệt vẫn có thể
   trích xuất. Repo GitHub có thể đọc source. Đừng cất bất kỳ secret nào vào JS.
