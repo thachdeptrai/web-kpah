@@ -1,0 +1,58 @@
+name: Build and publish minified browser JavaScript
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/**'
+      - 'tools/build-public-js.cjs'
+      - '.github/workflows/build-public-js.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kpah-browser-js-build-main
+  cancel-in-progress: false
+
+jobs:
+  minify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned Terser (build time only)
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund 'terser@5.44.1'
+      - name: Build production JavaScript without source maps
+        run: node tools/build-public-js.cjs
+      - name: Verify minified output and code smoke tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          count="$(find assets/js -maxdepth 1 -name '*.js' -type f | wc -l)"
+          built="$(find assets/js-dist -maxdepth 1 -name '*.js' -type f | wc -l)"
+          test "$built" -eq "$count"
+          find assets/js-dist -maxdepth 1 -name '*.js' -type f -print0 | xargs -0 -n1 node --check
+          node tests/downloads_upload_ui.test.js
+          node tests/game_accounts_bulk_ui.test.js
+      - name: Publish minified files only after checks pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A assets/js-dist/
+          if git diff --cached --quiet; then
+            echo 'Minified assets unchanged'
+            exit 0
+          fi
+          git diff --cached --check
+          git commit -m 'build(js): publish checked minified assets [skip ci]'
+          # Fail safely on concurrent pushes; never force-update main.
+          git push origin HEAD:main
