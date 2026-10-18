@@ -17,8 +17,7 @@
 
 ## Khi mở trực tiếp đường dẫn JavaScript (kiểu ảnh mẫu)
 
-Trên **Apache** có Fetch Metadata headers, yêu cầu GET dạng điều hướng
-(`Sec-Fetch-Mode: navigate`, `Sec-Fetch-Dest: document`) tới
+Trên **Apache**, yêu cầu GET điều hướng (`Sec-Fetch-Mode: navigate`, không phải `Sec-Fetch-Dest: script`) **hoặc** có `Accept: text/html` khi thiếu Fetch Metadata, tới
 `/assets/js/<ten>.js` được nội bộ chuyển tới
 `app/pages/js-navigation-preview.php`. Đường dẫn trình duyệt không đổi.
 
@@ -30,7 +29,7 @@ Trên **Apache** có Fetch Metadata headers, yêu cầu GET dạng điều hư�
 - Tải qua thẻ `<script src>` (`Sec-Fetch-Dest: script`) hoặc request không
   có Fetch Metadata vẫn nhận bản JS minify chạy bình thường. Truy cập trực tiếp
   `/assets/js-dist/` bị Apache từ chối; source map cũng bị từ chối.
-- **Cache:** vì cùng một URL có hai dạng response, Apache đặt `Cache-Control: private, no-store` và `Vary: Sec-Fetch-Dest, Sec-Fetch-Mode` cho JS. Nếu Cloudflare có Cache Rules/Page Rules ép cache JS hoặc "Cache Everything", hãy thêm rule **Bypass cache** cho `/assets/js/*` và xóa cache cũ sau khi triển khai để tránh nhầm bản preview với script thực thi.
+- **Cache và triển khai:** cần `git pull` các file `.htaccess`, `app/router.php` và `app/pages/js-navigation-preview.php` lên đúng Apache DocumentRoot; cần bật `mod_rewrite` và `AllowOverride`. Nếu response vẫn là JS minify thì kiểm tra request Headers trong DevTools (Accept / Sec-Fetch-*) trước, sau đó kiểm tra Cloudflare. Vì cùng một URL có hai dạng response, Apache đặt `Cache-Control: private, no-store` và `Vary: Sec-Fetch-Dest, Sec-Fetch-Mode` cho JS. Nếu Cloudflare có Cache Rules/Page Rules ép cache JS hoặc "Cache Everything", hãy thêm rule **Bypass cache** cho `/assets/js/*` và xóa cache cũ sau khi triển khai để tránh nhầm bản preview với script thực thi.
 - **Không phải DRM, chống copy hoặc bảo mật source:** Fetch Metadata có thể
   giả lập ngoài trình duyệt và code được phân phối cho trình duyệt vẫn có thể
   trích xuất. Repo GitHub có thể đọc source. Đừng cất bất kỳ secret nào vào JS.
