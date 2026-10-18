@@ -64,6 +64,10 @@ if os.environ.get('KPAH_EXPECT_APACHE_JS') == '1':
     check(status==403,'Apache blocks direct access to compiled asset path')
 catalog=json.loads(subprocess.check_output([PHP,'-r','echo json_encode(require '+repr(str(ROOT/'config/routes.php'))+');'],text=True))
 guest=Client()
+for endpoint in ('/api/payos-status?code=1', '/api/card-fees?telco=VIETTEL&amount=10000'):
+    status,headers,body=guest.request(endpoint)
+    check(status==401 and json.loads(body).get('ok') is False,
+          'Guest denied private payment API '+endpoint)
 for old,new in catalog['aliases'].items():
     route=catalog['routes'][new]
     status,headers,body=guest.request(old+'?probe=hello%20world')
@@ -127,6 +131,11 @@ check(c.cookies._cookies is not None,'session cookie jar populated')
 status,h,b=c.request('/admin/login.php',{'csrf':admin_token,'username':'routeadmin','password':'FixtureAdmin123'})
 check(status==302 and h.get('Location')=='/quan-tri','admin form survives player login')
 check({'KPAHREG','KPAHADMIN'}.issubset({cookie.name for cookie in c.cookies}),'distinct admin/player cookies')
+for endpoint in ('/api/payos-status?code=invalid', '/api/card-fees?telco=invalid&amount=10000'):
+    status,headers,body=c.request(endpoint)
+    check(status==422 and json.loads(body).get('ok') is False,
+          'Active player allowed past session guard but invalid amount/id rejected '+endpoint)
+
 for path in ['/tai-khoan','/ho-so','/nhan-vat','/bang-xep-hang','/nap','/nap-the','/nap-ngan-hang','/lich-su-nap','/quan-tri/tai-game','/quan-tri','/quan-tri/ma-gioi-thieu','/quan-tri/diem-nong-dan','/quan-tri/nap','/quan-tri/ty-le','/quan-tri/cong-tai-nguyen','/quan-tri/doi-soat','/quan-tri/tai-khoan-key']:
     body=clean_page(c,path)
     if path=='/nhan-vat':
@@ -222,13 +231,23 @@ check(status==403,'email changes still require verification')
 status,h,b=c.request('/api/change-password',{'csrf':token,'current_password':'FixturePass123','new_password':'ChangedPass123','confirm_password':'ChangedPass123'})
 check(status==200 and json.loads(b)['ok'],'password update persists')
 status,h,b=c.request('/api/logout')
-check(status==302 and h.get('Location')=='/dang-nhap','player logout canonical')
+check(status==200 and 'Xác nhận đăng xuất' in b,'player logout GET is only confirmation')
+check(c.request('/tai-khoan')[0]==200,'GET logout does not destroy player session')
+check(c.request('/api/logout',{'csrf':'invalid'})[0]==403,'player logout CSRF rejected')
+check(c.request('/tai-khoan')[0]==200,'failed logout does not destroy session')
+status,h,b=c.request('/api/logout',{'csrf':csrf(b)})
+check(status==303 and h.get('Location')=='/dang-nhap','CSRF POST logs player out')
 check(c.request('/quan-tri')[0]==200,'player logout preserves admin session')
 check(c.request('/tai-khoan')[0]==302,'player session revoked')
 token=csrf(c.request('/dang-nhap')[2])
 status,h,b=c.request('/dang-nhap',{'csrf':token,'username':'routeplayer','password':'ChangedPass123'})
 check(status==302 and h.get('Location')=='/tai-khoan','login with changed password')
-c.request('/quan-tri/dang-xuat')
+status,h,b=c.request('/quan-tri/dang-xuat')
+check(status==200 and 'Xác nhận đăng xuất' in b,'admin logout GET is only confirmation')
+check(c.request('/quan-tri')[0]==200,'GET logout does not destroy admin session')
+check(c.request('/quan-tri/dang-xuat',{'csrf':'invalid'})[0]==403,'admin logout requires CSRF')
+status,h,body=c.request('/quan-tri/dang-xuat',{'csrf':csrf(b)})
+check(status==303 and h.get('Location')=='/quan-tri/dang-nhap','CSRF POST logs admin out')
 check(c.request('/tai-khoan')[0]==200,'admin logout preserves player session')
 check(c.request('/quan-tri')[0]==302,'admin session revoked')
 # Simulate delivered OTP only; verification and account creation use real APIs.
