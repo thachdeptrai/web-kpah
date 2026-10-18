@@ -3,6 +3,10 @@ Options -Indexes -MultiViews
 DirectoryIndex index.php
 RewriteEngine On
 
+# Source maps/debug bundles must never be served from the public webroot.
+# The original client JavaScript itself remains visible to the browser.
+RewriteRule "\\.(?:map|js\\.map)$" - [F,END,NC]
+
 # Stop accidental exposure of Git internals, logs, SQL dumps and diagnostics.
 # Apache 2.4 / mod_rewrite; applies before public routes.
 RewriteRule "(^|/)\.(?!well-known(?:/|$))" - [F,END,NC]
@@ -42,3 +46,12 @@ RewriteRule ^ index.php [END,QSA]
 <FilesMatch "(?i)^(?:\.gitignore|\.gitattributes|\.gitmodules|README(?:\..*)?|LICENSE(?:\..*)?)$">
     Require all denied
 </FilesMatch>
+
+# Apply static JS response protections even though these files bypass PHP.
+<IfModule mod_headers.c>
+  <FilesMatch "(?i)\\.(?:js|mjs)$">
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+    Header always set Referrer-Policy "no-referrer"
+  </FilesMatch>
+</IfModule>
