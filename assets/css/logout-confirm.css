@@ -1,0 +1,12 @@
+/* Security-only confirmation page; no inline CSS under strict CSP. */
+:root{color-scheme:light;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(145deg,#ebf9ff,#f5efff 60%,#fef9e9);color:#29344f}
+.kp-logout-confirm{width:min(100%,440px);padding:clamp(24px,5vw,36px);background:#fff;border:1px solid #d9e3ef;border-radius:18px;box-shadow:0 16px 45px #223a571f}
+.kp-logout-confirm h1{margin:0 0 12px;font-size:clamp(24px,5vw,30px);line-height:1.3}
+.kp-logout-confirm p{color:#5b6780;font-size:15px;line-height:1.7;margin:0 0 22px}
+.kp-logout-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.kp-logout-actions button{border:0;border-radius:10px;background:#5367c7;color:#fff;min-height:44px;padding:10px 18px;font:700 14px inherit;cursor:pointer}
+.kp-logout-actions button:hover{background:#3b4cab}
+.kp-logout-actions a{color:#354d91;font-weight:650;font-size:14px;min-height:44px;display:inline-flex;align-items:center}
+.kp-logout-actions button:focus-visible,.kp-logout-actions a:focus-visible{outline:3px solid #25a8d2;outline-offset:3px}
