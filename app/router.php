@@ -2,6 +2,23 @@
 $catalog = require dirname(__DIR__) . '/config/routes.php';
 $uri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
 $path = explode('?', $uri, 2)[0];
+// A top-level navigation to a public .js URL is a display-only preview.
+// Apache rewrites only GET + document/navigate here. Recheck all conditions
+// server-side: a caller must never use a query parameter to load PHP files.
+if (isset($_GET['__kpah_js_preview'])) {
+    $asset = $_GET['__kpah_js_preview'];
+    if (is_string($asset)
+        && preg_match('/\\A[a-z0-9_-]+\\.js\\z/iD', $asset)
+        && $path === '/assets/js/' . $asset
+        && strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'GET'
+        && strtolower((string)($_SERVER['HTTP_SEC_FETCH_MODE'] ?? '')) === 'navigate'
+        && strtolower((string)($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '')) === 'document') {
+        $_GET['asset'] = $asset;
+        require __DIR__ . '/pages/js-navigation-preview.php';
+        exit;
+    }
+}
+
 // Decode once; reject ambiguous separators and control characters.
 if (preg_match('/%(?:2f|5c|00|0a|0d)/i', $path)) {
     http_response_code(400);
