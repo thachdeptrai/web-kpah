@@ -33,6 +33,14 @@ Bản cập nhật [Security Audit — PR #13](https://github.com/thachdeptrai/w
 - Các API phi HTML có chính sách `private/no-store`, `Vary: Cookie`, `nosniff`, CORP same-origin, CSP hạn chế nội dung và noindex. Dữ liệu API truyền qua HTTPS/TLS; DevTools vẫn xem được JSON của chính phiên người dùng. Không đặt khóa AES bên trong JS hoặc tự thay đổi payload của callback thanh toán.
 - Xem [tài liệu JS và API](docs/BROWSER_JS_API_SECURITY.md) và [kiểm thử browser/API](tests/client_api_transport_security_smoke.php). Các cơ chế phân quyền, CSRF, chữ ký thanh toán và kiểm tra phía server vẫn là biện pháp chính.
 
+## Rà soát DevTools và quyền truy cập — 19/10/2026
+
+- **Công khai hợp lệ:** trình duyệt luôn xem được HTML/CSS/JS, ảnh và request/response của chính phiên. Không coi obfuscation, che link JS hoặc chặn DevTools là bảo mật.
+- **API nạp:** `/api/payos-status` và `/api/card-fees` từ chối phiên hết hạn, tài khoản bị khóa hoặc không còn tồn tại; trả lỗi mà không lộ thông tin DB.
+- **Đăng xuất chống CSRF:** GET tại `/api/logout` và `/quan-tri/dang-xuat` chỉ mở trang xác nhận; POST có CSRF mới kết thúc phiên. Đường dẫn cũ được giữ nguyên.
+- **Test thực tế:** bộ HTTP regression với hai tài khoản người chơi fixture và một Admin, thử URL nhân vật người khác, truy cập trực tiếp khu quản trị và POST trái quyền. PHP 8.0/8.3 + Apache chạy với MariaDB fixture; không thực hiện trên production.
+- **Giới hạn:** chưa có kiểm thử đồng thời/replay thanh toán và cấp quà trên staging đầy đủ; xem [ma trận dữ liệu DevTools và kết quả audit](security-reports/DEVTOOLS_AUDIT_2026-10-19.md).
+
 ## Cập nhật bảo mật — 18/10/2026
 
 Tiếp tục audit `main` bằng cách truy vết source và chạy GitHub Actions. Các phát hiện có bằng chứng được vá theo nhóm; **không thử khai thác production, không thay đổi số dư, schema game, dữ liệu người chơi hay serialization item**.
