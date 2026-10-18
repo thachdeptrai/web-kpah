@@ -4,6 +4,7 @@
 [![Security regression](https://github.com/thachdeptrai/web-kpah/actions/workflows/security-checks.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/security-checks.yml)
 [![Vibe Check](https://github.com/thachdeptrai/web-kpah/actions/workflows/vibe-security-audit.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/vibe-security-audit.yml)
 [![Semgrep security](https://github.com/thachdeptrai/web-kpah/actions/workflows/semgrep-security.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/semgrep-security.yml)
+[![Public JavaScript build](https://github.com/thachdeptrai/web-kpah/actions/workflows/build-public-js.yml/badge.svg?branch=main)](https://github.com/thachdeptrai/web-kpah/actions/workflows/build-public-js.yml)
 
 Website cộng đồng **NGHIỆN KPAH** — quản lý tài khoản và nhân vật, bảng xếp hạng, nạp tiền vào ví VNĐ, đổi tài nguyên, tích Point đổi quà và quản trị hệ thống.
 
@@ -25,6 +26,12 @@ Bản cập nhật [Security Audit — PR #13](https://github.com/thachdeptrai/w
 - **Phạm vi Vibe Check:** CI chỉ quét headers/CORS trên **PHP fixture nội bộ tại localhost**, không quét website production và không khẳng định toàn bộ lỗ hổng đã được loại bỏ.
 
 Đọc chi tiết: [Kết quả audit](security-reports/SECURITY_AUDIT.md) · [Các sửa đổi](security-reports/SECURITY_FIXES.md) · [Bằng chứng kiểm thử](security-reports/SECURITY_TESTS.md) · [Rủi ro còn lại](security-reports/REMAINING_RISKS.md).
+
+## JavaScript production và API (19/10/2026)
+
+- Website tự phục vụ bản **JS minify bằng Terser** tại URL `/assets/js/*.js` khi có bản build tương ứng trong `assets/js-dist/`. GitHub Actions sinh **23 file build**, kiểm tra cú pháp và test JS trước khi commit lên `main`; không cần Node/npm trên XAMPP khi pull bản build. Có fallback sang file gốc nếu bản build chưa được phát hành. **Đây không phải mã hóa JS**: trình duyệt vẫn phải nhận được mã và repository vẫn có source công khai.
+- Các API phi HTML có chính sách `private/no-store`, `Vary: Cookie`, `nosniff`, CORP same-origin, CSP hạn chế nội dung và noindex. Dữ liệu API truyền qua HTTPS/TLS; DevTools vẫn xem được JSON của chính phiên người dùng. Không đặt khóa AES bên trong JS hoặc tự thay đổi payload của callback thanh toán.
+- Xem [tài liệu JS và API](docs/BROWSER_JS_API_SECURITY.md) và [kiểm thử browser/API](tests/client_api_transport_security_smoke.php). Các cơ chế phân quyền, CSRF, chữ ký thanh toán và kiểm tra phía server vẫn là biện pháp chính.
 
 ## Cập nhật bảo mật — 18/10/2026
 
@@ -229,7 +236,7 @@ web-kpah/
 
 ## Kiểm thử và GitHub Actions
 
-**Giữ nguyên bộ test trong repo** để tránh hồi quy khi sửa code. Hiện có **7 workflow**:
+**Giữ nguyên bộ test trong repo** để tránh hồi quy khi sửa code. Hiện có **8 workflow**:
 
 | Workflow | Phạm vi |
 | --- | --- |
@@ -240,6 +247,7 @@ web-kpah/
 | `topup-lint.yml` | Cú pháp và logic kiểm tra nạp |
 | `vibe-security-audit.yml` | PHP 8.0 lint, kiểm thử account/admin/topup, chặn tracked artifact nhạy cảm, Vibe Check headers/CORS trên fixture localhost và lưu JSON report |
 | `semgrep-security.yml` | Semgrep 1.181.0: 2 quy tắc PHP chặn lỗi; quét thêm `p/php` ở chế độ cảnh báo và lưu artifact JSON |
+| `build-public-js.yml` | Biên dịch JS đã minify (Terser), chạy syntax/JS smoke trước khi publish lên `main`; không sinh source map |
 
 Chạy smoke test trên môi trường phát triển có PHP CLI:
 
