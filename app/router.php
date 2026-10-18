@@ -11,8 +11,11 @@ if (isset($_GET['__kpah_js_preview'])) {
         && preg_match('/\A[a-z0-9_-]+\.js\z/iD', $asset)
         && $path === '/assets/js/' . $asset
         && strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'GET'
-        && strtolower((string)($_SERVER['HTTP_SEC_FETCH_MODE'] ?? '')) === 'navigate'
-        && strtolower((string)($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '')) === 'document') {
+        && strtolower((string)($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '')) !== 'script'
+        && (
+            strtolower((string)($_SERVER['HTTP_SEC_FETCH_MODE'] ?? '')) === 'navigate'
+            || preg_match('~(?:^|,)\\s*text/html(?:[,;]|$)~i', (string)($_SERVER['HTTP_ACCEPT'] ?? '')) === 1
+        )) {
         $_GET['asset'] = $asset;
         require __DIR__ . '/pages/js-navigation-preview.php';
         exit;
