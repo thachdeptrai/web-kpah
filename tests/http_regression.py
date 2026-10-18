@@ -40,6 +40,13 @@ for ext in ('png','jpg','jpeg','gif','webp','ico','woff','woff2'):
     if candidates:
         asset='/' + candidates[0].relative_to(ROOT).as_posix()
         check(Client().request(asset)[0]==200,'static asset delivered '+asset)
+if os.environ.get('KPAH_EXPECT_APACHE_JS') == '1':
+    expected=(ROOT/'assets/js-dist/ui-system.js').read_text(encoding='utf-8')
+    status,headers,body=Client().request('/assets/js/ui-system.js')
+    check(status==200,'Apache serves JavaScript at original asset URL')
+    check(body.strip()==expected.strip(),'Apache serves the tested minified JavaScript, not original source')
+    status,headers,body=Client().request('/assets/js/ui-system.js.map')
+    check(status in (403,404),'Apache denies JavaScript source maps')
 catalog=json.loads(subprocess.check_output([PHP,'-r','echo json_encode(require '+repr(str(ROOT/'config/routes.php'))+');'],text=True))
 guest=Client()
 for old,new in catalog['aliases'].items():
