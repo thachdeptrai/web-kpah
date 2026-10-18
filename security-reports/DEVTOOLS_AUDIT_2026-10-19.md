@@ -1,0 +1,42 @@
+# WEB-KPAH — DevTools/Browser security review — 19/10/2026
+
+**Evidence and scope:** Read GitHub `thachdeptrai/web-kpah` branch `main`, 357 Git tree entries (not truncated); reviewed README, `AGENTS.md`, `SECURITY.md`, Apache rewrite rules, JS distribution, auth/session, account APIs, notification queries, character ownership, PayOS/card read endpoints, money/Point/giftcode source paths and deployment checks. Replayed only **GitHub-hosted disposable PHP 8.0/8.3 and Apache/MariaDB fixtures**, not production; two seeded users `routeplayer`, `otherplayer` plus fixture admin were used. No real money, player accounts or payments were touched.
+
+**Important:** The GitHub repository is **public**. HTML/CSS/JS, images, API endpoint names, requests and responses authorized for the current account are intentionally visible to any user's browser/DevTools. No client-side encryption, minification, F12 blocking or anti-inspection trick creates a security boundary. The JS navigation ciphertext preview is cosmetic; requests using the ordinary script fetch can still obtain executable code.
+
+## Access and exposure matrix
+
+| Item / endpoint | Guest can see | Ordinary user can see | Admin can see | Intended visibility | Evidence / test | Assessment and action |
+|---|---|---|---|---|---|---|
+| HTML/CSS/JS/WebP under `assets/`, permitted `res/icon/*.png` | Public assets | Public assets | Public assets | Public | Git tree, `.htaccess`; Apache HTTP fixture for JS/source map | Legitimate; no attempt to hide via DevTools |
+| `/assets/js/*.js`, `/assets/js-dist/`, `*.js.map` | Functional JS via script request; preview on document navigation | Same | Same | JS public, maps/dist URLs denied | Apache HTTP regression verifies minified script, non-executable preview and denial of source map/dist paths | Existing controls; cosmetic preview is **not** source confidentiality |
+| `/api/payos-status?code=...` | 401 | Only own order (user-scoped SQL) if active, unbanned session | No implicit admin privileges through a player session | Private | `app/topup/bank-status.php`, `kp_player_api_user_id()`, disposable HTTP regression for guest/active; source trace of `WHERE order_code=? AND user_id=?` | **Medium**: used to accept stale/banned session IDs; patched, extra regression for ban/expiry |
+| `/api/card-fees` | 401 | Quotation only for active, unbanned session | No implicit admin privileges | Private | `app/topup/card-fees.php`, JSON guard and tests; malformed telco/amount still rejected | **Medium/Low**: did not revalidate session age/ban; patched |
+| `/api/logout` and `/quan-tri/dang-xuat` | GET confirmation | GET confirmation, POST+CSRF ends own player/admin session | POST+CSRF ends admin session | State changes only after user intention | `app/api/logout.php`, `app/admin/logout.php`, HTTP regression | **Low–Medium**: GET previously destroyed session (logout CSRF). Patched; legacy GET links now show one-click confirmation |
+| `/nhan-vat/chi-tiet?name=...` | Redirect to login | Owned character only | Admin panel separate | Private | `kp_inventory_character` requires both `w.userid` and `c.userId`; two fixture accounts cross-request by name | Verified ownership via HTTP on fixtures; no confirmed IDOR here |
+| `/thong-bao`, giftcode history, security events | Redirect to login | Rows scoped by session `user_id` or owned character | Separate admin center | Private | `kp_center_notifications/security/gift_history`, CSRF POST + bound SQL | Source-traced scope, not exhaustively concurrency-tested |
+| `/quan-tri`, giftcodes, Point approvals, manual wallet | Redirect or reject | Forbidden, including direct POST attempt | Admin server-side role, active flag and optional TOTP | Admin only | `kp_admin_require` DB role guard; two-user fixture GET/POST tests | Tested on fixture; not full role/permission matrix for every endpoint |
+| `/tai-game/tep` | Enabled public release | Same | Admin config/upload separately | Public binaries | Admin-only upload path and MIME/magic checks; fixture upload → download → removal / Range | Valid release public; malicious administrator upload risk requires operational review |
+| PHP internals, SQL, backup, `storage/`, `.env` | Forbidden if Apache rewrite enabled | Forbidden | Not public via HTTP | Secret | `.htaccess` and CI fixture probes | Verified only on Apache fixture; must verify Cloudflare/origin `AllowOverride` in staging |
+| Browser cookies, local/session storage | Session cookies bound to user browser | Own session data | Distinct admin session cookie | Protected as appropriate | `kp_session_start()`: HttpOnly, SameSite Lax, Secure on HTTPS; JS code search found no use of localStorage/sessionStorage setters | Source evidence only; cannot inspect real DevTools Application/Storage without authorized browser |
+| Payment callbacks, Point, giftcode and game item mutations | Not a client-authoritative operation | Cannot trust own amount/status; server side performs validation | Restricted adjustments/reconciliation | Sensitive | Source tracing of HMAC provider checks, Point ledger `FOR UPDATE`, wallet journals and MyISAM boundaries | **Not certified** against concurrency, crash/replay or real provider response; staging required |
+| WebSocket | No WebSocket endpoint found in website routing tree | Not applicable to this PHP site | Java game may use another service | Separate environment | Website repository tree/search only | Game service/WebSocket security **not tested** |
+
+## Patch groups and validation
+
+1. **API session guard**: `app/includes/security.php` adds `kp_player_api_user_id()` to reject missing/idle-expired session and `team_user.ban != 0` with a prepared DB read; `app/topup/bank-status.php` and `app/topup/card-fees.php` now call it before private work. Database failure produces 503 instead of accepting a stale session. Test: `tests/api_active_session_smoke.php`, plus HTTP guest/active probes in `tests/http_regression.py`.
+2. **Logout CSRF**: `app/api/logout.php` and `app/admin/logout.php` no longer mutate session on GET. A confirmation form with server CSRF token POSTs to the same canonical URL. Invalid/missing token returns 403; valid POST destroys the correct cookie/session and redirects with 303. Regression ensures player and admin cookie isolation.
+3. **Two-account fixture checks**: `tests/http_regression.py` exercises `routeplayer` vs `otherplayer` character detail and rejects player access to admin routes, including direct POST attempts. This uses fixture DB only.
+
+No UI redesign or SQL migration; existing navigation URLs remain unchanged. The logout page now requires explicit user confirmation, which is a small intentional behavioral change.
+
+## Evidence hierarchy, limits and follow-ups
+
+- **Confirmed before patch by source tracing:** API stale/banned-session authorization gap; GET logout changes login state. Unit/mock tests cover both old preconditions and current guard behavior; HTTP fixture tests cover guest/session and CSRF.
+- **Runtime confirmed on fixture:** existing private HTTP file boundaries, valid script loading vs navigation preview, CSRF/authorization on the selected paths, two-player character ownership, administrator denial.
+- **Observed controls, not a general proof:** SQL placeholders, safe output helpers, admin DB role checks, HMAC/payment-provider verification and idempotency in sampled code.
+- **Unverified:** live HTTPS/TLS, origin/proxy trust, production cookie `Secure`, complete browser DevTools logs/storage, third-party JS origin, provider replay and simultaneous wallet/Point/grant writes, all account-role combinations, production Java/WebSocket deployment. No privileged browser/staging instance or two safe payOS test transactions were provided.
+- **Manual:** configure origin trusted proxy/Cloudflare Full (strict); ensure Apache `AllowOverride`, mod_rewrite and denied private storage actually function; rotate any **genuinely exposed** credentials immediately if evidence appears. No committed real secret was confirmed in reviewed frontend source; this is not a historical-Git/production secret scan.
+- **Scanner caveat:** Semgrep focused rules, Vibe Check localhost fixture and PHP/JS syntax are CI guards, not complete penetration tests. See `security-reports/AUDIT_2026-10-18.md` for previous 130 unvalidated advisory scanner alerts.
+
+The exact latest workflow status and resulting commit IDs should always be verified at GitHub Actions. A green CI is not proof of 100% security.
