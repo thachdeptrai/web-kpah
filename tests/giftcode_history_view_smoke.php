@@ -44,6 +44,18 @@ foreach ([
 ] as $needle=>$label) {
     gc_history_assert(strpos($html, $needle)!==false, 'Missing '.$label);
 }
+gc_history_assert(substr_count($html, '<details class="gc-history-item">')===2,
+    'two readable item rows are independently expandable');
+gc_history_assert(substr_count($html, '<summary class="gc-history-item-summary">')===2,
+    'each item presents a short collapsed summary');
+gc_history_assert(strpos($html, '<details class="gc-history-item" open')===false,
+    'options must not expand and enlarge table rows by default');
+gc_history_assert(strpos($html, '<details class="gc-history-legacy">')!==false,
+    'legacy tokens must be collapsible instead of occupying rows');
+gc_history_assert(strpos($html, '2 chỉ số')!==false,
+    'summary displays option count without expanding options');
+gc_history_assert(strpos($html, '<div class="gc-history-item-body">')
+    > strpos($html, '</summary>'), 'details appear after summary, not inside it');
 gc_history_assert(strpos($html, '<thần>')===false, 'Item name must be escaped');
 gc_history_assert(strpos($html, 'javascript:')===false, 'Untrusted icon scheme must be rejected');
 gc_history_assert(strpos($html, 'onerror=')===false, 'Never include executable inline handlers');
@@ -57,6 +69,7 @@ $admin=(string)file_get_contents($root.'/app/admin/giftcodes.php');
 $css=(string)file_get_contents($root.'/assets/css/giftcodes.css');
 gc_history_assert(strpos($admin, 'kp_giftcode_history_items_html')!==false, 'History table must use view helper');
 gc_history_assert(strpos($css, '.gc-history-item')!==false, 'History item styling missing');
+gc_history_assert(strpos($css, 'min-height:40px')!==false, 'Compact 40px item row height missing');
 gc_history_assert(strpos($admin, 'SELECT id, giftcode, player, item, xu, luong, luongK FROM giftcode_log')!==false,
     'Game receipt query contract changed');
 echo "Giftcode history thumbnails/options smoke PASS\n";
