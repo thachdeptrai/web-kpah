@@ -52,7 +52,7 @@ gc_history_assert(strpos($html, '<details class="gc-history-item" open')===false
     'options must not expand and enlarge table rows by default');
 gc_history_assert(strpos($html, '<details class="gc-history-legacy">')!==false,
     'legacy tokens must be collapsible instead of occupying rows');
-gc_history_assert(strpos($html, '2 chỉ số')!==false,
+gc_history_assert(strpos($html, '3 chỉ số')!==false,
     'summary displays option count without expanding options');
 gc_history_assert(strpos($html, '<div class="gc-history-item-body">')
     > strpos($html, '</summary>'), 'details appear after summary, not inside it');
