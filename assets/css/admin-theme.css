@@ -352,3 +352,48 @@ body:not(.kp-admin-login-page) .tp-page.tp-admin :is(.tp-input,.tp-select,.tp-te
   .kp-admin-login-page .kp-admin-login-kicker{justify-content:center;font-size:9px;letter-spacing:.12em}
 }
 @media(prefers-reduced-motion:reduce){.kp-admin-login-page .kp-admin-login-emblem{animation:none}}
+
+/* Mobile admin data tables: preserve readable columns and scroll inside the
+   card instead of shrinking every cell into one-character vertical text. */
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap){
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap)>table{
+  table-layout:auto;
+  width:max-content;
+  min-width:100%;
+  max-width:none;
+  border-collapse:collapse;
+}
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap)>table :is(th,td){
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+  vertical-align:middle;
+}
+body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap)>table :is(td.empty,td[colspan]){
+  white-space:normal;
+}
+@media(max-width:768px){
+  body:not(.kp-admin-login-page) :is(.shell,.wrap,.farmer-shell,.panel,.card,.gc-panel,.gam-panel,.dl-card,.tp-panel){min-width:0;max-width:100%}
+  body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap)>table{
+    min-width:max(100%,720px);
+  }
+  body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap)>table :is(th,td){
+    padding:12px 14px;
+    font-size:12px;
+    line-height:1.5;
+  }
+  body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam-audit-scroll,.farmer-table-scroll,.tp-table-wrap,.dl-table-wrap)>table th{
+    font-size:11px;
+    letter-spacing:.025em;
+  }
+}
