@@ -60,3 +60,19 @@
 @media(max-width:420px){.farmer-history-metrics{grid-template-columns:1fr 1fr}.farmer-hot-card{align-items:flex-start}}
 
 .farmer-history-scroll{margin-top:18px}
+
+/* Farmer monitor has 13-column and 8-column audit records. Do not squeeze
+   them into a 320–430px viewport; swipe the table horizontally instead. */
+.farmer-table-scroll{display:block;width:100%;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.farmer-table-scroll>.farmer-table{table-layout:auto;width:max-content;max-width:none;min-width:1500px}
+.farmer-table-scroll>.farmer-history-table{min-width:1120px}
+.farmer-table-scroll>.farmer-table:not(.farmer-history-table):has(thead th:nth-child(3):last-child){min-width:690px}
+.farmer-table-scroll>.farmer-table :is(th,td){white-space:nowrap;word-break:normal;overflow-wrap:normal}
+.farmer-table-scroll>.farmer-table .farmer-action-info{white-space:normal;min-width:260px;max-width:440px;overflow-wrap:anywhere}
+.farmer-table-scroll>.farmer-table .empty{white-space:normal}
+@media(max-width:670px){
+  .farmer-table-scroll>.farmer-table{min-width:1500px}
+  .farmer-table-scroll>.farmer-history-table{min-width:1120px}
+  .farmer-table-scroll>.farmer-table:not(.farmer-history-table):has(thead th:nth-child(3):last-child){min-width:690px}
+  .farmer-table-scroll>.farmer-table :is(th,td){font-size:12px;line-height:1.5;padding:12px 14px}
+}
