@@ -3,6 +3,7 @@ require __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/admin_security.php';
 require_once __DIR__ . '/../includes/admin_nav.php';
 require_once __DIR__ . '/../includes/giftcodes.php';
+require_once __DIR__ . '/../includes/giftcode_history_view.php';
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 $admin = kp_admin_require('/quan-tri/dang-nhap', ['admin']);
@@ -239,7 +240,7 @@ function kp_admin_giftcode_reward_builder($builderId, array $parsed, $catalogRea
 <form method="get" class="gc-filters"><label>Mã code<input name="code" value="<?= kp_e($filter) ?>" maxlength="255" placeholder="Lọc code"></label><label>Tên nhân vật<input name="player" value="<?= kp_e($playerFilter) ?>" maxlength="80" placeholder="Tìm nhân vật"></label><button type="submit">Tìm kiếm</button><a href="/quan-tri/giftcode#gc-history">Xóa lọc</a></form>
 <p>Tìm được <?= number_format($totalLogs) ?> lượt nhận.</p>
 <div class="gc-table-wrap"><table><thead><tr><th>ID</th><th>Giftcode</th><th>Nhân vật</th><th>Xu</th><th>Lượng</th><th>Lượng khóa</th><th>Vật phẩm</th></tr></thead><tbody>
-<?php foreach ($logs as $log): ?><tr><td><?= (int)$log['id'] ?></td><td><?= kp_e((string)$log['giftcode']) ?></td><td><?= kp_e((string)$log['player']) ?></td><td><?= number_format((int)$log['xu']) ?></td><td><?= number_format((int)$log['luong']) ?></td><td><?= number_format((int)$log['luongK']) ?></td><td><?= kp_e((string)$log['item']) ?></td></tr><?php endforeach; ?>
+<?php foreach ($logs as $log): ?><tr><td><?= (int)$log['id'] ?></td><td><?= kp_e((string)$log['giftcode']) ?></td><td><?= kp_e((string)$log['player']) ?></td><td><?= number_format((int)$log['xu']) ?></td><td><?= number_format((int)$log['luong']) ?></td><td><?= number_format((int)$log['luongK']) ?></td><td class="gc-history-items-cell"><?= kp_giftcode_history_items_html((string)$log['item'], $rewardCatalog['item_map'], $rewardCatalog['option_map']) ?></td></tr><?php endforeach; ?>
 <?php if (!$logs): ?><tr><td colspan="7">Không có dữ liệu phù hợp.</td></tr><?php endif; ?>
 </tbody></table></div>
 <?php $totalPages=(int)ceil($totalLogs/$limit); if ($totalPages>1): ?><nav class="gc-pagination" aria-label="Phân trang lịch sử"><?php if ($page>1): ?><a href="?<?= kp_e(http_build_query(['code'=>$filter,'player'=>$playerFilter,'page'=>$page-1])) ?>#gc-history">← Trang trước</a><?php endif; ?><span>Trang <?= $page ?>/<?= $totalPages ?></span><?php if ($page<$totalPages): ?><a href="?<?= kp_e(http_build_query(['code'=>$filter,'player'=>$playerFilter,'page'=>$page+1])) ?>#gc-history">Trang tiếp →</a><?php endif; ?></nav><?php endif; ?>
