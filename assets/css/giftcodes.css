@@ -92,3 +92,44 @@ body.gc-modal-open{overflow:hidden}
 @media(max-width:1050px){.gc-item-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.gc-reward-controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.gc-reward-head,.gc-reward-card-top{align-items:stretch;flex-wrap:wrap}.gc-add-item{width:100%}.gc-reward-actions{width:100%}.gc-reward-actions button{flex:1}.gc-item-grid{grid-template-columns:repeat(2,minmax(0,1fr));padding:14px}.gc-option-list{grid-template-columns:1fr;padding:14px}.gc-picker-panel header,.gc-picker-tools{padding:16px}.gc-picker-tools{grid-template-columns:1fr}.gc-option-row{grid-template-columns:1fr 1fr auto}.gc-option-copy{grid-column:1/-1}.gc-param-preview{text-align:left}.gc-picker{padding:8px}.gc-picker-panel{max-height:96vh;border-radius:16px}}
 @media(max-width:480px){.gc-reward-controls{grid-template-columns:1fr}.gc-item-grid{grid-template-columns:1fr}.gc-item-choice-copy strong{white-space:normal}.gc-reward-toggle{min-height:48px}.gc-option-row{grid-template-columns:1fr auto}.gc-option-copy{grid-column:1/-1}.gc-param-preview{display:none}.gc-custom-head{align-items:stretch;flex-direction:column}.gc-add-option{width:100%}}
+
+
+/* Read-only admin redemption history: item art and DB/DBO option details. */
+.gc-admin .gc-table-wrap .gc-history-items-cell{
+  width:390px;
+  min-width:310px;
+  max-width:480px;
+  white-space:normal;
+  overflow-wrap:normal;
+  vertical-align:top;
+}
+.gc-history-items{display:grid;gap:10px;min-width:260px;max-width:100%}
+.gc-history-item{display:flex;align-items:flex-start;gap:11px;padding:11px;border:1px solid #dfe7f2;border-radius:12px;background:linear-gradient(135deg,#fafdff,#f3f7ff)}
+.gc-history-icon{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;overflow:hidden;border:1px solid #d9e2f0;border-radius:11px;background:#eaf1fd}
+.gc-history-icon img{display:block;width:44px;height:44px;object-fit:contain}
+.gc-history-icon-missing{color:#7284bd;font-size:24px}
+.gc-history-item-body{flex:1;min-width:0}
+.gc-history-item-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.gc-history-item-head strong{color:#293d62;font-size:12px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+.gc-history-quantity{flex:none;padding:3px 8px;border-radius:99px;background:#e7eefe;color:#4763b2;font-size:11px;font-weight:800}
+.gc-history-item-meta{display:block;margin-top:3px;color:#72839c;font-size:10px;line-height:1.55}
+.gc-history-option-group{margin-top:9px}
+.gc-history-option-group>span{display:block;margin-bottom:5px;color:#657995;font-size:9px;font-weight:800}
+.gc-history-option-group ul{display:grid;gap:5px;padding:0;margin:0;list-style:none}
+.gc-history-option{display:grid;gap:2px;padding:6px 8px;border:1px solid #d9e9df;border-radius:8px;background:#f0faf4}
+.gc-history-option-main{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;font-size:10px}
+.gc-history-option-main strong{color:#376852;font-weight:700;overflow-wrap:anywhere}
+.gc-history-option-main b{color:#1d8057;font-variant-numeric:tabular-nums}
+.gc-history-option small{color:#668772;font-size:9px;white-space:normal;overflow-wrap:anywhere}
+.gc-history-option-custom .gc-history-option{border-color:#d8e0fa;background:#f1f5ff}
+.gc-history-option-custom .gc-history-option-main :is(strong,b){color:#5266b5}
+.gc-history-option-custom .gc-history-option small{color:#6a7bad}
+.gc-history-legacy{display:grid;gap:4px;padding:9px 11px;border:1px dashed #e0d4bb;border-radius:10px;background:#fffaf1}
+.gc-history-legacy span{color:#89734a;font-size:10px;font-weight:700}
+.gc-history-legacy code{display:block;max-width:100%;color:#8a6a30;font-size:10px;white-space:normal;overflow-wrap:anywhere}
+.gc-history-no-item{font-size:11px;color:#8491a8}
+@media(max-width:680px){
+  .gc-admin .gc-table-wrap .gc-history-items-cell{min-width:295px;width:330px}
+  .gc-history-item{padding:9px}
+  .gc-history-items{min-width:275px}
+}
