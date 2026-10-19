@@ -87,7 +87,7 @@ return [
 
     'giftcode' => [
         // Chỉ bật sau khi game server đã áp game-server-patch/giftcode-item-options.patch.
-        'dbo_enabled' => false,
+        'dbo_enabled' => true,
     ],
 
     // SMTP: cấu hình qua config/register.local.php hoặc biến môi trường; không commit mật khẩu.
