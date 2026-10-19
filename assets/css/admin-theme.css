@@ -397,3 +397,9 @@ body:not(.kp-admin-login-page) :is(.table-scroll,.table-wrap,.gc-table-wrap,.gam
     letter-spacing:.025em;
   }
 }
+
+/* Overrides after the shared table rule; this file loads last on admin pages. */
+body:not(.kp-admin-login-page) .farmer-table-scroll>.farmer-table{min-width:1500px}
+body:not(.kp-admin-login-page) .farmer-table-scroll>.farmer-history-table{min-width:1120px}
+body:not(.kp-admin-login-page) .farmer-panel[aria-labelledby="farmer-sources-title"] .farmer-table-scroll>.farmer-table{min-width:690px}
+body:not(.kp-admin-login-page) .farmer-table-scroll>.farmer-table .farmer-action-info{white-space:normal;min-width:260px;max-width:440px;overflow-wrap:anywhere}
