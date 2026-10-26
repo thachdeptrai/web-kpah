@@ -1,0 +1,224 @@
+/*
+ * KPAH history pages · final light-theme compatibility layer.
+ * Must load AFTER admin-theme.css to resolve legacy dark-page declarations.
+ * Scoped to moderation and farmer history; no impact on authorization or data.
+ */
+body.kp-admin-redesign .gam-shell,
+body.farmer-admin .farmer-shell,
+body.kp-farmer-history .farmer-shell,
+body.kp-farmer-points .farmer-shell {
+  box-sizing:border-box;
+  min-width:0;
+  max-width:1320px;
+  margin:24px auto 50px;
+  padding:0 clamp(12px,3vw,24px);
+  color:#304260;
+  font-family:"Be Vietnam Pro",system-ui,sans-serif;
+}
+body.kp-admin-redesign .gam-history-panel,
+body.kp-admin-redesign .gam-history-filter,
+body.kp-farmer-history .farmer-panel,
+body.kp-farmer-points .farmer-panel,
+body.farmer-admin .farmer-claim-panel {
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+  border:1px solid #dbe6f5;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 10px 26px rgba(60,91,145,.06);
+  color:#344563;
+}
+body.kp-admin-redesign :is(.gam-history-panel,.gam-history-filter) :is(h2,strong),
+body.kp-farmer-history .farmer-panel :is(h2,strong),
+body.kp-farmer-points .farmer-panel :is(h2,strong),
+body.farmer-admin .farmer-claim-panel :is(h2,strong) {
+  color:#30415e;
+}
+body.kp-admin-redesign .gam-history-metrics .metric strong,
+body.kp-farmer-history .farmer-history-metrics .metric strong {
+  color:#3a5075;
+  font-variant-numeric:tabular-nums;
+}
+body.kp-admin-redesign :is(.gam-history-form label,.gam-history-form select,.gam-history-form input),
+body.kp-farmer-history :is(.farmer-field span,.farmer-field input,.farmer-field select),
+body.kp-farmer-points :is(.farmer-field span,.farmer-field input,.farmer-field select) {
+  color:#3d526e;
+  font-family:"Be Vietnam Pro",system-ui,sans-serif;
+}
+body.kp-admin-redesign .gam-history-form :is(input,select),
+body.kp-farmer-history .farmer-field :is(input,select),
+body.kp-farmer-points .farmer-field :is(input,select) {
+  min-width:0;
+  max-width:100%;
+  min-height:44px;
+  background:#fff;
+  border:1px solid #cad7e9;
+  color:#344460;
+  font-size:13px;
+  line-height:1.4;
+}
+body.kp-admin-redesign .gam-history-clear,
+body.kp-admin-redesign .gam-history-back,
+body.kp-farmer-history .farmer-reset,
+body.farmer-admin .farmer-back {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 13px;
+  border:1px solid #d0dced;
+  border-radius:10px;
+  background:#f6f9ff;
+  color:#4f66a4;
+  font-size:12px;
+  font-weight:750;
+  text-decoration:none;
+}
+body.kp-admin-redesign :is(.gam-history-status.ok,.gam-pill.ok),
+body.kp-farmer-history .farmer-pill.farmer-ok {
+  background:#e8f7ef;
+  border-color:#b8e5d0;
+  color:#207853;
+}
+body.kp-admin-redesign :is(.gam-history-status.special,.gam-pill.banned),
+body.kp-farmer-history .farmer-pill.farmer-bad {
+  background:#fff1f2;
+  border-color:#efcbd1;
+  color:#aa4b5c;
+}
+/* Keep all records a proper table at mobile widths. The former mobile card
+ * transformation conflicted with admin-theme table rules and broke labels. */
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll,
+body.kp-farmer-history .farmer-history-scroll,
+body.kp-farmer-history .farmer-table-scroll,
+body.kp-farmer-points .farmer-table-scroll,
+body.farmer-admin .farmer-claim-scroll {
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  border:1px solid #dde8f6;
+  border-radius:12px;
+  background:#fff;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table,
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table,
+body.kp-farmer-points .farmer-table-scroll > table.farmer-table,
+body.farmer-admin .farmer-claim-scroll > table.farmer-claim-table {
+  display:table;
+  width:max-content;
+  max-width:none;
+  table-layout:auto;
+  border-collapse:collapse;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table {min-width:1120px;}
+body.kp-farmer-history .farmer-history-scroll > table.farmer-history-table {min-width:1150px;}
+body.kp-farmer-history .farmer-panel[aria-labelledby="farmer-sources-title"] .farmer-table-scroll > table.farmer-table {min-width:720px;}
+body.kp-farmer-points .farmer-table-scroll > table.farmer-table {min-width:1400px;}
+body.farmer-admin .farmer-claim-scroll > table.farmer-claim-table {min-width:1600px;}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table thead,
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table tbody {
+  display:table-header-group;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table tbody {display:table-row-group;}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table tr {display:table-row;background:transparent;border:0;padding:0;}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table :is(th,td),
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table :is(th,td),
+body.kp-farmer-points .farmer-table-scroll > table.farmer-table :is(th,td),
+body.farmer-admin .farmer-claim-scroll > table.farmer-claim-table :is(th,td) {
+  display:table-cell;
+  box-sizing:content-box;
+  height:auto;
+  max-width:none;
+  min-width:0;
+  padding:11px 13px;
+  vertical-align:middle;
+  border-bottom:1px solid #e8edf6;
+  color:#3a4e6b;
+  font:500 12px/1.55 "Be Vietnam Pro",system-ui,sans-serif;
+  white-space:nowrap;
+  word-break:normal;
+  overflow-wrap:normal;
+  text-align:left;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table th,
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table th,
+body.kp-farmer-points .farmer-table-scroll > table.farmer-table th,
+body.farmer-admin .farmer-claim-scroll > table.farmer-claim-table th {
+  color:#5b6e8c;
+  background:#f2f6fd;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.015em;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table td::before {content:none;}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table td.gam-history-reason {
+  display:table-cell;
+  min-width:220px;
+  max-width:320px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:left;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table :is(.gam-history-admin,.gam-history-transition,.gam-history-type,.gam-history-link,.gam-history-status,.gam-pill),
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table :is(.farmer-score,.farmer-pill,.positive,.negative) {
+  font-family:"Be Vietnam Pro",system-ui,sans-serif;
+  font-variant-numeric:tabular-nums;
+}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table td strong,
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table td strong {color:#304e74;font-weight:750;}
+body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table td small,
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table td small {color:#7c8ca6;}
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table .farmer-action-info {
+  white-space:normal;
+  min-width:250px;
+  max-width:390px;
+  overflow-wrap:anywhere;
+}
+body.kp-farmer-history .farmer-table-scroll > table.farmer-table .empty {
+  white-space:normal;
+}
+body.kp-farmer-history .farmer-history-table .positive{color:#187957;font-weight:750;}
+body.kp-farmer-history .farmer-history-table .negative{color:#ba4f59;font-weight:750;}
+body.kp-farmer-history .farmer-history-table .gap{color:#a57124;}
+body.kp-farmer-history .farmer-panel .farmer-chart-box{background:#f7faff;border:1px solid #dfe8f7;}
+body.kp-farmer-history .farmer-panel .farmer-chart{max-width:100%;height:auto;}
+body.kp-farmer-history .farmer-filter-mini a,
+body.kp-farmer-points .farmer-filter-mini a {
+  border-color:#d5e1f0;
+  background:#f7f9fe;
+  color:#5470a8;
+}
+body.farmer-admin .farmer-claim-shell{width:min(100% - 32px,1320px);max-width:1320px;}
+body.farmer-admin .farmer-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:20px 0;}
+body.farmer-admin .farmer-heading h1{font-size:clamp(23px,3vw,34px);margin:6px 0;color:#294264;}
+body.farmer-admin .farmer-heading p{margin:5px 0;color:#687a98;font-size:12px;line-height:1.6;}
+body.farmer-admin .farmer-heading span{color:#6f83aa;font-size:10px;font-weight:850;letter-spacing:.08em;}
+body.farmer-admin .farmer-claim-panel{padding:clamp(12px,2vw,23px);}
+body.farmer-admin .farmer-claim-table :is(td,th){white-space:nowrap;}
+@media(max-width:800px) {
+  body.kp-admin-redesign .gam-history-form{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  body.kp-admin-redesign .gam-history-form label:first-child{grid-column:1/-1;}
+  body.kp-farmer-history .farmer-history-metrics,
+  body.kp-farmer-points .farmer-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:540px) {
+  body.kp-admin-redesign .gam-history-form{grid-template-columns:minmax(0,1fr);}
+  body.kp-admin-redesign .gam-history-form label:first-child{grid-column:auto;}
+  body.kp-admin-redesign .gam-history-form :is(button,.gam-history-clear){width:100%;}
+  body.kp-admin-redesign .gam-history-metrics,
+  body.kp-farmer-history .farmer-history-metrics,
+  body.kp-farmer-points .farmer-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+  body.kp-admin-redesign .gam-history-panel,
+  body.kp-admin-redesign .gam-history-filter,
+  body.kp-farmer-history .farmer-panel,
+  body.kp-farmer-points .farmer-panel{padding:12px;}
+  body.kp-admin-redesign .gam-history-panel .gam-audit-scroll > table.gam-history-table :is(th,td),
+  body.kp-farmer-history .farmer-table-scroll > table.farmer-table :is(th,td){font-size:11px;padding:10px 11px;}
+}
