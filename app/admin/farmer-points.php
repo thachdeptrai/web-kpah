@@ -148,7 +148,7 @@ $format=function($v): string{
   <section class="welcome farmer-hero">
     <div><div class="eyebrow">GAME DATA / GIÁM SÁT</div><h1>Điểm <span>nông dân.</span></h1>
     <p>Theo dõi số dư điểm nông dân của từng nhân vật trong database game. Tìm kiếm, lọc giá trị không hợp lệ và kiểm tra điểm cao bất thường, không ghi thay đổi vào SQL.</p></div>
-    <span class="farmer-readonly">● LIVE DATA · READ ONLY</span>
+    <a class="farmer-back" href="/quan-tri/diem-nong-dan/nhan-qua">Lịch sử nhận quà Điểm nông dân →</a><span class="farmer-readonly">● LIVE DATA · READ ONLY</span>
   </section>
   <?php if($monitorReady): ?>
   <div class="farmer-monitor-status"><strong><?= $monitorLast && strtotime((string)$monitorLast)>=time()-900?'Đang ghi lịch sử':'Chưa có lượt quét gần đây' ?></strong>
