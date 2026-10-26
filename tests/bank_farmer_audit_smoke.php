@@ -71,7 +71,7 @@ try {
         'admin sees all accounts, with pagination');
     $next=kp_bank_farmer_history_page(null,2,2);
     audit_check(count($next['rows'])===1,'second page contains the rest of the results');
-    audit_check(kp_bank_farmer_history_time(1760000000)==='09/10/2025 15:06:40',
+    audit_check(kp_bank_farmer_history_time(1760000000)==='09/10/2025 15:53:20',
         'date has seconds in Vietnam time zone');
     audit_check(kp_bank_farmer_history_place([])==='Không xác định',
         'historical missing geography shows unknown');
@@ -88,7 +88,7 @@ try {
         'player owner ID must come only from authenticated session');
     audit_check(strpos($adminSource,"kp_admin_require('/quan-tri/dang-nhap',['admin'])")!==false,
         'admin page restricted to full admin role');
-    audit_check(strpos($bank,"$gift += kp_bank_farmer_claim_audit()")!==false,
+    audit_check(strpos($bank,'$gift += kp_bank_farmer_claim_audit()')!==false,
         'claim must journal device/IP evidence before MyISAM update');
     echo "PASS: Farmer Points user/admin history IP/device/GeoIP, owner isolation and no replay\n";
 } finally {
