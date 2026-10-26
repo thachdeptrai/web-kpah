@@ -41,6 +41,7 @@ jobs:
           find assets/js-dist -maxdepth 1 -name '*.js' -type f -print0 | xargs -0 -n1 node --check
           node tests/downloads_upload_ui.test.js
           node tests/game_accounts_bulk_ui.test.js
+          node tests/giftcode_picker_ui.test.js
       - name: Publish minified files only after checks pass
         shell: bash
         run: |
