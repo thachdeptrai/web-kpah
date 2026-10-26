@@ -14,7 +14,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
     $home = $admin ? '/quan-tri' : '/tai-khoan';
     $nav = $admin
         ? [['/quan-tri/nap','Tổng quan','index'],['/quan-tri/ty-le','Tỷ lệ quy đổi','rates'],['/quan-tri/cong-tai-nguyen','Cộng tài nguyên','grant'],['/quan-tri/cong-vnd','Cộng VNĐ & tổng nạp','wallet-credit'],['/quan-tri/doi-soat','Đối soát','orders'],['/quan-tri/diem-tich-luy','Point & đổi quà','points']]
-        : [['/nap','Tổng quan','index'],['/nap-ngan-hang','Ngân hàng','bank'],['/nap-the','Nạp thẻ','card'],['/vi-vnd','Ví VNĐ & đổi mốc','wallet'],['/diem-tich-luy','Point & đổi quà','points'],['/lich-su-nap','Lịch sử','history'],['/top-nap','Top nạp','top']];
+        : [['/nap','Tổng quan','index'],['/nap-ngan-hang','Ngân hàng','bank'],['/nap-the','Nạp thẻ','card'],['/vi-vnd','Ví VNĐ & đổi mốc','wallet'],['/diem-tich-luy','Point & đổi quà','points'],['/lich-su-nap','Lịch sử','history'],['/lich-su-nhan-diem-nong-dan','Lịch sử nhận điểm','farmer-history'],['/top-nap','Top nạp','top']];
     if(!$admin&&!kp_topnap_enabled())$nav=array_values(array_filter($nav,static function($item){return $item[2]!=='top';}));
     ?>
 <!doctype html>
