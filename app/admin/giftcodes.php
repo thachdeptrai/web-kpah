@@ -330,7 +330,7 @@ if (!is_string($catalogJson)) $catalogJson = '{"items":[],"options":[],"dbo_enab
         <header><div><span>DATA_ITEM · NGUỒN THẬT</span><h2 id="gc-item-picker-title">Chọn vật phẩm</h2><p>Tìm theo tên hoặc ID, lọc theo loại rồi thêm vào Giftcode.</p></div><button type="button" class="gc-picker-close" data-gc-close aria-label="Đóng">×</button></header>
         <div class="gc-picker-tools"><label><span>Tìm nhanh</span><input type="search" id="gc-item-search" placeholder="Ví dụ: áo, kiếm, #120"></label><label><span>Loại vật phẩm</span><select id="gc-item-type"><option value="">Tất cả loại</option></select></label></div>
         <div class="gc-item-grid" id="gc-item-grid"></div>
-        <p class="gc-picker-result" id="gc-item-result"></p>
+        <div class="gc-picker-footer"><p class="gc-picker-result" id="gc-item-result"></p><button type="button" class="gc-item-more" id="gc-item-more" hidden>Hiển thị thêm vật phẩm</button></div>
     </section>
 </div>
 <div class="gc-picker" id="gc-option-picker" role="dialog" aria-modal="true" aria-labelledby="gc-option-picker-title" hidden>
