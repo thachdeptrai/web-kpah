@@ -31,3 +31,4 @@ jobs:
           find assets/js -type f -name '*.js' -print0 | xargs -0 -n1 node --check
           node tests/downloads_upload_ui.test.js
           node tests/game_accounts_bulk_ui.test.js
+          node tests/giftcode_picker_ui.test.js
