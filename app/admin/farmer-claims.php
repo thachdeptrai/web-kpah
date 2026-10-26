@@ -22,7 +22,7 @@ if (!$error && $history['rows']) {
     // IMPORTANT: array_unique() preserves sparse numeric keys. PDO positional
     // placeholders require a dense 0-based list or SQLSTATE[HY093] occurs
     // whenever multiple claimed orders share the same user.
-    $ids=array_values(array_unique(array_map('intval',array_column($history['rows'],'user_id'))));
+    $ids=kp_bank_farmer_history_user_ids($history['rows']);
     try {
         $holders=implode(',',array_fill(0,count($ids),'?'));
         $st=kp_db()->prepare('SELECT id,username FROM team_user WHERE id IN ('.$holders.')');
