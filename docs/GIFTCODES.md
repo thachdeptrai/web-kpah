@@ -22,6 +22,15 @@
 9. Tại trang quản trị, lọc lịch sử theo code hoặc tên nhân vật. Bảng `giftcode_log` không có timestamp; ID chỉ phản ánh thứ tự ghi tương đối.
 10. **Xóa:** code chưa ghi nhận sử dụng bị xóa hẳn; code có lịch sử được khóa và ẩn để giữ truy vết.
 
+## Bộ chọn vật phẩm và tạo hàng loạt
+
+- Bộ chọn item lấy **toàn bộ** `data_item` và tìm kiếm không phân biệt dấu theo tên hoặc ID (ví dụ `#250`). Danh sách render từng trang **80 vật phẩm**; bấm **Hiển thị thêm vật phẩm** để xem tiếp, thay cho giới hạn cũ 180 item. Chỉ những item thật trong DB mới được thêm vào Giftcode.
+- Tại `/quan-tri/giftcode`, phần **Tạo hàng loạt Giftcode** cho nhập tiền tố, **1–100 mã/lần**, Xu/Lượng/Lượng khóa, số lượt dùng **trên mỗi mã**, tiêu đề/ghi chú và item/options dùng chung cho cả đợt. Mỗi mã có hậu tố 16 ký tự hex sinh từ `random_bytes`, kiểm tra trùng với database và không được thay đổi parser Java.
+- Bộ tạo dùng lại `kp_giftcode_validate_reward_payload()`, `kp_giftcode_serialize_rewards()`, kiểm tra độ dài cột SQL và Admin CSRF/role/rate limit. Giới hạn tối đa **5 đợt/giờ trên mỗi Admin**, chỉ được tạo lại bằng nonce mới; gửi lại cùng POST không tạo thêm đợt.
+- Mã mới luôn **ẩn trên trang chủ**, kể cả khi đã bật cho nhập trong game. Có tùy chọn **Tạm khóa** toàn bộ đợt nếu chưa muốn phát. Danh sách mã mới tạo được hiển thị ngay sau khi lưu để Admin sao chép.
+- Bảng game có thể dùng **MyISAM**, nên không được giả định có transaction. Bộ tạo insert mỗi code **type=1 (khóa)**, ghi metadata rồi mới mở `type=0`. Nếu lỗi giữa chừng, các code đã hoàn tất được giữ nguyên, code đang tạo dở bị khóa và Admin được thông báo; **không gửi lại tự động** khi chưa đối chiếu.
+- Kiểm thử: `php tests/giftcode_bulk_smoke.php` và `node tests/giftcode_picker_ui.test.js`; các test sử dụng DB giả/các item giả, **không** sinh Giftcode trên production.
+
 ## Giới hạn và bảo mật
 
 - Không thay đổi chuỗi giftcode sau khi tạo vì lịch sử đang lưu tên code dạng text, không phải khóa ngoại.
