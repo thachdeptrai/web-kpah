@@ -31,6 +31,7 @@ function kp_admin_nav($active = 'home', $role = null)
         'grant' => ['/quan-tri/cong-tai-nguyen', 'Cộng tài nguyên'],
         'points' => ['/quan-tri/diem-tich-luy', 'Point & quà'],
         'farmer' => ['/quan-tri/diem-nong-dan', 'Điểm nông dân'],
+        'farmer-claims' => ['/quan-tri/diem-nong-dan/nhan-qua', 'Lịch sử nhận điểm'],
     ];
     $groups = $role === 'key'
         ? ['Tài khoản' => ['referrals']]
@@ -38,7 +39,7 @@ function kp_admin_nav($active = 'home', $role = null)
             'Truy cập nhanh' => ['home', 'notifications', 'downloads'],
             'Tài khoản' => ['game-accounts', 'mod-history', 'giftcodes', 'referrals', 'key-users'],
             'Thanh toán' => ['index', 'orders', 'rates', 'wallet-credit'],
-            'Vận hành' => ['grant', 'points', 'farmer'],
+            'Vận hành' => ['grant', 'points', 'farmer', 'farmer-claims'],
         ];
     $currentLabel = isset($items[$active]) ? $items[$active][1] : 'Quản trị';
     $desktopGroups = ['Tài khoản', 'Thanh toán', 'Vận hành'];
