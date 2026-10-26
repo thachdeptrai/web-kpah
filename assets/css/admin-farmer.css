@@ -76,3 +76,51 @@
   .farmer-panel[aria-labelledby="farmer-sources-title"] .farmer-table-scroll>.farmer-table{min-width:690px}
   .farmer-table-scroll>.farmer-table :is(th,td){font-size:12px;line-height:1.5;padding:12px 14px}
 }
+
+
+/* Admin Farmer Point claim audit: dedicated 10-column scroll, no broken text. */
+.farmer-claim-shell{min-width:0}
+.farmer-claim-panel{min-width:0;max-width:100%;overflow:hidden}
+.farmer-claim-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:14px}
+.farmer-claim-toolbar h2{margin:0;font-size:17px}
+.farmer-claim-toolbar p{margin:4px 0 0;font-size:11px;opacity:.7}
+.farmer-claim-filter{display:grid;gap:5px;max-width:100%;min-width:min(360px,100%)}
+.farmer-claim-filter label{font-size:11px;font-weight:750}
+.farmer-claim-filter>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.farmer-claim-filter input{
+ flex:1;min-width:180px;max-width:100%;padding:10px 12px;border:1px solid #c9d5ea;
+ border-radius:8px;background:#fff;color:#293e63;font:inherit;font-size:12px;
+}
+.farmer-claim-filter button,.farmer-claim-filter a{
+ padding:10px 13px;border:1px solid #b7c9e9;border-radius:8px;
+ background:#edf3ff;color:#36518a;font:inherit;font-size:12px;font-weight:750;cursor:pointer;text-decoration:none;
+}
+.farmer-claim-scroll{
+ display:block;width:100%;min-width:0;max-width:100%;overflow-x:auto;
+ overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+}
+.farmer-claim-scroll:focus-visible{outline:2px solid #687ddd;outline-offset:3px}
+.farmer-claim-scroll>table.farmer-claim-table{
+ display:table;width:max-content;min-width:1550px;max-width:none;table-layout:auto;
+ border-collapse:collapse;
+}
+.farmer-claim-scroll>table.farmer-claim-table :is(th,td){
+ white-space:nowrap;word-break:normal;overflow-wrap:normal;
+ font-size:11px;line-height:1.55;vertical-align:middle;padding:12px 13px;
+}
+.farmer-claim-table td small{display:block;white-space:nowrap;opacity:.7;font-size:10px}
+.farmer-claim-points{color:#177e59;font-weight:850;font-variant-numeric:tabular-nums}
+.farmer-claim-status{display:inline-flex;padding:4px 8px;border-radius:99px;background:#eef2fc;font-weight:750}
+.farmer-claim-pagination{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:14px 0}
+.farmer-claim-pagination :is(a,span){font-size:12px}
+.farmer-claim-alert,.farmer-claim-empty,.farmer-claim-footnote{font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.farmer-claim-footnote{margin-top:14px;opacity:.75}
+@media(max-width:680px){
+ .farmer-claim-shell{max-width:100%}
+ .farmer-claim-panel{padding:12px}
+ .farmer-claim-filter{width:100%}
+ .farmer-claim-filter>div{align-items:stretch}
+ .farmer-claim-filter input{min-width:0;width:100%;flex-basis:100%}
+ .farmer-claim-filter button,.farmer-claim-filter a{flex:1;text-align:center}
+ .farmer-claim-scroll>table.farmer-claim-table{min-width:1550px}
+}
