@@ -332,3 +332,64 @@ body.tp-page:not(.tp-admin) :is(a,button,input,select,textarea):focus-visible{
  .tp-page:not(.tp-admin) .tp-card{transition:none}
  .tp-page:not(.tp-admin) .tp-card:hover{transform:none}
 }
+
+
+/* Bank payment history only: six columns must scroll, never wrap per character. */
+body.tp-page:not(.tp-admin) .tp-bank-history-hint{
+  display:none;
+  color:#6b83a4;
+  font-size:11px;
+  line-height:1.6;
+  margin:2px 0 10px;
+}
+body.tp-page:not(.tp-admin) .tp-bank-history-scroll{
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+body.tp-page:not(.tp-admin) .tp-bank-history-scroll:focus-visible{
+  outline:2px solid #6674d8;
+  outline-offset:3px;
+}
+body.tp-page:not(.tp-admin) .tp-bank-history-scroll > table.tp-bank-history-table{
+  display:table;
+  box-sizing:border-box;
+  width:100%;
+  min-width:900px;
+  max-width:none;
+  table-layout:auto;
+  border-collapse:collapse;
+}
+body.tp-page:not(.tp-admin) .tp-bank-history-table :is(th,td){
+  font-family:"Be Vietnam Pro",system-ui,sans-serif;
+  font-size:12px;
+  line-height:1.5;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+  vertical-align:middle;
+  padding:12px 13px;
+}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th{
+  font-size:11px;
+  letter-spacing:.025em;
+}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th:nth-child(1){min-width:115px}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th:nth-child(2){min-width:168px}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th:nth-child(3){min-width:100px}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th:nth-child(4){min-width:130px}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th:nth-child(5){min-width:186px}
+body.tp-page:not(.tp-admin) .tp-bank-history-table th:nth-child(6){min-width:106px}
+body.tp-page:not(.tp-admin) .tp-bank-history-table td :is(a,small){
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  body.tp-page:not(.tp-admin) .tp-bank-history-hint{display:block}
+  body.tp-page:not(.tp-admin) .tp-bank-history-table :is(th,td){padding:11px 12px}
+}
