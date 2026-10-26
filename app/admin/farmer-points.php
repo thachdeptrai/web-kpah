@@ -138,7 +138,8 @@ $format=function($v): string{
 <link rel="stylesheet" href="/assets/css/admin-farmer.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-farmer.css') ?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>">
-</head><body>
+<link rel="stylesheet" href="/assets/css/admin-history-fixes.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-history-fixes.css') ?>">
+</head><body class="kp-farmer-points">
 <header class="topbar">
   <a class="brand" href="/quan-tri"><span class="brand-icon"><img src="/assets/img/emblem.webp" width="50" height="50" alt=""></span><span><small>NGHIỆN KPAH · QUẢN TRỊ</small><strong>Điểm nông dân</strong></span></a>
   <div class="top-actions"><span class="secure"><i></i> Chỉ đọc</span><span class="user"><?= kp_e($_SESSION['kp_admin_username']??'admin') ?></span><a class="logout" href="/quan-tri/dang-xuat">Đăng xuất ↗</a></div>
