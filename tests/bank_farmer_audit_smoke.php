@@ -73,6 +73,12 @@ try {
     $other=kp_bank_farmer_history_page(202,1,20,'345678901');
     audit_check($other['total']===0,
         'player cannot retrieve a second account via order-code filtering');
+    $ids=kp_bank_farmer_history_user_ids([
+        ['user_id'=>101], ['user_id'=>101], ['user_id'=>202],
+        ['user_id'=>101]
+    ]);
+    audit_check($ids === [101,202], 'duplicate owners reindexed for PDO positional placeholders');
+    audit_check(array_keys($ids) === [0,1], 'owner list contains no missing numeric keys');
     $admin=kp_bank_farmer_history_page(null,1,2);
     audit_check($admin['total']===3 && $admin['pages']===2 && count($admin['rows'])===2,
         'admin sees all accounts, with pagination');
