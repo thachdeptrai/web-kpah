@@ -112,6 +112,18 @@ function kp_bank_farmer_history_row(array $gift): ?array
 }
 
 /**
+ * Build a dense 0-based numeric argument list for PDO positional placeholders.
+ * Two or more claims can belong to one user; array_unique alone leaves gaps.
+ */
+function kp_bank_farmer_history_user_ids(array $rows): array
+{
+    return array_values(array_unique(array_filter(
+        array_map('intval', array_column($rows, 'user_id')),
+        static function(int $id): bool { return $id > 0; }
+    )));
+}
+
+/**
  * This helper MUST be called only after an existing authenticated user/admin
  * guard.  $ownerId is required for user views and is never request-controlled.
  * Returns a page of audit rows, in deterministic newest-first order.
