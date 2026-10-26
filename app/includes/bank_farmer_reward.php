@@ -9,6 +9,7 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__ . '/topup_core.php';
 require_once __DIR__ . '/wallet_vnd.php';
 require_once __DIR__ . '/farmer_points.php';
+require_once __DIR__ . '/bank_farmer_audit.php';
 
 function kp_bank_farmer_settings(?array $update = null): array
 {
@@ -179,6 +180,9 @@ function kp_bank_farmer_claim(int $userId, int $orderCode, int $charId): array
         $gift['charname'] = (string)$char['charname'];
         $gift['points_before'] = $changed['before'];
         $gift['points_after'] = $changed['after'];
+        // Persist audit context with the prepared intent BEFORE the MyISAM
+        // update, so incomplete writes keep forensic evidence.
+        $gift += kp_bank_farmer_claim_audit();
         $gift['prepared_at'] = time();
         // Durable intent must be saved BEFORE a nontransactional game-table write.
         kp_topup_write_file($path, $gift);
