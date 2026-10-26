@@ -40,6 +40,7 @@ $labels=['completed'=>'Đã nhận','prepared'=>'Đang đối soát','needs_revi
 <link rel="stylesheet" href="/assets/css/admin-farmer.css?v=<?=(int)@filemtime(KP_ROOT.'/assets/css/admin-farmer.css')?>">
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?=(int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css')?>">
 <link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?=(int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css')?>">
+<link rel="stylesheet" href="/assets/css/admin-history-fixes.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-history-fixes.css') ?>">
 </head><body class="farmer-admin">
 <?php kp_admin_nav('farmer-claims','admin'); ?>
 <main class="farmer-shell farmer-claim-shell">
