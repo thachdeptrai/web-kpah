@@ -54,6 +54,9 @@ try {
         'points_before'=>10777,'points_after'=>20777,'status'=>'needs_review',
         'prepared_at'=>1760000040
     ]);
+    // Malformed legacy JSON is an isolated corrupted file; it must not
+    // prevent the other accounts' history from rendering.
+    file_put_contents(kp_bank_farmer_path(345678905), '{broken-json');
     $owner=kp_bank_farmer_history_page(101,1,20);
     audit_check($owner['total']===2
         && $owner['rows'][0]['order_code']===345678904
@@ -63,6 +66,10 @@ try {
         'completed claim contains IP and previous balance');
     audit_check($owner['rows'][0]['ip']==='' && $owner['rows'][0]['device']==='',
         'missing old metadata is displayed as absent, not guessed');
+    $source=(string)file_get_contents(dirname(__DIR__).'/app/includes/bank_farmer_audit.php');
+    audit_check(strpos($source, "KP_ROOT.'/storage/topup/bank-farmer'")!==false
+        && strpos($source, "kp_topup_root().'/bank-farmer'")===false,
+        'read-only history must not require write permission in topup root');
     $other=kp_bank_farmer_history_page(202,1,20,'345678901');
     audit_check($other['total']===0,
         'player cannot retrieve a second account via order-code filtering');
