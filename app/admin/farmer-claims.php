@@ -14,17 +14,26 @@ $error=false;$usernames=[];
 try {
     // Admin may inspect ALL claims, with pagination and an optional search.
     $history=kp_bank_farmer_history_page(null,$page,40,$filter);
-    $ids=array_unique(array_column($history['rows'],'user_id'));
-    if ($ids) {
+} catch(Throwable $e) {
+    kp_log('admin farmer claim history unavailable',$e);
+    $error=true;
+}
+if (!$error && $history['rows']) {
+    // IMPORTANT: array_unique() preserves sparse numeric keys. PDO positional
+    // placeholders require a dense 0-based list or SQLSTATE[HY093] occurs
+    // whenever multiple claimed orders share the same user.
+    $ids=array_values(array_unique(array_map('intval',array_column($history['rows'],'user_id'))));
+    try {
         $holders=implode(',',array_fill(0,count($ids),'?'));
         $st=kp_db()->prepare('SELECT id,username FROM team_user WHERE id IN ('.$holders.')');
         $st->execute($ids);
         foreach($st->fetchAll(PDO::FETCH_ASSOC) as $userRow)
             $usernames[(int)$userRow['id']]=(string)$userRow['username'];
+    } catch(Throwable $e) {
+        // User name enrichment is optional. Keep valid audit history visible
+        // with numeric user IDs even when this lookup temporarily fails.
+        kp_log('admin farmer claim username enrichment unavailable',$e);
     }
-} catch(Throwable $e) {
-    kp_log('admin farmer claim history unavailable',$e);
-    $error=true;
 }
 $pageLink=static function(int $number)use($filter):string {
     return '/quan-tri/diem-nong-dan/nhan-qua?'.http_build_query(['q'=>$filter,'page'=>$number],'','&',PHP_QUERY_RFC3986);
