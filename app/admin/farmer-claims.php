@@ -57,7 +57,7 @@ $labels=['completed'=>'Đã nhận','prepared'=>'Đang đối soát','needs_revi
 <div><input id="farmer-claim-q" name="q" type="search" maxlength="60" value="<?=kp_e($filter)?>" placeholder="Nhập mã đơn, ID, tên nhân vật">
 <button type="submit">Tìm kiếm</button><a href="/quan-tri/diem-nong-dan/nhan-qua">Xóa lọc</a></div>
 </form></div>
-<?php if($error):?><p class="farmer-claim-alert" role="alert">Chưa đọc được nhật ký. Kiểm tra quyền đọc storage/topup/bank-farmer.</p>
+<?php if($error):?><p class="farmer-claim-alert" role="alert">Chưa tải được lịch sử nhận điểm. Kiểm tra PHP error log và quyền đọc thư mục lưu quà nạp; không có nghĩa là điểm đã bị mất.</p>
 <?php elseif(!$history['rows']):?><p class="farmer-claim-empty">Không có dữ liệu nhận Điểm nông dân phù hợp.</p>
 <?php else:?>
 <div class="farmer-table-scroll farmer-claim-scroll" role="region" aria-label="Lịch sử nhận Điểm nông dân trên tất cả tài khoản" tabindex="0">
