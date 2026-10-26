@@ -22,6 +22,8 @@ PATHS={
     "giftcodes":"/quan-tri/giftcode",
     "game-accounts":"/quan-tri/tai-khoan-game",
     "moderation":"/quan-tri/lich-su-thao-tac",
+    "farmer-history":"/quan-tri/diem-nong-dan/lich-su?id=101",
+    "farmer-claims":"/quan-tri/diem-nong-dan/nhan-qua",
     "farmer":"/quan-tri/diem-nong-dan",
     "payments":"/quan-tri/nap",
     "orders":"/quan-tri/doi-soat",
