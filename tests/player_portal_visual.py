@@ -75,6 +75,31 @@ JS=r"""JSON.stringify((()=>{
   errors,layout:{navHeight:rail?.height,heroHeight:hero?.height,mainX:main?.left,metricCount:stats.length}};
 })())"""
 
+BANK_HISTORY_JS=r"""JSON.stringify((()=>{
+ const wrap=document.querySelector('.tp-bank-history-scroll');
+ const table=document.querySelector('.tp-bank-history-table');
+ const issues=[],w=innerWidth;
+ const bad=(condition,message)=>{if(condition)issues.push(message)};
+ bad(!wrap||!table,'missing bank history table or scroll region');
+ bad(document.documentElement.scrollWidth>w+2,'bank page overflows viewport');
+ if(wrap&&table){
+  const r=wrap.getBoundingClientRect();
+  bad(r.left<-2||r.right>w+2,'history scroll region offscreen');
+  bad(getComputedStyle(wrap).overflowX!=='auto','horizontal scrolling disabled');
+  bad(table.getBoundingClientRect().width<895,'history table squashed');
+  bad(table.querySelectorAll('thead th').length!==6,'history columns missing');
+  for(const cell of table.querySelectorAll('thead th')){
+   const cs=getComputedStyle(cell),b=cell.getBoundingClientRect();
+   bad(cs.whiteSpace!=='nowrap','header text can wrap vertically: '+cell.textContent);
+   bad(b.width<95,'header column crushed: '+cell.textContent);
+  }
+  if(w<=768)bad(wrap.scrollWidth<=wrap.clientWidth+30,'mobile table cannot scroll horizontally');
+ }
+ return {width:w,viewportScroll:document.documentElement.scrollWidth,
+   historyWidth:table?.getBoundingClientRect().width,scrollRegionWidth:wrap?.clientWidth,
+   scrollContentWidth:wrap?.scrollWidth,issues};
+})())"""
+
 def wait_condition(dev,expr,attempts=100):
     for _ in range(attempts):
         time.sleep(.16)
@@ -126,6 +151,22 @@ def main():
                             (OUTPUT/f"{name}-{width}.png").write_bytes(base64.b64decode(shot["data"]))
                             print("PORTAL "+name+" "+str(width)+": "+json.dumps(result,ensure_ascii=False),flush=True)
                             if result["errors"]:failures.append((name,width,result["errors"]))
+                    # Check the bank history table after a real fixture-player login.
+                    # The report is geometry-only: no QR creation or payment mutation.
+                    for width in (320,375,430,768,1280):
+                        dev.call("Emulation.setDeviceMetricsOverride",
+                                 {"width":width,"height":930,"deviceScaleFactor":1,"mobile":False})
+                        dev.call("Page.navigate",{"url":BASE+"/nap-ngan-hang"})
+                        if not wait_condition(dev,
+                            "document.readyState==='complete' && !!document.querySelector('.tp-bank-history-table')"):
+                            failures.append(("bank-history",width,["bank history table did not load"]));continue
+                        time.sleep(.2)
+                        result=json.loads(dev.eval(BANK_HISTORY_JS))
+                        shot=dev.call("Page.captureScreenshot",
+                                      {"format":"png","fromSurface":True,"captureBeyondViewport":False})
+                        (OUTPUT/f"bank-history-{width}.png").write_bytes(base64.b64decode(shot["data"]))
+                        print("BANK HISTORY "+str(width)+": "+json.dumps(result,ensure_ascii=False),flush=True)
+                        if result["issues"]:failures.append(("bank-history",width,result["issues"]))
                 finally:conn.close()
             finally:
                 proc.terminate()
