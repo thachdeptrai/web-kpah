@@ -3,12 +3,19 @@ require __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/admin_security.php';
 require_once __DIR__ . '/../includes/admin_nav.php';
 require_once __DIR__ . '/../includes/giftcodes.php';
+require_once __DIR__ . '/../includes/giftcode_bulk.php';
 require_once __DIR__ . '/../includes/giftcode_history_view.php';
 kp_send_security_headers(true);
 header('Content-Type: text/html; charset=utf-8');
 $admin = kp_admin_require('/quan-tri/dang-nhap', ['admin']);
 $notice = '';
 $error = '';
+$bulkResult = ['codes'=>[], 'locked'=>[], 'error'=>''];
+$bulkNonce = (string)($_SESSION['kp_giftcode_bulk_nonce'] ?? '');
+if (!preg_match('/\A[a-f0-9]{32}\z/D', $bulkNonce)) {
+    $bulkNonce = bin2hex(random_bytes(16));
+    $_SESSION['kp_giftcode_bulk_nonce'] = $bulkNonce;
+}
 $pdo = kp_db();
 $rewardCatalog = ['items'=>[], 'options'=>[], 'item_map'=>[], 'option_map'=>[]];
 $rewardCatalogError = '';
@@ -28,12 +35,21 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         try {
             $action = (string)($_POST['action'] ?? '');
             $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-            if ($action === 'create' || $action === 'update') {
+            if ($action === 'create' || $action === 'update' || $action === 'bulk_create') {
                 if ($rewardCatalogError !== '') throw new RuntimeException($rewardCatalogError.' Không thể lưu phần thưởng an toàn.');
-                [$allowed] = kp_admin_limit('giftcode-write', (string)$admin['id'], 45, 3600);
+                if ($action === 'bulk_create') {
+                    if (!hash_equals($bulkNonce, (string)($_POST['bulk_nonce'] ?? ''))) {
+                        throw new RuntimeException('Yêu cầu tạo hàng loạt đã hết hạn hoặc đã xử lý. Hãy tải lại trang.');
+                    }
+                    [$allowed] = kp_admin_limit('giftcode-bulk', (string)$admin['id'], 5, 3600);
+                } else {
+                    [$allowed] = kp_admin_limit('giftcode-write', (string)$admin['id'], 45, 3600);
+                }
                 if (!$allowed) throw new RuntimeException('Thao tác quá nhiều. Thử lại sau.');
                 $code = trim((string)($_POST['code'] ?? ''));
-                if (!kp_giftcode_valid_code($code)) throw new RuntimeException('Code phải dài 4–50 ký tự, chỉ gồm chữ không dấu, số, _ hoặc -.');
+                if ($action !== 'bulk_create' && !kp_giftcode_valid_code($code)) {
+                    throw new RuntimeException('Code phải dài 4–50 ký tự, chỉ gồm chữ không dấu, số, _ hoặc -.');
+                }
                 $values = [];
                 foreach (['xu','luong','luongLock','limit_use'] as $field) {
                     $n = filter_var($_POST[$field] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>0,'max_range'=>2147483647]]);
@@ -59,7 +75,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     throw new RuntimeException('Phần thưởng dài '.strlen($item).' byte, vượt cột item hiện tại ('.$itemColumnCapacity.'). Hãy chạy migration giftcode_item_options.sql.');
                 }
                 // Game Java reads this table directly. A disabled code must remain type != 0.
-                if ($action === 'create') {
+                if ($action === 'bulk_create') {
+                    $count = filter_var($_POST['bulk_count'] ?? null, FILTER_VALIDATE_INT,
+                        ['options'=>['min_range'=>1,'max_range'=>100]]);
+                    if ($count === false || $count === null) {
+                        throw new RuntimeException('Chỉ được tạo 1–100 Giftcode mỗi lần.');
+                    }
+                    $prefix = kp_giftcode_bulk_prefix($_POST['bulk_prefix'] ?? '');
+                    // Consume this one-time nonce before any MyISAM inserts. Reposting
+                    // the same request must not produce an accidental second batch.
+                    $bulkNonce = bin2hex(random_bytes(16));
+                    $_SESSION['kp_giftcode_bulk_nonce'] = $bulkNonce;
+                    $bulkResult = kp_giftcode_bulk_create(
+                        $pdo, $prefix, (int)$count, $values, $item, $meta, $type !== 0
+                    );
+                    $done = count($bulkResult['codes']);
+                    if ($bulkResult['error'] !== '') {
+                        $error = $bulkResult['error'] . ' Đã hoàn tất ' . $done . '/' . $count . ' mã.';
+                    } else {
+                        $notice = 'Đã tạo ' . $done . ' Giftcode riêng tư. '
+                            . 'Mỗi mã có ' . number_format($values['limit_use']) . ' lượt sử dụng.';
+                    }
+                } elseif ($action === 'create') {
                     $dup = $pdo->prepare('SELECT id FROM giftcode WHERE giftcode = ? LIMIT 1');
                     $dup->execute([$code]);
                     if ($dup->fetchColumn()) throw new RuntimeException('Giftcode đã tồn tại.');
@@ -214,6 +251,39 @@ function kp_admin_giftcode_reward_builder($builderId, array $parsed, $catalogRea
 <label class="gc-check"><input type="checkbox" name="disabled" value="1"> Tạm khóa code (type = 1)</label>
 <div class="gc-full"><button type="submit">Tạo giftcode ↗</button></div>
 </form></section>
+<section class="gc-panel" id="gc-bulk-create">
+<h2>Tạo hàng loạt Giftcode <small>(1–100 mã/lần)</small></h2>
+<p>Tạo nhiều <strong>Giftcode riêng biệt</strong> trong một lần, mỗi mã có cùng Xu/Lượng/vật phẩm và số lượt sử dụng. Mã được sinh ngẫu nhiên, không trùng và <strong>luôn ẩn khỏi trang chủ</strong> để phân phát riêng.</p>
+<form method="post" class="gc-form" id="gc-bulk-form">
+<input type="hidden" name="csrf" value="<?= kp_e(kp_csrf_token()) ?>">
+<input type="hidden" name="bulk_nonce" value="<?= kp_e($bulkNonce) ?>">
+<input type="hidden" name="action" value="bulk_create">
+<label>Tiền tố mã<input name="bulk_prefix" maxlength="30" pattern="[A-Za-z0-9_-]{3,30}" required value="KPAH" placeholder="KPAH"></label>
+<label>Số mã cần tạo<input name="bulk_count" type="number" min="1" max="100" value="100" required></label>
+<label>Lượt sử dụng / mã<input name="limit_use" type="number" min="0" max="2147483647" value="1" required></label>
+<label>Xu / mã<input name="xu" type="number" min="0" max="2147483647" value="0" required></label>
+<label>Lượng / mã<input name="luong" type="number" min="0" max="2147483647" value="0" required></label>
+<label>Lượng khóa / mã<input name="luongLock" type="number" min="0" max="2147483647" value="0" required></label>
+<label>Tiêu đề nội bộ<input name="title" maxlength="150" placeholder="Giftcode sự kiện"></label>
+<label class="gc-full">Ghi chú / mô tả nội bộ<textarea name="description" maxlength="600" rows="2" placeholder="Đợt phát giftcode..."></textarea></label>
+<?php kp_admin_giftcode_reward_builder('bulk', ['rewards'=>[], 'legacy'=>[]], $rewardCatalogError === '', $dboEnabled, $itemColumnCapacity); ?>
+<label class="gc-check"><input type="checkbox" name="disabled" value="1"> Tạo các mã ở trạng thái khóa (chưa cho nhập)</label>
+<p class="gc-full gc-bulk-warning">Giới hạn 5 lần tạo hàng loạt mỗi giờ. Mỗi mã mới được lưu ở trạng thái khóa trước khi xác nhận metadata, rồi mới kích hoạt. Không nhấn gửi lại nếu có lỗi giữa chừng.</p>
+<div class="gc-full"><button type="submit">Tạo Giftcode hàng loạt</button></div>
+</form>
+<?php if ($bulkResult['codes']): ?>
+<div class="gc-bulk-result" role="status">
+<h3>Đã tạo <?= count($bulkResult['codes']) ?> mã</h3>
+<p>Sao chép và lưu danh sách này để phát cho người chơi; chỉ hiển thị trong phản hồi tạo mã.</p>
+<textarea id="gc-bulk-generated-codes" rows="8" readonly aria-label="Danh sách Giftcode vừa tạo"><?= kp_e(implode("\n", $bulkResult['codes'])) ?></textarea>
+<button type="button" data-gc-copy-batch>Sao chép tất cả</button>
+</div>
+<?php endif; ?>
+<?php if ($bulkResult['locked']): ?>
+<div class="gc-alert gc-warning">Một số mã đã được tạo nhưng chưa kích hoạt; kiểm tra trước khi thử lại:
+<code><?= kp_e(implode(', ', $bulkResult['locked'])) ?></code></div>
+<?php endif; ?>
+</section>
 <section class="gc-panel"><h2>Danh sách giftcode <small>(300 mã mới nhất)</small></h2>
 <p>Để sửa, thay số liệu rồi lưu. <strong>Đổi mã code đã tạo không được hỗ trợ</strong> nhằm giữ lịch sử nhập; xóa mã đã dùng sẽ tự động chuyển thành khóa.</p>
 <div class="gc-code-list">
