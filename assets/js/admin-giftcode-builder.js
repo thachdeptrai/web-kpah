@@ -23,6 +23,10 @@
   var itemType = document.getElementById('gc-item-type');
   var itemGrid = document.getElementById('gc-item-grid');
   var itemResult = document.getElementById('gc-item-result');
+  var itemMore = document.getElementById('gc-item-more');
+  var itemMatches = [];
+  var itemVisible = 0;
+  var itemPageSize = 80;
   var optionSearch = document.getElementById('gc-option-search');
   var optionGroup = document.getElementById('gc-option-group');
   var optionList = document.getElementById('gc-option-list');
@@ -226,16 +230,28 @@
     if (lastTrigger) lastTrigger.focus();
   }
 
-  function renderItemPicker() {
-    var query = normalize(itemSearch.value).replace(/^#/, '');
-    var type = itemType.value;
-    var filtered = items.filter(function (item) {
-      var matchesType = type === '' || String(item.type) === type;
-      var haystack = normalize(item.name + ' ' + item.id + ' #' + item.id);
-      return matchesType && (query === '' || haystack.indexOf(query) !== -1);
-    });
-    itemGrid.textContent = '';
-    filtered.slice(0, 180).forEach(function (item) {
+  function renderItemPicker(append) {
+    if (append !== true) {
+      var query = normalize(itemSearch.value);
+      var type = itemType.value;
+      var numeric = query.match(/^#?([0-9]+)$/);
+      var exactId = numeric ? Number(numeric[1]) : null;
+      itemMatches = items.filter(function (item) {
+        if (type !== '' && String(item.type) !== type) return false;
+        if (query === '') return true;
+        return normalize(item.name).indexOf(query) !== -1
+          || String(item.id).indexOf(query.replace(/^#/, '')) !== -1;
+      });
+      // Exact numeric ID is always the first result, even when the term also
+      // happens to occur in names/other IDs.
+      if (exactId !== null) itemMatches.sort(function (a, b) {
+        return (b.id === exactId ? 1 : 0) - (a.id === exactId ? 1 : 0);
+      });
+      itemVisible = 0;
+      itemGrid.textContent = '';
+    }
+    var page = itemMatches.slice(itemVisible, itemVisible + itemPageSize);
+    page.forEach(function (item) {
       var selected = activeBuilder && activeBuilder.rewards.some(function (reward) { return reward.item_id === item.id; });
       var button = element('button', 'gc-item-choice' + (selected ? ' is-selected' : ''));
       button.type = 'button'; button.disabled = selected;
@@ -253,7 +269,10 @@
       });
       itemGrid.appendChild(button);
     });
-    itemResult.textContent = filtered.length > 180 ? 'Hiển thị 180/' + filtered.length + ' kết quả — nhập thêm từ khóa để thu hẹp.' : filtered.length + ' vật phẩm phù hợp.';
+    itemVisible += page.length;
+    if (itemMore) itemMore.hidden = itemVisible >= itemMatches.length;
+    itemResult.textContent = 'Đang hiển thị ' + itemVisible + '/' + itemMatches.length
+      + ' vật phẩm. Tìm theo tên hoặc nhập ID chính xác (ví dụ #250).';
   }
 
   function renderOptionPicker() {
@@ -317,12 +336,31 @@
   Object.keys(types).sort(function (a, b) { return Number(a) - Number(b); }).forEach(function (type) {
     var option = document.createElement('option'); option.value = type; option.textContent = types[type] + ' (' + type + ')'; itemType.appendChild(option);
   });
+  if (itemMore) itemMore.addEventListener('click', function () { renderItemPicker(true); });
   if (itemSearch) itemSearch.addEventListener('input', renderItemPicker);
   if (itemType) itemType.addEventListener('change', renderItemPicker);
   if (optionSearch) optionSearch.addEventListener('input', renderOptionPicker);
   if (optionGroup) optionGroup.addEventListener('change', renderOptionPicker);
   Array.prototype.slice.call(document.querySelectorAll('[data-gc-close]')).forEach(function (button) {
     button.addEventListener('click', function () { closePicker(button.closest('.gc-picker')); });
+  });
+  var bulkCopy = document.querySelector('[data-gc-copy-batch]');
+  if (bulkCopy) bulkCopy.addEventListener('click', function () {
+    var source = document.getElementById('gc-bulk-generated-codes');
+    if (!source) return;
+    function copied() { bulkCopy.textContent = 'Đã sao chép!'; }
+    function fallback() {
+      source.focus();
+      source.select();
+      try { if (document.execCommand('copy')) copied(); } catch (error) {
+        bulkCopy.textContent = 'Hãy chọn và sao chép danh sách';
+      }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(source.value).then(copied, fallback);
+    } else {
+      fallback();
+    }
   });
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Escape') return;
