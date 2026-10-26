@@ -15,6 +15,7 @@ on:
       - 'tests/downloads_smoke.php'
       - 'tests/giftcodes_smoke.php'
       - 'tests/giftcode_builder_smoke.php'
+      - 'tests/giftcode_bulk_smoke.php'
       - 'tests/giftcode_history_view_smoke.php'
       - 'assets/js/admin-giftcode-builder.js'
       - 'assets/css/giftcodes.css'
@@ -36,6 +37,7 @@ on:
       - 'tests/downloads_smoke.php'
       - 'tests/giftcodes_smoke.php'
       - 'tests/giftcode_builder_smoke.php'
+      - 'tests/giftcode_bulk_smoke.php'
       - 'tests/giftcode_history_view_smoke.php'
       - 'assets/js/admin-giftcode-builder.js'
       - 'assets/css/giftcodes.css'
@@ -80,6 +82,8 @@ jobs:
         run: php tests/giftcodes_smoke.php
       - name: Giftcode item builder and Java contract smoke tests
         run: php tests/giftcode_builder_smoke.php
+      - name: Giftcode bulk creator and complete item picker smoke tests
+        run: php tests/giftcode_bulk_smoke.php
       - name: Giftcode item icons and option history renderer
         run: php tests/giftcode_history_view_smoke.php
       - name: Recharge conversion smoke tests
