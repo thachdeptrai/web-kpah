@@ -122,13 +122,26 @@ function kp_bank_farmer_history_page(?int $ownerId, int $page = 1, int $perPage 
     $page=max(1,min(100000,$page));
     $perPage=max(1,min(100,$perPage));
     $filter=trim(substr($filter,0,60));
-    $dir=kp_topup_root().'/bank-farmer';
+    // Reading history must NOT depend on storage being writable.  The normal
+    // kp_topup_root() helper checks write access for payment operations and
+    // can incorrectly block a perfectly readable, read-only audit folder.
+    $dir=KP_ROOT.'/storage/topup/bank-farmer';
     if (!is_dir($dir)) return ['rows'=>[],'total'=>0,'pages'=>1,'page'=>1];
+    if (!is_readable($dir)) {
+        throw new RuntimeException('Thư mục lịch sử nhận điểm không thể đọc.');
+    }
     $rows=[];
     // Iterate filenames directly; never accept a user-supplied file path.
     foreach (new DirectoryIterator($dir) as $file) {
         if (!$file->isFile() || !preg_match('/\A([1-9][0-9]{8})\.json\z/D', $file->getFilename(), $m)) continue;
-        $gift=kp_topup_read_file($file->getPathname());
+        try {
+            $gift=kp_topup_read_file($file->getPathname());
+        } catch (Throwable $e) {
+            // A single unreadable/broken historical JSON file must not hide
+            // all other users' legitimate audit history. Never rewrite it.
+            if (function_exists('kp_log')) kp_log('farmer claim audit unreadable order='.$m[1],$e);
+            continue;
+        }
         if (!is_array($gift) || (int)($gift['order_code'] ?? 0) !== (int)$m[1]) continue;
         $row=kp_bank_farmer_history_row($gift);
         if ($row===null || ($ownerId!==null && $row['user_id']!==$ownerId)) continue;
