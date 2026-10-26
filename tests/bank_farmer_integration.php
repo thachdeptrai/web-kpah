@@ -17,6 +17,18 @@ function gift_refused(callable $action, $msg) {
     catch (RuntimeException $e) { gift_assert(true,$msg); }
 }
 $db = kp_db();
+// Regression: multiple claim rows for one account previously left holes in
+// array_unique() numeric keys, triggering PDO SQLSTATE[HY093] on name lookup.
+$historyUserIds=kp_bank_farmer_history_user_ids([
+    ['user_id'=>101],['user_id'=>101],['user_id'=>202],
+    ['user_id'=>202],['user_id'=>101]
+]);
+gift_assert($historyUserIds===[101,202], 'claim history produces dense unique owner IDs');
+$ownersSql=implode(',',array_fill(0,count($historyUserIds),'?'));
+$ownersStmt=$db->prepare('SELECT id,username FROM team_user WHERE id IN ('.$ownersSql.')');
+$ownersStmt->execute($historyUserIds);
+$ownerRows=$ownersStmt->fetchAll(PDO::FETCH_ASSOC);
+gift_assert(count($ownerRows)===2, 'claim history username enrichment supports repeated owner IDs');
 $sql = preg_replace('/^--.*$/m', '', file_get_contents(KP_ROOT . '/database/payos_bank.sql'));
 foreach (preg_split('/;\s*(?:\r?\n|$)/', $sql) as $statement) {
     if (trim($statement) !== '') $db->exec($statement);
