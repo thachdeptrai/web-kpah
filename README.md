@@ -296,3 +296,8 @@ Tài liệu: [Chính sách bảo mật](SECURITY.md) · [Bảo mật triển kha
 ---
 
 **NGHIỆN KPAH** · [nghienkpah.io.vn](https://nghienkpah.io.vn) · [GitHub](https://github.com/thachdeptrai/web-kpah)
+
+
+## Database Point riêng (tùy chọn)
+
+Có thể dùng schema MySQL/MariaDB thứ hai `kpah_points` cho `kp_points_*` trên cùng server database game. Import `database/points_separate.sql`, và **nếu đã có Point thật phải chuyển đủ dữ liệu trước khi bật cấu hình**. Hướng dẫn tại [docs/POINTS_SEPARATE_DATABASE.md](docs/POINTS_SEPARATE_DATABASE.md).

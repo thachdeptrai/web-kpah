@@ -57,3 +57,8 @@ There is **no automatic retrospective award**: `kp_points_program.activated_at` 
 12. Uninstalled migration: Point page shows a friendly notice; **payment confirmation remains operational**, Point write failures are logged.
 
 The above are test cases to run; a live payOS/game-server test is **not** performed by the GitHub commit.
+
+
+## Database Point riêng (không bắt buộc)
+
+Hệ thống hỗ trợ `KPAH_POINTS_DB_NAME=kpah_points` trên **cùng MariaDB/MySQL host** với database game. Thông số để trống vẫn sử dụng DB cũ. Cài SQL mới tại `database/points_separate.sql`; **đang dùng Point thật phải chuyển toàn bộ dữ liệu lịch sử trước khi bật**. Chi tiết: `docs/POINTS_SEPARATE_DATABASE.md`.
