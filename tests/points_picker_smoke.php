@@ -31,9 +31,10 @@ foreach([
  [['point_picker_options'=>'[{"id":0,"param":1}]','item_id'=>''], 'no item'],
  [['point_picker_options'=>'<svg/onload=alert(1)>','item_id'=>'11'], 'malformed JSON'],
 ] as $scenario){
- try{kp_points_picker_display_input($scenario[0],$catalog);
-    pp_assert(false,'rejected '.$scenario[1]);
- }catch(RuntimeException $expected){}
+ $rejected=false;
+ try{kp_points_picker_display_input($scenario[0],$catalog);}
+ catch(RuntimeException $expected){$rejected=true;}
+ pp_assert($rejected,'rejected '.$scenario[1]);
 }
 $legacy=kp_points_picker_display_input([
  'icon_id'=>'42','item_id'=>'11','option_lines'=>"Công +30\nHP +40",
