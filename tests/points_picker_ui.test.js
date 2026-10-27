@@ -114,6 +114,14 @@ assert.match(fields.option_lines.value,/<svg\/onload=alert\(1\)>/,'hostile game 
 assert.equal(program.includes('innerHTML'),false,'no HTML execution sink');
 assert.equal(program.includes('eval('),false);
 assert.ok(program.includes("aria-selected"),'tab ARIA state must be synchronized');
+let prevented=false;
+tabs[1].listeners.keydown({key:'ArrowLeft',preventDefault(){prevented=true;}});
+assert.equal(prevented,true,'tab arrow key prevents page scroll');
+assert.equal(tabs[0].getAttribute('aria-selected'),'true','left arrow opens Items');
+assert.equal(nodes['point-picker-options'].hidden,true,'keyboard tab change hides Options');
+tabs[0].listeners.keydown({key:'ArrowRight',preventDefault(){}});
+assert.equal(tabs[1].getAttribute('aria-selected'),'true','right arrow opens Options');
+assert.equal(nodes['point-picker-items'].hidden,true,'keyboard tab change hides Items');
 assert.equal(chips.children.some(n=>n.tagName==='span'&&n._text.includes('svg')),true,
  'hostile string shown through textContent only');
 }
