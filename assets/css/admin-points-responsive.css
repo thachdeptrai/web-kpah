@@ -1,0 +1,194 @@
+/* /quan-tri/diem-tich-luy only: keep all Point admin controls usable on phones.
+   Loaded after admin-theme.css to avoid broad overrides on unrelated screens. */
+.tp-page.tp-admin.tp-admin-points .tp-content{box-sizing:border-box;min-width:0;width:100%;max-width:1500px}
+.tp-page.tp-admin.tp-admin-points :is(.tp-section,.tp-panel,.tp-card,.tp-form,.tp-grid,.tp-reward-admin-grid,.point-reward-editor){min-width:0}
+.tp-page.tp-admin.tp-admin-points .tp-section{padding-block:clamp(12px,1.8vw,24px);scroll-margin-top:16px}
+.tp-page.tp-admin.tp-admin-points .tp-panel{max-width:100%;overflow-wrap:anywhere}
+.tp-page.tp-admin.tp-admin-points .tp-panel :is(input,textarea,select){box-sizing:border-box;min-width:0;max-width:100%}
+.tp-page.tp-admin.tp-admin-points :is(.tp-field,.point-picker-meta,.tp-mini-notice,.point-reconcile-group){min-width:0;overflow-wrap:anywhere}
+.tp-page.tp-admin.tp-admin-points .tp-mini-notice{overflow-wrap:anywhere}
+.tp-page.tp-admin.tp-admin-points .tp-hero{margin-bottom:12px}
+.tp-page.tp-admin.tp-admin-points .tp-hero h1{line-height:1.23;overflow-wrap:anywhere}
+.tp-page.tp-admin.tp-admin-points .tp-breadcrumb{min-width:0;overflow-wrap:anywhere}
+.tp-page.tp-admin.tp-admin-points .tp-user{min-width:0;max-width:45%;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.tp-page.tp-admin.tp-admin-points .point-admin-jump{
+ display:flex;gap:8px;width:100%;max-width:100%;min-width:0;
+ padding:8px 2px 14px;overflow-x:auto;overscroll-behavior-x:contain;
+ scroll-snap-type:x proximity;scrollbar-width:thin
+}
+.tp-page.tp-admin.tp-admin-points .point-admin-jump a{
+ display:inline-flex;align-items:center;justify-content:center;flex:none;
+ min-height:42px;box-sizing:border-box;padding:10px 14px;
+ border:1px solid #ccd9ef;border-radius:999px;background:#f4f8ff;
+ color:#3d588b;font-size:12px;font-weight:800;text-decoration:none;
+ white-space:nowrap;scroll-snap-align:start
+}
+.tp-page.tp-admin.tp-admin-points .point-admin-jump a:hover,
+.tp-page.tp-admin.tp-admin-points .point-admin-jump a:focus-visible{
+ border-color:#7476df;background:#eaeefe;color:#34479c
+}
+.tp-page.tp-admin.tp-admin-points .tp-reward-create{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ align-items:start;gap:15px
+}
+.tp-page.tp-admin.tp-admin-points .tp-reward-create>.point-reward-editor{
+ grid-column:1/-1;min-width:0
+}
+.tp-page.tp-admin.tp-admin-points .tp-reward-create>.tp-field{grid-column:auto}
+.tp-page.tp-admin.tp-admin-points .tp-reward-create>button[type=submit]{align-self:end;min-height:48px}
+.tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px
+}
+.tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid .tp-card{
+ min-width:0;display:grid;grid-template-columns:minmax(0,1fr);
+ overflow-wrap:anywhere;align-content:start
+}
+.tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid .tp-card>.tp-form{min-width:0}
+.tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid .point-reward-editor{
+ grid-template-columns:repeat(2,minmax(0,1fr))
+}
+.tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid .point-reward-editor>.tp-grid.two{
+ grid-column:1/-1;min-width:0
+}
+.tp-page.tp-admin.tp-admin-points .point-picker-selection{min-width:0;overflow-wrap:anywhere}
+.tp-page.tp-admin.tp-admin-points :is(.tp-button,.tp-button-secondary){text-align:center;white-space:normal}
+.tp-page.tp-admin.tp-admin-points .point-admin-orders-wrap{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.tp-page.tp-admin.tp-admin-points .point-admin-orders-table{min-width:920px}
+.tp-page.tp-admin.tp-admin-points .point-admin-orders-table td{vertical-align:top}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-reward{display:grid;gap:5px;min-width:0}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-reward strong{font-size:12px;line-height:1.5}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-reward small{font-size:11px;color:#647a97;line-height:1.55}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-form{min-width:215px;max-width:100%;gap:8px}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-form .tp-input{min-height:42px}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-buttons{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tp-page.tp-admin.tp-admin-points .point-admin-order-buttons button{flex:1 1 100px;min-height:40px}
+.tp-page.tp-admin.tp-admin-points .point-admin-sr-only{
+ position:absolute;width:1px;height:1px;overflow:hidden;
+ clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)
+}
+.tp-page.tp-admin.tp-admin-points .tp-table-wrap{
+ box-sizing:border-box;min-width:0;max-width:100%;overflow-x:auto;
+ overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch
+}
+.tp-page.tp-admin.tp-admin-points :is(.tp-table-wrap,.point-reconcile-group):focus-visible{
+ outline:3px solid #6477d5;outline-offset:2px
+}
+.tp-page.tp-admin.tp-admin-points .point-admin-scroll-hint{display:none;color:#65789b;font-size:12px;line-height:1.5}
+.tp-page.tp-admin.tp-admin-points .point-reconcile-group{max-width:100%}
+.tp-page.tp-admin.tp-admin-points .point-reconcile-group .point-audit-scroll{max-width:100%}
+@media(max-width:1499px){
+ .tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:1190px){
+ .tp-page.tp-admin.tp-admin-points .tp-grid.two{grid-template-columns:minmax(0,1fr)}
+ .tp-page.tp-admin.tp-admin-points .point-tier-admin-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:800px){
+ .tp-page.tp-admin.tp-admin-points .tp-content{padding-inline:clamp(12px,3vw,20px)}
+ .tp-page.tp-admin.tp-admin-points .tp-reward-create{gap:12px}
+ .tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid{grid-template-columns:minmax(0,1fr)}
+ .tp-page.tp-admin.tp-admin-points .tp-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .tp-page.tp-admin.tp-admin-points .tp-summary>div{padding:12px}
+ .tp-page.tp-admin.tp-admin-points .tp-hero{padding:22px}
+}
+@media(max-width:700px){
+ .tp-page.tp-admin.tp-admin-points .point-admin-scroll-hint{display:block}
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-wrap{
+  border:0;background:transparent;overflow:visible;box-shadow:none
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table{
+  display:block;width:100%;min-width:0;max-width:100%;
+  border-collapse:separate
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table thead{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table tbody{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:14px
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table tr{
+  display:grid;grid-template-columns:minmax(0,1fr);min-width:0;
+  border:1px solid #d6e4f6;border-radius:14px;
+  background:#fff;overflow:hidden;
+  box-shadow:0 5px 16px rgba(47,89,158,.06)
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table td{
+  display:grid;grid-template-columns:minmax(82px,32%) minmax(0,1fr);
+  align-items:start;gap:12px;padding:11px 12px;min-width:0;
+  border-bottom:1px solid #eaf0f7;text-align:left;
+  white-space:normal;overflow-wrap:anywhere
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table td:last-child{border-bottom:0}
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table td:before{
+  content:attr(data-label);font-size:11px;font-weight:800;
+  color:#647b9a;line-height:1.6;overflow-wrap:anywhere
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table td>*{min-width:0;max-width:100%}
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table .tp-pill{
+  justify-self:start;white-space:normal;line-height:1.5
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table .point-admin-order-form{
+  min-width:0;width:100%
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-order-buttons{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:7px
+ }
+ .tp-page.tp-admin.tp-admin-points .point-admin-order-buttons .tp-button-secondary{
+  min-height:43px;width:100%;white-space:normal
+ }
+}
+@media(max-width:600px){
+ .tp-page.tp-admin.tp-admin-points .tp-reward-create{
+  grid-template-columns:minmax(0,1fr);gap:14px
+ }
+ .tp-page.tp-admin.tp-admin-points .tp-reward-create>.point-reward-editor{grid-column:1}
+ .tp-page.tp-admin.tp-admin-points .tp-reward-create>button[type=submit]{width:100%}
+ .tp-page.tp-admin.tp-admin-points .point-reward-editor{
+  grid-template-columns:minmax(0,1fr)!important
+ }
+ .tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid .point-reward-editor{
+  grid-template-columns:minmax(0,1fr)
+ }
+ .tp-page.tp-admin.tp-admin-points .tp-reward-admin-grid .point-reward-editor>.tp-grid.two{
+  grid-template-columns:minmax(0,1fr)
+ }
+ .tp-page.tp-admin.tp-admin-points .point-picker-dialog{
+  box-sizing:border-box;position:fixed;inset:auto 0 0;
+  margin:0;width:100%;max-width:100%;height:min(91dvh,820px);
+  max-height:calc(100dvh - env(safe-area-inset-top,0px));
+  padding:17px 14px calc(16px + env(safe-area-inset-bottom,0px));
+  transform:none;overflow-y:auto;overscroll-behavior:contain;
+  border-radius:20px 20px 0 0
+ }
+ .tp-page.tp-admin.tp-admin-points .point-picker-items,
+ .tp-page.tp-admin.tp-admin-points .point-picker-options{
+  grid-template-columns:minmax(0,1fr)
+ }
+ .tp-page.tp-admin.tp-admin-points .point-picker-dialog :is(input,select,textarea){
+  font-size:16px
+ }
+ .tp-page.tp-admin.tp-admin-points .tp-summary{
+  grid-template-columns:minmax(0,1fr);gap:8px
+ }
+ .tp-page.tp-admin.tp-admin-points .point-tier-admin-strip{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+ }
+ .tp-page.tp-admin.tp-admin-points .tp-panel{padding:clamp(12px,3vw,18px)}
+ .tp-page.tp-admin.tp-admin-points .tp-header{gap:8px;flex-wrap:wrap}
+ .tp-page.tp-admin.tp-admin-points .tp-breadcrumb,
+ .tp-page.tp-admin.tp-admin-points .tp-user{max-width:100%}
+}
+@media(max-width:360px){
+ .tp-page.tp-admin.tp-admin-points .tp-content{padding-inline:9px}
+ .tp-page.tp-admin.tp-admin-points .tp-hero{padding:15px}
+ .tp-page.tp-admin.tp-admin-points .point-admin-jump{gap:6px}
+ .tp-page.tp-admin.tp-admin-points .point-admin-jump a{padding:9px 11px;font-size:11px}
+ .tp-page.tp-admin.tp-admin-points .point-admin-orders-table td{
+  grid-template-columns:minmax(74px,31%) minmax(0,1fr);
+  gap:8px;padding:10px 8px
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .tp-page.tp-admin.tp-admin-points .point-admin-jump{scroll-behavior:auto}
+}

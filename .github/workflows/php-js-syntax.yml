@@ -27,6 +27,7 @@ jobs:
       - name: Membership and responsive PHP smoke tests
         run: |
           php tests/membership_layout_smoke.php
+          php tests/admin_points_responsive_smoke.php
           php tests/points_picker_smoke.php
           php tests/responsive_smoke.php
       - name: Node.js JavaScript syntax checks

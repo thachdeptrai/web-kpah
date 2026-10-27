@@ -34,8 +34,9 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <link rel="stylesheet" href="/assets/css/point-reward-picker.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/point-reward-picker.css') ?>">
 <link rel="stylesheet" href="/assets/css/brand-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/brand-system.css') ?>">
 <?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>"><?php endif;?>
+<?php if($admin && $active==='points'):?><link rel="stylesheet" href="/assets/css/admin-points-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-points-responsive.css') ?>"><?php endif;?>
 </head>
-<body class="tp-page<?= $admin ? ' tp-admin' : '' ?>">
+<body class="tp-page<?= $admin ? ' tp-admin' : '' ?><?=($admin && $active==='points') ? ' tp-admin-points' : '' ?>">
 <div class="tp-shell">
 <aside class="tp-sidebar" aria-label="Điều hướng">
   <a class="tp-brand" href="<?= kp_e($home) ?>"><?php if($admin): ?><span class="tp-brand-mark">K<span>.</span></span><?php else: ?><span class="tp-brand-mark tp-brand-game-logo"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="" loading="eager"></span><?php endif; ?><span><b>KPAH</b><small><?= $admin ? 'Quản trị nạp' : 'Khu nạp tài nguyên' ?></small></span></a>
