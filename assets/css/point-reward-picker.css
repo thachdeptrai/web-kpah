@@ -45,3 +45,122 @@
  .point-picker-param{align-items:stretch}
  .point-picker-param label,.point-picker-param label input{width:100%}
 }
+
+/* Show exactly one picker pane. Browser [hidden] otherwise loses to the
+   more-specific display:grid rules below (the original broken tab behaviour). */
+#point-reward-picker [hidden]{display:none!important}
+
+/* Bright KPAH fantasy palette: azure inventory, amethyst option selection. */
+.point-picker-dialog{
+ background:linear-gradient(155deg,#fff 0%,#f7faff 51%,#fffaf4 100%);
+ border:1px solid #c5d6ee;box-shadow:0 28px 90px rgba(19,43,88,.3)
+}
+.point-picker-dialog>header{padding:2px 0 12px;border-bottom:1px solid #dfe9f6}
+.point-picker-dialog>header strong{
+ font-size:clamp(16px,2vw,21px);font-weight:850;line-height:1.45;color:#2b4779
+}
+.point-picker-dialog>header button:hover{background:#e5ecfa;border-color:#98b0d9}
+.point-picker-tabs{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;padding:5px;margin:15px 0;
+ background:#edf2fb;border:1px solid #dfe8f6;border-radius:15px
+}
+.point-picker-tabs button{
+ min-width:0;min-height:45px;border:1px solid transparent;border-radius:11px;
+ padding:10px 12px;background:transparent;color:#61718c;
+ font:800 13px/1.45 "Be Vietnam Pro",sans-serif;
+ transition:background .18s,border-color .18s,box-shadow .18s,color .18s
+}
+.point-picker-tabs button[data-point-tab="items"][aria-pressed="true"]{
+ background:linear-gradient(125deg,#d9f1ff,#eff8ff);
+ border-color:#84bee9;color:#125895;box-shadow:0 3px 10px rgba(55,131,205,.13)
+}
+.point-picker-tabs button[data-point-tab="options"][aria-pressed="true"]{
+ background:linear-gradient(125deg,#eaddff,#fff0fb);
+ border-color:#c28ee8;color:#763cad;box-shadow:0 3px 10px rgba(140,70,195,.13)
+}
+.point-picker-dialog .tp-field>span{color:#405b85;font-weight:800}
+.point-picker-dialog #point-picker-search{
+ background:#fff;color:#284265;border-color:#c8d9ee;min-height:46px;
+ box-shadow:0 3px 12px rgba(75,101,151,.045)
+}
+.point-picker-dialog #point-picker-search:focus{
+ border-color:#8169d8;outline:3px solid rgba(134,110,224,.18);outline-offset:0
+}
+.point-picker-item{
+ padding:11px;border-color:#d6e6f8;background:linear-gradient(135deg,#fff,#f0f8ff);
+ box-shadow:0 2px 9px rgba(46,111,192,.05)
+}
+.point-picker-icon{background:#e0efff;border:1px solid #cde2fa}
+.point-picker-item-heading strong{font-size:13px;color:#284e83;line-height:1.45}
+.point-picker-item-heading small{font-size:11px;line-height:1.55;color:#7186a5}
+.point-picker-item-actions button{
+ border-color:#bed8f7;background:#e6f2ff;color:#2363a7;
+ min-height:36px;white-space:normal
+}
+.point-picker-item-actions button:last-child{
+ border-color:#3182d6;background:linear-gradient(120deg,#3198ee,#286bdc);color:#fff
+}
+.point-picker-options{gap:10px}
+.point-picker-option{
+ display:flex;align-items:center;gap:12px;min-width:0;
+ padding:12px 14px;border:1px solid #dfcef8;border-radius:13px;
+ background:linear-gradient(135deg,#fff 0%,#f8f1ff 100%);
+ box-shadow:0 3px 12px rgba(111,65,173,.06);
+ transition:border-color .17s,background .17s,box-shadow .17s,transform .17s
+}
+.point-picker-option:before{
+ content:"✧";display:grid;place-items:center;flex:none;
+ width:35px;height:35px;border:1px solid #d6b8f4;border-radius:10px;
+ color:#8a4fbe;background:linear-gradient(140deg,#f0e1ff,#fff);
+ font-size:21px
+}
+.point-picker-option .point-picker-item-heading strong{color:#613d93}
+.point-picker-option .point-picker-item-heading small{color:#806c9e}
+.point-picker-option:hover,.point-picker-option[aria-pressed="true"]{
+ border-color:#9d6dd6;background:linear-gradient(135deg,#f6eaff,#fff6fc);
+ box-shadow:0 6px 16px rgba(120,72,178,.17);transform:translateY(-1px)
+}
+.point-picker-option[aria-pressed="true"]:before{background:#8b53c7;color:#fff;border-color:#8b53c7}
+.point-picker-actions{padding:7px 0 3px;border-top:1px solid #e1e9f6}
+.point-picker-actions p{color:#57739d;font-size:12px;font-weight:700}
+.point-picker-actions button{
+ padding:9px 14px;border-color:#caa3ef;background:#f3e9ff;color:#7147a9;font-size:12px
+}
+.point-picker-param{
+ position:sticky;top:0;z-index:3;align-items:center;
+ margin:12px 0 14px;padding:14px;border:1px solid #b990e9;
+ background:linear-gradient(135deg,#ecddff,#fff0f9);
+ box-shadow:0 10px 22px rgba(105,54,161,.16)
+}
+.point-picker-param>span{color:#663993;font-weight:850}
+.point-picker-param label{color:#664c87;font-weight:750}
+.point-picker-param input{
+ min-height:43px;background:#fff;border-color:#b99be3;
+ color:#3c2960;font-size:15px
+}
+.point-picker-param button{
+ min-height:43px;border-color:#844bd0;
+ background:linear-gradient(120deg,#9d68df,#7642c0);color:#fff;
+ font:800 12px/1.4 "Be Vietnam Pro",sans-serif
+}
+.point-picker-param button:hover{filter:brightness(1.07)}
+.point-picker-dialog .point-picker-help{font-size:11px;line-height:1.7;color:#6b7d9c}
+.point-picker-dialog :is(button,input):focus-visible{
+ outline:3px solid rgba(117,91,216,.45);outline-offset:2px
+}
+@media(max-width:760px){
+ .point-picker-tabs{gap:6px;padding:4px}
+ .point-picker-tabs button{padding:9px 6px;font-size:11px;min-height:43px}
+ .point-picker-item{flex-wrap:wrap}
+ .point-picker-item-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+ .point-picker-option{padding:11px}
+ .point-picker-param{gap:9px;padding:11px}
+ .point-picker-param>span{flex-basis:100%}
+ .point-picker-param button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+ .point-picker-option,.point-picker-tabs button{transition:none}
+ .point-picker-option:hover{transform:none}
+}
+

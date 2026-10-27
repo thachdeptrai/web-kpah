@@ -208,17 +208,20 @@ $json=json_encode($pointPickerCatalog,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLAS
 <script type="application/json" id="point-reward-catalog"><?=is_string($json)?$json:'{}'?></script>
 <dialog id="point-reward-picker" class="point-picker-dialog" aria-label="Chọn icon vật phẩm và chỉ số">
   <header><strong>Chọn icon, vật phẩm và chỉ số</strong><button type="button" data-point-close aria-label="Đóng">×</button></header>
-  <div class="point-picker-tabs" role="group" aria-label="Loại lựa chọn"><button type="button" data-point-tab="items">Vật phẩm & icon</button><button type="button" data-point-tab="options">Chỉ số (options)</button></div>
+  <div class="point-picker-tabs" role="tablist" aria-label="Chọn loại dữ liệu">
+    <button type="button" id="point-picker-tab-items" role="tab" aria-controls="point-picker-items" aria-selected="true" aria-pressed="true" data-point-tab="items">Vật phẩm & icon</button>
+    <button type="button" id="point-picker-tab-options" role="tab" aria-controls="point-picker-options" aria-selected="false" aria-pressed="false" data-point-tab="options">Chỉ số (Options)</button>
+  </div>
   <label class="tp-field"><span>Tìm theo tên hoặc ID</span><input type="search" class="tp-input" id="point-picker-search" placeholder="Tên vật phẩm hoặc #123" autocomplete="off"></label>
-  <div id="point-picker-items" class="point-picker-items" role="list"></div>
-  <div id="point-picker-options" class="point-picker-options" role="list" hidden></div>
-  <div class="point-picker-actions"><p id="point-picker-count" role="status"></p><button type="button" id="point-picker-more">Hiển thị thêm</button></div>
   <div id="point-picker-selected-option" class="point-picker-param" hidden>
-    <span id="point-picker-option-title"></span>
+    <span id="point-picker-option-title" role="status"></span>
     <label>Giá trị option<input type="number" id="point-picker-param-value" min="1" max="32767" value="1"></label>
     <button type="button" id="point-picker-add-option">Thêm chỉ số</button>
   </div>
-  <p class="tp-muted">Item và option được đối chiếu lại bằng PHP với data_item/data_attribute khi lưu. Không tự phát vật phẩm.</p>
+  <div id="point-picker-items" class="point-picker-items" role="tabpanel" aria-labelledby="point-picker-tab-items"></div>
+  <div id="point-picker-options" class="point-picker-options" role="tabpanel" aria-labelledby="point-picker-tab-options" hidden></div>
+  <div class="point-picker-actions"><p id="point-picker-count" role="status" aria-live="polite"></p><button type="button" id="point-picker-more">Hiển thị thêm</button></div>
+  <p class="tp-muted point-picker-help">Chọn vật phẩm trước khi thêm Options. Item và chỉ số được kiểm tra lại bằng PHP khi lưu; không tự phát quà trong game.</p>
 </dialog>
 <script src="/assets/js/points-reward-picker.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/points-reward-picker.js') ?>" defer></script>
 <?php endif;?>
