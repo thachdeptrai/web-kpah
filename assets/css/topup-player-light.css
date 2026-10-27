@@ -503,3 +503,40 @@ body.tp-page:not(.tp-admin) .tp-bank-history-table td :is(a,small){
  .point-picker-param{align-items:stretch}
  .point-picker-param label,.point-picker-param label input{width:100%}
 }
+
+
+/* Four K membership crests, transparent WebP on light fantasy surfaces. */
+.tp-page:not(.tp-admin) .point-member-current{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:12px 0}
+.tp-page:not(.tp-admin) .point-tier-featured{
+  display:block;flex:0 0 auto;width:clamp(76px,12vw,104px);height:clamp(76px,12vw,104px);
+  object-fit:contain;filter:drop-shadow(0 9px 12px rgba(60,74,130,.15));
+}
+.tp-page:not(.tp-admin) .point-member-current>div{flex:1;min-width:min(220px,100%)}
+.tp-page:not(.tp-admin) .point-member-current h2{font-size:clamp(17px,2.5vw,25px);line-height:1.4;overflow-wrap:anywhere}
+.tp-page:not(.tp-admin) .point-tier-gallery{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:17px 0 2px;
+}
+.tp-page:not(.tp-admin) .point-tier-chip{
+ display:flex;align-items:center;gap:9px;min-width:0;padding:8px;
+ border:1px solid #dbe6f7;border-radius:13px;background:#f9fbff;
+}
+.tp-page:not(.tp-admin) .point-tier-chip.is-active{
+ border-color:#8ba4e5;background:#eef4ff;box-shadow:0 6px 16px rgba(76,112,183,.12);
+}
+.tp-page:not(.tp-admin) .point-tier-chip img{
+ display:block;flex:0 0 auto;width:clamp(38px,5.2vw,60px);height:clamp(38px,5.2vw,60px);object-fit:contain;
+}
+.tp-page:not(.tp-admin) .point-tier-chip>div{display:grid;gap:3px;min-width:0}
+.tp-page:not(.tp-admin) .point-tier-chip strong{color:#344d79;font-size:12px;overflow-wrap:anywhere}
+.tp-page:not(.tp-admin) .point-tier-chip small{color:#7289aa;font-size:10px;line-height:1.5}
+@media(max-width:900px){
+ .tp-page:not(.tp-admin) .point-tier-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+}
+@media(max-width:430px){
+ .tp-page:not(.tp-admin) .point-member-current{gap:10px}
+ .tp-page:not(.tp-admin) .point-tier-gallery{gap:6px}
+ .tp-page:not(.tp-admin) .point-tier-chip{padding:6px;gap:5px;flex-direction:column;text-align:center}
+ .tp-page:not(.tp-admin) .point-tier-chip img{width:50px;height:50px}
+ .tp-page:not(.tp-admin) .point-tier-chip strong{font-size:11px}
+ .tp-page:not(.tp-admin) .point-tier-chip small{font-size:9px}
+}
