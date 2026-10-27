@@ -25,12 +25,12 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   if($action==='create_reward'){
    [$title,$description,$cost,$stock]=kp_admin_points_reward_input();
    $display=kp_point_reward_display_input($_POST);
-   if(!kp_point_reward_display_available($db))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi tạo mới.');
+   if(!kp_point_reward_display_available($db) && ($display['icon_id']!==null || $display['item_id']!==null || $display['option_lines']!==''))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi lưu icon/options.');
    $db->beginTransaction();
    try {
     $st=$db->prepare('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)');
     $st->execute([$title,$description,$cost,$stock,'manual']);
-    kp_point_reward_display_save($db,(int)$db->lastInsertId(),$display);
+    if(kp_point_reward_display_available($db))kp_point_reward_display_save($db,(int)$db->lastInsertId(),$display);
     $db->commit();
    }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
    $notice='Đã tạo quà mới.';
@@ -38,14 +38,14 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    $id=filter_var($_POST['reward_id']??null,FILTER_VALIDATE_INT);if($id===false||$id<1)throw new RuntimeException('Mã quà không hợp lệ.');
    [$title,$description,$cost,$stock]=kp_admin_points_reward_input();
    $display=kp_point_reward_display_input($_POST);
-   if(!kp_point_reward_display_available($db))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi chỉnh sửa.');
+   if(!kp_point_reward_display_available($db) && ($display['icon_id']!==null || $display['item_id']!==null || $display['option_lines']!==''))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi lưu icon/options.');
    $db->beginTransaction();
    try {
     $st=$db->prepare('UPDATE kp_points_rewards SET title=?,description=?,points_cost=?,stock=? WHERE id=?');
     $st->execute([$title,$description,$cost,$stock,$id]);
     $check=$db->prepare('SELECT id FROM kp_points_rewards WHERE id=?');$check->execute([$id]);
     if(!$check->fetchColumn())throw new RuntimeException('Không tìm thấy quà.');
-    kp_point_reward_display_save($db,(int)$id,$display);
+    if(kp_point_reward_display_available($db))kp_point_reward_display_save($db,(int)$id,$display);
     $db->commit();
    }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
    $notice='Đã cập nhật quà #'.$id.'.';
