@@ -80,7 +80,7 @@ POINT_RANK_JS=r"""JSON.stringify((()=>{
  const chips=[...document.querySelectorAll('.point-tier-chip')];
  const images=[...document.querySelectorAll('.point-tier-chip img,.point-tier-featured')];
  const failures=[];
- if(!gallery||chips.length!==4)failures.push('not all four member rank badges rendered');
+ if(!gallery||chips.length!==6||images.length!==7)failures.push('six member rank badges plus current rank required');
  for(const image of images){
   if(!image.complete||image.naturalWidth<64)failures.push('missing/invalid WebP badge: '+image.src);
   let r=image.getBoundingClientRect();
@@ -88,7 +88,9 @@ POINT_RANK_JS=r"""JSON.stringify((()=>{
  }
  if(document.documentElement.scrollWidth>w+3)failures.push('Point rank page horizontal overflow');
  const columns=gallery?getComputedStyle(gallery).gridTemplateColumns.split(' ').length:0;
- if(w<=430&&columns!==2)failures.push('phone membership badges should use two columns');
+ if(w<=650&&columns!==2)failures.push('phone membership badges should use two columns');
+ if(w>650&&w<=1190&&columns!==3)failures.push('tablet membership badges should use three columns');
+ if(w>1190&&columns!==6)failures.push('desktop membership badges should use six columns');
  return {w,images:images.length,columns,scrollWidth:document.documentElement.scrollWidth,failures};
 })())"""
 
