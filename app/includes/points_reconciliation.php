@@ -26,7 +26,7 @@ function kp_points_reconcile(PDO $db): array {
   ORDER BY b.id DESC LIMIT 100"
  ];
  foreach($statements as $type=>$sql) {
-  try {$report[$type]=$db->query($sql)->fetchAll(PDO::FETCH_ASSOC);}
+  try {$report[$type]=$db->query(kp_points_sql($sql))->fetchAll(PDO::FETCH_ASSOC);}
   catch(Throwable $e){
    $report['errors'][]=$type;
    if(function_exists('kp_log'))kp_log('Point reconciliation failed '.$type,$e);

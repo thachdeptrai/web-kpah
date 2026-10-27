@@ -8,7 +8,7 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 
 function kp_point_reward_display_available(PDO $db): bool {
     try {
-        $st=$db->query("SHOW TABLES LIKE 'kp_points_reward_display'");
+        $st=$db->query(kp_points_sql("SHOW TABLES LIKE 'kp_points_reward_display'"));
         return $st && $st->fetchColumn()!==false;
     } catch (Throwable $e) { return false; }
 }
@@ -39,9 +39,9 @@ function kp_point_reward_display_save(PDO $db, int $rewardId, array $display): v
     if ($rewardId<1) throw new RuntimeException('Mã quà không hợp lệ.');
     if (!kp_point_reward_display_available($db))
         throw new RuntimeException('Chưa chạy database/points_stage1_reward_display.sql.');
-    $st=$db->prepare('INSERT INTO kp_points_reward_display (reward_id,icon_id,item_id,option_lines)
+    $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_reward_display (reward_id,icon_id,item_id,option_lines)
          VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE icon_id=VALUES(icon_id),
-         item_id=VALUES(item_id),option_lines=VALUES(option_lines)');
+         item_id=VALUES(item_id),option_lines=VALUES(option_lines)'));
     $st->execute([$rewardId,$display['icon_id'],$display['item_id'],$display['option_lines']]);
 }
 
@@ -51,7 +51,7 @@ function kp_point_reward_display_all(PDO $db, array $rewards): array {
     $ids=array_values(array_unique(array_map('intval',array_column($rewards,'id'))));
     $ids=array_values(array_filter($ids,static fn($id)=>$id>0));
     if (!$ids) return [];
-    $st=$db->prepare('SELECT reward_id,icon_id,item_id,option_lines FROM kp_points_reward_display WHERE reward_id IN ('.implode(',',array_fill(0,count($ids),'?')).')');
+    $st=$db->prepare(kp_points_sql('SELECT reward_id,icon_id,item_id,option_lines FROM kp_points_reward_display WHERE reward_id IN ('.implode(',',array_fill(0,count($ids),'?')).')'));
     $st->execute($ids);
     $result=[];
     foreach($st->fetchAll(PDO::FETCH_ASSOC) as $row) $result[(int)$row['reward_id']]=$row;
