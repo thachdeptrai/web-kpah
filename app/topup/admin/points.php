@@ -8,7 +8,7 @@ require_once __DIR__.'/../../includes/points_reconciliation.php';
 require_once __DIR__.'/../../includes/points_reward_admin.php';
 require_once __DIR__.'/../_layout.php';
 
-$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$redemptions=[];$rewards=[];$ledger=[];$adminNotices=[];$ready=false;$rewardDisplays=[];$rewardVisualReady=false;$workflowEnabled=false;$redemptionTargets=[];$recipientEnabled=false;$pointAudit=[];$pointReconcile=[];$tierRequired=[];$tiersReady=false;$pointPickerCatalog=null;$pointPickerError='';$rewardUsed=[];
+$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$redemptions=[];$rewards=[];$ledger=[];$adminNotices=[];$ready=false;$rewardDisplays=[];$rewardVisualReady=false;$workflowEnabled=false;$redemptionTargets=[];$recipientEnabled=false;$pointAudit=[];$pointReconcile=[];$tierRequired=[];$tiersReady=false;$pointPickerCatalog=null;$pointPickerError='';$rewardUsed=[];$redemptionControlReady=false;$redemptionEnabled=true;
 
 function kp_admin_points_reward_input(): array {
     $title=trim((string)($_POST['title']??''));$description=trim((string)($_POST['description']??''));
@@ -81,6 +81,16 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    if($userId===false)throw new RuntimeException('Không tìm thấy tài khoản đang hoạt động.');
    $changed=kp_points_adjust((int)$userId,(int)$admin['id'],(int)$delta,(string)($_POST['reason']??''),(string)($_POST['token']??''));
    $notice=$changed?'Đã điều chỉnh Point và gửi thông báo cho người chơi.':'Thao tác này đã được xử lý trước đó.';
+  }elseif($action==='set_redemption_enabled'){
+   $enabledRaw=(string)($_POST['enabled']??'');
+   if(!in_array($enabledRaw,['0','1'],true))throw new RuntimeException('Trạng thái đổi Point không hợp lệ.');
+   $nextEnabled=$enabledRaw==='1';
+   $changed=kp_points_redemption_set_enabled($db,$nextEnabled,(int)$admin['id']);
+   if($changed && function_exists('kp_admin_log_event'))
+    kp_admin_log_event($nextEnabled?'points_exchange_enabled':'points_exchange_disabled',(int)$admin['id']);
+   $notice=$changed
+    ?($nextEnabled?'Đã mở lại chức năng đổi quà bằng Point.':'Đã tạm tắt đổi quà bằng Point. Người chơi sẽ thấy thông báo bảo trì.')
+    :'Trạng thái đổi quà bằng Point không thay đổi.';
   }elseif($action==='update_program'){
    $rate=filter_var($_POST['points_per_1000']??null,FILTER_VALIDATE_INT);if($rate===false||$rate<1||$rate>100)throw new RuntimeException('Tỷ lệ phải từ 1 đến 100 Point / 1.000đ.');
    $st=$db->prepare('UPDATE kp_points_program SET points_per_1000=? WHERE id=1');$st->execute([$rate]);$notice='Đã cập nhật tỷ lệ tích Point.';
@@ -97,6 +107,8 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
 
 try{
  $db=kp_db();$program=$db->query('SELECT activated_at,points_per_1000 FROM kp_points_program WHERE id=1')->fetch(PDO::FETCH_ASSOC);$ready=(bool)$program;
+ $redemptionControlReady=kp_points_redemption_control_ready($db);
+ $redemptionEnabled=kp_points_redemption_enabled($db);
  if($ready){
   $rewards=$db->query('SELECT id,title,description,points_cost,stock,is_active FROM kp_points_rewards ORDER BY id DESC LIMIT 70')->fetchAll(PDO::FETCH_ASSOC);
   $rewardVisualReady=kp_point_reward_display_available($db);
@@ -136,7 +148,35 @@ kp_topup_page_start('Quản lý Point','points',(string)$admin['username'],true)
 <section class="tp-hero"><span class="tp-kicker"><i></i> QUẢN TRỊ / POINT &amp; QUÀ</span><h1>Point, quà &amp; <em>đơn chờ duyệt.</em></h1><p class="tp-lead">Mọi cộng/trừ Point đều lưu vào sổ giao dịch. Quà được ẩn thay vì xoá để không làm mất lịch sử.</p></section>
 <?php if($error):?><div class="tp-alert bad" role="alert"><?=kp_e($error)?></div><div hidden data-ui-toast="error" data-ui-toast-title="Chưa lưu được" data-ui-toast-message="<?=kp_e($error)?>"></div><?php endif;?>
 <?php if(!$ready):?><div class="tp-alert warning">Chưa có bảng Point. Hãy chạy <code>database/loyalty_points.sql</code> và <code>database/user_center.sql</code>.</div><?php else: ?>
-<nav class="point-admin-jump" aria-label="Đi nhanh đến mục quản trị Point"><a href="#point-admin-control">Điều chỉnh Point</a><a href="#point-admin-rewards">Quản lý quà</a><a href="#point-admin-orders">Đơn chờ duyệt</a><a href="#point-admin-ledger">Lịch sử Point</a><a href="#point-admin-audit">Nhật ký chi tiết</a><a href="#point-admin-reconcile">Đối soát</a></nav>
+<nav class="point-admin-jump" aria-label="Đi nhanh đến mục quản trị Point"><a href="#point-admin-redemption-switch">Bật/Tắt đổi Point</a><a href="#point-admin-control">Điều chỉnh Point</a><a href="#point-admin-rewards">Quản lý quà</a><a href="#point-admin-orders">Đơn chờ duyệt</a><a href="#point-admin-ledger">Lịch sử Point</a><a href="#point-admin-audit">Nhật ký chi tiết</a><a href="#point-admin-reconcile">Đối soát</a></nav>
+<section class="tp-section point-admin-redemption-section" id="point-admin-redemption-switch">
+ <div class="tp-panel point-admin-redemption-panel">
+  <div class="point-admin-redemption-copy">
+   <span class="tp-eyebrow">CẤU HÌNH CỬA HÀNG POINT</span>
+   <h2>Bật / Tắt đổi quà bằng Point</h2>
+   <p class="tp-muted">Chỉ tạm dừng tạo yêu cầu đổi quà mới. Người chơi vẫn tích Point, xem số dư và lịch sử; các đơn chờ duyệt vẫn được xử lý.</p>
+   <span class="point-admin-redemption-state <?=$redemptionEnabled?'is-on':'is-off'?>" role="status">
+    <?=$redemptionEnabled?'Đang mở đổi quà':'Đang tạm bảo trì'?>
+   </span>
+  </div>
+  <div class="point-admin-redemption-control">
+   <?php if(!$redemptionControlReady):?>
+    <div class="tp-alert warning" role="alert">Chưa bật được công tắc. Cần chạy <code>database/points_stage7_redemption_control.sql</code> trong SQL trước khi sử dụng.</div>
+   <?php else:?>
+   <form method="post" class="point-admin-redemption-form">
+    <input type="hidden" name="csrf" value="<?=kp_e($csrf)?>">
+    <input type="hidden" name="action" value="set_redemption_enabled">
+    <button type="submit" name="enabled" value="<?=$redemptionEnabled?'0':'1'?>"
+      class="point-admin-redemption-button <?=$redemptionEnabled?'switch-off':'switch-on'?>"
+      aria-label="<?=$redemptionEnabled?'Tắt chức năng đổi quà Point':'Bật lại chức năng đổi quà Point'?>">
+      <span class="point-admin-redemption-indicator" aria-hidden="true"></span>
+      <?=$redemptionEnabled?'Tắt đổi quà Point':'Bật lại đổi quà Point'?>
+    </button>
+   </form>
+   <?php endif;?>
+  </div>
+ </div>
+</section>
 <section class="tp-section"><div class="tp-summary"><div><small>Đơn đang chờ</small><strong><?=$pending?></strong></div><div><small>Thông báo chưa đọc</small><strong><?=$unread?></strong></div><div><small>Quà đang mở</small><strong><?=count(array_filter($rewards,static fn($x)=>(int)$x['is_active']===1))?></strong></div></div></section>
 <?php if($pending>0):?><div class="tp-alert warning" role="status"><strong>Có <?=$pending?> đơn đổi quà đang đợi duyệt.</strong> Kiểm tra từng đơn trước khi xác nhận đã phát quà.</div><?php endif;?>
 

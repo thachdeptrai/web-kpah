@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/loyalty_points.php';
 require_once __DIR__.'/../includes/points_reward_display.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$userId=(int)$user['id'];$csrf=kp_csrf_token();
-$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];$pointAudit=[];$tierRequired=[];
+$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];$pointAudit=[];$tierRequired=[];$redemptionEnabled=true;
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try {
         if(!kp_csrf_check((string)($_POST['csrf']??'')))throw new RuntimeException('Phiên xác nhận hết hạn.');
@@ -27,6 +27,7 @@ try {
     $program=$db->query('SELECT activated_at FROM kp_points_program WHERE id=1')->fetch(PDO::FETCH_ASSOC);
     if(!$program)throw new RuntimeException('Chưa kích hoạt chương trình.');
     $ready=true;
+    $redemptionEnabled=kp_points_redemption_enabled($db);
     $targetEnabled=kp_points_target_enabled($db);
     if($targetEnabled)$redeemCharacters=kp_points_available_characters($db,$userId);
     // Repair post-payment Points in case the site went offline after successful delivery.
@@ -68,6 +69,13 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <?php if($notice):?><div class="tp-alert good" role="status"><?=kp_e($notice)?></div><?php endif;?>
 <?php if(!$ready):?><div class="tp-alert warning">Cửa hàng đổi quà đang chuẩn bị mở cửa. Bạn ghé lại sau nhé!</div>
 <?php else: ?>
+<?php if(!$redemptionEnabled):?>
+<div class="tp-alert warning point-redemption-paused" role="status">
+ <strong>Chức năng hiện đang cập nhật</strong>
+ <p>Đổi quà bằng Point đang tạm dừng. Bạn vẫn có thể tích Point, kiểm tra số dư, hạng thành viên và lịch sử đổi quà.</p>
+</div>
+<div hidden data-ui-toast="warning" data-ui-toast-title="Chức năng hiện đang cập nhật" data-ui-toast-message="Đổi quà Point đang tạm dừng. Vui lòng quay lại sau." data-ui-toast-duration="5000"></div>
+<?php endif;?>
 <section class="tp-section">
 <div class="tp-summary"><div><small>Point hiện có</small><strong><?=number_format($balance,0,',','.')?></strong></div><div><small>Đã tích lũy</small><strong><?=number_format((int)($wallet['total_earned']??0),0,',','.')?></strong></div><div><small>Đã sử dụng</small><strong><?=number_format((int)($wallet['total_spent']??0),0,',','.')?></strong></div></div>
 <div class="tp-panel point-member-panel">
@@ -107,7 +115,7 @@ $progress=max(0,min(100,(int)floor(($earned-$base)*100/max(1,$goal-$base))));
 <article class="tp-card point-reward-card"><?php $visual=$rewardDisplays[(int)$reward['id']]??[];$icon=kp_point_reward_icon($visual); ?><div class="point-reward-preview"><?php if($icon):?><img src="<?=kp_e($icon)?>" alt="" loading="lazy" width="72" height="72" decoding="async"><?php else:?><span class="point-reward-placeholder" aria-hidden="true">✦</span><?php endif;?><div><h3><?=kp_e($reward['title'])?></h3><?php if(isset($visual['item_id'])&&$visual['item_id']!==null):?><small>Mã vật phẩm #<?=(int)$visual['item_id']?></small><?php endif;?></div></div><p><?=kp_e($reward['description']??'')?></p><?php if($requiredTier>0):?><span class="point-tier-label">Yêu cầu hạng <?=kp_e($tiersList[$requiredTier]['name']??'Đồng')?></span><?php endif;?><?php $optLines=kp_point_reward_option_lines($visual);if($optLines):?><details class="point-reward-options"><summary>Xem <?=count($optLines)?> option / chỉ số</summary><ul><?php foreach($optLines as $opt):?><li><?=kp_e($opt)?></li><?php endforeach;?></ul></details><?php endif;?>
 <p><strong><?=number_format((int)$reward['points_cost'],0,',','.')?> Point</strong><?= $reward['stock']===null?'':' · Còn '.number_format((int)$reward['stock'],0,',','.') ?></p>
 <form method="post" class="tp-form point-redeem-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="redeem"><input type="hidden" name="reward_id" value="<?=(int)$reward['id']?>"><input type="hidden" name="token" value="<?=bin2hex(random_bytes(16))?>"><?php if($targetEnabled):?><label class="tp-field"><span>Nhân vật nhận quà</span><select class="tp-input" name="char_id" required><option value="">Chọn nhân vật thuộc tài khoản</option><?php foreach($redeemCharacters as $character):?><option value="<?=(int)$character['id']?>"><?=kp_e($character['charname'])?> (#<?=(int)$character['id']?>)</option><?php endforeach;?></select></label><?php endif;?>
-<button class="tp-button" type="submit" <?= (!$available||$balance<(int)$reward['points_cost']||($targetEnabled&&!$redeemCharacters)||$tierLocked)?'disabled':'' ?>><?=!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':($targetEnabled&&!$redeemCharacters?'Chưa có nhân vật':($tierLocked?'Chưa đủ hạng':'Đổi quà ↗')))?></button></form>
+<button class="tp-button" type="submit" <?= (!$redemptionEnabled||!$available||$balance<(int)$reward['points_cost']||($targetEnabled&&!$redeemCharacters)||$tierLocked)?'disabled':'' ?>><?=!$redemptionEnabled?'Đang cập nhật':(!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':($targetEnabled&&!$redeemCharacters?'Chưa có nhân vật':($tierLocked?'Chưa đủ hạng':'Đổi quà ↗'))))?></button></form>
 </article>
 <?php endforeach; ?></div><?php endif; ?></div>
 </section>

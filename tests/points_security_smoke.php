@@ -48,6 +48,9 @@ try {
  points_safe(strpos($admin,'$admin=kp_topup_admin()')!==false
     && strpos($admin,'kp_admin_csrf_valid(')!==false,
     'admin mutation requires role-bound session and CSRF');
+ points_safe(strpos($core,'kp_points_redemption_enabled($db,true)')!==false
+    && strpos($player,'!$redemptionEnabled')!==false,
+    'maintenance gate is verified on the server and shown on the player page');
  points_safe(strpos($core,'kp_points_validate_character')!==false
     && strpos($core,'kp_points_reward_min_tier')!==false,
     'character ownership and rank verified on backend');

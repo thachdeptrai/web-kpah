@@ -454,3 +454,17 @@ body.tp-page:not(.tp-admin) .tp-bank-history-table td :is(a,small){
 .tp-page:not(.tp-admin) .point-reward-options ul{margin:8px 0 0;padding-left:17px;color:#425879;font-size:11px;line-height:1.8}
 .tp-page:not(.tp-admin) .point-reward-card .point-redeem-form{margin-top:auto}
 @media(max-width:540px){.tp-page:not(.tp-admin) .point-reward-preview img,.tp-page:not(.tp-admin) .point-reward-placeholder{width:56px;height:56px}}
+
+/* Global maintenance status for new Point redemptions; histories remain readable. */
+.tp-page:not(.tp-admin) .point-redemption-paused{
+ display:block;padding:17px 19px;margin:15px 0;border:1px solid #e9c78d;
+ border-left:5px solid #d99b38;border-radius:14px;background:#fff8eb;
+ box-shadow:0 7px 20px rgba(167,122,45,.08);color:#78531f
+}
+.tp-page:not(.tp-admin) .point-redemption-paused strong{
+ display:block;font-size:clamp(15px,2vw,18px);font-weight:850;color:#895514
+}
+.tp-page:not(.tp-admin) .point-redemption-paused p{
+ margin:7px 0 0;font-size:12px;line-height:1.8;color:#866233
+}
+.tp-page:not(.tp-admin) .point-redeem-form .tp-button:disabled{cursor:not-allowed;opacity:.64}

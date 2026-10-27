@@ -9,6 +9,12 @@ $css=ar_src('assets/css/admin-points-responsive.css');
 $picker=ar_src('assets/css/point-reward-picker.css');
 foreach(['point-admin-jump','point-admin-orders-table','data-label="Thao tác"','point-admin-scroll','point-admin-reconcile','point-admin-orders','name="csrf"','name="redemption_id"'] as $str) ar_ok(strpos($page,$str)!==false,'markup '.$str);
 ar_ok(strpos($page,'kp_admin_csrf_valid(')!==false && strpos($page,'$admin=kp_topup_admin()')!==false,'server permissions preserved');
+ar_ok(strpos($page,'set_redemption_enabled')!==false
+ && strpos($page,'kp_points_redemption_set_enabled($db,$nextEnabled,(int)$admin[\'id\'])')!==false,
+ 'admin Point exchange toggle is server-controlled');
+ar_ok(strpos($page,'point-admin-redemption-switch')!==false
+ && strpos($page,'$redemptionControlReady')!==false
+ && strpos($css,'.point-admin-redemption-button')!==false,'maintenance toggle responsive UI');
 ar_ok(strpos($page,'delete_reward')!==false && strpos($page,'name="confirm_delete" value="DELETE"')!==false,'explicit POST delete confirmation');
 ar_ok(strpos($page,'kp_points_admin_delete_reward($db,$id)')!==false,'delete server helper integrated');
 ar_ok(strpos($page,'point-reward-delete-locked')!==false,'historical gifts cannot be deleted through UI');
