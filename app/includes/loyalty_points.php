@@ -220,9 +220,15 @@ function kp_points_adjust(int $userId, int $adminId, int $delta, string $reason,
         if($st->rowCount()!==1)throw new RuntimeException('Không cập nhật được ví Point.');
         kp_points_audit_append($db,$userId,$adminId,null,'admin_adjust',$requestToken,$delta,(int)$balance,(int)$balance+$delta);
         $db->commit();
-        kp_center_notify($userId,$delta>0?'Point đã được cộng':'Point đã được điều chỉnh',
-            'Quản trị viên đã '.($delta>0?'cộng ':'trừ ').number_format(abs($delta),0,',','.').' Point. Lý do: '.$reason,
-            'payment','/diem-tich-luy');
+        // Notification is best effort after a committed ledger entry.
+        // Do not report a failed Point mutation and invite a second adjustment.
+        try {
+            kp_center_notify($userId,$delta>0?'Point đã được cộng':'Point đã được điều chỉnh',
+                'Quản trị viên đã '.($delta>0?'cộng ':'trừ ').number_format(abs($delta),0,',','.').' Point. Lý do: '.$reason,
+                'payment','/diem-tich-luy');
+        } catch(Throwable $notifyError) {
+            if(function_exists('kp_log'))kp_log('Point admin adjustment notification failed after commit',$notifyError);
+        }
         return true;
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }
