@@ -82,3 +82,26 @@
  .tp-page .tp-content{padding-inline:10px}
  .tp-page .tp-panel{padding:13px}
 }
+
+/* Loyalty Point upgrades 1–6: scoped accessibility and mobile-safe tables. */
+.tp-page .point-audit-scroll{display:block;width:100%;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.tp-page .point-audit-table{display:table;table-layout:auto;width:max-content;min-width:1120px;max-width:none;border-collapse:collapse}
+.tp-page .point-audit-table :is(th,td){white-space:nowrap;overflow-wrap:normal;word-break:normal;min-width:105px;padding:11px 14px;vertical-align:middle;font-size:12px}
+.tp-page .point-audit-scroll:focus-visible{outline:2px solid #7187cf;outline-offset:2px}
+.tp-page.tp-admin .point-reward-icon{display:flex;align-items:center;justify-content:center;padding:7px}
+.tp-page.tp-admin .point-reward-icon img{display:block;width:64px;height:64px;object-fit:contain;background:#f0f5fe;border:1px solid #dce8f4;border-radius:11px}
+.tp-page .point-reconcile-group{margin-top:12px;padding:11px 13px;border:1px solid #dae6f4;border-radius:10px;background:rgba(242,246,255,.74)}
+.tp-page .point-reconcile-group>summary{cursor:pointer;color:#445f98;font-size:13px;font-weight:800}
+.tp-page .point-reconcile-group .tp-table-wrap{margin-top:12px}
+.tp-page .point-reconcile-summary{margin:13px 0}
+.tp-page:not(.tp-admin) .point-member-panel{margin:15px 0;padding:16px 19px;background:linear-gradient(120deg,#f8fbff,#f0f3ff);border:1px solid #dce6f8;border-radius:15px}
+.tp-page:not(.tp-admin) .point-member-panel h2{margin:4px 0 10px;color:#415d97;font-size:17px}
+.tp-page:not(.tp-admin) .point-tier-track{height:9px;max-width:550px;background:#dae5fa;border-radius:99px;overflow:hidden}
+.tp-page:not(.tp-admin) .point-tier-track>span{display:block;height:100%;background:linear-gradient(90deg,#6587de,#8567d4);border-radius:99px}
+.tp-page:not(.tp-admin) .point-tier-label{display:inline-flex;align-items:center;align-self:flex-start;margin:0 0 5px;padding:5px 8px;border:1px solid #d3dafa;border-radius:99px;background:#f0f3ff;color:#545cab;font-size:10px;font-weight:800}
+@media(max-width:680px){
+ .tp-page .point-audit-scroll{border-radius:10px}
+ .tp-page .point-audit-table{min-width:1120px}
+ .tp-page .point-audit-table :is(th,td){font-size:11px;padding:10px 12px}
+ .tp-page:not(.tp-admin) .point-member-panel{padding:12px 14px}
+}
