@@ -53,7 +53,12 @@ pp_assert(strpos($page,'JSON_HEX_TAG|JSON_HEX_AMP')!==false,
 pp_assert(strpos($page,'kp_admin_csrf_valid')!==false,
     'admin CSRF remains required');
 $tiers=kp_points_tiers();
-pp_assert(count($tiers)===4,'rank count unchanged');
+pp_assert(count($tiers)===6,'six membership ranks configured');
+pp_assert(array_column($tiers,'threshold')===[0,501,2001,5001,10001,20001],
+    'rank thresholds agree with six-level design');
+foreach([[0,0],[500,0],[501,1],[2000,1],[2001,2],[5000,2],[5001,3],[10000,3],[10001,4],[20000,4],[20001,5]] as [$earned,$id]){
+ pp_assert(kp_points_member_tier($earned)['id']===$id,'member rank boundary '.$earned);
+}
 foreach($tiers as $tier){
  pp_assert(strpos($tier['image'],'/assets/img/point-tier-')===0,'tier has local image');
  $path=KP_ROOT.$tier['image'];
@@ -62,4 +67,4 @@ foreach($tiers as $tier){
  pp_assert(substr($magic,0,4)==='RIFF' && substr($magic,8,4)==='WEBP',
     'tier badge must be an actual WEBP binary');
 }
-echo "PASS: Point editor icon/option validation, JS injection safety and 4 WEBP ranks\n";
+echo "PASS: Point editor icon/option validation, JS injection safety and 6 WEBP ranks\n";

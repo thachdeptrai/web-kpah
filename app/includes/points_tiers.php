@@ -4,9 +4,11 @@ if(!defined('KP_ROOT')){http_response_code(403);exit;}
 function kp_points_tiers(): array {
  return [
   ['id'=>0,'name'=>'Đồng','threshold'=>0,'image'=>'/assets/img/point-tier-dong.webp'],
-  ['id'=>1,'name'=>'Bạc','threshold'=>1000,'image'=>'/assets/img/point-tier-bac.webp'],
-  ['id'=>2,'name'=>'Vàng','threshold'=>5000,'image'=>'/assets/img/point-tier-vang.webp'],
-  ['id'=>3,'name'=>'Kim Cương','threshold'=>15000,'image'=>'/assets/img/point-tier-kim-cuong.webp'],
+  ['id'=>1,'name'=>'Bạc','threshold'=>501,'image'=>'/assets/img/point-tier-bac.webp'],
+  ['id'=>2,'name'=>'Vàng','threshold'=>2001,'image'=>'/assets/img/point-tier-vang.webp'],
+  ['id'=>3,'name'=>'Kim Cương','threshold'=>5001,'image'=>'/assets/img/point-tier-kim-cuong.webp'],
+  ['id'=>4,'name'=>'Cao Cấp','threshold'=>10001,'image'=>'/assets/img/point-tier-cao-cap.webp'],
+  ['id'=>5,'name'=>'Huyền Thoại','threshold'=>20001,'image'=>'/assets/img/point-tier-huyen-thoai.webp'],
  ];
 }
 function kp_points_member_tier(int $earned): array {
@@ -39,10 +41,10 @@ function kp_points_reward_min_tier(PDO $db,int $rewardId): int {
  if(!kp_points_tier_enabled($db))return 0;
  $st=$db->prepare('SELECT min_tier FROM kp_points_reward_tiers WHERE reward_id=?');
  $st->execute([$rewardId]);$id=$st->fetchColumn();
- return $id===false?0:max(0,min(3,(int)$id));
+ return $id===false?0:max(0,min(5,(int)$id));
 }
 function kp_points_reward_set_tier(PDO $db,int $rewardId,int $tier): void {
- if($tier<0||$tier>3||$rewardId<1)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
+ if($tier<0||$tier>5||$rewardId<1)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
  if(!kp_points_tier_enabled($db)){
   if($tier===0)return;
   throw new RuntimeException('Chưa chạy database/points_stage6_tiers.sql.');

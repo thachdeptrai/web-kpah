@@ -29,7 +29,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    $pointCatalog=trim((string)($_POST['point_picker_options']??''))!==''?kp_points_picker_catalog($db):null;
    $display=kp_points_picker_display_input($_POST,$pointCatalog);
    $tier=filter_var($_POST['min_tier']??0,FILTER_VALIDATE_INT);
-   if($tier===false||$tier<0||$tier>3)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
+   if($tier===false||$tier<0||$tier>5)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
    if(!kp_point_reward_display_available($db) && ($display['icon_id']!==null || $display['item_id']!==null || $display['option_lines']!==''))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi lưu icon/options.');
    $db->beginTransaction();
    try {
@@ -47,7 +47,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    $pointCatalog=trim((string)($_POST['point_picker_options']??''))!==''?kp_points_picker_catalog($db):null;
    $display=kp_points_picker_display_input($_POST,$pointCatalog);
    $tier=filter_var($_POST['min_tier']??0,FILTER_VALIDATE_INT);
-   if($tier===false||$tier<0||$tier>3)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
+   if($tier===false||$tier<0||$tier>5)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
    if(!kp_point_reward_display_available($db) && ($display['icon_id']!==null || $display['item_id']!==null || $display['option_lines']!==''))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi lưu icon/options.');
    $db->beginTransaction();
    try {
