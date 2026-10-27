@@ -29,6 +29,14 @@ thiếu sổ Point. Chỉ đọc, mỗi nhóm tối đa 100 bản ghi, không au
 tính theo total_earned. Admin đặt hạng tối thiểu cho quà; PHP kiểm tra
 hạng trước khi trừ Point, kể cả khi nút HTML bị sửa.
 
+## Bộ chọn trực quan icon / item / options và huy hiệu K
+
+- Admin tại **/quan-tri/diem-tich-luy** có nút **Chọn vật phẩm / icon / options** cho cả tạo mới và chỉnh sửa. Hộp chọn dùng toàn bộ danh mục `data_item` và `data_attribute`, tìm theo tên không dấu hoặc `#ID`, tải từng trang 64 mục để mượt trên điện thoại. Có nút **Chọn icon** hoặc **Chọn item** (kèm icon), và thêm option có `param` theo khoảng min/max của server.
+- PHP kiểm tra lại mọi ID, param, option trùng và độ dài; dựng lại mô tả dựa trên catalog thật. Quà cũ dùng mô tả text vẫn tương thích khi catalog không khả dụng. **Metadata chỉ để xem và Admin phát quà thủ công**, không tự gọi Java trao vật phẩm.
+- Bốn hạng và ngưỡng giữ nguyên: Đồng (0), Bạc (1.000), Vàng (5.000), Kim Cương (15.000). Huy hiệu chữ K dạng transparent WebP 128x128: `assets/img/point-tier-{dong,bac,vang,kim-cuong}.webp`, có breakpoint desktop/tablet/mobile.
+- Ảnh build và kiểm tra bởi `tools/generate_point_rank_badges.py` cùng `.github/workflows/point-badges.yml`. VPS không cần cài Pillow.
+- Tests: `php tests/points_picker_smoke.php`, `node tests/points_picker_ui.test.js` chạy cả source + bản minify, và test tích hợp `tests/points_workflow_integration.php`.
+
 ## Kiểm tra bắt buộc
 
 - PHP lint, CI Routes and account regression và tests/points_workflow_integration.php
