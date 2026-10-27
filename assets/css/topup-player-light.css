@@ -540,3 +540,20 @@ body.tp-page:not(.tp-admin) .tp-bank-history-table td :is(a,small){
  .tp-page:not(.tp-admin) .point-tier-chip strong{font-size:11px}
  .tp-page:not(.tp-admin) .point-tier-chip small{font-size:9px}
 }
+
+
+.tp-page.tp-admin .point-tier-admin-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:13px 0 22px}
+.tp-page.tp-admin .point-tier-admin-chip{display:flex;align-items:center;gap:9px;min-width:0;padding:7px;border:1px solid #dce6f5;border-radius:12px;background:#f8fbff}
+.tp-page.tp-admin .point-tier-admin-chip img{display:block;flex:0 0 56px;width:56px;height:56px;object-fit:contain}
+.tp-page.tp-admin .point-tier-admin-chip span{display:grid;min-width:0;gap:4px;color:#41577f;font-size:12px;font-weight:800}
+.tp-page.tp-admin .point-tier-admin-chip small{color:#7086a7;font-size:10px;font-weight:500}
+@media(max-width:850px){
+ .tp-page.tp-admin .point-tier-admin-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:420px){
+ .tp-page.tp-admin .point-tier-admin-strip{gap:6px}
+ .tp-page.tp-admin .point-tier-admin-chip{flex-direction:column;text-align:center;padding:6px 2px}
+ .tp-page.tp-admin .point-tier-admin-chip img{flex-basis:auto;width:48px;height:48px}
+ .tp-page.tp-admin .point-tier-admin-chip span{font-size:11px}
+ .tp-page.tp-admin .point-tier-admin-chip small{font-size:9px}
+}
