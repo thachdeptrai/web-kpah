@@ -3,9 +3,10 @@ require __DIR__.'/../../includes/bootstrap.php';
 require_once __DIR__.'/../../includes/topup_core.php';
 require_once __DIR__.'/../../includes/loyalty_points.php';
 require_once __DIR__.'/../../includes/points_reward_display.php';
+require_once __DIR__.'/../../includes/points_reconciliation.php';
 require_once __DIR__.'/../_layout.php';
 
-$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$redemptions=[];$rewards=[];$ledger=[];$adminNotices=[];$ready=false;$rewardDisplays=[];$rewardVisualReady=false;$workflowEnabled=false;$redemptionTargets=[];$recipientEnabled=false;$pointAudit=[];
+$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$redemptions=[];$rewards=[];$ledger=[];$adminNotices=[];$ready=false;$rewardDisplays=[];$rewardVisualReady=false;$workflowEnabled=false;$redemptionTargets=[];$recipientEnabled=false;$pointAudit=[];$pointReconcile=[];
 
 function kp_admin_points_reward_input(): array {
     $title=trim((string)($_POST['title']??''));$description=trim((string)($_POST['description']??''));
@@ -87,6 +88,7 @@ try{
   $recipientEnabled=kp_points_target_enabled($db);
   $redemptionTargets=kp_points_targets($db,$redemptions);
   $pointAudit=kp_points_audit_list($db,null,80);
+  $pointReconcile=kp_points_reconcile($db);
   $ledger=$db->query('SELECT l.id,l.user_id,l.points_delta,l.source_type,l.note,l.created_at,u.username FROM kp_points_ledger l LEFT JOIN team_user u ON u.id=l.user_id ORDER BY l.id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
   try{$adminNotices=kp_admin_notifications($db,12);}catch(Throwable $e){kp_log('admin points notifications unavailable',$e);}
  }
@@ -133,5 +135,19 @@ kp_topup_page_start('Quản lý Point','points',(string)$admin['username'],true)
 <td><?=kp_e($a['device_type'].' · '.$a['browser'])?></td>
 <td><?=kp_e($a['location_hint']!==''?$a['location_hint'].' (ước lượng)':'Không xác định')?></td>
 </tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
+<section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">KIỂM TRA CHÉO · CHỈ ĐỌC</span><h2>Đối soát Point</h2>
+<p class="tp-muted">Ba nhóm cần kiểm tra thủ công, mỗi nhóm tối đa 100 kết quả. Trang này không sửa số dư, không gọi webhook và không phát lại quà.</p>
+<div class="tp-summary point-reconcile-summary">
+<div><small>Ví khác sổ bút toán</small><strong><?=count($pointReconcile['wallet_mismatch']??[])?></strong></div>
+<div><small>Đơn quá 24 giờ chưa xong</small><strong><?=count($pointReconcile['overdue_orders']??[])?></strong></div>
+<div><small>Bank chưa thấy bút toán Point</small><strong><?=count($pointReconcile['missing_payos_ledger']??[])?></strong></div></div>
+<?php if(!empty($pointReconcile['errors'])):?><p class="tp-alert warning">Không đọc được đầy đủ: <?=kp_e(implode(', ',$pointReconcile['errors']))?>. Không tự đối soát hoặc cấp lại.</p><?php endif;?>
+<?php foreach(['wallet_mismatch'=>'Chênh lệch số dư ví / ledger','overdue_orders'=>'Yêu cầu đổi quà còn tồn quá 24 giờ','missing_payos_ledger'=>'Đơn nạp có thể thiếu Point — cần kiểm tra trạng thái ví'] as $key=>$caption):?>
+<details class="point-reconcile-group"><summary><?=kp_e($caption)?> (<?=count($pointReconcile[$key]??[])?>)</summary>
+<?php if(empty($pointReconcile[$key])):?><p class="tp-muted">Chưa phát hiện trong phạm vi dữ liệu được kiểm tra.</p><?php else:?>
+<div class="tp-table-wrap point-audit-scroll" tabindex="0" role="region" aria-label="<?=kp_e($caption)?>"><table class="tp-table point-audit-table"><thead><tr>
+<?php foreach(array_keys($pointReconcile[$key][0]) as $col):?><th><?=kp_e($col)?></th><?php endforeach;?></tr></thead><tbody>
+<?php foreach($pointReconcile[$key] as $entry):?><tr><?php foreach($entry as $value):?><td><?=kp_e((string)$value)?></td><?php endforeach;?></tr><?php endforeach;?>
+</tbody></table></div><?php endif;?></details><?php endforeach;?></div></section>
 <?php endif;?>
 <?php kp_topup_page_end(); ?>
