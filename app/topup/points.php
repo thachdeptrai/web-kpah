@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/loyalty_points.php';
 require_once __DIR__.'/../includes/points_reward_display.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$userId=(int)$user['id'];$csrf=kp_csrf_token();
-$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];$pointAudit=[];
+$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];$pointAudit=[];$tierRequired=[];
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try {
         if(!kp_csrf_check((string)($_POST['csrf']??'')))throw new RuntimeException('Phiên xác nhận hết hạn.');
@@ -47,6 +47,7 @@ try {
     $st->execute([$userId]);$ledger=$st->fetchAll(PDO::FETCH_ASSOC);
     $rewards=$db->query('SELECT id,title,description,points_cost,stock FROM kp_points_rewards WHERE is_active=1 ORDER BY points_cost ASC,id ASC LIMIT 80')->fetchAll(PDO::FETCH_ASSOC);
     $rewardDisplays=kp_point_reward_display_all($db,$rewards);
+    $tierRequired=kp_points_reward_required_tiers($db,$rewards);
     $st=$db->prepare('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
     $st->execute([$userId]);$redemptions=$st->fetchAll(PDO::FETCH_ASSOC);
     $redemptionTargets=kp_points_targets($db,$redemptions);
@@ -56,6 +57,10 @@ try {
     $ready=false;
 }
 $balance=(int)($wallet['balance']??0);
+$earned=(int)($wallet['total_earned']??0);
+$memberTier=kp_points_member_tier($earned);
+$nextTier=kp_points_next_tier($earned);
+$tiersList=kp_points_tiers();
 kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 ?>
 <section class="tp-hero"><span class="tp-kicker"><i></i> CHƯƠNG TRÌNH THÀNH VIÊN</span><h1>Point tích lũy <em>đổi quà.</em></h1><p class="tp-lead">Cứ nạp 10.000đ, bạn nhận 10 Point để dành đổi quà. Point dùng chung cho tất cả nhân vật trong tài khoản.</p></section>
@@ -65,14 +70,26 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <?php else: ?>
 <section class="tp-section">
 <div class="tp-summary"><div><small>Point hiện có</small><strong><?=number_format($balance,0,',','.')?></strong></div><div><small>Đã tích lũy</small><strong><?=number_format((int)($wallet['total_earned']??0),0,',','.')?></strong></div><div><small>Đã sử dụng</small><strong><?=number_format((int)($wallet['total_spent']??0),0,',','.')?></strong></div></div>
+<div class="tp-panel point-member-panel">
+<span class="tp-eyebrow">HẠNG THÀNH VIÊN</span>
+<h2><?=kp_e($memberTier['name'])?> · <?=number_format($earned,0,',','.')?> Point đã tích lũy</h2>
+<?php if($nextTier):
+$base=$memberTier['threshold'];$goal=$nextTier['threshold'];
+$progress=max(0,min(100,(int)floor(($earned-$base)*100/max(1,$goal-$base))));
+?>
+<p class="tp-muted">Còn <?=number_format($goal-$earned,0,',','.')?> Point để đạt hạng <?=kp_e($nextTier['name'])?>.</p>
+<div class="point-tier-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?=$progress?>" aria-label="Tiến độ lên hạng"><span style="width:<?=$progress?>%"></span></div>
+<?php else:?><p class="tp-muted">Bạn đã đạt hạng cao nhất. Quà đặc biệt tùy theo hạng sẽ hiển thị tại cửa hàng.</p><?php endif;?>
+</div>
+
 <div class="tp-panel tp-mt-17"><span class="tp-eyebrow">CỬA HÀNG POINT</span><h2>Chọn phần quà yêu thích</h2>
 <?php if(!$rewards):?><p class="tp-muted">Quà mới đang được chuẩn bị. Hãy quay lại xem có gì thú vị nhé!</p><?php else: ?>
 <div class="tp-grid">
-<?php foreach($rewards as $reward):$available=($reward['stock']===null||(int)$reward['stock']>0); ?>
-<article class="tp-card point-reward-card"><?php $visual=$rewardDisplays[(int)$reward['id']]??[];$icon=kp_point_reward_icon($visual); ?><div class="point-reward-preview"><?php if($icon):?><img src="<?=kp_e($icon)?>" alt="" loading="lazy" width="72" height="72" decoding="async"><?php else:?><span class="point-reward-placeholder" aria-hidden="true">✦</span><?php endif;?><div><h3><?=kp_e($reward['title'])?></h3><?php if(isset($visual['item_id'])&&$visual['item_id']!==null):?><small>Mã vật phẩm #<?=(int)$visual['item_id']?></small><?php endif;?></div></div><p><?=kp_e($reward['description']??'')?></p><?php $optLines=kp_point_reward_option_lines($visual);if($optLines):?><details class="point-reward-options"><summary>Xem <?=count($optLines)?> option / chỉ số</summary><ul><?php foreach($optLines as $opt):?><li><?=kp_e($opt)?></li><?php endforeach;?></ul></details><?php endif;?>
+<?php foreach($rewards as $reward):$available=($reward['stock']===null||(int)$reward['stock']>0);$requiredTier=(int)($tierRequired[(int)$reward['id']]??0);$tierLocked=(int)$memberTier['id']<$requiredTier; ?>
+<article class="tp-card point-reward-card"><?php $visual=$rewardDisplays[(int)$reward['id']]??[];$icon=kp_point_reward_icon($visual); ?><div class="point-reward-preview"><?php if($icon):?><img src="<?=kp_e($icon)?>" alt="" loading="lazy" width="72" height="72" decoding="async"><?php else:?><span class="point-reward-placeholder" aria-hidden="true">✦</span><?php endif;?><div><h3><?=kp_e($reward['title'])?></h3><?php if(isset($visual['item_id'])&&$visual['item_id']!==null):?><small>Mã vật phẩm #<?=(int)$visual['item_id']?></small><?php endif;?></div></div><p><?=kp_e($reward['description']??'')?></p><?php if($requiredTier>0):?><span class="point-tier-label">Yêu cầu hạng <?=kp_e($tiersList[$requiredTier]['name']??'Đồng')?></span><?php endif;?><?php $optLines=kp_point_reward_option_lines($visual);if($optLines):?><details class="point-reward-options"><summary>Xem <?=count($optLines)?> option / chỉ số</summary><ul><?php foreach($optLines as $opt):?><li><?=kp_e($opt)?></li><?php endforeach;?></ul></details><?php endif;?>
 <p><strong><?=number_format((int)$reward['points_cost'],0,',','.')?> Point</strong><?= $reward['stock']===null?'':' · Còn '.number_format((int)$reward['stock'],0,',','.') ?></p>
 <form method="post" class="tp-form point-redeem-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="redeem"><input type="hidden" name="reward_id" value="<?=(int)$reward['id']?>"><input type="hidden" name="token" value="<?=bin2hex(random_bytes(16))?>"><?php if($targetEnabled):?><label class="tp-field"><span>Nhân vật nhận quà</span><select class="tp-input" name="char_id" required><option value="">Chọn nhân vật thuộc tài khoản</option><?php foreach($redeemCharacters as $character):?><option value="<?=(int)$character['id']?>"><?=kp_e($character['charname'])?> (#<?=(int)$character['id']?>)</option><?php endforeach;?></select></label><?php endif;?>
-<button class="tp-button" type="submit" <?= (!$available||$balance<(int)$reward['points_cost']||($targetEnabled&&!$redeemCharacters))?'disabled':'' ?>><?=!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':($targetEnabled&&!$redeemCharacters?'Chưa có nhân vật':'Đổi quà ↗'))?></button></form>
+<button class="tp-button" type="submit" <?= (!$available||$balance<(int)$reward['points_cost']||($targetEnabled&&!$redeemCharacters)||$tierLocked)?'disabled':'' ?>><?=!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':($targetEnabled&&!$redeemCharacters?'Chưa có nhân vật':($tierLocked?'Chưa đủ hạng':'Đổi quà ↗')))?></button></form>
 </article>
 <?php endforeach; ?></div><?php endif; ?></div>
 </section>
