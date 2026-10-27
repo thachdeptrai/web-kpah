@@ -26,6 +26,7 @@ PATHS={
     "farmer-claims":"/quan-tri/diem-nong-dan/nhan-qua",
     "farmer":"/quan-tri/diem-nong-dan",
     "payments":"/quan-tri/nap",
+    "points":"/quan-tri/diem-tich-luy",
     "orders":"/quan-tri/doi-soat",
     "key-users":"/quan-tri/tai-khoan-key",
 }
@@ -70,6 +71,30 @@ JS=r"""JSON.stringify((()=>{
    if(rect.left<-3||rect.right>w+3)fieldErrors.push(e.name||e.id||e.tagName);
  }
  add(fieldErrors.length>0,"form control clipped: "+fieldErrors.slice(0,4).join(","));
+ if(location.pathname==="/quan-tri/diem-tich-luy"){
+  add(!document.body.classList.contains("tp-admin-points"),"Point responsive page scope missing");
+  add(!q('link[href*="admin-points-responsive.css"]'),"Point responsive stylesheet not loaded");
+  const jump=q(".point-admin-jump"),form=q(".tp-reward-create"),tiers=q(".point-tier-admin-strip");
+  add(!jump,"Point quick navigation missing");
+  add(!form,"Point reward editor missing");
+  add(!tiers||tiers.children.length!==6,"six membership badges unavailable");
+  if(tiers){
+   for(const im of tiers.querySelectorAll("img"))
+    add(!im.complete||im.naturalWidth<1,"membership badge image did not load");
+  }
+  if(form){
+   const formGrid=getComputedStyle(form).gridTemplateColumns.split(" ").filter(Boolean).length;
+   add(w<=600&&formGrid!==1,"mobile reward form not single-column: "+formGrid);
+   const panel=box(form);
+   add(panel&&(panel.left<-2||panel.right>w+2),"reward creation form outside viewport");
+  }
+  const orderTable=q(".point-admin-orders-table");
+  if(orderTable&&w<=700){
+   add(getComputedStyle(orderTable.tBodies[0]).display!=="grid","mobile approval orders not card layout");
+   const orderBox=box(orderTable);
+   add(orderBox&&(orderBox.left<-2||orderBox.right>w+2),"mobile approval cards overflow");
+  }
+ }
  return {path:location.pathname,width:w,scrollWidth:bodyWidth,issues,menuOpen:openMenu};
 })())"""
 
