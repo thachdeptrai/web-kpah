@@ -438,3 +438,19 @@ body.tp-page:not(.tp-admin) .tp-bank-history-table td :is(a,small){
  .tp-page:not(.tp-admin) .tp-farmer-audit-detail{grid-template-columns:1fr}
  .tp-page:not(.tp-admin) .tp-farmer-audit-card-head>div:last-child{justify-items:start}
 }
+
+/* Point reward cards - compact, accessible, supports legacy text-only prizes */
+.tp-page:not(.tp-admin) .point-reward-card{min-width:0;display:flex;flex-direction:column;gap:10px}
+.tp-page:not(.tp-admin) .point-reward-preview{display:flex;align-items:center;gap:12px;min-width:0}
+.tp-page:not(.tp-admin) .point-reward-preview img,.tp-page:not(.tp-admin) .point-reward-placeholder{
+ width:72px;height:72px;flex:none;display:grid;place-items:center;object-fit:contain;background:#ecf4ff;border:1px solid #dce8f8;border-radius:13px;
+}
+.tp-page:not(.tp-admin) .point-reward-placeholder{font-size:28px;color:#8191d2}
+.tp-page:not(.tp-admin) .point-reward-preview div{min-width:0}
+.tp-page:not(.tp-admin) .point-reward-preview h3{margin:0;font-size:15px;overflow-wrap:anywhere}
+.tp-page:not(.tp-admin) .point-reward-preview small{font-size:10px;color:#7185a9}
+.tp-page:not(.tp-admin) .point-reward-options{border:1px solid #dde7f7;border-radius:9px;background:#f8fbff;padding:8px 11px}
+.tp-page:not(.tp-admin) .point-reward-options summary{cursor:pointer;color:#576db1;font-size:12px;font-weight:750}
+.tp-page:not(.tp-admin) .point-reward-options ul{margin:8px 0 0;padding-left:17px;color:#425879;font-size:11px;line-height:1.8}
+.tp-page:not(.tp-admin) .point-reward-card .point-redeem-form{margin-top:auto}
+@media(max-width:540px){.tp-page:not(.tp-admin) .point-reward-preview img,.tp-page:not(.tp-admin) .point-reward-placeholder{width:56px;height:56px}}
