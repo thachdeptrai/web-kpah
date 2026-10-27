@@ -32,3 +32,4 @@ jobs:
           node tests/downloads_upload_ui.test.js
           node tests/game_accounts_bulk_ui.test.js
           node tests/giftcode_picker_ui.test.js
+          node tests/points_js_reverse_audit.test.js
