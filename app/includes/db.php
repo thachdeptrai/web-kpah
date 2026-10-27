@@ -7,6 +7,8 @@ if (!defined('KP_ROOT')) {
     exit;
 }
 
+require_once __DIR__.'/points_storage.php';
+
 /** @return PDO */
 function kp_db()
 {

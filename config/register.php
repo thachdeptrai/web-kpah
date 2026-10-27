@@ -35,6 +35,9 @@ return [
         'charset' => 'utf8mb4',
     ],
 
+    // Same MySQL/MariaDB server as 'db'; leave empty until Point rows are migrated.
+    'points_db' => ['name' => ''],
+
     'security' => [
         // Mẫu tên tài khoản (PCRE). Mặc định: 4–20 ký tự gồm chữ thường, số, gạch dưới.
         'username_pattern'   => '/^[a-z0-9_]{4,20}$/',
