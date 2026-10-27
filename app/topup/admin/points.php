@@ -26,7 +26,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   $action=(string)($_POST['action']??'');$notice='';$db=kp_db();
   if($action==='create_reward'){
    [$title,$description,$cost,$stock]=kp_admin_points_reward_input();
-   $pointCatalog=kp_points_picker_catalog($db);
+   $pointCatalog=trim((string)($_POST['point_picker_options']??''))!==''?kp_points_picker_catalog($db):null;
    $display=kp_points_picker_display_input($_POST,$pointCatalog);
    $tier=filter_var($_POST['min_tier']??0,FILTER_VALIDATE_INT);
    if($tier===false||$tier<0||$tier>3)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
@@ -44,7 +44,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
   }elseif($action==='update_reward'){
    $id=filter_var($_POST['reward_id']??null,FILTER_VALIDATE_INT);if($id===false||$id<1)throw new RuntimeException('Mã quà không hợp lệ.');
    [$title,$description,$cost,$stock]=kp_admin_points_reward_input();
-   $pointCatalog=kp_points_picker_catalog($db);
+   $pointCatalog=trim((string)($_POST['point_picker_options']??''))!==''?kp_points_picker_catalog($db):null;
    $display=kp_points_picker_display_input($_POST,$pointCatalog);
    $tier=filter_var($_POST['min_tier']??0,FILTER_VALIDATE_INT);
    if($tier===false||$tier<0||$tier>3)throw new RuntimeException('Hạng đổi quà không hợp lệ.');
