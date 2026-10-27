@@ -43,6 +43,7 @@ jobs:
           node tests/game_accounts_bulk_ui.test.js
           node tests/giftcode_picker_ui.test.js
           node tests/points_js_reverse_audit.test.js
+          node tests/points_picker_ui.test.js
       - name: Publish minified files only after checks pass
         shell: bash
         run: |
