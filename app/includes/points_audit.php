@@ -30,7 +30,11 @@ function kp_points_audit_context(array $server): array {
 function kp_points_audit_append(PDO $db,int $userId,?int $adminId,?int $redemptionId,string $operation,string $reference,int $delta,?int $before,?int $after): void {
  if(!kp_points_audit_enabled($db))return;
  if($userId<=0||!preg_match('/\A[a-z_]{3,24}\z/D',$operation)||strlen($reference)>80)throw new RuntimeException('Point audit event invalid.');
- $ctx=kp_points_audit_context($_SERVER);
+ $ctx=$operation==='award'
+    ? ['ip'=>'','device'=>'Hệ thống','browser'=>'PayOS/Thẻ','location'=>'']
+    : kp_points_audit_context($_SERVER);
+ // Webhooks and reconciliation workers have their OWN IP/UA; never label
+ // provider-server metadata as if it belonged to the paying customer.
  $st=$db->prepare('INSERT INTO kp_points_audit (user_id,actor_admin_id,redemption_id,operation,reference,points_delta,balance_before,balance_after,ip,device_type,browser,location_hint) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
  $st->execute([$userId,$adminId,$redemptionId,$operation,$reference,$delta,$before,$after,$ctx['ip'],$ctx['device'],$ctx['browser'],$ctx['location']]);
 }
