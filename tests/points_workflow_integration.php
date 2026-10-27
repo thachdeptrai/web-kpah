@@ -7,7 +7,7 @@ require_once KP_ROOT.'/app/includes/points_reward_display.php';
 require_once KP_ROOT.'/app/includes/points_reconciliation.php';
 require_once KP_ROOT.'/app/includes/points_reward_admin.php';
 $db=kp_db();
-foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql',KP_ROOT.'/database/points_stage2_redemption_events.sql',KP_ROOT.'/database/points_stage3_redemption_targets.sql',KP_ROOT.'/database/points_stage4_audit.sql',KP_ROOT.'/database/points_stage6_tiers.sql'] as $file){
+foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql',KP_ROOT.'/database/points_stage2_redemption_events.sql',KP_ROOT.'/database/points_stage3_redemption_targets.sql',KP_ROOT.'/database/points_stage4_audit.sql',KP_ROOT.'/database/points_stage6_tiers.sql',KP_ROOT.'/database/points_stage7_redemption_control.sql'] as $file){
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
     foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement)if(trim($statement)!=='')$db->exec($statement);
 }
@@ -15,6 +15,24 @@ function point_ok($condition,$message){if(!$condition)throw new RuntimeException
 
 $db->exec('DELETE FROM kp_admin_notifications');$db->exec('DELETE FROM kp_user_notifications');$db->exec('DELETE FROM kp_points_ledger');
 $db->exec('DELETE FROM kp_points_redemption_events');$db->exec('DELETE FROM kp_points_redemption_targets');$db->exec('DELETE FROM kp_points_audit');$db->exec('DELETE FROM kp_points_reward_tiers');$db->exec('DELETE FROM kp_points_redemptions');$db->exec('DELETE FROM kp_points_rewards');$db->exec('DELETE FROM kp_points_wallet');
+point_ok(kp_points_redemption_control_ready($db),'stage 7 global switch table is installed');
+point_ok(kp_points_redemption_enabled($db),'stage 7 defaults to enabled');
+point_ok(kp_points_redemption_set_enabled($db,false,1),'admin can disable Point redemption');
+point_ok(!kp_points_redemption_enabled($db),'stage 7 off persists in SQL');
+point_ok(!kp_points_redemption_set_enabled($db,false,1),'stage 7 repeated disable is idempotent');
+$walletBefore=(int)$db->query('SELECT COUNT(*) FROM kp_points_wallet')->fetchColumn();
+$redemptionsBefore=(int)$db->query('SELECT COUNT(*) FROM kp_points_redemptions')->fetchColumn();
+$blockedMaintenance=false;
+try{kp_points_redeem(101,9999,'55555555555555555555555555555555',101);}
+catch(RuntimeException $e){$blockedMaintenance=$e->getMessage()==='Chức năng hiện đang cập nhật';}
+point_ok($blockedMaintenance,'new requests cannot bypass disabled switch through direct backend');
+point_ok((int)$db->query('SELECT COUNT(*) FROM kp_points_wallet')->fetchColumn()===$walletBefore
+ && (int)$db->query('SELECT COUNT(*) FROM kp_points_redemptions')->fetchColumn()===$redemptionsBefore,
+ 'maintenance-mode rejection does not create wallet or redemption rows');
+point_ok(kp_points_redemption_set_enabled($db,true,1),'admin can re-enable new redemptions');
+point_ok(kp_points_redemption_enabled($db),'stage 7 enabled state restores normal flow');
+$badAdmin=false;try{kp_points_redemption_set_enabled($db,false,0);}catch(InvalidArgumentException $e){$badAdmin=true;}
+point_ok($badAdmin,'invalid admin cannot switch redemption');
 $db->prepare('INSERT INTO kp_points_wallet (user_id,balance,total_earned,total_spent) VALUES (101,1000,1000,0)')->execute();
 $db->prepare('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)')
    ->execute(['Quà kiểm thử','Chỉ dùng trong CI',200,3,'manual']);
@@ -47,6 +65,17 @@ point_ok($auditRecord && (int)$auditRecord['user_id']===101 && (int)$auditRecord
 point_ok((int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn()===800,'pending redemption reserves Point once');
 point_ok((int)$db->query("SELECT COUNT(*) FROM kp_admin_notifications WHERE is_read=0")->fetchColumn()===1,'admin receives pending order notification');
 point_ok((int)$db->query("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND category='gift'")->fetchColumn()===1,'user receives pending order notification');
+point_ok(kp_points_redemption_set_enabled($db,false,1),'temporary disable during existing redemption');
+point_ok(kp_points_redeem(101,$reward,$token,101)===$redemption,
+ 'already-created request stays idempotent during maintenance');
+$balancePaused=(int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn();
+$blockedNew=false;
+try{kp_points_redeem(101,$reward,'66666666666666666666666666666666',101);}
+catch(RuntimeException $e){$blockedNew=$e->getMessage()==='Chức năng hiện đang cập nhật';}
+point_ok($blockedNew,'new redemption is rejected for an otherwise valid reward while disabled');
+point_ok((int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn()===$balancePaused,
+ 'disabled redemption never deducts Point');
+point_ok(kp_points_redemption_set_enabled($db,true,1),'reopening restores ability to redeem');
 point_ok(kp_points_redeem(101,$reward,$token,101)===$redemption,'redemption request token is idempotent');
 point_ok((int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn()===800,'redemption replay cannot deduct twice');
 

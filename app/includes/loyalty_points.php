@@ -5,6 +5,7 @@ require_once __DIR__.'/user_center.php';
 require_once __DIR__.'/points_recipient.php';
 require_once __DIR__.'/points_audit.php';
 require_once __DIR__.'/points_tiers.php';
+require_once __DIR__.'/points_redemption_control.php';
 
 /** Exactly one ledger row per verified payment, under an InnoDB transaction. */
 function kp_points_award(int $userId, string $source, string $reference, int $amountVnd, $orderCreatedAt): bool {
@@ -64,6 +65,10 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
             if((int)$previous['user_id']!==$userId)throw new RuntimeException('Yêu cầu đổi quà không hợp lệ.');
             $db->commit();return (int)$previous['id'];
         }
+        // Global maintenance mode: preserve replay of an already-created order,
+        // but block every NEW redemption before touching stock or balances.
+        if(!kp_points_redemption_enabled($db,true))
+            throw new RuntimeException('Chức năng hiện đang cập nhật');
         $target=null;
         if(kp_points_target_enabled($db))$target=kp_points_validate_character($db,$userId,$charId);
         $st=$db->prepare('SELECT id,title,points_cost,stock FROM kp_points_rewards WHERE id=? AND is_active=1 FOR UPDATE');
