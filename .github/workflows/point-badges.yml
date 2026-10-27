@@ -28,21 +28,21 @@ jobs:
           from PIL import Image
           from pathlib import Path
           targets=list(Path('assets/img').glob('point-tier-*.webp'))
-          assert len(targets)==4, targets
+          assert len(targets)==6, targets
           for p in targets:
               with Image.open(p) as im:
                   assert im.format=='WEBP'
                   assert im.mode=='RGBA'
-                  assert im.size==(128,128)
-              assert 500 < p.stat().st_size < 40000, p
-          print('PASS: 4 transparent WebP K badges for existing tier levels')
+                  assert im.size==(192,192)
+              assert 500 < p.stat().st_size < 70000, p
+          print('PASS: 6 transparent WebP K membership crests')
           PY
       - name: Commit assets directly to main
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/img/point-tier-dong.webp assets/img/point-tier-bac.webp assets/img/point-tier-vang.webp assets/img/point-tier-kim-cuong.webp
+          git add assets/img/point-tier-dong.webp assets/img/point-tier-bac.webp assets/img/point-tier-vang.webp assets/img/point-tier-kim-cuong.webp assets/img/point-tier-cao-cap.webp assets/img/point-tier-huyen-thoai.webp
           if git diff --cached --quiet; then echo 'Badges unchanged'; exit 0; fi
-          git commit -m 'assets(points): add 4 WEBP K membership tier badges'
+          git commit -m 'assets(points): generate six fantasy WEBP membership badges'
           git push origin HEAD:main
