@@ -79,8 +79,10 @@ JS=r"""JSON.stringify((()=>{
   add(!form,"Point reward editor missing");
   add(!tiers||tiers.children.length!==6,"six membership badges unavailable");
   if(tiers){
-   for(const im of tiers.querySelectorAll("img"))
-    add(!im.complete||im.naturalWidth<1,"membership badge image did not load");
+   for(const im of tiers.querySelectorAll("img")){
+    add(!im.getAttribute("src")?.endsWith(".webp"),"membership badge image is not WebP");
+    if(im.complete)add(im.naturalWidth<1,"completed membership badge image is invalid");
+   }
   }
   if(form){
    const formGrid=getComputedStyle(form).gridTemplateColumns.split(" ").filter(Boolean).length;
