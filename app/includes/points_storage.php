@@ -26,9 +26,9 @@ function kp_points_sql(string $sql, ?string $schemaOverride=null): string {
     if(preg_match('/^\s*SHOW\s+TABLES\s+LIKE\s+["\'](kp_points_'.$tables.')["\']\s*$/i',$sql,$m)) {
         return "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='".$schema."' AND TABLE_NAME='".$m[1]."' LIMIT 1";
     }
-    $pattern="/'(?:''|[^'])*'|\"(?:\"\"|[^\"])*\"|\\b(FROM|JOIN|UPDATE|INTO|TABLE)\\s+(kp_points_".$tables.")\\b/i";
+    $pattern="/'(?:''|[^'])*'|\"(?:\"\"|[^\"])*\"|\\b(FROM|JOIN|UPDATE|INTO|TABLE)\\s+(IF\\s+NOT\\s+EXISTS\\s+)?(kp_points_".$tables.")\\b/i";
     return preg_replace_callback($pattern,static function(array $m)use($schema): string {
-        if(!isset($m[2]))return $m[0]; // Quoted SQL string, not a table.
-        return $m[1].' '.chr(96).$schema.chr(96).'.'.chr(96).$m[2].chr(96);
+        if(!isset($m[3]))return $m[0]; // Quoted SQL string, not a table.
+        return $m[1].' '.($m[2]??'').chr(96).$schema.chr(96).'.'.chr(96).$m[3].chr(96);
     },$sql);
 }
