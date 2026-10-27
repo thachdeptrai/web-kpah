@@ -1,0 +1,48 @@
+name: Build K rank WebP badges
+on:
+  push:
+    paths:
+      - 'tools/generate_point_rank_badges.py'
+      - '.github/workflows/point-badges.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  create-badges:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow
+        run: python -m pip install --disable-pip-version-check Pillow==11.1.0
+      - name: Render K badges and verify real WebP
+        run: |
+          set -euo pipefail
+          python tools/generate_point_rank_badges.py
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          targets=list(Path('assets/img').glob('point-tier-*.webp'))
+          assert len(targets)==4, targets
+          for p in targets:
+              with Image.open(p) as im:
+                  assert im.format=='WEBP'
+                  assert im.mode=='RGBA'
+                  assert im.size==(128,128)
+              assert 500 < p.stat().st_size < 40000, p
+          print('PASS: 4 transparent WebP K badges for existing tier levels')
+          PY
+      - name: Commit assets directly to main
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/img/point-tier-dong.webp assets/img/point-tier-bac.webp assets/img/point-tier-vang.webp assets/img/point-tier-kim-cuong.webp
+          if git diff --cached --quiet; then echo 'Badges unchanged'; exit 0; fi
+          git commit -m 'assets(points): add 4 WEBP K membership tier badges'
+          git push origin HEAD:main
