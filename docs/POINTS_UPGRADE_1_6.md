@@ -62,3 +62,9 @@ Apache phải thực thi PHP và chặn truy cập source app/, storage/, config
 Không tấn công SQL injection hoặc replay webhook trên production.
 Mọi kiểm tra CI không thay thế QA game + provider giả lập/kiểm tra VPS thật.
 Lịch sử thiết bị/IP trước lúc thêm audit không thể khôi phục.
+
+## Stage 7 — Công tắc bảo trì đổi quà Point
+
+Trên cơ sở dữ liệu đã có Point, **backup trước**, chạy `database/points_stage7_redemption_control.sql`. Bảng `kp_points_redemption_control` có một dòng id=1, mặc định bật. Nếu chưa chạy SQL, phần Admin sẽ báo thiếu migration và chức năng đổi quà cũ tiếp tục hoạt động.
+
+Trong `/quan-tri/diem-tich-luy`, Admin sử dụng **Bật/Tắt đổi quà bằng Point**. Khi tắt, trang User `/diem-tich-luy` hiện banner/toast **“Chức năng hiện đang cập nhật”** và vô hiệu hóa nút đổi. Backend từ chối POST mới ngay trong transaction, trước khi trừ Point/stock; không thay đổi lịch sử, đơn đã tạo, số dư hay việc nhận Point từ nạp hợp lệ. Admin vẫn duyệt/từ chối/phát quà cũ. Bật lại cho phép nhận đơn mới. Test tích hợp ở `tests/points_workflow_integration.php` kiểm tra tắt/bật, chống trừ điểm và replay.

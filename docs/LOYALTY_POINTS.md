@@ -4,6 +4,25 @@
 
 **Back up first.** Open Navicat or mysql, select the same kpah database configured in PHP and execute **only** `database/loyalty_points.sql` once. This SQL creates `kp_points_program`, `kp_points_wallet`, `kp_points_ledger`, `kp_points_rewards`, `kp_points_redemptions`. It does not change game tables or bank orders. Re-running `CREATE TABLE IF NOT EXISTS` will not reset wallets.
 
+### Bật/tắt đổi quà Point (migration Stage 7)
+
+For databases that were **already installed**, back up `kpah` and run
+`database/points_stage7_redemption_control.sql` once in Navicat/MySQL.
+This adds **only** `kp_points_redemption_control` (id=1, is_enabled=1 by default).
+The initial `database/loyalty_points.sql` also includes it for brand-new installs,
+but existing installations should run the standalone Stage 7 migration.
+
+Then, at `/quan-tri/diem-tich-luy`, use **Bật/Tắt đổi quà bằng Point**.
+Turning it off shows **“Chức năng hiện đang cập nhật”** to players and
+disables every new reward redemption. The server enforces the same condition in
+`kp_points_redeem()`; a forged POST cannot deduct Points during maintenance.
+Wallet balances, Point earning from verified deposits, membership ranks,
+history, and processing/refunding **previously created orders** remain enabled.
+Existing request tokens remain idempotent; re-enabling restores new redemptions.
+
+Until Stage 7 is installed, the legacy behavior remains enabled and the Admin
+page displays the installation warning; it does not pretend that the switch was saved.
+
 There is **no automatic retrospective award**: `kp_points_program.activated_at` records when you run the migration. Older payment orders are ignored even if their statuses change later.
 
 ## Rules
