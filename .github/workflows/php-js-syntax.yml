@@ -24,6 +24,11 @@ jobs:
         run: |
           set -euo pipefail
           find . -type f -name '*.php' -not -path './vendor/*' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+      - name: Membership and responsive PHP smoke tests
+        run: |
+          php tests/membership_layout_smoke.php
+          php tests/points_picker_smoke.php
+          php tests/responsive_smoke.php
       - name: Node.js JavaScript syntax checks
         shell: bash
         run: |
