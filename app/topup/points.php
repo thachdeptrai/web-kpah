@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/loyalty_points.php';
 require_once __DIR__.'/../includes/points_reward_display.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$userId=(int)$user['id'];$csrf=kp_csrf_token();
-$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];
+$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try {
         if(!kp_csrf_check((string)($_POST['csrf']??'')))throw new RuntimeException('Phiên xác nhận hết hạn.');
@@ -14,7 +14,8 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
         if(!$allowed)throw new RuntimeException('Bạn thao tác quá nhanh, vui lòng thử lại sau.');
         $rewardId=filter_var($_POST['reward_id']??null,FILTER_VALIDATE_INT);
         if($rewardId===false||$rewardId<1)throw new RuntimeException('Quà tặng không hợp lệ.');
-        $rid=kp_points_redeem($userId,$rewardId,(string)($_POST['token']??''));
+        $chosen=filter_var($_POST['char_id']??0,FILTER_VALIDATE_INT);
+        $rid=kp_points_redeem($userId,$rewardId,(string)($_POST['token']??''),$chosen===false?0:(int)$chosen);
         $notice='Đã ghi nhận yêu cầu đổi quà #'.$rid.'. Quản trị viên sẽ xác nhận và phát quà.';
     }catch(Throwable $e){
         kp_log('player points redemption failed',$e);
@@ -26,6 +27,8 @@ try {
     $program=$db->query('SELECT activated_at FROM kp_points_program WHERE id=1')->fetch(PDO::FETCH_ASSOC);
     if(!$program)throw new RuntimeException('Chưa kích hoạt chương trình.');
     $ready=true;
+    $targetEnabled=kp_points_target_enabled($db);
+    if($targetEnabled)$redeemCharacters=kp_points_available_characters($db,$userId);
     // Repair post-payment Points in case the site went offline after successful delivery.
     $st=$db->prepare("SELECT order_code,amount,created_at FROM kp_bank_orders WHERE user_id=? AND status IN ('completed','wallet_credited') AND created_at>=? ORDER BY id DESC LIMIT 150");
     $st->execute([$userId,$program['activated_at']]);
@@ -46,6 +49,7 @@ try {
     $rewardDisplays=kp_point_reward_display_all($db,$rewards);
     $st=$db->prepare('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
     $st->execute([$userId]);$redemptions=$st->fetchAll(PDO::FETCH_ASSOC);
+    $redemptionTargets=kp_points_targets($db,$redemptions);
 }catch(Throwable $e){
     kp_log('player loyalty page failed',$e);
     $ready=false;
@@ -66,15 +70,15 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <?php foreach($rewards as $reward):$available=($reward['stock']===null||(int)$reward['stock']>0); ?>
 <article class="tp-card point-reward-card"><?php $visual=$rewardDisplays[(int)$reward['id']]??[];$icon=kp_point_reward_icon($visual); ?><div class="point-reward-preview"><?php if($icon):?><img src="<?=kp_e($icon)?>" alt="" loading="lazy" width="72" height="72" decoding="async"><?php else:?><span class="point-reward-placeholder" aria-hidden="true">✦</span><?php endif;?><div><h3><?=kp_e($reward['title'])?></h3><?php if(isset($visual['item_id'])&&$visual['item_id']!==null):?><small>Mã vật phẩm #<?=(int)$visual['item_id']?></small><?php endif;?></div></div><p><?=kp_e($reward['description']??'')?></p><?php $optLines=kp_point_reward_option_lines($visual);if($optLines):?><details class="point-reward-options"><summary>Xem <?=count($optLines)?> option / chỉ số</summary><ul><?php foreach($optLines as $opt):?><li><?=kp_e($opt)?></li><?php endforeach;?></ul></details><?php endif;?>
 <p><strong><?=number_format((int)$reward['points_cost'],0,',','.')?> Point</strong><?= $reward['stock']===null?'':' · Còn '.number_format((int)$reward['stock'],0,',','.') ?></p>
-<form method="post" class="tp-form point-redeem-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="redeem"><input type="hidden" name="reward_id" value="<?=(int)$reward['id']?>"><input type="hidden" name="token" value="<?=bin2hex(random_bytes(16))?>">
-<button class="tp-button" type="submit" <?= (!$available||$balance<(int)$reward['points_cost'])?'disabled':'' ?>><?=!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':'Đổi quà ↗')?></button></form>
+<form method="post" class="tp-form point-redeem-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="redeem"><input type="hidden" name="reward_id" value="<?=(int)$reward['id']?>"><input type="hidden" name="token" value="<?=bin2hex(random_bytes(16))?>"><?php if($targetEnabled):?><label class="tp-field"><span>Nhân vật nhận quà</span><select class="tp-input" name="char_id" required><option value="">Chọn nhân vật thuộc tài khoản</option><?php foreach($redeemCharacters as $character):?><option value="<?=(int)$character['id']?>"><?=kp_e($character['charname'])?> (#<?=(int)$character['id']?>)</option><?php endforeach;?></select></label><?php endif;?>
+<button class="tp-button" type="submit" <?= (!$available||$balance<(int)$reward['points_cost']||($targetEnabled&&!$redeemCharacters))?'disabled':'' ?>><?=!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':($targetEnabled&&!$redeemCharacters?'Chưa có nhân vật':'Đổi quà ↗'))?></button></form>
 </article>
 <?php endforeach; ?></div><?php endif; ?></div>
 </section>
 <section class="tp-section"><div class="tp-panel"><h2>Yêu cầu đổi quà</h2>
 <?php if(!$redemptions):?><p class="tp-muted">Bạn chưa đổi quà nào.</p><?php else:?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Phần quà</th><th>Point</th><th>Trạng thái</th><th>Cập nhật</th><th>Ngày</th></tr></thead><tbody>
-<?php $redemptionLabels=['pending'=>'Đang chờ duyệt','approved'=>'Đã duyệt · chờ phát quà','delivering'=>'Admin đang phát quà','fulfilled'=>'Đã giao quà','rejected'=>'Từ chối · đã hoàn Point'];foreach($redemptions as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['reward_title'])?></td><td><?=number_format((int)$x['points_cost'],0,',','.')?></td><td><span class="tp-pill <?=kp_e($x['status'])?>"><?=kp_e($redemptionLabels[$x['status']]??$x['status'])?></span></td><td><?=kp_e($x['admin_note']?:($x['status']==='pending'?'Quản trị viên đang kiểm tra':'—'))?></td><td><?=kp_e($x['created_at'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
+<?php $redemptionLabels=['pending'=>'Đang chờ duyệt','approved'=>'Đã duyệt · chờ phát quà','delivering'=>'Admin đang phát quà','fulfilled'=>'Đã giao quà','rejected'=>'Từ chối · đã hoàn Point'];foreach($redemptions as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['reward_title'])?><?php if(isset($redemptionTargets[(int)$x['id']])):$target=$redemptionTargets[(int)$x['id']];?><small> · Nhận bởi <?=kp_e($target['char_name'])?> (#<?=(int)$target['char_id']?>)</small><?php endif;?></td><td><?=number_format((int)$x['points_cost'],0,',','.')?></td><td><span class="tp-pill <?=kp_e($x['status'])?>"><?=kp_e($redemptionLabels[$x['status']]??$x['status'])?></span></td><td><?=kp_e($x['admin_note']?:($x['status']==='pending'?'Quản trị viên đang kiểm tra':'—'))?></td><td><?=kp_e($x['created_at'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <section class="tp-section"><div class="tp-panel"><h2>Lịch sử Point</h2>
 <?php if(!$ledger):?><p class="tp-muted">Chưa có giao dịch Point.</p><?php else:?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Point</th></tr></thead><tbody>
