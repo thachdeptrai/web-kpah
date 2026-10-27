@@ -75,6 +75,23 @@ JS=r"""JSON.stringify((()=>{
   errors,layout:{navHeight:rail?.height,heroHeight:hero?.height,mainX:main?.left,metricCount:stats.length}};
 })())"""
 
+POINT_RANK_JS=r"""JSON.stringify((()=>{
+ const w=innerWidth, gallery=document.querySelector('.point-tier-gallery');
+ const chips=[...document.querySelectorAll('.point-tier-chip')];
+ const images=[...document.querySelectorAll('.point-tier-chip img,.point-tier-featured')];
+ const failures=[];
+ if(!gallery||chips.length!==4)failures.push('not all four member rank badges rendered');
+ for(const image of images){
+  if(!image.complete||image.naturalWidth<64)failures.push('missing/invalid WebP badge: '+image.src);
+  let r=image.getBoundingClientRect();
+  if(r.right>w+3||r.left<-3)failures.push('badge outside viewport');
+ }
+ if(document.documentElement.scrollWidth>w+3)failures.push('Point rank page horizontal overflow');
+ const columns=gallery?getComputedStyle(gallery).gridTemplateColumns.split(' ').length:0;
+ if(w<=430&&columns!==2)failures.push('phone membership badges should use two columns');
+ return {w,images:images.length,columns,scrollWidth:document.documentElement.scrollWidth,failures};
+})())"""
+
 BANK_HISTORY_JS=r"""JSON.stringify((()=>{
  const wrap=document.querySelector('.tp-bank-history-scroll');
  const table=document.querySelector('.tp-bank-history-table');
@@ -167,6 +184,21 @@ def main():
                         (OUTPUT/f"bank-history-{width}.png").write_bytes(base64.b64decode(shot["data"]))
                         print("BANK HISTORY "+str(width)+": "+json.dumps(result,ensure_ascii=False),flush=True)
                         if result["issues"]:failures.append(("bank-history",width,result["issues"]))
+                    # K membership crest layout; never mutates Point balance or catalog.
+                    for width in (320,375,430,768,1280):
+                        dev.call("Emulation.setDeviceMetricsOverride",
+                                 {"width":width,"height":930,"deviceScaleFactor":1,"mobile":False})
+                        dev.call("Page.navigate",{"url":BASE+"/diem-tich-luy"})
+                        if not wait_condition(dev,
+                            "document.readyState==='complete' && !!document.querySelector('.point-tier-gallery')"):
+                            failures.append(("point-k-ranks",width,["member rank images did not load"]));continue
+                        time.sleep(.22)
+                        result=json.loads(dev.eval(POINT_RANK_JS))
+                        shot=dev.call("Page.captureScreenshot",
+                                      {"format":"png","fromSurface":True,"captureBeyondViewport":False})
+                        (OUTPUT/f"point-k-ranks-{width}.png").write_bytes(base64.b64decode(shot["data"]))
+                        print("POINT RANK "+str(width)+": "+json.dumps(result,ensure_ascii=False),flush=True)
+                        if result["failures"]:failures.append(("point-k-ranks",width,result["failures"]))
                 finally:conn.close()
             finally:
                 proc.terminate()
