@@ -24,7 +24,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
 }
 try {
     $db=kp_db();
-    $program=$db->query('SELECT activated_at FROM kp_points_program WHERE id=1')->fetch(PDO::FETCH_ASSOC);
+    $program=$db->query(kp_points_sql('SELECT activated_at FROM kp_points_program WHERE id=1'))->fetch(PDO::FETCH_ASSOC);
     if(!$program)throw new RuntimeException('Chưa kích hoạt chương trình.');
     $ready=true;
     $redemptionEnabled=kp_points_redemption_enabled($db);
@@ -42,14 +42,14 @@ try {
         try{kp_points_award($userId,'card',(string)$c['id'],(int)$c['amount'],$c['created_at']);}
         catch(Throwable $e){kp_log('recheck card loyalty points failed',$e);}
     }
-    $st=$db->prepare('SELECT balance,total_earned,total_spent FROM kp_points_wallet WHERE user_id=?');
+    $st=$db->prepare(kp_points_sql('SELECT balance,total_earned,total_spent FROM kp_points_wallet WHERE user_id=?'));
     $st->execute([$userId]);$wallet=$st->fetch(PDO::FETCH_ASSOC);
-    $st=$db->prepare('SELECT points_delta,source_type,note,created_at FROM kp_points_ledger WHERE user_id=? ORDER BY id DESC LIMIT 40');
+    $st=$db->prepare(kp_points_sql('SELECT points_delta,source_type,note,created_at FROM kp_points_ledger WHERE user_id=? ORDER BY id DESC LIMIT 40'));
     $st->execute([$userId]);$ledger=$st->fetchAll(PDO::FETCH_ASSOC);
-    $rewards=$db->query('SELECT id,title,description,points_cost,stock FROM kp_points_rewards WHERE is_active=1 ORDER BY points_cost ASC,id ASC LIMIT 80')->fetchAll(PDO::FETCH_ASSOC);
+    $rewards=$db->query(kp_points_sql('SELECT id,title,description,points_cost,stock FROM kp_points_rewards WHERE is_active=1 ORDER BY points_cost ASC,id ASC LIMIT 80'))->fetchAll(PDO::FETCH_ASSOC);
     $rewardDisplays=kp_point_reward_display_all($db,$rewards);
     $tierRequired=kp_points_reward_required_tiers($db,$rewards);
-    $st=$db->prepare('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
+    $st=$db->prepare(kp_points_sql('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30'));
     $st->execute([$userId]);$redemptions=$st->fetchAll(PDO::FETCH_ASSOC);
     $redemptionTargets=kp_points_targets($db,$redemptions);
     $pointAudit=kp_points_audit_list($db,$userId,40);

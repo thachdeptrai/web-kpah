@@ -34,7 +34,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    if(!kp_point_reward_display_available($db) && ($display['icon_id']!==null || $display['item_id']!==null || $display['option_lines']!==''))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi lưu icon/options.');
    $db->beginTransaction();
    try {
-    $st=$db->prepare('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)');
+    $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)'));
     $st->execute([$title,$description,$cost,$stock,'manual']);
     $newRewardId=(int)$db->lastInsertId();
     if(kp_point_reward_display_available($db))kp_point_reward_display_save($db,$newRewardId,$display);
@@ -52,9 +52,9 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    if(!kp_point_reward_display_available($db) && ($display['icon_id']!==null || $display['item_id']!==null || $display['option_lines']!==''))throw new RuntimeException('Cần chạy migration hiển thị quà Point trước khi lưu icon/options.');
    $db->beginTransaction();
    try {
-    $st=$db->prepare('UPDATE kp_points_rewards SET title=?,description=?,points_cost=?,stock=? WHERE id=?');
+    $st=$db->prepare(kp_points_sql('UPDATE kp_points_rewards SET title=?,description=?,points_cost=?,stock=? WHERE id=?'));
     $st->execute([$title,$description,$cost,$stock,$id]);
-    $check=$db->prepare('SELECT id FROM kp_points_rewards WHERE id=?');$check->execute([$id]);
+    $check=$db->prepare(kp_points_sql('SELECT id FROM kp_points_rewards WHERE id=?'));$check->execute([$id]);
     if(!$check->fetchColumn())throw new RuntimeException('Không tìm thấy quà.');
     if(kp_point_reward_display_available($db))kp_point_reward_display_save($db,(int)$id,$display);
     kp_points_reward_set_tier($db,(int)$id,(int)$tier);
@@ -71,7 +71,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    }elseif($action==='toggle_reward'){
    $id=filter_var($_POST['reward_id']??null,FILTER_VALIDATE_INT);$state=(string)($_POST['state']??'');
    if($id===false||$id<1||!in_array($state,['0','1'],true))throw new RuntimeException('Yêu cầu đổi trạng thái quà không hợp lệ.');
-   $st=$db->prepare('UPDATE kp_points_rewards SET is_active=? WHERE id=? AND is_active<>?');$st->execute([(int)$state,$id,(int)$state]);
+   $st=$db->prepare(kp_points_sql('UPDATE kp_points_rewards SET is_active=? WHERE id=? AND is_active<>?'));$st->execute([(int)$state,$id,(int)$state]);
    if($st->rowCount()!==1)throw new RuntimeException('Không tìm thấy quà hoặc trạng thái không đổi.');
    $notice=$state==='1'?'Đã mở lại quà.':'Đã ẩn quà an toàn; lịch sử vẫn được giữ.';
   }elseif($action==='adjust_points'){
@@ -93,7 +93,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     :'Trạng thái đổi quà bằng Point không thay đổi.';
   }elseif($action==='update_program'){
    $rate=filter_var($_POST['points_per_1000']??null,FILTER_VALIDATE_INT);if($rate===false||$rate<1||$rate>100)throw new RuntimeException('Tỷ lệ phải từ 1 đến 100 Point / 1.000đ.');
-   $st=$db->prepare('UPDATE kp_points_program SET points_per_1000=? WHERE id=1');$st->execute([$rate]);$notice='Đã cập nhật tỷ lệ tích Point.';
+   $st=$db->prepare(kp_points_sql('UPDATE kp_points_program SET points_per_1000=? WHERE id=1'));$st->execute([$rate]);$notice='Đã cập nhật tỷ lệ tích Point.';
   }elseif(in_array($action,['approved','delivering','fulfilled','rejected'],true)){
    $id=filter_var($_POST['redemption_id']??null,FILTER_VALIDATE_INT);if($id===false||$id<1)throw new RuntimeException('Mã đổi quà không hợp lệ.');
    kp_points_review_redemption($id,(int)$admin['id'],$action,(string)($_POST['note']??''));
@@ -106,28 +106,28 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
 }
 
 try{
- $db=kp_db();$program=$db->query('SELECT activated_at,points_per_1000 FROM kp_points_program WHERE id=1')->fetch(PDO::FETCH_ASSOC);$ready=(bool)$program;
+ $db=kp_db();$program=$db->query(kp_points_sql('SELECT activated_at,points_per_1000 FROM kp_points_program WHERE id=1'))->fetch(PDO::FETCH_ASSOC);$ready=(bool)$program;
  $redemptionControlReady=kp_points_redemption_control_ready($db);
  $redemptionEnabled=kp_points_redemption_enabled($db);
  if($ready){
-  $rewards=$db->query('SELECT id,title,description,points_cost,stock,is_active FROM kp_points_rewards ORDER BY id DESC LIMIT 70')->fetchAll(PDO::FETCH_ASSOC);
+  $rewards=$db->query(kp_points_sql('SELECT id,title,description,points_cost,stock,is_active FROM kp_points_rewards ORDER BY id DESC LIMIT 70'))->fetchAll(PDO::FETCH_ASSOC);
   $rewardVisualReady=kp_point_reward_display_available($db);
   $workflowEnabled=kp_points_workflow_enabled($db);
   if($rewards){
    $ids=array_map('intval',array_column($rewards,'id'));
-   $stUsed=$db->prepare('SELECT DISTINCT reward_id FROM kp_points_redemptions WHERE reward_id IN ('.implode(',',array_fill(0,count($ids),'?')).')');
+   $stUsed=$db->prepare(kp_points_sql('SELECT DISTINCT reward_id FROM kp_points_redemptions WHERE reward_id IN ('.implode(',',array_fill(0,count($ids),'?')).')'));
    $stUsed->execute($ids);
    foreach($stUsed->fetchAll(PDO::FETCH_COLUMN) as $usedId)$rewardUsed[(int)$usedId]=true;
   }
   $rewardDisplays=kp_point_reward_display_all($db,$rewards);
   $tiersReady=kp_points_tier_enabled($db);
   $tierRequired=kp_points_reward_required_tiers($db,$rewards);
-  $redemptions=$db->query('SELECT r.id,r.user_id,r.reward_title,r.points_cost,r.status,r.admin_note,r.created_at,u.username FROM kp_points_redemptions r LEFT JOIN team_user u ON u.id=r.user_id ORDER BY (r.status="pending") DESC,r.id DESC LIMIT 120')->fetchAll(PDO::FETCH_ASSOC);
+  $redemptions=$db->query(kp_points_sql('SELECT r.id,r.user_id,r.reward_title,r.points_cost,r.status,r.admin_note,r.created_at,u.username FROM kp_points_redemptions r LEFT JOIN team_user u ON u.id=r.user_id ORDER BY (r.status="pending") DESC,r.id DESC LIMIT 120'))->fetchAll(PDO::FETCH_ASSOC);
   $recipientEnabled=kp_points_target_enabled($db);
   $redemptionTargets=kp_points_targets($db,$redemptions);
   $pointAudit=kp_points_audit_list($db,null,80);
   $pointReconcile=kp_points_reconcile($db);
-  $ledger=$db->query('SELECT l.id,l.user_id,l.points_delta,l.source_type,l.note,l.created_at,u.username FROM kp_points_ledger l LEFT JOIN team_user u ON u.id=l.user_id ORDER BY l.id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
+  $ledger=$db->query(kp_points_sql('SELECT l.id,l.user_id,l.points_delta,l.source_type,l.note,l.created_at,u.username FROM kp_points_ledger l LEFT JOIN team_user u ON u.id=l.user_id ORDER BY l.id DESC LIMIT 100'))->fetchAll(PDO::FETCH_ASSOC);
   try{$adminNotices=kp_admin_notifications($db,12);}catch(Throwable $e){kp_log('admin points notifications unavailable',$e);}
  }
 }catch(Throwable $e){kp_log('admin points dashboard query failed',$e);$error=$error?:'Không tải được hệ thống Point. Kiểm tra SQL migration.';}

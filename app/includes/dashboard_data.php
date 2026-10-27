@@ -29,12 +29,12 @@ function kp_dashboard_data(int $userId): array {
     }catch(Throwable $e){kp_log('dashboard VND/tongnap unavailable',$e);}
 
     try{
-        $st=$db->prepare('SELECT balance,total_earned FROM kp_points_wallet WHERE user_id=? LIMIT 1');
+        $st=$db->prepare(kp_points_sql('SELECT balance,total_earned FROM kp_points_wallet WHERE user_id=? LIMIT 1'));
         $st->execute([$userId]);$points=$st->fetch(PDO::FETCH_ASSOC);
         if($points){
             $result['points']=$points['balance'];
             $result['earned']=$points['total_earned'];
-        }elseif($db->query('SELECT 1 FROM kp_points_program WHERE id=1 LIMIT 1')->fetchColumn()){
+        }elseif($db->query(kp_points_sql('SELECT 1 FROM kp_points_program WHERE id=1 LIMIT 1'))->fetchColumn()){
             $result['points']=0;
             $result['earned']=0;
         }
@@ -68,7 +68,7 @@ function kp_dashboard_data(int $userId): array {
     }catch(Throwable $e){kp_log('dashboard personal achievements unavailable',$e);}
 
     try{
-        $st=$db->prepare('SELECT id,title,points_cost FROM kp_points_rewards WHERE is_active=1 AND (stock IS NULL OR stock>0) ORDER BY points_cost ASC,id ASC LIMIT 1');
+        $st=$db->prepare(kp_points_sql('SELECT id,title,points_cost FROM kp_points_rewards WHERE is_active=1 AND (stock IS NULL OR stock>0) ORDER BY points_cost ASC,id ASC LIMIT 1'));
         $st->execute();$reward=$st->fetch(PDO::FETCH_ASSOC);
         $result['reward']=$reward?:null;
         $result['rewards_ready']=true;
