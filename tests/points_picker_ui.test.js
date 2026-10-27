@@ -22,6 +22,7 @@ class FakeNode{
  setCustomValidity(){}
  reportValidity(){}
 }
+function exercise(filename){
 const nodes={};
 const ids=['point-reward-catalog','point-reward-picker','point-picker-search','point-picker-items',
  'point-picker-options','point-picker-count','point-picker-more','point-picker-selected-option',
@@ -64,7 +65,10 @@ const document={
  createElement(tag){return new FakeNode(tag);},
  addEventListener(){},
 };
-const program=fs.readFileSync('assets/js/points-reward-picker.js','utf8');
+const program=fs.readFileSync(filename,'utf8');
+assert.ok(!/eval\s*\(|new\s+Function\s*\(|innerHTML\s*=|document\.write\s*\(/i.test(program),filename+' executes unsafe HTML');
+assert.ok(!/(?:fetch|XMLHttpRequest|WebSocket)\s*\(/i.test(program),filename+' unexpected requests');
+assert.ok(!/api[_-]?key|secret[_-]?key|password\s*[:=]/i.test(program),filename+' exposes embedded secrets');
 vm.runInNewContext(program,{document,console},{filename:'points-reward-picker.js'});
 launch.fire('click');
 assert.equal(nodes['point-picker-items'].children.length,64,'first page renders only 64');
@@ -91,4 +95,7 @@ assert.equal(program.includes('innerHTML'),false,'no HTML execution sink');
 assert.equal(program.includes('eval('),false);
 assert.equal(chips.children.some(n=>n.tagName==='span'&&n._text.includes('svg')),true,
  'hostile string shown through textContent only');
-console.log('PASS: Point picker 501 items ID/icon/option choices and script-injection safety');
+}
+exercise('assets/js/points-reward-picker.js');
+exercise('assets/js-dist/points-reward-picker.js');
+console.log('PASS: original AND reverse-inspected minified Point picker, 501 items, options, JS injection safety');
