@@ -1,0 +1,150 @@
+{
+  "files": [
+    {
+      "evidence": [
+        "AGENTS.md"
+      ],
+      "sha256": "10241bf064f92e62f666ea32755dadd6a9f636b74afbfb2719b5f727e4ecd425",
+      "ranges_read": [
+        1,
+        44
+      ],
+      "status": "read",
+      "path": "AGENTS.md",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 44
+    },
+    {
+      "evidence": [
+        "index.php"
+      ],
+      "sha256": "5a9a416e9a9283af95fba2c979baa165d0199a617b2356a2230180ebc3f91a6f",
+      "ranges_read": [
+        1,
+        3
+      ],
+      "status": "read",
+      "path": "index.php",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 3
+    },
+    {
+      "evidence": [
+        "app/router.php"
+      ],
+      "sha256": "f283bb9e97048f53bfd8619a19aaae170152a9511da8a685d5659c4b699da262",
+      "ranges_read": [
+        1,
+        55
+      ],
+      "status": "read",
+      "path": "app/router.php",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 55
+    },
+    {
+      "evidence": [
+        "app/includes/bootstrap.php"
+      ],
+      "sha256": "e624e5c31b886587b92a273316e405fe08e843a4dc0e4a4269485a79a3d4f06d",
+      "ranges_read": [
+        1,
+        36
+      ],
+      "status": "read",
+      "path": "app/includes/bootstrap.php",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 36
+    },
+    {
+      "evidence": [
+        "app/includes/db.php"
+      ],
+      "sha256": "f279290a072a80e9acb6b51a42bdcf243c0a03dddd9baa221cea669bae9b3493",
+      "ranges_read": [
+        1,
+        41
+      ],
+      "status": "read",
+      "path": "app/includes/db.php",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 41
+    },
+    {
+      "evidence": [
+        "security-reports/SECURITY_AUDIT.md"
+      ],
+      "sha256": "ea8f436e73e1eaa25bc9d2b8088e0a29265ed288015ad515d8ec24aa2ef65217",
+      "ranges_read": [
+        1,
+        44
+      ],
+      "status": "read",
+      "path": "security-reports/SECURITY_AUDIT.md",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 44
+    },
+    {
+      "evidence": [
+        "security-reports/REMAINING_RISKS.md"
+      ],
+      "sha256": "3337136fd00077183659b342682eb0cf3f14f7b52c8e07617c6823ab5ecc2662",
+      "ranges_read": [
+        1,
+        15
+      ],
+      "status": "read",
+      "path": "security-reports/REMAINING_RISKS.md",
+      "reviewer": "lead",
+      "summary": "Inspected in current session",
+      "reviewed_at": "2026-10-27T14:20:32.3165476Z",
+      "total_lines": 15
+    },
+    {
+      "path": "config/routes.php",
+      "sha256": "89aa421a213cb41658a172e6d14646e5f4a31ca8ea0b11e9f28839874d1959aa",
+      "status": "read",
+      "ranges_read": [
+        1,
+        106
+      ],
+      "total_lines": 106,
+      "reviewer": "lead",
+      "summary": "Full text reviewed",
+      "evidence": [
+        "config\\routes.php"
+      ],
+      "reviewed_at": "2026-10-27T14:22:19.7271961Z"
+    },
+    {
+      "path": "docs/ROUTING.md",
+      "sha256": "010b61e7e3b0dc90944b705a8f68655efc37d21f473a7f7933ede9fceb4795f9",
+      "status": "read",
+      "ranges_read": [
+        1,
+        47
+      ],
+      "total_lines": 47,
+      "reviewer": "lead",
+      "summary": "Full text reviewed",
+      "evidence": [
+        "docs\\ROUTING.md"
+      ],
+      "reviewed_at": "2026-10-27T14:22:19.7462565Z"
+    }
+  ],
+  "project_root": "C:/xampp/htdocs",
+  "schema_version": 1
+}

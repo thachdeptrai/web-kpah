@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * KPAH – Cấu hình trang đăng ký tài khoản (giá trị mặc định, KHÔNG chứa mật khẩu).
  *
@@ -19,7 +19,7 @@ return [
         'timezone'  => 'Asia/Ho_Chi_Minh',      // dữ liệu regdate hiện có đang theo giờ Việt Nam
         'debug_log' => false,                   // true: ghi thêm thông điệp lỗi kỹ thuật vào error_log (KHÔNG hiển thị ra web)
     ],
-
+    'points_db' => ['name' => 'kpah_points'],
     // Đặt true nếu config.php của dự án `return` một mảng có khoá 'db' / 'security' / 'captcha'.
     // Mặc định tắt để không xung đột với cấu hình hiện có.
     'integration' => [
@@ -35,8 +35,7 @@ return [
         'charset' => 'utf8mb4',
     ],
 
-    // Same MySQL/MariaDB server as 'db'; leave empty until Point rows are migrated.
-    'points_db' => ['name' => ''],
+    // Point tables are in kpah_points on the same MariaDB server.
 
     'security' => [
         // Mẫu tên tài khoản (PCRE). Mặc định: 4–20 ký tự gồm chữ thường, số, gạch dưới.
