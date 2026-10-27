@@ -2,9 +2,10 @@
 require __DIR__.'/../includes/bootstrap.php';
 require_once __DIR__.'/../includes/topup_core.php';
 require_once __DIR__.'/../includes/loyalty_points.php';
+require_once __DIR__.'/../includes/points_reward_display.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$userId=(int)$user['id'];$csrf=kp_csrf_token();
-$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];
+$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try {
         if(!kp_csrf_check((string)($_POST['csrf']??'')))throw new RuntimeException('Phiên xác nhận hết hạn.');
@@ -42,6 +43,7 @@ try {
     $st=$db->prepare('SELECT points_delta,source_type,note,created_at FROM kp_points_ledger WHERE user_id=? ORDER BY id DESC LIMIT 40');
     $st->execute([$userId]);$ledger=$st->fetchAll(PDO::FETCH_ASSOC);
     $rewards=$db->query('SELECT id,title,description,points_cost,stock FROM kp_points_rewards WHERE is_active=1 ORDER BY points_cost ASC,id ASC LIMIT 80')->fetchAll(PDO::FETCH_ASSOC);
+    $rewardDisplays=kp_point_reward_display_all($db,$rewards);
     $st=$db->prepare('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
     $st->execute([$userId]);$redemptions=$st->fetchAll(PDO::FETCH_ASSOC);
 }catch(Throwable $e){
@@ -62,11 +64,11 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <?php if(!$rewards):?><p class="tp-muted">Quà mới đang được chuẩn bị. Hãy quay lại xem có gì thú vị nhé!</p><?php else: ?>
 <div class="tp-grid">
 <?php foreach($rewards as $reward):$available=($reward['stock']===null||(int)$reward['stock']>0); ?>
-<div class="tp-card"><h3><?=kp_e($reward['title'])?></h3><p><?=kp_e($reward['description']??'')?></p>
+<article class="tp-card point-reward-card"><?php $visual=$rewardDisplays[(int)$reward['id']]??[];$icon=kp_point_reward_icon($visual); ?><div class="point-reward-preview"><?php if($icon):?><img src="<?=kp_e($icon)?>" alt="" loading="lazy" width="72" height="72" decoding="async"><?php else:?><span class="point-reward-placeholder" aria-hidden="true">✦</span><?php endif;?><div><h3><?=kp_e($reward['title'])?></h3><?php if(isset($visual['item_id'])&&$visual['item_id']!==null):?><small>Mã vật phẩm #<?=(int)$visual['item_id']?></small><?php endif;?></div></div><p><?=kp_e($reward['description']??'')?></p><?php $optLines=kp_point_reward_option_lines($visual);if($optLines):?><details class="point-reward-options"><summary>Xem <?=count($optLines)?> option / chỉ số</summary><ul><?php foreach($optLines as $opt):?><li><?=kp_e($opt)?></li><?php endforeach;?></ul></details><?php endif;?>
 <p><strong><?=number_format((int)$reward['points_cost'],0,',','.')?> Point</strong><?= $reward['stock']===null?'':' · Còn '.number_format((int)$reward['stock'],0,',','.') ?></p>
 <form method="post" class="tp-form point-redeem-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="action" value="redeem"><input type="hidden" name="reward_id" value="<?=(int)$reward['id']?>"><input type="hidden" name="token" value="<?=bin2hex(random_bytes(16))?>">
 <button class="tp-button" type="submit" <?= (!$available||$balance<(int)$reward['points_cost'])?'disabled':'' ?>><?=!$available?'Hết quà':($balance<(int)$reward['points_cost']?'Chưa đủ Point':'Đổi quà ↗')?></button></form>
-</div>
+</article>
 <?php endforeach; ?></div><?php endif; ?></div>
 </section>
 <section class="tp-section"><div class="tp-panel"><h2>Yêu cầu đổi quà</h2>
