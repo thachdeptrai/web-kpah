@@ -3,6 +3,7 @@
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/user_center.php';
 require_once __DIR__.'/points_recipient.php';
+require_once __DIR__.'/points_audit.php';
 
 /** Exactly one ledger row per verified payment, under an InnoDB transaction. */
 function kp_points_award(int $userId, string $source, string $reference, int $amountVnd, $orderCreatedAt): bool {
@@ -29,13 +30,15 @@ function kp_points_award(int $userId, string $source, string $reference, int $am
         $st->execute([$userId]);
         $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
         $st->execute([$userId]);
-        if ($st->fetchColumn()===false) throw new RuntimeException('Ví Point chưa sẵn sàng.');
+        $before=$st->fetchColumn();
+        if ($before===false) throw new RuntimeException('Ví Point chưa sẵn sàng.');
         $st=$db->prepare('INSERT IGNORE INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,amount_vnd,note) VALUES (?,?,?,?,?,?)');
         $st->execute([$userId,$points,$source,$reference,$amountVnd,'Tích Point từ giao dịch hợp lệ']);
         if ($st->rowCount()!==1) { $db->commit(); return false; }
         $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_earned=total_earned+? WHERE user_id=?');
         $st->execute([$points,$points,$userId]);
         if ($st->rowCount()!==1) throw new RuntimeException('Chưa hoàn tất cập nhật ví Point.');
+        kp_points_audit_append($db,$userId,null,null,'award',$source.':'.$reference,$points,(int)$before,(int)$before+$points);
         $db->commit();
         kp_center_notify($userId,'Bạn vừa nhận Point',
             'Đã cộng '.number_format($points,0,',','.').' Point từ giao dịch nạp hợp lệ.',
@@ -82,6 +85,7 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
         }
         $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
         $st->execute([$userId,-$cost,'redeem',(string)$id,'Đổi quà: '.$reward['title']]);
+        kp_points_audit_append($db,$userId,null,$id,'redeem',(string)$id,-$cost,(int)$balance,(int)$balance-$cost);
         $db->commit();
         kp_center_notify($userId,'Yêu cầu đổi quà đang chờ duyệt',
             'Đơn #'.$id.' · '.$reward['title'].' đã được gửi. Point đã được giữ và quản trị viên sẽ kiểm tra.',
@@ -146,6 +150,13 @@ function kp_points_review_redemption(int $redemptionId, int $adminId, string $ac
             $st=$db->prepare('INSERT INTO kp_points_redemption_events (redemption_id,actor_admin_id,from_status,to_status,note) VALUES (?,?,?,?,?)');
             $st->execute([$redemptionId,$adminId,$old,$action,$note]);
         }
+        $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=?');
+        $st->execute([(int)$redemption['user_id']]);
+        $afterBalance=$st->fetchColumn();
+        $afterBalance=$afterBalance===false?null:(int)$afterBalance;
+        $change=$action==='rejected'?(int)$redemption['points_cost']:0;
+        kp_points_audit_append($db,(int)$redemption['user_id'],$adminId,$redemptionId,
+            $action,(string)$redemptionId,$change,$afterBalance===null?null:$afterBalance-$change,$afterBalance);
         $db->commit();
         $labels=['approved'=>'Đã duyệt, chờ phát quà','delivering'=>'Đang tiến hành phát quà','fulfilled'=>'Quà đã được xác nhận giao','rejected'=>'Đơn bị từ chối, Point đã hoàn'];
         $body='Đơn #'.$redemptionId.' · '.$redemption['reward_title'].' · '.$labels[$action].'. Ghi chú: '.$note;
@@ -190,6 +201,7 @@ function kp_points_adjust(int $userId, int $adminId, int $delta, string $reason,
             $st->execute([$spent,$spent,$userId,$spent]);
         }
         if($st->rowCount()!==1)throw new RuntimeException('Không cập nhật được ví Point.');
+        kp_points_audit_append($db,$userId,$adminId,null,'admin_adjust',$requestToken,$delta,(int)$balance,(int)$balance+$delta);
         $db->commit();
         kp_center_notify($userId,$delta>0?'Point đã được cộng':'Point đã được điều chỉnh',
             'Quản trị viên đã '.($delta>0?'cộng ':'trừ ').number_format(abs($delta),0,',','.').' Point. Lý do: '.$reason,
