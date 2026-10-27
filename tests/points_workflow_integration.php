@@ -5,14 +5,14 @@ require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once KP_ROOT.'/app/includes/loyalty_points.php';
 require_once KP_ROOT.'/app/includes/points_reward_display.php';
 $db=kp_db();
-foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql'] as $file){
+foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql',KP_ROOT.'/database/points_stage2_redemption_events.sql'] as $file){
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
     foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement)if(trim($statement)!=='')$db->exec($statement);
 }
 function point_ok($condition,$message){if(!$condition)throw new RuntimeException('FAIL: '.$message);echo "PASS: $message\n";}
 
 $db->exec('DELETE FROM kp_admin_notifications');$db->exec('DELETE FROM kp_user_notifications');$db->exec('DELETE FROM kp_points_ledger');
-$db->exec('DELETE FROM kp_points_redemptions');$db->exec('DELETE FROM kp_points_rewards');$db->exec('DELETE FROM kp_points_wallet');
+$db->exec('DELETE FROM kp_points_redemption_events');$db->exec('DELETE FROM kp_points_redemptions');$db->exec('DELETE FROM kp_points_rewards');$db->exec('DELETE FROM kp_points_wallet');
 $db->prepare('INSERT INTO kp_points_wallet (user_id,balance,total_earned,total_spent) VALUES (101,1000,1000,0)')->execute();
 $db->prepare('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)')
    ->execute(['Quà kiểm thử','Chỉ dùng trong CI',200,3,'manual']);
@@ -45,7 +45,15 @@ point_ok((int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101
 point_ok(kp_points_adjust(101,1,-20,'Thu hồi nhập nhầm','33333333333333333333333333333333')===true,'admin can append a safe Point debit');
 
 $redemption2=kp_points_redeem(101,$reward,'44444444444444444444444444444444');
+$early=false;try{kp_points_review_redemption($redemption2,1,'fulfilled','Chưa giao nhưng muốn bỏ qua');}catch(RuntimeException $e){$early=true;}
+point_ok($early,'stage 2 blocks confirming delivery before approval and delivery');
+kp_points_review_redemption($redemption2,1,'approved','Đã kiểm tra đủ thông tin');
+point_ok($db->query('SELECT status FROM kp_points_redemptions WHERE id='.$redemption2)->fetchColumn()==='approved','approval does not falsely claim gift delivered');
+kp_points_review_redemption($redemption2,1,'delivering','Đã phân công Admin phát quà');
+$noRefund=false;try{kp_points_review_redemption($redemption2,1,'rejected','Đã phát rồi');}catch(RuntimeException $e){$noRefund=true;}
+point_ok($noRefund,'stage 2 prohibits automatic refund once delivery has started');
 kp_points_review_redemption($redemption2,1,'fulfilled','Đã cộng quà trong game');
+point_ok((int)$db->query('SELECT COUNT(*) FROM kp_points_redemption_events WHERE redemption_id='.$redemption2)->fetchColumn()===3,'stage 2 logs each transition within Point transaction');
 point_ok($db->query('SELECT status FROM kp_points_redemptions WHERE id='.$redemption2)->fetchColumn()==='fulfilled','approval finalizes pending reward');
-point_ok((int)$db->query("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND title='Quà đã được duyệt và cộng'")->fetchColumn()===1,'approval notifies the correct user');
+point_ok((int)$db->query("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND title='Quà đã được xác nhận giao'")->fetchColumn()===1,'actual delivery notifies the correct user');
 echo "Point workflow integration PASS\n";
