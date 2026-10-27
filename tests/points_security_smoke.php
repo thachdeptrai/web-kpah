@@ -35,7 +35,7 @@ try {
  $admin=(string)file_get_contents($root.'/app/topup/admin/points.php');
  $core=(string)file_get_contents($root.'/app/includes/loyalty_points.php');
  $js=(string)file_get_contents($root.'/assets/js/points-guard.js');
- points_safe(strpos($player,"$user=kp_topup_user()")!==false
+ points_safe(strpos($player,'$user=kp_topup_user()')!==false
     && strpos($player,'kp_points_audit_list($db,$userId')!==false,
     'player audit view only uses authenticated owner ID');
  points_safe(strpos($admin,'$admin=kp_topup_admin()')!==false
@@ -45,7 +45,7 @@ try {
     && strpos($core,'kp_points_reward_min_tier')!==false,
     'character ownership and rank verified on backend');
  points_safe(strpos($player,'<?=kp_e($opt)?>')!==false
-    && strpos($admin,'<?=kp_e($a['."'ip'".'])?>')===false,
+    && strpos($admin, "<?=kp_e(\$a['device_type']")!==false,
     'option rendering is HTML-escaped and audit values are not interpolated as JS');
  points_safe(!preg_match('/\b(?:eval|new Function|document\.write|innerHTML)\b/',$js),
     'client Point guard avoids executable HTML and evaluation sinks');
