@@ -19,6 +19,7 @@
   var addOption=document.getElementById('point-picker-add-option');
   var active=null;
   var option=null;
+  var selectedOptionButton=null;
   var tab='items';
   var matches=[];
   var shown=0;
@@ -99,11 +100,21 @@
     active=null;
   }
   function chooseTab(name){
+    if(name!=='items'&&name!=='options')return;
+    if(tab!==name)search.value=''; // Do not reuse the item's filter on Options.
     tab=name;shown=0;option=null;paramBox.hidden=true;
-    itemContainer.hidden=tab!=='items';
-    optionContainer.hidden=tab!=='options';
+    if(selectedOptionButton){
+      selectedOptionButton.setAttribute('aria-pressed','false');
+      selectedOptionButton=null;
+    }
+    itemContainer.hidden=name!=='items';
+    optionContainer.hidden=name!=='options';
+    search.placeholder=name==='items'?'Tìm vật phẩm hoặc #ID':'Tìm chỉ số / option hoặc #ID';
     dialog.querySelectorAll('[data-point-tab]').forEach(function(button){
-      button.setAttribute('aria-pressed',String(button.getAttribute('data-point-tab')===tab));
+      var selected=button.getAttribute('data-point-tab')===tab;
+      button.setAttribute('aria-pressed',String(selected));
+      button.setAttribute('aria-selected',String(selected));
+      button.tabIndex=selected?0:-1;
     });
     render(false);
   }
@@ -139,11 +150,15 @@
   function optionRow(meta){
     var button=elem('button','point-picker-option','');
     button.type='button';
+    button.setAttribute('aria-pressed','false');
     var labels=elem('span','point-picker-item-heading');
     labels.appendChild(elem('strong','',meta.name));
     labels.appendChild(elem('small','','#'+meta.id+(meta.percent?' · %':'')+' · '+(meta.description||'Chỉ số')));
     button.appendChild(labels);
     button.addEventListener('click',function(){
+      if(selectedOptionButton)selectedOptionButton.setAttribute('aria-pressed','false');
+      selectedOptionButton=button;
+      button.setAttribute('aria-pressed','true');
       option=meta;paramBox.hidden=false;
       optionTitle.textContent=meta.name+' (#'+meta.id+')';
       paramInput.min=meta.min;
@@ -155,6 +170,11 @@
   }
   function render(append){
     if(!append){
+      if(selectedOptionButton){
+        selectedOptionButton.setAttribute('aria-pressed','false');
+        selectedOptionButton=null;
+      }
+      option=null;paramBox.hidden=true;
       var q=norm(search.value);
       var id=q.match(/^#?(\d+)$/);
       var set=tab==='items'?items:options;
@@ -187,6 +207,15 @@
   dialog.addEventListener('close',function(){active=null;});
   dialog.querySelectorAll('[data-point-tab]').forEach(function(b){
     b.addEventListener('click',function(){chooseTab(b.getAttribute('data-point-tab'));});
+    b.addEventListener('keydown',function(e){
+      if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+      e.preventDefault();
+      var next=b.getAttribute('data-point-tab')==='items'?'options':'items';
+      chooseTab(next);
+      dialog.querySelectorAll('[data-point-tab]').forEach(function(t){
+        if(t.getAttribute('data-point-tab')===next)t.focus();
+      });
+    });
   });
   search.addEventListener('input',function(){render(false);});
   more.addEventListener('click',function(){render(true);});

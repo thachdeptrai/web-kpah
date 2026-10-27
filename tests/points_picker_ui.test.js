@@ -83,6 +83,26 @@ itemRow.children[2].children[1].fire('click');
 assert.equal(fields.item_id.value,491,'selected catalog item');
 assert.equal(fields.icon_id.value,492,'icon matches item');
 launch.fire('click');
+// A previous item search must not hide options when the tab changes.
+nodes['point-picker-search'].value='Kiếm';
+nodes['point-picker-search'].fire('input');
+tabs[1].fire('click');
+assert.equal(nodes['point-picker-search'].value,'','search resets on category change');
+assert.equal(nodes['point-picker-search'].placeholder,'Tìm chỉ số / option hoặc #ID');
+assert.equal(nodes['point-picker-items'].hidden,true,'items panel must be hidden on Options');
+assert.equal(nodes['point-picker-options'].hidden,false,'options panel must be visible');
+assert.equal(tabs[1].getAttribute('aria-selected'),'true','Options tab selected');
+assert.equal(tabs[0].getAttribute('aria-selected'),'false','Items tab deselected');
+assert.equal(nodes['point-picker-options'].children.length,1,'options catalog is rendered, not items');
+const optionButton=nodes['point-picker-options'].children[0];
+optionButton.fire('click');
+assert.equal(optionButton.getAttribute('aria-pressed'),'true','chosen option has active styling');
+assert.equal(nodes['point-picker-selected-option'].hidden,false,'param editor appears on option selection');
+// Returning to items must restore just the items pane.
+tabs[0].fire('click');
+assert.equal(nodes['point-picker-options'].hidden,true,'Options panel hides on Items');
+assert.equal(nodes['point-picker-items'].hidden,false,'Items panel reappears');
+assert.equal(nodes['point-picker-selected-option'].hidden,true,'old option editor resets');
 tabs[1].fire('click');
 assert.equal(nodes['point-picker-options'].children.length,1);
 nodes['point-picker-options'].children[0].fire('click');
@@ -93,9 +113,18 @@ assert.match(fields.option_lines.value,/\+3\.000%/);
 assert.match(fields.option_lines.value,/<svg\/onload=alert\(1\)>/,'hostile game text remains plain text');
 assert.equal(program.includes('innerHTML'),false,'no HTML execution sink');
 assert.equal(program.includes('eval('),false);
+assert.ok(program.includes("aria-selected"),'tab ARIA state must be synchronized');
 assert.equal(chips.children.some(n=>n.tagName==='span'&&n._text.includes('svg')),true,
  'hostile string shown through textContent only');
 }
+// CSS used to override [hidden] with display:grid, exposing both panels.
+const css=fs.readFileSync('assets/css/point-reward-picker.css','utf8');
+assert.match(css, /#point-reward-picker\s+\[hidden\]\s*\{\s*display:\s*none\s*!important\s*\}/,
+ 'hidden panels must override the grid layout');
+assert.match(css,/point-picker-option\[aria-pressed="true"\]/,'selected Option receives a visible state');
+const template=fs.readFileSync('app/topup/admin/points.php','utf8');
+assert.match(template,/id="point-picker-options"[^>]*hidden/,'Options pane starts hidden');
+assert.match(template,/role="tablist"/,'picker uses accessible tabs');
 exercise('assets/js/points-reward-picker.js');
 exercise('assets/js-dist/points-reward-picker.js');
 console.log('PASS: original AND reverse-inspected minified Point picker, 501 items, options, JS injection safety');

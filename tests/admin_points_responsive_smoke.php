@@ -12,4 +12,9 @@ ar_ok(strpos($page,'kp_admin_csrf_valid(')!==false && strpos($page,'$admin=kp_to
 ar_ok(strpos($layout,'tp-admin-points')!==false && strpos($layout,'/assets/css/admin-points-responsive.css?v=')!==false,'scoped style loaded for admin Point only');
 foreach(['max-width:1499px','max-width:1190px','max-width:800px','max-width:700px','max-width:600px','max-width:360px','prefers-reduced-motion','point-admin-orders-table td:before','point-picker-dialog','overflow-x:auto'] as $str)ar_ok(strpos($css,$str)!==false,'responsive style '.$str);
 ar_ok(strpos($picker,'.point-picker-dialog')!==false,'Point picker dialog stylesheet shared with admin');
+ar_ok(strpos($picker,'#point-reward-picker [hidden]{display:none!important}')!==false,
+  'hidden Item and Option panels cannot be overridden by display grid');
+ar_ok(strpos($page,'aria-controls="point-picker-options"')!==false
+ && strpos($page,'id="point-picker-options"')!==false,
+  'option tab points to the real Options panel');
 echo "PASS: Point admin static responsive suite\n";
