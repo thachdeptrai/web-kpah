@@ -30,6 +30,7 @@ function kp_topup_page_start($title, $active, $username = '', $admin = false) {
 <link rel="stylesheet" href="/assets/css/site-responsive.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/site-responsive.css') ?>">
 <link rel="stylesheet" href="/assets/css/ui-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/ui-system.css') ?>">
 <?php if(!$admin):?><link rel="stylesheet" href="/assets/css/topup-player-light.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/topup-player-light.css') ?>"><?php endif;?>
+<link rel="stylesheet" href="/assets/css/point-membership.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/point-membership.css') ?>">
 <link rel="stylesheet" href="/assets/css/brand-system.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/brand-system.css') ?>">
 <?php if($admin):?><link rel="stylesheet" href="/assets/css/admin-theme.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/admin-theme.css') ?>"><?php endif;?>
 </head>

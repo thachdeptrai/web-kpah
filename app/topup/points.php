@@ -73,7 +73,7 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <div class="tp-panel point-member-panel">
 <span class="tp-eyebrow">HẠNG THÀNH VIÊN</span>
 <div class="point-member-current">
-<img class="point-tier-featured" src="<?=kp_e($memberTier['image'])?>" alt="Huy hiệu K hạng <?=kp_e($memberTier['name'])?>" width="96" height="96" decoding="async">
+<img class="point-tier-featured" loading="eager" src="<?=kp_e($memberTier['image'])?>" alt="Huy hiệu K hạng <?=kp_e($memberTier['name'])?>" width="96" height="96" decoding="async">
 <div><h2><?=kp_e($memberTier['name'])?> · <?=number_format($earned,0,',','.')?> Point đã tích lũy</h2>
 <p class="tp-muted">Hạng được tính theo tổng Point tích lũy, không giảm khi đổi quà.</p></div>
 </div>
@@ -84,11 +84,20 @@ $progress=max(0,min(100,(int)floor(($earned-$base)*100/max(1,$goal-$base))));
 <p class="tp-muted">Còn <?=number_format($goal-$earned,0,',','.')?> Point để đạt hạng <?=kp_e($nextTier['name'])?>.</p>
 <div class="point-tier-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?=$progress?>" aria-label="Tiến độ lên hạng"><span style="width:<?=$progress?>%"></span></div>
 <?php else:?><p class="tp-muted">Bạn đã đạt hạng cao nhất. Quà đặc biệt tùy theo hạng sẽ hiển thị tại cửa hàng.</p><?php endif;?>
-<div class="point-tier-gallery" aria-label="Các hạng thành viên">
-<?php foreach($tiersList as $t):?><div class="point-tier-chip<?=((int)$memberTier['id']===(int)$t['id'])?' is-active':''?>">
-<img src="<?=kp_e($t['image'])?>" width="60" height="60" alt="" loading="lazy" decoding="async">
-<div><strong><?=kp_e($t['name'])?></strong><small><?=number_format((int)$t['threshold'],0,',','.')?> Point</small></div>
-</div><?php endforeach;?></div>
+<div class="point-tier-gallery-heading"><strong>6 HẠNG THÀNH VIÊN</strong><span>Hạng hiện tại được đánh dấu nổi bật</span></div>
+<div class="point-tier-gallery" aria-label="Sáu hạng thành viên">
+<?php foreach($tiersList as $index=>$t):
+  $nextLimit=(int)($tiersList[$index+1]['threshold']??0);
+  $pointRange=$nextLimit>0
+      ? number_format((int)$t['threshold'],0,',','.').' – '.number_format($nextLimit-1,0,',','.')
+      : 'Trên '.number_format((int)$t['threshold']-1,0,',','.');
+  $selected=(int)$memberTier['id']===(int)$t['id'];
+?>
+<article class="point-tier-chip point-tier-chip--<?=(int)$t['id']?><?=$selected?' is-active':''?>" <?=$selected?'aria-current="true"':''?>>
+ <div class="point-tier-emblem"><img src="<?=kp_e($t['image'])?>" width="192" height="192" alt="Huy hiệu K hạng <?=kp_e($t['name'])?>" loading="lazy" decoding="async"></div>
+ <div class="point-tier-copy"><strong>Hội viên <?=kp_e($t['name'])?></strong><small><?=kp_e($pointRange)?> Point</small></div>
+</article>
+<?php endforeach;?></div>
 </div>
 
 <div class="tp-panel tp-mt-17"><span class="tp-eyebrow">CỬA HÀNG POINT</span><h2>Chọn phần quà yêu thích</h2>
