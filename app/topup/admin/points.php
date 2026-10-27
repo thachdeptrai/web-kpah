@@ -5,7 +5,7 @@ require_once __DIR__.'/../../includes/loyalty_points.php';
 require_once __DIR__.'/../../includes/points_reward_display.php';
 require_once __DIR__.'/../_layout.php';
 
-$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$redemptions=[];$rewards=[];$ledger=[];$adminNotices=[];$ready=false;$rewardDisplays=[];$rewardVisualReady=false;$workflowEnabled=false;$redemptionTargets=[];$recipientEnabled=false;
+$admin=kp_topup_admin();$csrf=kp_csrf_token();$error='';$redemptions=[];$rewards=[];$ledger=[];$adminNotices=[];$ready=false;$rewardDisplays=[];$rewardVisualReady=false;$workflowEnabled=false;$redemptionTargets=[];$recipientEnabled=false;$pointAudit=[];
 
 function kp_admin_points_reward_input(): array {
     $title=trim((string)($_POST['title']??''));$description=trim((string)($_POST['description']??''));
@@ -86,6 +86,7 @@ try{
   $redemptions=$db->query('SELECT r.id,r.user_id,r.reward_title,r.points_cost,r.status,r.admin_note,r.created_at,u.username FROM kp_points_redemptions r LEFT JOIN team_user u ON u.id=r.user_id ORDER BY (r.status="pending") DESC,r.id DESC LIMIT 120')->fetchAll(PDO::FETCH_ASSOC);
   $recipientEnabled=kp_points_target_enabled($db);
   $redemptionTargets=kp_points_targets($db,$redemptions);
+  $pointAudit=kp_points_audit_list($db,null,80);
   $ledger=$db->query('SELECT l.id,l.user_id,l.points_delta,l.source_type,l.note,l.created_at,u.username FROM kp_points_ledger l LEFT JOIN team_user u ON u.id=l.user_id ORDER BY l.id DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
   try{$adminNotices=kp_admin_notifications($db,12);}catch(Throwable $e){kp_log('admin points notifications unavailable',$e);}
  }
@@ -117,5 +118,20 @@ kp_topup_page_start('Quản lý Point','points',(string)$admin['username'],true)
 
 <section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">DUYỆT ĐỔI QUÀ</span><h2>Danh sách yêu cầu</h2><?php if(!$workflowEnabled):?><p class="tp-muted">Chạy <code>database/points_stage2_redemption_events.sql</code> để mở quy trình duyệt → phát → đã giao; trước khi chạy sẽ dùng quy trình cũ.</p><?php endif;?><?php if(!$redemptions):?><p class="tp-muted">Chưa có yêu cầu.</p><?php else:?><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Người đổi</th><th>Quà</th><th>Point</th><th>Ngày</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody><?php foreach($redemptions as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['username']??('ID '.$x['user_id']))?></td><td><?=kp_e($x['reward_title'])?><?php if(isset($redemptionTargets[(int)$x['id']])):$target=$redemptionTargets[(int)$x['id']];?><small> → <?=kp_e($target['char_name'])?> (#<?=(int)$target['char_id']?>)</small><?php else:?><small> · Chưa có nhân vật nhận</small><?php endif;?></td><td><?=number_format((int)$x['points_cost'],0,',','.')?></td><td><?=kp_e($x['created_at'])?></td><td><span class="tp-pill <?=kp_e($x['status'])?>"><?=kp_e($statusLabels[$x['status']]??$x['status'])?></span></td><td><?php $actions=$nextDeliveryAction((string)$x['status'],$workflowEnabled);if($actions):?><form method="post" class="tp-form"><input type="hidden" name="csrf" value="<?=kp_e($csrf)?>"><input type="hidden" name="redemption_id" value="<?=(int)$x['id']?>"><input class="tp-input" name="note" maxlength="200" required placeholder="Ghi chú xử lý / bằng chứng đã giao"><div><?php foreach($actions as $value=>$caption):?><button name="action" value="<?=kp_e($value)?>" type="submit" class="tp-button-secondary tp-btn--small"><?=kp_e($caption)?></button> <?php endforeach;?></div></form><?php else:?><?=kp_e($x['admin_note'])?><?php endif;?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">AUDIT POINT</span><h2>100 bút toán gần nhất</h2><p class="tp-muted">Lịch sử chỉ được ghi nối tiếp, không cho sửa hoặc xoá.</p><?php if(!$ledger):?><p class="tp-muted">Chưa có biến động Point.</p><?php else:?><div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Mã</th><th>Tài khoản</th><th>Point</th><th>Nguồn</th><th>Nội dung</th><th>Thời gian</th></tr></thead><tbody><?php foreach($ledger as $x):?><tr><td>#<?=(int)$x['id']?></td><td><?=kp_e($x['username']??('ID '.$x['user_id']))?></td><td><strong><?=((int)$x['points_delta']>0?'+':'').number_format((int)$x['points_delta'],0,',','.')?></strong></td><td><?=kp_e($x['source_type'])?></td><td><?=kp_e($x['note'])?></td><td><?=kp_e($x['created_at'])?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
+<section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">AUDIT / IP · THIẾT BỊ</span><h2>Nhật ký Point chi tiết</h2>
+<p class="tp-muted">Admin xem tất cả. Thời gian hiển thị đến giây; IP được ghi từ kết nối máy chủ, vị trí chỉ là GeoIP ước lượng nếu có.</p>
+<?php if(!kp_points_audit_enabled($db)):?><p class="tp-alert warning">Chạy <code>database/points_stage4_audit.sql</code> để ghi lịch sử chi tiết mới. Giao dịch cũ không thể phục dựng IP và thiết bị.</p>
+<?php elseif(!$pointAudit):?><p class="tp-muted">Chưa có bút toán audit mới.</p>
+<?php else:?><div class="tp-table-wrap point-audit-scroll" tabindex="0" role="region" aria-label="Nhật ký Point tất cả tài khoản có thể cuộn ngang"><table class="tp-table point-audit-table">
+<thead><tr><th>Thời gian</th><th>Tài khoản #</th><th>Thao tác</th><th>Point +/-</th><th>Trước → Sau</th><th>Admin #</th><th>IP</th><th>Thiết bị</th><th>Vị trí IP (ước lượng)</th></tr></thead>
+<tbody><?php foreach($pointAudit as $a):?><tr>
+<td><?=kp_e($a['created_at'])?></td><td><?=(int)$a['user_id']?></td><td><?=kp_e($a['operation'])?> · <?=kp_e($a['reference'])?></td>
+<td><?=((int)$a['points_delta']>=0?'+':'').number_format((int)$a['points_delta'],0,',','.')?></td>
+<td><?=$a['balance_before']===null?'—':number_format((int)$a['balance_before'],0,',','.')?> → <?=$a['balance_after']===null?'—':number_format((int)$a['balance_after'],0,',','.')?></td>
+<td><?=$a['actor_admin_id']===null?'—':(int)$a['actor_admin_id']?></td>
+<td><?=kp_e($a['ip']!==''?$a['ip']:'Không có dữ liệu')?></td>
+<td><?=kp_e($a['device_type'].' · '.$a['browser'])?></td>
+<td><?=kp_e($a['location_hint']!==''?$a['location_hint'].' (ước lượng)':'Không xác định')?></td>
+</tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <?php endif;?>
 <?php kp_topup_page_end(); ?>
