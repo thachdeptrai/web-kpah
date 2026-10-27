@@ -90,17 +90,38 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken): int
 }
 
 /** Admin-confirmed manual fulfillment or an atomic refund of pending rewards. */
+function kp_points_workflow_enabled(PDO $db): bool {
+    try {
+        $st=$db->query("SHOW TABLES LIKE 'kp_points_redemption_events'");
+        return $st && $st->fetchColumn()!==false;
+    } catch (Throwable $e) { return false; }
+}
+
+/**
+ * Multi-step manual delivery: pending -> approved -> delivering -> fulfilled.
+ * Rejection with atomic refund is allowed before delivery begins only.
+ * Existing installations without the optional migration retain legacy review.
+ */
 function kp_points_review_redemption(int $redemptionId, int $adminId, string $action, string $note): string {
-    if($redemptionId<1 || $adminId<1 || !in_array($action,['fulfilled','rejected'],true)
-        || trim($note)==='' || strlen($note)>200)
+    $note=trim($note);
+    if($redemptionId<1 || $adminId<1
+        || !in_array($action,['approved','delivering','fulfilled','rejected'],true)
+        || $note==='' || strlen($note)>200)
         throw new InvalidArgumentException('Xác nhận đổi quà không hợp lệ.');
     $db=kp_db();
+    $advanced=kp_points_workflow_enabled($db);
     $db->beginTransaction();
     try {
         $st=$db->prepare('SELECT * FROM kp_points_redemptions WHERE id=? FOR UPDATE');
         $st->execute([$redemptionId]);$redemption=$st->fetch(PDO::FETCH_ASSOC);
-        if(!$redemption || $redemption['status']!=='pending')
-            throw new RuntimeException('Yêu cầu không còn chờ xử lý. Không thao tác lại.');
+        if(!$redemption)throw new RuntimeException('Không tìm thấy yêu cầu đổi quà.');
+        $old=(string)$redemption['status'];
+        $allowed=$advanced
+            ? ['pending'=>['approved','rejected'],'approved'=>['delivering','rejected'],'delivering'=>['fulfilled']]
+            : ['pending'=>['fulfilled','rejected']];
+        if(!in_array($action,$allowed[$old]??[],true)) {
+            throw new RuntimeException('Trạng thái đã thay đổi hoặc bước phát quà không hợp lệ. Không xử lý lặp.');
+        }
         if($action==='rejected'){
             $userId=(int)$redemption['user_id'];$cost=(int)$redemption['points_cost'];
             $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
@@ -111,19 +132,24 @@ function kp_points_review_redemption(int $redemptionId, int $adminId, string $ac
             $st->execute([$userId,$cost,'refund',(string)$redemptionId,'Hoàn Point do yêu cầu đổi quà bị từ chối']);
             $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_spent=total_spent-? WHERE user_id=?');
             $st->execute([$cost,$cost,$userId]);
+            if($st->rowCount()!==1)throw new RuntimeException('Hoàn Point chưa được ghi nhận.');
             $db->prepare('UPDATE kp_points_rewards SET stock=stock+1 WHERE id=? AND stock IS NOT NULL')->execute([(int)$redemption['reward_id']]);
         }
-        $st=$db->prepare('UPDATE kp_points_redemptions SET status=?,admin_note=? WHERE id=? AND status="pending"');
-        $st->execute([$action,'#'.$adminId.' '.$note,$redemptionId]);
+        $st=$db->prepare('UPDATE kp_points_redemptions SET status=?,admin_note=? WHERE id=? AND status=?');
+        $st->execute([$action,'#'.$adminId.' '.$note,$redemptionId,$old]);
         if($st->rowCount()!==1)throw new RuntimeException('Không hoàn tất đối soát yêu cầu.');
+        if($advanced){
+            $st=$db->prepare('INSERT INTO kp_points_redemption_events (redemption_id,actor_admin_id,from_status,to_status,note) VALUES (?,?,?,?,?)');
+            $st->execute([$redemptionId,$adminId,$old,$action,$note]);
+        }
         $db->commit();
-        $title=(string)$redemption['reward_title'];
-        $body=$action==='fulfilled'
-            ? 'Đơn #'.$redemptionId.' đã được duyệt. Quà “'.$title.'” đã được quản trị viên xác nhận cộng/phát. Ghi chú: '.$note
-            : 'Đơn #'.$redemptionId.' bị từ chối. '.number_format((int)$redemption['points_cost'],0,',','.').' Point đã được hoàn lại. Lý do: '.$note;
-        kp_center_notify((int)$redemption['user_id'],
-            $action==='fulfilled'?'Quà đã được duyệt và cộng':'Đơn đổi quà bị từ chối',
-            $body,'gift','/diem-tich-luy');
+        $labels=['approved'=>'Đã duyệt, chờ phát quà','delivering'=>'Đang tiến hành phát quà','fulfilled'=>'Quà đã được xác nhận giao','rejected'=>'Đơn bị từ chối, Point đã hoàn'];
+        $body='Đơn #'.$redemptionId.' · '.$redemption['reward_title'].' · '.$labels[$action].'. Ghi chú: '.$note;
+        try {
+            kp_center_notify((int)$redemption['user_id'],$labels[$action],$body,'gift','/diem-tich-luy');
+        } catch(Throwable $notifyError) {
+            if(function_exists('kp_log'))kp_log('point redemption notification failed after commit',$notifyError);
+        }
         return $action;
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }
