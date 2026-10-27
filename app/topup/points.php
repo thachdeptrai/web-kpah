@@ -5,7 +5,7 @@ require_once __DIR__.'/../includes/loyalty_points.php';
 require_once __DIR__.'/../includes/points_reward_display.php';
 require_once __DIR__.'/_layout.php';
 $user=kp_topup_user();$userId=(int)$user['id'];$csrf=kp_csrf_token();
-$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];
+$error='';$notice='';$ready=false;$wallet=null;$ledger=[];$rewards=[];$redemptions=[];$rewardDisplays=[];$redeemCharacters=[];$targetEnabled=false;$redemptionTargets=[];$pointAudit=[];
 if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
     try {
         if(!kp_csrf_check((string)($_POST['csrf']??'')))throw new RuntimeException('Phiên xác nhận hết hạn.');
@@ -50,6 +50,7 @@ try {
     $st=$db->prepare('SELECT id,reward_title,points_cost,status,admin_note,created_at FROM kp_points_redemptions WHERE user_id=? ORDER BY id DESC LIMIT 30');
     $st->execute([$userId]);$redemptions=$st->fetchAll(PDO::FETCH_ASSOC);
     $redemptionTargets=kp_points_targets($db,$redemptions);
+    $pointAudit=kp_points_audit_list($db,$userId,40);
 }catch(Throwable $e){
     kp_log('player loyalty page failed',$e);
     $ready=false;
@@ -83,6 +84,13 @@ kp_topup_page_start('Điểm tích lũy','points',(string)$user['username']);
 <?php if(!$ledger):?><p class="tp-muted">Chưa có giao dịch Point.</p><?php else:?>
 <div class="tp-table-wrap"><table class="tp-table"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Point</th></tr></thead><tbody>
 <?php foreach($ledger as $x):?><tr><td><?=kp_e($x['created_at'])?></td><td><?=kp_e($x['note'])?></td><td><b><?= (int)$x['points_delta']>0?'+':'' ?><?=number_format((int)$x['points_delta'],0,',','.')?></b></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
+<section class="tp-section"><div class="tp-panel"><span class="tp-eyebrow">NHẬT KÝ CỦA TÔI</span><h2>Lịch sử xác nhận và thiết bị</h2><p class="tp-muted">Chỉ hiển thị các thao tác Point của tài khoản đang đăng nhập. Vị trí IP là ước lượng nếu có, không phải GPS.</p>
+<?php if(!$pointAudit):?><p class="tp-muted">Chưa có bản ghi nhật ký chi tiết mới.</p><?php else:?>
+<div class="tp-table-wrap point-audit-scroll" tabindex="0" role="region" aria-label="Nhật ký Point tài khoản của tôi"><table class="tp-table point-audit-table">
+<thead><tr><th>Thời gian</th><th>Thao tác</th><th>Point +/-</th><th>Số dư trước → sau</th><th>Thiết bị</th><th>IP</th><th>Vị trí IP</th></tr></thead><tbody>
+<?php foreach($pointAudit as $a):?><tr><td><?=kp_e($a['created_at'])?></td><td><?=kp_e($a['operation'])?></td><td><?=((int)$a['points_delta']>=0?'+':'').number_format((int)$a['points_delta'],0,',','.')?></td>
+<td><?=$a['balance_before']===null?'—':number_format((int)$a['balance_before'],0,',','.')?> → <?=$a['balance_after']===null?'—':number_format((int)$a['balance_after'],0,',','.')?></td>
+<td><?=kp_e($a['device_type'].' · '.$a['browser'])?></td><td><?=kp_e($a['ip']!==''?$a['ip']:'Không có dữ liệu')?></td><td><?=kp_e($a['location_hint']!==''?$a['location_hint'].' (ước lượng)':'Không xác định')?></td></tr><?php endforeach;?></tbody></table></div><?php endif;?></div></section>
 <?php endif;?>
 <script src="/assets/js/points-guard.js?v=1" defer></script>
 <?php kp_topup_page_end(); ?>
