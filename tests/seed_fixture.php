@@ -4,6 +4,12 @@ $name=getenv('KPAH_DB_NAME');
 if ($name!=='kpah_route_test') { fwrite(STDERR,"Refusing to seed a non-test database\n"); exit(1); }
 require dirname(__DIR__).'/app/includes/bootstrap.php';
 $pdo=kp_db();
+$pointsName=(string)(getenv('KPAH_POINTS_DB_NAME')?:'');
+if($pointsName!==''){
+    // Only disposable CI databases may be created from this script.
+    if($pointsName!=='kpah_route_points_test')throw new RuntimeException('Refusing to initialize a non-fixture Point database');
+    $pdo->exec('CREATE DATABASE IF NOT EXISTS `kpah_route_points_test` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
+}
 foreach ([__DIR__.'/fixtures/schema.sql', KP_ROOT.'/database/referral_codes.sql'] as $file) {
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
     foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement) {

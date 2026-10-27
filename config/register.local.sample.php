@@ -16,6 +16,10 @@ return [
         'user' => 'TEN_USER_DB',
         'pass' => 'MAT_KHAU_DB',
     ],
+    // Only enable once ALL original kp_points_* rows are imported.
+    // Database must be on the SAME MariaDB server as 'db' above.
+    // 'points_db' => ['name' => 'kpah_points'],
+
     'mail' => [
         'from_email' => 'your-email@example.com',
         'from_name' => 'KPAH',

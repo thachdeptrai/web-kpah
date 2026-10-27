@@ -31,6 +31,7 @@ jobs:
       KPAH_DB_HOST: 127.0.0.1
       KPAH_DB_PORT: '3306'
       KPAH_DB_NAME: kpah_route_test
+      KPAH_POINTS_DB_NAME: kpah_route_points_test
       KPAH_DB_USER: root
       KPAH_DB_PASS: fixture-only-password
       KPAH_ADMIN_REQUIRE_TOTP: '0'
@@ -83,6 +84,7 @@ jobs:
             SetEnv KPAH_DB_HOST 127.0.0.1
             SetEnv KPAH_DB_PORT 3306
             SetEnv KPAH_DB_NAME kpah_route_test
+            SetEnv KPAH_POINTS_DB_NAME kpah_route_points_test
             SetEnv KPAH_DB_USER root
             SetEnv KPAH_DB_PASS fixture-only-password
             SetEnv KPAH_ADMIN_REQUIRE_TOTP 0
