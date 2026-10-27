@@ -4,6 +4,7 @@ if(getenv('KPAH_DB_NAME')!=='kpah_route_test'){fwrite(STDERR,"Refusing non-test 
 require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once KP_ROOT.'/app/includes/loyalty_points.php';
 require_once KP_ROOT.'/app/includes/points_reward_display.php';
+require_once KP_ROOT.'/app/includes/points_reconciliation.php';
 $db=kp_db();
 foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql',KP_ROOT.'/database/points_stage2_redemption_events.sql',KP_ROOT.'/database/points_stage3_redemption_targets.sql',KP_ROOT.'/database/points_stage4_audit.sql'] as $file){
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
@@ -70,4 +71,12 @@ $_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4';
 $ctx=kp_points_audit_context(['REMOTE_ADDR'=>'203.0.113.19','HTTP_X_FORWARDED_FOR'=>'1.2.3.4','HTTP_USER_AGENT'=>'Mozilla/5.0 (Windows NT 10.0) Chrome/130.0.0.0 Safari/537.36']);
 point_ok($ctx['ip']==='203.0.113.19' && $ctx['device']==='Máy tính',
  'stage 4 does not trust spoofed forwarded IP or device claims');
+$beforeAuditCount=(int)$db->query('SELECT COUNT(*) FROM kp_points_ledger')->fetchColumn();
+$beforeWalletBalance=(int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn();
+$rec=kp_points_reconcile($db);
+point_ok(isset($rec['wallet_mismatch'],$rec['overdue_orders'],$rec['missing_payos_ledger']),
+ 'stage 5 reconciliation returns stable read-only result categories');
+point_ok($beforeAuditCount===(int)$db->query('SELECT COUNT(*) FROM kp_points_ledger')->fetchColumn()
+ && $beforeWalletBalance===(int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn(),
+ 'stage 5 never writes wallet or ledger');
 echo "Point workflow integration PASS\n";
