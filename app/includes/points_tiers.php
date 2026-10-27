@@ -24,14 +24,14 @@ function kp_points_next_tier(int $earned): ?array {
  return null;
 }
 function kp_points_tier_enabled(PDO $db): bool {
- try{$st=$db->query("SHOW TABLES LIKE 'kp_points_reward_tiers'");return $st && $st->fetchColumn()!==false;}
+ try{$st=$db->query(kp_points_sql("SHOW TABLES LIKE 'kp_points_reward_tiers'"));return $st && $st->fetchColumn()!==false;}
  catch(Throwable $e){return false;}
 }
 function kp_points_reward_required_tiers(PDO $db,array $rewards): array {
  if(!kp_points_tier_enabled($db)||!$rewards)return [];
  $ids=array_values(array_unique(array_map('intval',array_column($rewards,'id'))));
  if(!$ids)return [];
- $st=$db->prepare('SELECT reward_id,min_tier FROM kp_points_reward_tiers WHERE reward_id IN ('.implode(',',array_fill(0,count($ids),'?')).')');
+ $st=$db->prepare(kp_points_sql('SELECT reward_id,min_tier FROM kp_points_reward_tiers WHERE reward_id IN ('.implode(',',array_fill(0,count($ids),'?')).')'));
  $st->execute($ids);
  $out=[];
  foreach($st->fetchAll(PDO::FETCH_ASSOC) as $row)$out[(int)$row['reward_id']]=(int)$row['min_tier'];
@@ -39,7 +39,7 @@ function kp_points_reward_required_tiers(PDO $db,array $rewards): array {
 }
 function kp_points_reward_min_tier(PDO $db,int $rewardId): int {
  if(!kp_points_tier_enabled($db))return 0;
- $st=$db->prepare('SELECT min_tier FROM kp_points_reward_tiers WHERE reward_id=?');
+ $st=$db->prepare(kp_points_sql('SELECT min_tier FROM kp_points_reward_tiers WHERE reward_id=?'));
  $st->execute([$rewardId]);$id=$st->fetchColumn();
  return $id===false?0:max(0,min(5,(int)$id));
 }
@@ -49,6 +49,6 @@ function kp_points_reward_set_tier(PDO $db,int $rewardId,int $tier): void {
   if($tier===0)return;
   throw new RuntimeException('Chưa chạy database/points_stage6_tiers.sql.');
  }
- $st=$db->prepare('INSERT INTO kp_points_reward_tiers (reward_id,min_tier) VALUES (?,?) ON DUPLICATE KEY UPDATE min_tier=VALUES(min_tier)');
+ $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_reward_tiers (reward_id,min_tier) VALUES (?,?) ON DUPLICATE KEY UPDATE min_tier=VALUES(min_tier)'));
  $st->execute([$rewardId,$tier]);
 }

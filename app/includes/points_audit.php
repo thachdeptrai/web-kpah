@@ -2,7 +2,7 @@
 /** Optional append-only Point audit. Ledger is authoritative for balances. */
 if(!defined('KP_ROOT')){http_response_code(403);exit;}
 function kp_points_audit_enabled(PDO $db): bool {
- try{$st=$db->query("SHOW TABLES LIKE 'kp_points_audit'");return $st && $st->fetchColumn()!==false;}
+ try{$st=$db->query(kp_points_sql("SHOW TABLES LIKE 'kp_points_audit'"));return $st && $st->fetchColumn()!==false;}
  catch(Throwable $e){return false;}
 }
 function kp_points_audit_context(array $server): array {
@@ -35,14 +35,14 @@ function kp_points_audit_append(PDO $db,int $userId,?int $adminId,?int $redempti
     : kp_points_audit_context($_SERVER);
  // Webhooks and reconciliation workers have their OWN IP/UA; never label
  // provider-server metadata as if it belonged to the paying customer.
- $st=$db->prepare('INSERT INTO kp_points_audit (user_id,actor_admin_id,redemption_id,operation,reference,points_delta,balance_before,balance_after,ip,device_type,browser,location_hint) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
+ $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_audit (user_id,actor_admin_id,redemption_id,operation,reference,points_delta,balance_before,balance_after,ip,device_type,browser,location_hint) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'));
  $st->execute([$userId,$adminId,$redemptionId,$operation,$reference,$delta,$before,$after,$ctx['ip'],$ctx['device'],$ctx['browser'],$ctx['location']]);
 }
 /** Return only the caller-owned rows unless explicitly authorized admin sets null. */
 function kp_points_audit_list(PDO $db,?int $owner,int $limit=80): array {
  if(!kp_points_audit_enabled($db)||($owner!==null && $owner<1))return [];
  $limit=max(1,min(200,$limit));
- if($owner===null){$st=$db->query('SELECT * FROM kp_points_audit ORDER BY id DESC LIMIT '.$limit);}
- else{$st=$db->prepare('SELECT * FROM kp_points_audit WHERE user_id=? ORDER BY id DESC LIMIT '.$limit);$st->execute([$owner]);}
+ if($owner===null){$st=$db->query(kp_points_sql('SELECT * FROM kp_points_audit ORDER BY id DESC LIMIT '.$limit));}
+ else{$st=$db->prepare(kp_points_sql('SELECT * FROM kp_points_audit WHERE user_id=? ORDER BY id DESC LIMIT '.$limit));$st->execute([$owner]);}
  return $st->fetchAll(PDO::FETCH_ASSOC);
 }

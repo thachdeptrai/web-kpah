@@ -15,7 +15,7 @@ function kp_points_award(int $userId, string $source, string $reference, int $am
         throw new InvalidArgumentException('Thông tin tích điểm không hợp lệ.');
     }
     $db = kp_db();
-    $config = $db->query('SELECT activated_at,points_per_1000 FROM kp_points_program WHERE id=1')->fetch(PDO::FETCH_ASSOC);
+    $config = $db->query(kp_points_sql('SELECT activated_at,points_per_1000 FROM kp_points_program WHERE id=1'))->fetch(PDO::FETCH_ASSOC);
     if (!$config) return false; // Migration has not been initialized.
     $started = strtotime((string)$config['activated_at']);
     $created = is_numeric($orderCreatedAt) ? (int)$orderCreatedAt : strtotime((string)$orderCreatedAt);
@@ -28,16 +28,16 @@ function kp_points_award(int $userId, string $source, string $reference, int $am
 
     $db->beginTransaction();
     try {
-        $st=$db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)');
+        $st=$db->prepare(kp_points_sql('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)'));
         $st->execute([$userId]);
-        $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+        $st=$db->prepare(kp_points_sql('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE'));
         $st->execute([$userId]);
         $before=$st->fetchColumn();
         if ($before===false) throw new RuntimeException('Ví Point chưa sẵn sàng.');
-        $st=$db->prepare('INSERT IGNORE INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,amount_vnd,note) VALUES (?,?,?,?,?,?)');
+        $st=$db->prepare(kp_points_sql('INSERT IGNORE INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,amount_vnd,note) VALUES (?,?,?,?,?,?)'));
         $st->execute([$userId,$points,$source,$reference,$amountVnd,'Tích Point từ giao dịch hợp lệ']);
         if ($st->rowCount()!==1) { $db->commit(); return false; }
-        $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_earned=total_earned+? WHERE user_id=?');
+        $st=$db->prepare(kp_points_sql('UPDATE kp_points_wallet SET balance=balance+?,total_earned=total_earned+? WHERE user_id=?'));
         $st->execute([$points,$points,$userId]);
         if ($st->rowCount()!==1) throw new RuntimeException('Chưa hoàn tất cập nhật ví Point.');
         kp_points_audit_append($db,$userId,null,null,'award',$source.':'.$reference,$points,(int)$before,(int)$before+$points);
@@ -59,7 +59,7 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
     $db=kp_db();
     $db->beginTransaction();
     try {
-        $st=$db->prepare('SELECT id,user_id FROM kp_points_redemptions WHERE request_token=? LIMIT 1');
+        $st=$db->prepare(kp_points_sql('SELECT id,user_id FROM kp_points_redemptions WHERE request_token=? LIMIT 1'));
         $st->execute([$requestToken]);$previous=$st->fetch(PDO::FETCH_ASSOC);
         if($previous) {
             if((int)$previous['user_id']!==$userId)throw new RuntimeException('Yêu cầu đổi quà không hợp lệ.');
@@ -71,33 +71,33 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
             throw new RuntimeException('Chức năng hiện đang cập nhật');
         $target=null;
         if(kp_points_target_enabled($db))$target=kp_points_validate_character($db,$userId,$charId);
-        $st=$db->prepare('SELECT id,title,points_cost,stock FROM kp_points_rewards WHERE id=? AND is_active=1 FOR UPDATE');
+        $st=$db->prepare(kp_points_sql('SELECT id,title,points_cost,stock FROM kp_points_rewards WHERE id=? AND is_active=1 FOR UPDATE'));
         $st->execute([$rewardId]);$reward=$st->fetch(PDO::FETCH_ASSOC);
         if(!$reward)throw new RuntimeException('Quà tặng này chưa mở đổi.');
         $cost=(int)$reward['points_cost'];
         if($cost<1)throw new RuntimeException('Giá Point không hợp lệ.');
         if($reward['stock']!==null && (int)$reward['stock']<1)throw new RuntimeException('Quà đã hết.');
-        $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
-        $st=$db->prepare('SELECT balance,total_earned FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+        $db->prepare(kp_points_sql('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)'))->execute([$userId]);
+        $st=$db->prepare(kp_points_sql('SELECT balance,total_earned FROM kp_points_wallet WHERE user_id=? FOR UPDATE'));
         $st->execute([$userId]);$wallet=$st->fetch(PDO::FETCH_ASSOC);
         if(!$wallet || (int)$wallet['balance']<$cost)throw new RuntimeException('Bạn chưa đủ Point để đổi quà.');
         $balance=(int)$wallet['balance'];
         if(kp_points_member_tier((int)$wallet['total_earned'])['id']<kp_points_reward_min_tier($db,$rewardId)){
             throw new RuntimeException('Hạng thành viên chưa đủ để đổi phần quà này.');
         }
-        $st=$db->prepare('INSERT INTO kp_points_redemptions (user_id,reward_id,reward_title,points_cost,request_token,status) VALUES (?,?,?,?,?,?)');
+        $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_redemptions (user_id,reward_id,reward_title,points_cost,request_token,status) VALUES (?,?,?,?,?,?)'));
         $st->execute([$userId,$rewardId,$reward['title'],$cost,$requestToken,'pending']);
         $id=(int)$db->lastInsertId();
         if($target!==null)kp_points_save_target($db,$id,$target);
-        $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance-?,total_spent=total_spent+? WHERE user_id=? AND balance>=?');
+        $st=$db->prepare(kp_points_sql('UPDATE kp_points_wallet SET balance=balance-?,total_spent=total_spent+? WHERE user_id=? AND balance>=?'));
         $st->execute([$cost,$cost,$userId,$cost]);
         if($st->rowCount()!==1)throw new RuntimeException('Không trừ được Point.');
         if($reward['stock']!==null){
-            $st=$db->prepare('UPDATE kp_points_rewards SET stock=stock-1 WHERE id=? AND stock>0');
+            $st=$db->prepare(kp_points_sql('UPDATE kp_points_rewards SET stock=stock-1 WHERE id=? AND stock>0'));
             $st->execute([$rewardId]);
             if($st->rowCount()!==1)throw new RuntimeException('Quà đã hết.');
         }
-        $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
+        $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)'));
         $st->execute([$userId,-$cost,'redeem',(string)$id,'Đổi quà: '.$reward['title']]);
         kp_points_audit_append($db,$userId,null,$id,'redeem',(string)$id,-$cost,(int)$balance,(int)$balance-$cost);
         $db->commit();
@@ -122,7 +122,7 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
 /** Admin-confirmed manual fulfillment or an atomic refund of pending rewards. */
 function kp_points_workflow_enabled(PDO $db): bool {
     try {
-        $st=$db->query("SHOW TABLES LIKE 'kp_points_redemption_events'");
+        $st=$db->query(kp_points_sql("SHOW TABLES LIKE 'kp_points_redemption_events'"));
         return $st && $st->fetchColumn()!==false;
     } catch (Throwable $e) { return false; }
 }
@@ -142,7 +142,7 @@ function kp_points_review_redemption(int $redemptionId, int $adminId, string $ac
     $advanced=kp_points_workflow_enabled($db);
     $db->beginTransaction();
     try {
-        $st=$db->prepare('SELECT * FROM kp_points_redemptions WHERE id=? FOR UPDATE');
+        $st=$db->prepare(kp_points_sql('SELECT * FROM kp_points_redemptions WHERE id=? FOR UPDATE'));
         $st->execute([$redemptionId]);$redemption=$st->fetch(PDO::FETCH_ASSOC);
         if(!$redemption)throw new RuntimeException('Không tìm thấy yêu cầu đổi quà.');
         $old=(string)$redemption['status'];
@@ -154,25 +154,25 @@ function kp_points_review_redemption(int $redemptionId, int $adminId, string $ac
         }
         if($action==='rejected'){
             $userId=(int)$redemption['user_id'];$cost=(int)$redemption['points_cost'];
-            $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
-            $st=$db->prepare('SELECT total_spent FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+            $db->prepare(kp_points_sql('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)'))->execute([$userId]);
+            $st=$db->prepare(kp_points_sql('SELECT total_spent FROM kp_points_wallet WHERE user_id=? FOR UPDATE'));
             $st->execute([$userId]);$spent=$st->fetchColumn();
             if($spent===false||(int)$spent<$cost)throw new RuntimeException('Ví Point không khớp để hoàn trả.');
-            $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
+            $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)'));
             $st->execute([$userId,$cost,'refund',(string)$redemptionId,'Hoàn Point do yêu cầu đổi quà bị từ chối']);
-            $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_spent=total_spent-? WHERE user_id=?');
+            $st=$db->prepare(kp_points_sql('UPDATE kp_points_wallet SET balance=balance+?,total_spent=total_spent-? WHERE user_id=?'));
             $st->execute([$cost,$cost,$userId]);
             if($st->rowCount()!==1)throw new RuntimeException('Hoàn Point chưa được ghi nhận.');
-            $db->prepare('UPDATE kp_points_rewards SET stock=stock+1 WHERE id=? AND stock IS NOT NULL')->execute([(int)$redemption['reward_id']]);
+            $db->prepare(kp_points_sql('UPDATE kp_points_rewards SET stock=stock+1 WHERE id=? AND stock IS NOT NULL'))->execute([(int)$redemption['reward_id']]);
         }
-        $st=$db->prepare('UPDATE kp_points_redemptions SET status=?,admin_note=? WHERE id=? AND status=?');
+        $st=$db->prepare(kp_points_sql('UPDATE kp_points_redemptions SET status=?,admin_note=? WHERE id=? AND status=?'));
         $st->execute([$action,'#'.$adminId.' '.$note,$redemptionId,$old]);
         if($st->rowCount()!==1)throw new RuntimeException('Không hoàn tất đối soát yêu cầu.');
         if($advanced){
-            $st=$db->prepare('INSERT INTO kp_points_redemption_events (redemption_id,actor_admin_id,from_status,to_status,note) VALUES (?,?,?,?,?)');
+            $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_redemption_events (redemption_id,actor_admin_id,from_status,to_status,note) VALUES (?,?,?,?,?)'));
             $st->execute([$redemptionId,$adminId,$old,$action,$note]);
         }
-        $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=?');
+        $st=$db->prepare(kp_points_sql('SELECT balance FROM kp_points_wallet WHERE user_id=?'));
         $st->execute([(int)$redemption['user_id']]);
         $afterBalance=$st->fetchColumn();
         $afterBalance=$afterBalance===false?null:(int)$afterBalance;
@@ -199,7 +199,7 @@ function kp_points_adjust(int $userId, int $adminId, int $delta, string $reason,
         throw new InvalidArgumentException('Điều chỉnh Point không hợp lệ.');
     $db=kp_db();$db->beginTransaction();
     try{
-        $st=$db->prepare('SELECT user_id FROM kp_points_ledger WHERE source_type=? AND source_ref=? LIMIT 1');
+        $st=$db->prepare(kp_points_sql('SELECT user_id FROM kp_points_ledger WHERE source_type=? AND source_ref=? LIMIT 1'));
         $st->execute(['admin_adjust',$requestToken]);$previous=$st->fetchColumn();
         if($previous!==false){
             if((int)$previous!==$userId)throw new RuntimeException('Mã thao tác Point không hợp lệ.');
@@ -208,18 +208,18 @@ function kp_points_adjust(int $userId, int $adminId, int $delta, string $reason,
         $st=$db->prepare('SELECT id,username FROM team_user WHERE id=? AND ban=0 LIMIT 1');
         $st->execute([$userId]);$user=$st->fetch(PDO::FETCH_ASSOC);
         if(!$user)throw new RuntimeException('Không tìm thấy tài khoản đang hoạt động.');
-        $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
-        $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+        $db->prepare(kp_points_sql('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)'))->execute([$userId]);
+        $st=$db->prepare(kp_points_sql('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE'));
         $st->execute([$userId]);$balance=$st->fetchColumn();
         if($balance===false||$delta<0&&(int)$balance<abs($delta))throw new RuntimeException('Số dư Point không đủ để trừ.');
-        $st=$db->prepare('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)');
+        $st=$db->prepare(kp_points_sql('INSERT INTO kp_points_ledger (user_id,points_delta,source_type,source_ref,note) VALUES (?,?,?,?,?)'));
         $st->execute([$userId,$delta,'admin_adjust',$requestToken,'Admin #'.$adminId.': '.$reason]);
         if($delta>0){
-            $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance+?,total_earned=total_earned+? WHERE user_id=?');
+            $st=$db->prepare(kp_points_sql('UPDATE kp_points_wallet SET balance=balance+?,total_earned=total_earned+? WHERE user_id=?'));
             $st->execute([$delta,$delta,$userId]);
         }else{
             $spent=abs($delta);
-            $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance-?,total_spent=total_spent+? WHERE user_id=? AND balance>=?');
+            $st=$db->prepare(kp_points_sql('UPDATE kp_points_wallet SET balance=balance-?,total_spent=total_spent+? WHERE user_id=? AND balance>=?'));
             $st->execute([$spent,$spent,$userId,$spent]);
         }
         if($st->rowCount()!==1)throw new RuntimeException('Không cập nhật được ví Point.');
