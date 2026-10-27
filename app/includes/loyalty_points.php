@@ -2,6 +2,7 @@
 /** Website loyalty Points, separate from any game-character progression. */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/user_center.php';
+require_once __DIR__.'/points_recipient.php';
 
 /** Exactly one ledger row per verified payment, under an InnoDB transaction. */
 function kp_points_award(int $userId, string $source, string $reference, int $amountVnd, $orderCreatedAt): bool {
@@ -43,7 +44,7 @@ function kp_points_award(int $userId, string $source, string $reference, int $am
     } catch(Throwable $e) { if ($db->inTransaction()) $db->rollBack(); throw $e; }
 }
 
-function kp_points_redeem(int $userId, int $rewardId, string $requestToken): int {
+function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int $charId=0): int {
     if ($userId < 1 || $rewardId < 1 || !preg_match('/^[a-f0-9]{32}$/D',$requestToken))
         throw new InvalidArgumentException('Yêu cầu đổi quà không hợp lệ.');
     $db=kp_db();
@@ -55,6 +56,8 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken): int
             if((int)$previous['user_id']!==$userId)throw new RuntimeException('Yêu cầu đổi quà không hợp lệ.');
             $db->commit();return (int)$previous['id'];
         }
+        $target=null;
+        if(kp_points_target_enabled($db))$target=kp_points_validate_character($db,$userId,$charId);
         $st=$db->prepare('SELECT id,title,points_cost,stock FROM kp_points_rewards WHERE id=? AND is_active=1 FOR UPDATE');
         $st->execute([$rewardId]);$reward=$st->fetch(PDO::FETCH_ASSOC);
         if(!$reward)throw new RuntimeException('Quà tặng này chưa mở đổi.');
@@ -68,6 +71,7 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken): int
         $st=$db->prepare('INSERT INTO kp_points_redemptions (user_id,reward_id,reward_title,points_cost,request_token,status) VALUES (?,?,?,?,?,?)');
         $st->execute([$userId,$rewardId,$reward['title'],$cost,$requestToken,'pending']);
         $id=(int)$db->lastInsertId();
+        if($target!==null)kp_points_save_target($db,$id,$target);
         $st=$db->prepare('UPDATE kp_points_wallet SET balance=balance-?,total_spent=total_spent+? WHERE user_id=? AND balance>=?');
         $st->execute([$cost,$cost,$userId,$cost]);
         if($st->rowCount()!==1)throw new RuntimeException('Không trừ được Point.');
