@@ -5,6 +5,7 @@ require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once KP_ROOT.'/app/includes/loyalty_points.php';
 require_once KP_ROOT.'/app/includes/points_reward_display.php';
 require_once KP_ROOT.'/app/includes/points_reconciliation.php';
+require_once KP_ROOT.'/app/includes/points_reward_admin.php';
 $db=kp_db();
 foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql',KP_ROOT.'/database/points_stage2_redemption_events.sql',KP_ROOT.'/database/points_stage3_redemption_targets.sql',KP_ROOT.'/database/points_stage4_audit.sql',KP_ROOT.'/database/points_stage6_tiers.sql'] as $file){
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
@@ -87,4 +88,31 @@ point_ok(isset($rec['wallet_mismatch'],$rec['overdue_orders'],$rec['missing_payo
 point_ok($beforeAuditCount===(int)$db->query('SELECT COUNT(*) FROM kp_points_ledger')->fetchColumn()
  && $beforeWalletBalance===(int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn(),
  'stage 5 never writes wallet or ledger');
+
+// Removing a catalog gift is legal only before its first redemption.
+$refused=false;
+try { kp_points_admin_delete_reward($db,$reward); }
+catch(RuntimeException $e) { $refused=strpos($e->getMessage(),'lịch sử đổi')!==false; }
+point_ok($refused,'gift with a historical redemption cannot be permanently deleted');
+point_ok((int)$db->query('SELECT COUNT(*) FROM kp_points_rewards WHERE id='.$reward)->fetchColumn()===1,
+ 'historical gift stays in catalog for replay and order audit');
+point_ok((int)$db->query('SELECT COUNT(*) FROM kp_points_redemptions WHERE reward_id='.$reward)->fetchColumn()===2,
+ 'rejected and delivered redemption records remain unchanged');
+
+$db->prepare('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)')
+   ->execute(['Quà nháp có thể xóa','Kiểm thử xóa khi chưa đổi',300,4,'manual']);
+$draftId=(int)$db->lastInsertId();
+kp_point_reward_display_save($db,$draftId,['icon_id'=>42,'item_id'=>11,'option_lines'=>'HP +100']);
+kp_points_reward_set_tier($db,$draftId,3);
+$invalid=false;
+try {kp_points_admin_delete_reward($db,0);}catch(InvalidArgumentException $e){$invalid=true;}
+point_ok($invalid,'delete rejects invalid gift ID');
+point_ok(kp_points_admin_delete_reward($db,$draftId)==='Quà nháp có thể xóa','unused gift can be deleted');
+foreach(['kp_points_rewards'=>'id','kp_points_reward_display'=>'reward_id','kp_points_reward_tiers'=>'reward_id'] as $table=>$column){
+ $st=$db->prepare('SELECT COUNT(*) FROM '.$table.' WHERE '.$column.'=?');$st->execute([$draftId]);
+ point_ok((int)$st->fetchColumn()===0,'deletion removes unused gift and related '.$table);
+}
+$missing=false;
+try {kp_points_admin_delete_reward($db,$draftId);}catch(RuntimeException $e){$missing=true;}
+point_ok($missing,'deletion replay cannot remove an already deleted gift');
 echo "Point workflow integration PASS\n";
