@@ -3,8 +3,9 @@
 if(getenv('KPAH_DB_NAME')!=='kpah_route_test'){fwrite(STDERR,"Refusing non-test database\n");exit(1);}
 require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once KP_ROOT.'/app/includes/loyalty_points.php';
+require_once KP_ROOT.'/app/includes/points_reward_display.php';
 $db=kp_db();
-foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql'] as $file){
+foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql'] as $file){
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
     foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement)if(trim($statement)!=='')$db->exec($statement);
 }
@@ -15,7 +16,15 @@ $db->exec('DELETE FROM kp_points_redemptions');$db->exec('DELETE FROM kp_points_
 $db->prepare('INSERT INTO kp_points_wallet (user_id,balance,total_earned,total_spent) VALUES (101,1000,1000,0)')->execute();
 $db->prepare('INSERT INTO kp_points_rewards (title,description,points_cost,stock,delivery_type,is_active) VALUES (?,?,?,?,?,1)')
    ->execute(['Quà kiểm thử','Chỉ dùng trong CI',200,3,'manual']);
-$reward=(int)$db->lastInsertId();$token='11111111111111111111111111111111';
+$reward=(int)$db->lastInsertId();
+$display=kp_point_reward_display_input(['icon_id'=>'123','item_id'=>'456','option_lines'=>"Sức mạnh +10\nHP +500"]);
+kp_point_reward_display_save($db,$reward,$display);
+$stored=kp_point_reward_display_all($db,[['id'=>$reward]]);
+point_ok(kp_point_reward_icon($stored[$reward])==='/res/icon/123.png','stage 1 reward image comes from numeric game icon');
+point_ok(count(kp_point_reward_option_lines($stored[$reward]))===2,'stage 1 option details stored and read');
+point_ok($stored[$reward]['item_id']==456,'stage 1 item ID saved only as metadata');
+point_ok(kp_point_reward_icon(['icon_id'=>'javascript:alert(1)'])==='','unsafe icon protocol rejected');
+$token='11111111111111111111111111111111';
 $redemption=kp_points_redeem(101,$reward,$token);
 point_ok((int)$db->query('SELECT balance FROM kp_points_wallet WHERE user_id=101')->fetchColumn()===800,'pending redemption reserves Point once');
 point_ok((int)$db->query("SELECT COUNT(*) FROM kp_admin_notifications WHERE is_read=0")->fetchColumn()===1,'admin receives pending order notification');
