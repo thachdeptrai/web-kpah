@@ -4,6 +4,7 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/user_center.php';
 require_once __DIR__.'/points_recipient.php';
 require_once __DIR__.'/points_audit.php';
+require_once __DIR__.'/points_tiers.php';
 
 /** Exactly one ledger row per verified payment, under an InnoDB transaction. */
 function kp_points_award(int $userId, string $source, string $reference, int $amountVnd, $orderCreatedAt): bool {
@@ -68,9 +69,13 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
         if($cost<1)throw new RuntimeException('Giá Point không hợp lệ.');
         if($reward['stock']!==null && (int)$reward['stock']<1)throw new RuntimeException('Quà đã hết.');
         $db->prepare('INSERT IGNORE INTO kp_points_wallet (user_id) VALUES (?)')->execute([$userId]);
-        $st=$db->prepare('SELECT balance FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
-        $st->execute([$userId]);$balance=$st->fetchColumn();
-        if($balance===false || (int)$balance<$cost)throw new RuntimeException('Bạn chưa đủ Point để đổi quà.');
+        $st=$db->prepare('SELECT balance,total_earned FROM kp_points_wallet WHERE user_id=? FOR UPDATE');
+        $st->execute([$userId]);$wallet=$st->fetch(PDO::FETCH_ASSOC);
+        if(!$wallet || (int)$wallet['balance']<$cost)throw new RuntimeException('Bạn chưa đủ Point để đổi quà.');
+        $balance=(int)$wallet['balance'];
+        if(kp_points_member_tier((int)$wallet['total_earned'])['id']<kp_points_reward_min_tier($db,$rewardId)){
+            throw new RuntimeException('Hạng thành viên chưa đủ để đổi phần quà này.');
+        }
         $st=$db->prepare('INSERT INTO kp_points_redemptions (user_id,reward_id,reward_title,points_cost,request_token,status) VALUES (?,?,?,?,?,?)');
         $st->execute([$userId,$rewardId,$reward['title'],$cost,$requestToken,'pending']);
         $id=(int)$db->lastInsertId();
