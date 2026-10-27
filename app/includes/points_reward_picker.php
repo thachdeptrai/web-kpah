@@ -44,7 +44,7 @@ function kp_points_picker_display_input(array $post, ?array $catalog): array {
     if (strlen($json)>4096) throw new RuntimeException('Danh sách option quá lớn.');
     if ($catalog===null) throw new RuntimeException('Chưa tải được catalog game để xác thực option.');
     $options=json_decode($json,true);
-    if (!is_array($options)||!array_is_list($options)||count($options)>12)
+    if (!is_array($options)||array_values($options)!==$options||count($options)>12)
         throw new RuntimeException('Dữ liệu option phải là danh sách tối đa 12 chỉ số.');
     if (!$options) {
         $display['option_lines']='';
