@@ -41,9 +41,13 @@ function kp_points_award(int $userId, string $source, string $reference, int $am
         if ($st->rowCount()!==1) throw new RuntimeException('Chưa hoàn tất cập nhật ví Point.');
         kp_points_audit_append($db,$userId,null,null,'award',$source.':'.$reference,$points,(int)$before,(int)$before+$points);
         $db->commit();
-        kp_center_notify($userId,'Bạn vừa nhận Point',
-            'Đã cộng '.number_format($points,0,',','.').' Point từ giao dịch nạp hợp lệ.',
-            'payment','/diem-tich-luy');
+        try {
+            kp_center_notify($userId,'Bạn vừa nhận Point',
+                'Đã cộng '.number_format($points,0,',','.').' Point từ giao dịch nạp hợp lệ.',
+                'payment','/diem-tich-luy');
+        } catch(Throwable $notifyError) {
+            if(function_exists('kp_log'))kp_log('Point award notification failed after commit',$notifyError);
+        }
         return true;
     } catch(Throwable $e) { if ($db->inTransaction()) $db->rollBack(); throw $e; }
 }
@@ -92,12 +96,20 @@ function kp_points_redeem(int $userId, int $rewardId, string $requestToken, int 
         $st->execute([$userId,-$cost,'redeem',(string)$id,'Đổi quà: '.$reward['title']]);
         kp_points_audit_append($db,$userId,null,$id,'redeem',(string)$id,-$cost,(int)$balance,(int)$balance-$cost);
         $db->commit();
-        kp_center_notify($userId,'Yêu cầu đổi quà đang chờ duyệt',
-            'Đơn #'.$id.' · '.$reward['title'].' đã được gửi. Point đã được giữ và quản trị viên sẽ kiểm tra.',
-            'gift','/diem-tich-luy');
-        kp_admin_notify('Có 1 đơn đổi quà đang chờ duyệt',
-            'Đơn #'.$id.' · tài khoản ID '.$userId.' yêu cầu đổi '.$reward['title'].'.',
-            'reward','/quan-tri/diem-tich-luy');
+        try {
+            kp_center_notify($userId,'Yêu cầu đổi quà đang chờ duyệt',
+                'Đơn #'.$id.' · '.$reward['title'].' đã được gửi. Point đã được giữ và quản trị viên sẽ kiểm tra.',
+                'gift','/diem-tich-luy');
+        } catch(Throwable $notifyError) {
+            if(function_exists('kp_log'))kp_log('Point redeem user notification failed after commit',$notifyError);
+        }
+        try {
+            kp_admin_notify('Có 1 đơn đổi quà đang chờ duyệt',
+                'Đơn #'.$id.' · tài khoản ID '.$userId.' yêu cầu đổi '.$reward['title'].'.',
+                'reward','/quan-tri/diem-tich-luy');
+        } catch(Throwable $notifyError) {
+            if(function_exists('kp_log'))kp_log('Point redeem admin notification failed after commit',$notifyError);
+        }
         return $id;
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }
