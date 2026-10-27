@@ -21,9 +21,16 @@ try {
   catch(RuntimeException $expected){}
  }
  points_safe(kp_points_member_tier(0)['id']===0 &&
-  kp_points_member_tier(1000)['id']===1 &&
+  kp_points_member_tier(500)['id']===0 &&
+  kp_points_member_tier(501)['id']===1 &&
+  kp_points_member_tier(2000)['id']===1 &&
+  kp_points_member_tier(2001)['id']===2 &&
   kp_points_member_tier(5000)['id']===2 &&
-  kp_points_member_tier(15000)['id']===3,'tier boundaries are deterministic');
+  kp_points_member_tier(5001)['id']===3 &&
+  kp_points_member_tier(10000)['id']===3 &&
+  kp_points_member_tier(10001)['id']===4 &&
+  kp_points_member_tier(20000)['id']===4 &&
+  kp_points_member_tier(20001)['id']===5,'six tier boundaries are deterministic');
  $ctx=kp_points_audit_context(['REMOTE_ADDR'=>'192.0.2.10',
     'HTTP_USER_AGENT'=>'Mozilla/5.0 (iPhone; CPU iPhone OS 18 like Mac OS X) Mobile/15 Safari/604',
     'HTTP_X_FORWARDED_FOR'=>'203.0.113.13','HTTP_CF_CONNECTING_IP'=>'203.0.113.13',
