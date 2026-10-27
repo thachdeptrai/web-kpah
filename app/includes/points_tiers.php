@@ -3,10 +3,10 @@
 if(!defined('KP_ROOT')){http_response_code(403);exit;}
 function kp_points_tiers(): array {
  return [
-  ['id'=>0,'name'=>'Đồng','threshold'=>0],
-  ['id'=>1,'name'=>'Bạc','threshold'=>1000],
-  ['id'=>2,'name'=>'Vàng','threshold'=>5000],
-  ['id'=>3,'name'=>'Kim Cương','threshold'=>15000],
+  ['id'=>0,'name'=>'Đồng','threshold'=>0,'image'=>'/assets/img/point-tier-dong.webp'],
+  ['id'=>1,'name'=>'Bạc','threshold'=>1000,'image'=>'/assets/img/point-tier-bac.webp'],
+  ['id'=>2,'name'=>'Vàng','threshold'=>5000,'image'=>'/assets/img/point-tier-vang.webp'],
+  ['id'=>3,'name'=>'Kim Cương','threshold'=>15000,'image'=>'/assets/img/point-tier-kim-cuong.webp'],
  ];
 }
 function kp_points_member_tier(int $earned): array {
