@@ -91,13 +91,19 @@ function kp_forum_own_replies(PDO $db,int $userId,array $topicIds): array {
     $rows=[];foreach($st->fetchAll(PDO::FETCH_ASSOC) as $r)$rows[(int)$r['topic_id']][]=$r;
     return $rows;
 }
-function kp_forum_admin_list(PDO $db,string $status='',int $limit=100): array {
+function kp_forum_admin_count(PDO $db,string $status=''): int {
+    $where=in_array($status,['new','reviewing','resolved','declined'],true)?'WHERE status=?':'';
+    $st=$db->prepare('SELECT COUNT(*) FROM kp_forum_topics '.$where);
+    $st->execute($where?[$status]:[]);return (int)$st->fetchColumn();
+}
+function kp_forum_admin_list(PDO $db,string $status='',int $limit=100,int $page=1): array {
+    $limit=max(1,min(150,$limit));$offset=(max(1,min(10000,$page))-1)*$limit;
     // Admin endpoint only. Real usernames never enter public queries.
     $where=in_array($status,['new','reviewing','resolved','declined'],true)?'WHERE t.status=?':'';
     $st=$db->prepare('SELECT t.*,u.username AS account_name,
       (SELECT COUNT(*) FROM kp_forum_replies r WHERE r.topic_id=t.id) AS reply_count
       FROM kp_forum_topics t LEFT JOIN team_user u ON u.id=t.user_id '.$where.'
-      ORDER BY FIELD(t.status,\'new\',\'reviewing\',\'resolved\',\'declined\'),t.id DESC LIMIT '.max(1,min(150,$limit)));
+      ORDER BY FIELD(t.status,\'new\',\'reviewing\',\'resolved\',\'declined\'),t.id DESC LIMIT '.$limit.' OFFSET '.$offset);
     $st->execute($where?[$status]:[]);
     return $st->fetchAll(PDO::FETCH_ASSOC);
 }

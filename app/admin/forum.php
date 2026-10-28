@@ -41,9 +41,10 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
 }
 $filter=isset($_GET['status'])&&is_string($_GET['status'])?(string)$_GET['status']:'';
 if(!in_array($filter,['new','reviewing','resolved','declined'],true))$filter='';
-$rows=[];$replies=[];$unavailable=false;
+$rows=[];$replies=[];$total=0;$unavailable=false;
+$page=filter_var($_GET['trang']??1,FILTER_VALIDATE_INT);$page=is_int($page)?max(1,min(10000,$page)):1;
 try{
- $db=kp_db();$rows=kp_forum_admin_list($db,$filter,120);
+ $db=kp_db();$rows=kp_forum_admin_list($db,$filter,60,$page);$total=kp_forum_admin_count($db,$filter);
  if($rows){
   $ids=array_map('intval',array_column($rows,'id'));
   $st=$db->prepare('SELECT topic_id,body,created_at FROM kp_forum_replies WHERE topic_id IN ('.implode(',',array_fill(0,count($ids),'?')).') ORDER BY id ASC');
@@ -91,6 +92,10 @@ $statusLabels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resol
   </article>
  <?php endforeach;?>
  </div>
+ <nav class="ff-filters" aria-label="Phân trang quản trị">
+  <?php if($page>1):?><a href="/quan-tri/forum?trang=<?=($page-1)?><?= $filter!==''?'&amp;status='.kp_e($filter):'' ?>">← Trang trước</a><?php endif;?>
+  <?php if($total>$page*60):?><a href="/quan-tri/forum?trang=<?=($page+1)?><?= $filter!==''?'&amp;status='.kp_e($filter):'' ?>">Trang tiếp →</a><?php endif;?>
+ </nav>
  <?php endif;?>
 </main>
 <script src="/assets/js/admin-nav.js?v=1" defer></script>
