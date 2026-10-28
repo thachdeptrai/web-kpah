@@ -18,6 +18,7 @@ function kp_public_nav_icon(string $key): string
         'download' => '<path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
         'giftcode' => '<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18"/><path d="M12 9H8.5A2.5 2.5 0 1 1 11 6.5L12 9Zm0 0h3.5A2.5 2.5 0 1 0 13 6.5L12 9Z"/>',
         'news' => '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h4"/>',
+        'forum' => '<path d="M4 5h16v12H9l-5 4z"/><path d="M8 10h8m-8 4h5"/>',
     ];
     $shape = $paths[$key] ?? $paths['home'];
     return '<span class="lp-nav-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round" focusable="false">' . $shape . '</svg></span>';
@@ -33,6 +34,7 @@ function kp_public_page_start(string $title, string $active, string $description
         'giftcode' => ['/giftcode', 'Giftcode'],
         'news' => ['/tin-tuc', 'Tin tức'],
         'community' => ['/cong-dong', 'Cộng đồng'],
+        'forum' => ['/dien-dan', 'Diễn đàn'],
     ];
     ?><!doctype html>
 <html lang="vi">
@@ -54,6 +56,7 @@ function kp_public_page_start(string $title, string $active, string $description
     <?php if ($active === 'home'): ?><link rel="stylesheet" href="/assets/css/home-layout.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/home-layout.css') ?>"><?php endif; ?>
     <link rel="stylesheet" href="/assets/css/nav-modern.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/nav-modern.css') ?>">
     <link rel="stylesheet" href="/assets/css/brand-system.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/brand-system.css') ?>">
+    <?php if ($active === 'forum'): ?><link rel="stylesheet" href="/assets/css/forum-feedback.css?v=<?= (int) @filemtime(KP_ROOT.'/assets/css/forum-feedback.css') ?>"><?php endif; ?>
 </head>
 <body class="landing-page public-inner-page<?= $active === 'home' ? ' kp-home-page' : ' kp-inner-page' ?>">
 <a class="lp-skip" href="#noi-dung">Đi đến nội dung chính</a>
@@ -97,7 +100,7 @@ function kp_public_page_hero(string $kicker, string $title, string $copy, string
             </div>
         </div>
         <nav class="lp-page-tabs lp-container" aria-label="Các trang người chơi">
-            <?php foreach (['about'=>['/gioi-thieu','Giới thiệu'],'download'=>['/tai-game','Tải game'],'giftcode'=>['/giftcode','Giftcode'],'news'=>['/tin-tuc','Tin tức'],'community'=>['/cong-dong','Cộng đồng']] as $key=>$tab): ?>
+            <?php foreach (['about'=>['/gioi-thieu','Giới thiệu'],'download'=>['/tai-game','Tải game'],'giftcode'=>['/giftcode','Giftcode'],'news'=>['/tin-tuc','Tin tức'],'community'=>['/cong-dong','Cộng đồng'],'forum'=>['/dien-dan','Diễn đàn']] as $key=>$tab): ?>
             <a href="<?= kp_e($tab[0]) ?>"<?= ($kp_public_active ?? '') === $key ? ' class="is-active" aria-current="page"' : '' ?>><?= kp_e($tab[1]) ?></a>
             <?php endforeach; ?>
         </nav>
@@ -108,7 +111,7 @@ function kp_public_page_end(): void
 {
     ?><section class="lp-inner-cta"><div class="lp-container"><div><span class="lp-section-kicker">NGHIỆN KPAH</span><h2>Tải game & <em>tạo tài khoản</em></h2></div><div><a class="lp-button lp-button-primary" href="/tai-game">Tải game ngay</a><a class="lp-button lp-button-glass" href="/dang-ky">Tạo tài khoản</a></div></div></section>
 </main>
-<footer class="lp-footer"><div class="lp-container lp-footer-main"><a class="lp-brand" href="/"><span class="lp-brand-mark"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="NGHIỆN KPAH"></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a><nav aria-label="Liên kết cuối trang"><a href="/gioi-thieu">Giới thiệu</a><a href="/tai-game">Tải game</a><a href="/giftcode">Giftcode</a><a href="/tin-tuc">Tin tức</a><a href="/cong-dong">Cộng đồng</a></nav></div><div class="lp-container lp-footer-bottom"><span>© <?= date('Y') ?> NGHIỆN KPAH · Cổng thông tin cộng đồng người chơi</span><a href="#noi-dung">Lên đầu trang ↑</a></div></footer>
+<footer class="lp-footer"><div class="lp-container lp-footer-main"><a class="lp-brand" href="/"><span class="lp-brand-mark"><img src="/assets/img/kpah-logo-main.webp" width="1280" height="512" alt="NGHIỆN KPAH"></span><span><strong>NGHIỆN KPAH</strong><small>THẾ GIỚI PHIÊU LƯU</small></span></a><nav aria-label="Liên kết cuối trang"><a href="/gioi-thieu">Giới thiệu</a><a href="/tai-game">Tải game</a><a href="/giftcode">Giftcode</a><a href="/tin-tuc">Tin tức</a><a href="/cong-dong">Cộng đồng</a><a href="/dien-dan">Diễn đàn</a></nav></div><div class="lp-container lp-footer-bottom"><span>© <?= date('Y') ?> NGHIỆN KPAH · Cổng thông tin cộng đồng người chơi</span><a href="#noi-dung">Lên đầu trang ↑</a></div></footer>
 <script src="/assets/js/giftcodes.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/giftcodes.js') ?>" defer></script>
 <script src="/assets/js/landing.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/landing.js') ?>" defer></script>
 <script src="/assets/js/ui-system.js?v=<?= (int) @filemtime(KP_ROOT.'/assets/js/ui-system.js') ?>" defer></script>

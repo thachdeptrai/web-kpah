@@ -7,6 +7,8 @@ return [
         '/tai-game' => ['file' => 'app/pages/downloads-public.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/giftcode' => ['file' => 'app/pages/giftcodes-public.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/tin-tuc' => ['file' => 'app/pages/news-public.php', 'scope' => 'player', 'redirect_legacy' => true],
+        '/dien-dan' => ['file' => 'app/pages/forum.php', 'scope' => 'player', 'redirect_legacy' => true],
+        '/quan-tri/forum' => ['file' => 'app/admin/forum.php', 'scope' => 'admin', 'redirect_legacy' => true],
         '/cong-dong' => ['file' => 'app/pages/community-public.php', 'scope' => 'player', 'redirect_legacy' => true],
         '/tai-game/tep' => ['file' => 'app/pages/game-download.php', 'scope' => 'player', 'redirect_legacy' => false],
         '/dang-nhap' => ['file' => 'app/pages/login.php', 'scope' => 'player', 'redirect_legacy' => true],

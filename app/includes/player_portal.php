@@ -124,6 +124,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
         ['topup','/nap','wallet','Nạp game'],
         ['gifts','/giftcode-cua-toi','gift','Giftcode của tôi'],
         ['notifications','/thong-bao','bell','Thông báo'],
+        ['forum','/dien-dan','receipt','Báo lỗi & góp ý'],
         ['orders','/theo-doi-don-nap','receipt','Theo dõi đơn nạp'],
         ['security','/lich-su-bao-mat','shield','Lịch sử bảo mật'],
     ];

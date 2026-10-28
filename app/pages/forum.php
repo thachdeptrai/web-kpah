@@ -43,7 +43,6 @@ catch(Throwable $e){kp_log('forum public read unavailable',$e);$unavailable=true
 $labels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resolved'=>'Đã giải quyết','declined'=>'Không thực hiện'];
 kp_public_page_start('Diễn đàn báo lỗi & góp ý','forum','Báo lỗi game, gửi góp ý và theo dõi câu trả lời chính thức từ Admin.');
 ?>
-<link rel="stylesheet" href="/assets/css/forum-feedback.css?v=<?= (int)@filemtime(KP_ROOT.'/assets/css/forum-feedback.css') ?>">
 <section class="ff-hero"><div class="lp-container ff-hero-inner"><div><span class="lp-section-kicker">DIỄN ĐÀN CỘNG ĐỒNG</span><h1>Báo lỗi & <em>góp ý</em></h1><p>Chia sẻ vấn đề trong game, đề xuất cải tiến và theo dõi phản hồi công khai từ ban quản trị.</p><a class="ff-hero-link" href="#gui-bai">Gửi bài mới <span aria-hidden="true">↗</span></a></div><img src="/assets/img/rank-sorcerer.webp" alt="" aria-hidden="true" loading="eager"></div></section>
 <div class="lp-container ff-layout">
  <section class="ff-main" aria-labelledby="ff-title">

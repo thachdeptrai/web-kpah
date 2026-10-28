@@ -27,12 +27,12 @@ function kp_center_safe_path($path) {
     return is_string($path) && in_array($path, [
         '', '/thong-bao', '/lich-su-bao-mat', '/giftcode-cua-toi',
         '/theo-doi-don-nap', '/lich-su-nap', '/ho-so', '/nhan-vat',
-        '/diem-tich-luy'
+        '/diem-tich-luy', '/dien-dan'
     ], true);
 }
 function kp_admin_center_safe_path($path) {
     return is_string($path) && in_array($path, [
-        '', '/quan-tri', '/quan-tri/thong-bao', '/quan-tri/diem-tich-luy', '/quan-tri/doi-soat'
+        '', '/quan-tri', '/quan-tri/thong-bao', '/quan-tri/diem-tich-luy', '/quan-tri/doi-soat', '/quan-tri/forum'
     ], true);
 }
 function kp_admin_notify($title,$body,$category='system',$path='') {
