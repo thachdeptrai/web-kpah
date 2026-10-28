@@ -29,7 +29,6 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   $_SESSION['kp_forum_message']=$visibility==='public'
      ?'Đã đăng bài #'.$id.' lên diễn đàn. Ban quản trị sẽ theo dõi và phản hồi.'
      :'Đã tiếp nhận bài #'.$id.'. Nội dung có thể chứa thông tin nhạy cảm nên sẽ chờ Admin kiểm duyệt trước khi công khai.';
-  kp_admin_notify('Báo lỗi / Góp ý #'.$id,'Có bài viết mới chờ kiểm tra hoặc xử lý.','system','/quan-tri/forum');
   header('Location: /dien-dan',true,303);exit;
  }catch(Throwable $e){kp_log('forum submission rejected',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không lưu được bài viết, vui lòng thử lại.';}
 }
