@@ -30,7 +30,7 @@ function kp_forum_valid_text($value,int $min,int $max): string {
 function kp_forum_sensitive_content(string $text): bool {
     // Conservative hold: email, contact number, secrets, payment data,
     // host/SQL vulnerabilities. Admin can review before publishing.
-    return (bool)preg_match('/(?:[\w.+-]+@[\w.-]+\.[a-z]{2,}|(?:\+?84|0)\d[\d .-]{8,15}\d|mật\s*khẩu|password|api[_ -]?key|token|otp|sql\s*injection|xss|rce|lỗ\s*hổng|lộ\s*dữ\s*liệu|tên\s*tài\s*khoản|username|access[_ -]?key)/iu',$text);
+    return (bool)preg_match('/(?:[\w.+-]+@[\w.-]+\.[a-z]{2,}|(?:\+?84|0)[\d .-]{8,15}\d|mật\s*khẩu|password|api[_ -]?key|token|otp|sql\s*injection|xss|rce|lỗ\s*hổng|lộ\s*dữ\s*liệu|tên\s*tài\s*khoản|username|access[_ -]?key)/iu',$text);
 }
 function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,string $title,string $body,string $nonce): int {
     if($userId<1||!in_array($kind,['bug','suggestion'],true)||!in_array($platform,['Android','iOS','Windows','J2ME','Web','Khác'],true))
