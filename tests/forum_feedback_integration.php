@@ -33,8 +33,17 @@ forum_test($res['changed']===true&&$res['user_id']===101,'admin update returns r
 $replies=kp_forum_public_replies($db,[$id]);forum_test(count($replies[$id])===1,'official reply visible');
 forum_test(strpos($replies[$id][0]['body'],'testplayer123')===false&&strpos($replies[$id][0]['body'],'t****')!==false,'admin reply redacts full username');
 forum_test(!array_key_exists('admin_id',$replies[$id][0]),'public reply omits staff identifier');
+$mine=kp_forum_own_topics($db,101);
+forum_test(count($mine)===1&&$mine[0]['id']===$id,'owner can list own reports');
+forum_test(kp_forum_own_topics($db,102)===[],'another user cannot list owner reports');
+$privateReplies=kp_forum_own_replies($db,101,[$id]);
+forum_test(count($privateReplies[$id])===1,'owner can read official reply');
+forum_test(kp_forum_own_replies($db,102,[$id])===[],'another user cannot read private reply');
+forum_test(kp_forum_admin_count($db)===1,'admin total count available');
+
 $res=kp_forum_admin_update($db,$id,42,'resolved','hidden','',str_repeat('c',64));
 forum_test(kp_forum_public_count($db)===0&&kp_forum_public_replies($db,[$id])===[],'hiding topic also hides its replies');
+forum_test(count(kp_forum_own_replies($db,101,[$id])[$id])===1,'owner still reads reply when public topic hidden');
 try{kp_forum_admin_update($db,$id,42,'hacked','public','',str_repeat('d',64));forum_test(false,'invalid admin status accepted');}
 catch(RuntimeException $expected){forum_test(true,'invalid admin status rejected');}
 $secretId=kp_forum_create($db,102,'suggestion','Web','Đề nghị hỗ trợ tài khoản','Liên hệ qua email myplayer@example.com để trao đổi thêm.',str_repeat('e',64));
