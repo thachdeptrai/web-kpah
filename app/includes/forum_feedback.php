@@ -5,6 +5,7 @@
  * resolve the real username after kp_admin_require().
  */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/forum_storage.php';
 
 function kp_forum_mask_username($username): string {
     $name=strtolower(trim((string)$username));
@@ -45,7 +46,7 @@ function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,strin
     $body=kp_forum_redact_username($body,$username);
     $visibility=kp_forum_sensitive_content($title."\n".$body)?'hidden':'public';
     // Do not store raw usernames or addresses in the forum schema.
-    $st=$db->prepare('INSERT INTO kp_forum_topics (user_id,public_alias,kind,platform,title,body,visibility,submission_token) VALUES (?,?,?,?,?,?,?,?)');
+    $st=$db->prepare(kp_forum_sql('INSERT INTO kp_forum_topics (user_id,public_alias,kind,platform,title,body,visibility,submission_token) VALUES (?,?,?,?,?,?,?,?)'));
     $st->execute([$userId,kp_forum_mask_username($username),$kind,$platform,$title,$body,$visibility,$nonce]);
     return (int)$db->lastInsertId();
 }
@@ -62,7 +63,7 @@ function kp_forum_public_count(PDO $db,string $kind='',string $status=''): int {
     $where="visibility='public'";$values=[];
     if(in_array($kind,['bug','suggestion'],true)){$where.=' AND kind=?';$values[]=$kind;}
     if(in_array($status,['new','reviewing','resolved','declined'],true)){$where.=' AND status=?';$values[]=$status;}
-    $st=$db->prepare('SELECT COUNT(*) FROM kp_forum_topics WHERE '.$where);
+    $st=$db->prepare(kp_forum_sql('SELECT COUNT(*) FROM kp_forum_topics WHERE '.$where));
     $st->execute($values);return (int)$st->fetchColumn();
 }
 function kp_forum_public_replies(PDO $db,array $ids): array {
@@ -77,7 +78,7 @@ function kp_forum_public_replies(PDO $db,array $ids): array {
 }
 function kp_forum_own_topics(PDO $db,int $userId,int $limit=20): array {
     if($userId<1)return [];
-    $st=$db->prepare('SELECT id,kind,title,status,visibility,created_at FROM kp_forum_topics WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(50,$limit)));
+    $st=$db->prepare(kp_forum_sql('SELECT id,kind,title,status,visibility,created_at FROM kp_forum_topics WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(50,$limit))));
     $st->execute([$userId]);return $st->fetchAll(PDO::FETCH_ASSOC);
 }
 function kp_forum_own_replies(PDO $db,int $userId,array $topicIds): array {
@@ -93,17 +94,17 @@ function kp_forum_own_replies(PDO $db,int $userId,array $topicIds): array {
 }
 function kp_forum_admin_count(PDO $db,string $status=''): int {
     $where=in_array($status,['new','reviewing','resolved','declined'],true)?'WHERE status=?':'';
-    $st=$db->prepare('SELECT COUNT(*) FROM kp_forum_topics '.$where);
+    $st=$db->prepare(kp_forum_sql('SELECT COUNT(*) FROM kp_forum_topics '.$where));
     $st->execute($where?[$status]:[]);return (int)$st->fetchColumn();
 }
 function kp_forum_admin_list(PDO $db,string $status='',int $limit=100,int $page=1): array {
     $limit=max(1,min(150,$limit));$offset=(max(1,min(10000,$page))-1)*$limit;
     // Admin endpoint only. Real usernames never enter public queries.
     $where=in_array($status,['new','reviewing','resolved','declined'],true)?'WHERE t.status=?':'';
-    $st=$db->prepare('SELECT t.*,u.username AS account_name,
+    $st=$db->prepare(kp_forum_sql('SELECT t.*,u.username AS account_name,
       (SELECT COUNT(*) FROM kp_forum_replies r WHERE r.topic_id=t.id) AS reply_count
       FROM kp_forum_topics t LEFT JOIN team_user u ON u.id=t.user_id '.$where.'
-      ORDER BY FIELD(t.status,\'new\',\'reviewing\',\'resolved\',\'declined\'),t.id DESC LIMIT '.$limit.' OFFSET '.$offset);
+      ORDER BY FIELD(t.status,\'new\',\'reviewing\',\'resolved\',\'declined\'),t.id DESC LIMIT '.$limit.' OFFSET '.$offset));
     $st->execute($where?[$status]:[]);
     return $st->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -117,12 +118,12 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
         throw new RuntimeException('Mã phản hồi không hợp lệ.');
     $db->beginTransaction();
     try {
-        $st=$db->prepare('SELECT user_id,status,visibility FROM kp_forum_topics WHERE id=? FOR UPDATE');
+        $st=$db->prepare(kp_forum_sql('SELECT user_id,status,visibility FROM kp_forum_topics WHERE id=? FOR UPDATE'));
         $st->execute([$topicId]);$old=$st->fetch(PDO::FETCH_ASSOC);
         if(!$old)throw new RuntimeException('Không tìm thấy bài viết.');
         if($status!==(string)$old['status']||$visibility!==(string)$old['visibility']){
-            $db->prepare('UPDATE kp_forum_topics SET status=?,visibility=? WHERE id=?')->execute([$status,$visibility,$topicId]);
-            $db->prepare('INSERT INTO kp_forum_actions (topic_id,admin_id,previous_status,new_status,previous_visibility,new_visibility) VALUES (?,?,?,?,?,?)')
+            $db->prepare(kp_forum_sql('UPDATE kp_forum_topics SET status=?,visibility=? WHERE id=?'))->execute([$status,$visibility,$topicId]);
+            $db->prepare(kp_forum_sql('INSERT INTO kp_forum_actions (topic_id,admin_id,previous_status,new_status,previous_visibility,new_visibility) VALUES (?,?,?,?,?,?)'))
                 ->execute([$topicId,$adminId,$old['status'],$status,$old['visibility'],$visibility]);
         }
         if($reply!==''){
@@ -131,7 +132,7 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
             if(is_string($owner))$reply=kp_forum_redact_username($reply,$owner);
             if($visibility==='public' && kp_forum_sensitive_content($reply))
                 throw new RuntimeException('Phản hồi nhạy cảm phải giữ bài ở trạng thái ẩn.');
-            $st=$db->prepare('INSERT INTO kp_forum_replies (topic_id,admin_id,body,reply_token) VALUES (?,?,?,?)');
+            $st=$db->prepare(kp_forum_sql('INSERT INTO kp_forum_replies (topic_id,admin_id,body,reply_token) VALUES (?,?,?,?)'));
             $st->execute([$topicId,$adminId,$reply,$nonce]);
         }
         $db->commit();

@@ -22,7 +22,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
      throw new RuntimeException('Phản hồi đã gửi hoặc phiên đã hết hạn, hãy tải lại.');
   // Avoid publishing a report or reply containing payment details, PII or exploit instructions.
   if($visibility==='public'){
-    $st=kp_db()->prepare('SELECT title,body FROM kp_forum_topics WHERE id=?');
+    $st=kp_db()->prepare(kp_forum_sql('SELECT title,body FROM kp_forum_topics WHERE id=?'));
     $st->execute([$id]);$original=$st->fetch(PDO::FETCH_ASSOC);
     if(!$original)throw new RuntimeException('Không tìm thấy bài viết.');
     if(kp_forum_sensitive_content((string)$original['title']."\n".(string)$original['body'])
@@ -47,7 +47,7 @@ try{
  $db=kp_db();$rows=kp_forum_admin_list($db,$filter,60,$page);$total=kp_forum_admin_count($db,$filter);
  if($rows){
   $ids=array_map('intval',array_column($rows,'id'));
-  $st=$db->prepare('SELECT topic_id,body,created_at FROM kp_forum_replies WHERE topic_id IN ('.implode(',',array_fill(0,count($ids),'?')).') ORDER BY id ASC');
+  $st=$db->prepare(kp_forum_sql('SELECT topic_id,body,created_at FROM kp_forum_replies WHERE topic_id IN ('.implode(',',array_fill(0,count($ids),'?')).') ORDER BY id ASC'));
   $st->execute($ids);foreach($st->fetchAll(PDO::FETCH_ASSOC) as $r)$replies[(int)$r['topic_id']][]=$r;
  }
 }catch(Throwable $e){kp_log('forum admin list unavailable',$e);$unavailable=true;}

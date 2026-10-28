@@ -24,7 +24,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   $id=kp_forum_create($db,$userId,(string)($_POST['kind']??''),(string)($_POST['platform']??''),
      $_POST['title']??'',$_POST['body']??'',(string)$_POST['nonce']);
   $_SESSION['kp_forum_submit_nonce']=bin2hex(random_bytes(32));
-  $st=$db->prepare('SELECT visibility FROM kp_forum_topics WHERE id=? AND user_id=?');
+  $st=$db->prepare(kp_forum_sql('SELECT visibility FROM kp_forum_topics WHERE id=? AND user_id=?'));
   $st->execute([$id,$userId]);$visibility=$st->fetchColumn();
   $_SESSION['kp_forum_message']=$visibility==='public'
      ?'Đã đăng bài #'.$id.' lên diễn đàn. Ban quản trị sẽ theo dõi và phản hồi.'

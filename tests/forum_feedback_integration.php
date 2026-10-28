@@ -5,11 +5,13 @@ require dirname(__DIR__).'/app/includes/bootstrap.php';
 require_once KP_ROOT.'/app/includes/forum_feedback.php';
 function forum_test($condition,$name){if(!$condition)throw new RuntimeException('FAIL forum: '.$name);echo 'PASS forum: '.$name."\n";}
 $db=kp_db();
+if(kp_forum_schema_name()!=='kpah_forum_test_data')throw new RuntimeException('Unsafe forum test database');
+$db->exec('CREATE DATABASE IF NOT EXISTS `kpah_forum_test_data` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
 $db->exec('CREATE TABLE IF NOT EXISTS team_user (id INT NOT NULL PRIMARY KEY,username VARCHAR(40) NOT NULL,ban TINYINT NOT NULL DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 $db->exec("INSERT INTO team_user (id,username,ban) VALUES (101,'testplayer123',0),(102,'otheruser777',0) ON DUPLICATE KEY UPDATE username=VALUES(username),ban=VALUES(ban)");
 $sql=preg_replace('/^--.*$/m','',(string)file_get_contents(KP_ROOT.'/database/forum_feedback.sql'));
-foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement){if(trim($statement)!=='')$db->exec($statement);}
-foreach(['kp_forum_replies','kp_forum_actions','kp_forum_topics'] as $table)$db->exec('DELETE FROM '.$table);
+foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement){if(trim($statement)!=='')$db->exec(kp_forum_sql($statement));}
+foreach(['kp_forum_replies','kp_forum_actions','kp_forum_topics'] as $table)$db->exec(kp_forum_sql('DELETE FROM '.$table));
 forum_test(kp_forum_mask_username('testplayer123')==='t****','username fixed alias');
 forum_test(kp_forum_mask_username('t')===kp_forum_mask_username('testplayer123'),'mask length hides real length');
 forum_test(kp_forum_mask_username('otheruser777')==='o****','other username');
@@ -19,7 +21,7 @@ forum_test(!kp_forum_sensitive_content('Không thể qua bản đồ mới, nhâ
 forum_test(kp_forum_redact_username('Xin chào testplayer123!','testplayer123')==='Xin chào t****!','redact real owner in public text');
 $token=str_repeat('a',64);
 $id=kp_forum_create($db,101,'bug','Android','Lỗi của testplayer123 trong túi','Nhân vật testplayer123 bị lỗi khi đổi tiêu tím sau khi nhấn thao tác.', $token);
-$st=$db->prepare('SELECT public_alias,title,body,visibility FROM kp_forum_topics WHERE id=?');$st->execute([$id]);$row=$st->fetch(PDO::FETCH_ASSOC);
+$st=$db->prepare(kp_forum_sql('SELECT public_alias,title,body,visibility FROM kp_forum_topics WHERE id=?'));$st->execute([$id]);$row=$st->fetch(PDO::FETCH_ASSOC);
 forum_test($row['public_alias']==='t****','stored public alias masked');
 forum_test(strpos($row['title'],'testplayer123')===false&&strpos($row['body'],'testplayer123')===false,'raw username not stored in title/body');
 forum_test($row['visibility']==='public','normal bug published');
@@ -51,6 +53,6 @@ forum_test(kp_forum_public_count($db)===0,'PII automatically held, no accidental
 forum_test(count(kp_forum_admin_list($db))===2,'admin can see hidden report');
 try{kp_forum_create($db,101,'bug','Android','Lỗi lặp nội dung','Gửi lại với mã đơn trùng cần bị chặn an toàn.',str_repeat('a',64));forum_test(false,'duplicate nonce accepted');}
 catch(PDOException $expected){forum_test(true,'duplicate submission nonce prevented at DB constraint');}
-$columns=$db->query('SHOW COLUMNS FROM kp_forum_topics')->fetchAll(PDO::FETCH_COLUMN);
+$columns=$db->query(kp_forum_sql('SHOW COLUMNS FROM kp_forum_topics'))->fetchAll(PDO::FETCH_COLUMN);
 forum_test(!in_array('username',$columns,true)&&!in_array('email',$columns,true),'forum data table does not duplicate personal identifiers');
 echo "Forum integration COMPLETE\n";

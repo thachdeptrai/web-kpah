@@ -20,6 +20,8 @@ return [
         'debug_log' => false,                   // true: ghi thêm thông điệp lỗi kỹ thuật vào error_log (KHÔNG hiển thị ra web)
     ],
     'points_db' => ['name' => 'kpah_points'],
+    // Dedicated forum database on the same MySQL server as game.
+    'forum_db' => ['name' => 'kpahpoint'],
     // Đặt true nếu config.php của dự án `return` một mảng có khoá 'db' / 'security' / 'captcha'.
     // Mặc định tắt để không xung đột với cấu hình hiện có.
     'integration' => [
