@@ -11,9 +11,12 @@ function kp_admin_nav($active = 'home', $role = null)
     $role = $role === null ? (string)($_SESSION['kp_admin_role'] ?? '') : (string)$role;
     if (!in_array($role, ['admin', 'key'], true)) return;
     $attention=$role==='admin'?kp_admin_attention_summary():['total'=>0,'latest'=>null];
-    $attentionToast=$role==='admin'&&$attention['total']>0&&(int)($_SESSION['kp_admin_notice_toast_count']??0)!==(int)$attention['total'];
-    if($role==='admin')$_SESSION['kp_admin_notice_toast_count']=(int)$attention['total'];
+    $noticeMarker=(int)$attention['total'].'|'.(int)($attention['latest_id']??0);
+    $attentionToast=$role==='admin'&&$attention['total']>0
+        &&(string)($_SESSION['kp_admin_notice_toast_marker']??'')!==$noticeMarker;
+    if($role==='admin')$_SESSION['kp_admin_notice_toast_marker']=$noticeMarker;
     $pendingRewards=$role==='admin'?(int)$attention['points']:0;
+    $pendingForum=$role==='admin'?(int)($attention['forum']??0):0;
 
     $items = [
         'home' => ['/quan-tri', 'Tổng quan'],
@@ -57,7 +60,7 @@ function kp_admin_nav($active = 'home', $role = null)
       <a class="kp-admin-nav-item<?= $active === 'referrals' ? ' is-active' : '' ?>" href="/quan-tri/ma-gioi-thieu"<?= $active === 'referrals' ? ' aria-current="page"' : '' ?>>Mã giới thiệu</a>
     <?php else: ?>
       <?php foreach ($groups['Truy cập nhanh'] as $id): ?>
-        <a class="kp-admin-nav-item<?= $active === $id ? ' is-active' : '' ?>" href="<?= kp_e($items[$id][0]) ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><?= kp_e($items[$id][1]) ?></a>
+        <a class="kp-admin-nav-item<?= $active === $id ? ' is-active' : '' ?>" href="<?= kp_e($items[$id][0]) ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><?= kp_e($items[$id][1]) ?><?php if($id==='forum'&&$pendingForum>0):?><b class="kp-admin-nav-badge" aria-label="<?=$pendingForum?> báo lỗi hoặc góp ý mới"><?=$pendingForum>99?'99+':$pendingForum?></b><?php endif;?></a>
       <?php endforeach; ?>
       <?php foreach ($desktopGroups as $heading): ?>
         <?php $selected = in_array($active, $groups[$heading], true); ?>
@@ -89,7 +92,7 @@ function kp_admin_nav($active = 'home', $role = null)
           <div class="kp-admin-nav-mobile-group">
             <span class="kp-admin-nav-mobile-group-title"><?= kp_e($heading) ?></span>
             <?php foreach ($ids as $id): ?>
-              <a class="kp-admin-nav-mobile-link<?= $active === $id ? ' is-active' : '' ?>" href="<?= kp_e($items[$id][0]) ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><span><?= kp_e($items[$id][1]) ?><?php if($id==='points'&&$pendingRewards>0):?> <b class="kp-admin-nav-badge"><?=$pendingRewards>99?'99+':$pendingRewards?></b><?php endif;?></span><span aria-hidden="true">↗</span></a>
+              <a class="kp-admin-nav-mobile-link<?= $active === $id ? ' is-active' : '' ?>" href="<?= kp_e($items[$id][0]) ?>"<?= $active === $id ? ' aria-current="page"' : '' ?>><span><?= kp_e($items[$id][1]) ?><?php if($id==='points'&&$pendingRewards>0):?> <b class="kp-admin-nav-badge"><?=$pendingRewards>99?'99+':$pendingRewards?></b><?php endif;?><?php if($id==='forum'&&$pendingForum>0):?> <b class="kp-admin-nav-badge" aria-label="<?=$pendingForum?> báo lỗi hoặc góp ý mới"><?=$pendingForum>99?'99+':$pendingForum?></b><?php endif;?></span><span aria-hidden="true">↗</span></a>
             <?php endforeach; ?>
           </div>
         <?php endforeach; ?>
