@@ -1,13 +1,13 @@
 <?php
 /**
- * Separate forum storage on kpahpoint (same MySQL/MariaDB server as kp_db()).
+ * Separate forum storage on kpah_points (same MySQL/MariaDB server as kp_db()).
  * No fallback to game DB when this schema is absent.
  */
 if(!defined('KP_ROOT')){http_response_code(403);exit;}
 function kp_forum_schema_name(): string {
-    $schema=(string)kp_config('forum_db.name','kpahpoint');
-    $env=getenv('KPAH_FORUM_DB_NAME');
-    if($env!==false&&$env!=='')$schema=(string)$env;
+    // Reuse the Point schema, including KPAH_POINTS_DB_NAME override.
+    $schema=kp_points_schema_name();
+    if($schema==='')$schema='kpah_points';
     if(!preg_match('/^[A-Za-z0-9_]{1,64}$/D',$schema))
         throw new RuntimeException('Cấu hình database Forum không hợp lệ.');
     return $schema;
