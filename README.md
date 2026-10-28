@@ -301,3 +301,8 @@ Tài liệu: [Chính sách bảo mật](SECURITY.md) · [Bảo mật triển kha
 ## Database Point riêng (tùy chọn)
 
 Có thể dùng schema MySQL/MariaDB thứ hai `kpah_points` cho `kp_points_*` trên cùng server database game. Import `database/points_separate.sql`, và **nếu đã có Point thật phải chuyển đủ dữ liệu trước khi bật cấu hình**. Hướng dẫn tại [docs/POINTS_SEPARATE_DATABASE.md](docs/POINTS_SEPARATE_DATABASE.md).
+
+
+## Diễn đàn Báo lỗi & Góp ý
+
+Có trang công khai `/dien-dan` và trang Admin `/quan-tri/forum`. **Chạy** `database/forum_feedback.sql` trên database game/web trước khi sử dụng; tên tài khoản trên forum được che, Admin có quyền phản hồi và đổi trạng thái. Hướng dẫn tại [docs/FORUM_FEEDBACK.md](docs/FORUM_FEEDBACK.md).
