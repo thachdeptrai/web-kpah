@@ -2,15 +2,19 @@
 
 ## Cài đặt database (bắt buộc)
 
-1. Sao lưu database website/game `kpah` trước.
-2. Import [`database/forum_feedback.sql`](../database/forum_feedback.sql) bằng Navicat trong **database game/web `kpah`**, không import vào database Point `kpah_points`. Script CREATE TABLE IF NOT EXISTS, không sửa dữ liệu game cũ.
-3. Website tự dùng kết nối `kp_db()` hiện tại; tài khoản MySQL của PHP phải được phép đọc/ghi ba bảng `kp_forum_topics`, `kp_forum_replies` và `kp_forum_actions`.
+1. Sao lưu cả database website/game `kpah` và database Point `kpah_points` trước.
+2. Import [`database/forum_feedback.sql`](../database/forum_feedback.sql) vào database Point **`kpah_points`** bằng Navicat. Chỉ tạo ba bảng `kp_forum_*`, không đụng tới bảng game hay dữ liệu Point có sẵn.
+3. Website tái sử dụng cấu hình `points_db.name` hoặc `KPAH_POINTS_DB_NAME` (mặc định `kpah_points`). PHP truy cập hai schema trên cùng MySQL server: `kpah.team_user` để tra tên thật khi cần, `kpah_points.kp_forum_*` để đọc/ghi bài viết. Không tạo cấu hình `forum_db` riêng.
 4. Git pull trên `main`, kiểm tra:
    - `/dien-dan`: người chơi xem bài công khai; đăng nhập mới gửi được.
    - `/quan-tri/forum`: chỉ role `admin` vào xử lý và trả lời.
    - `/cong-dong` và menu công khai có đường dẫn đến diễn đàn.
    - Menu khu tài khoản có "Báo lỗi & góp ý"; thông báo Admin và User trỏ đến diễn đàn.
 5. Thử trên môi trường staging: gửi báo lỗi bình thường, kiểm tra hiển thị tên bị che, Admin phản hồi, thay trạng thái, ẩn bài, kiểm tra chỉ tác giả đọc được phản hồi riêng.
+
+## Chuyển bài viết cũ nếu từng dùng database game
+
+Chỉ áp dụng nếu đã từng lưu bài/phản hồi vào `kpah.kp_forum_*`: dừng ghi forum, sao lưu và import [script chuyển dữ liệu](../database/forum_move_existing_to_kpah_points.sql) sau khi tạo bảng mới tại `kpah_points`. **Chỉ chạy một lần khi bảng đích rỗng**; so sánh số dòng, ID, trạng thái và phản hồi trước khi bật ghi lại. Giữ các bảng gốc để rollback. Nếu chưa tạo forum trong `kpah`, **không chạy script chuyển dữ liệu**.
 
 ## Dữ liệu lưu trữ
 
