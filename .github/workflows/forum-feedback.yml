@@ -1,0 +1,58 @@
+name: Forum feedback security and integration
+on:
+  push:
+    paths:
+      - 'app/includes/forum_feedback.php'
+      - 'app/pages/forum.php'
+      - 'app/admin/forum.php'
+      - 'database/forum_feedback.sql'
+      - 'tests/forum_feedback_integration.php'
+      - '.github/workflows/forum-feedback.yml'
+  pull_request:
+    paths:
+      - 'app/includes/forum_feedback.php'
+      - 'app/pages/forum.php'
+      - 'app/admin/forum.php'
+      - 'database/forum_feedback.sql'
+      - 'tests/forum_feedback_integration.php'
+      - '.github/workflows/forum-feedback.yml'
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.0', '8.3']
+    services:
+      mariadb:
+        image: mariadb:10.4
+        env:
+          MYSQL_ROOT_PASSWORD: fixture-only-password
+          MYSQL_DATABASE: kpah_forum_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pfixture-only-password"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      KPAH_DB_HOST: 127.0.0.1
+      KPAH_DB_PORT: '3306'
+      KPAH_DB_NAME: kpah_forum_test
+      KPAH_DB_USER: root
+      KPAH_DB_PASS: fixture-only-password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '${{ matrix.php }}'
+          extensions: pdo_mysql, mbstring
+          coverage: none
+      - name: PHP syntax
+        run: |
+          php -l app/includes/forum_feedback.php
+          php -l app/pages/forum.php
+          php -l app/admin/forum.php
+          php -l tests/forum_feedback_integration.php
+      - name: Forum MySQL integration and identity protections
+        run: php tests/forum_feedback_integration.php
