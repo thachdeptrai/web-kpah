@@ -33,12 +33,29 @@ function kp_forum_sensitive_content(string $text): bool {
     // host/SQL vulnerabilities. Admin can review before publishing.
     return (bool)preg_match('/(?:[\w.+-]+@[\w.-]+\.[a-z]{2,}|(?:\+?84|0)[\d .-]{8,15}\d|mật\s*khẩu|password|api[_ -]?key|token|otp|sql\s*injection|xss|rce|lỗ\s*hổng|lộ\s*dữ\s*liệu|tên\s*tài\s*khoản|username|access[_ -]?key)/iu',$text);
 }
+/** Notifications are stored in the same InnoDB transaction as Forum writes. */
+function kp_forum_write_admin_notice(PDO $db,int $id,string $kind): void {
+    $type=$kind==='suggestion'?'Góp ý':'Báo lỗi';
+    $st=$db->prepare('INSERT INTO kp_admin_notifications (title,body,category,link_path) VALUES (?,?,?,?)');
+    $st->execute([$type.' mới #'.$id,'Có '.$type.' mới cần kiểm tra và xử lý.','system','/quan-tri/forum']);
+}
+function kp_forum_write_user_notice(PDO $db,int $userId,int $id,string $kind,string $status,string $visibility,bool $replied): void {
+    $type=$kind==='suggestion'?'Góp ý':'Báo lỗi';
+    $labels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resolved'=>'Đã giải quyết','declined'=>'Không thực hiện'];
+    $title=$replied?'Admin đã phản hồi '.$type.' #'.$id:$type.' #'.$id.' đã được cập nhật';
+    $body=$replied?'Admin vừa phản hồi bài #'.$id.'. ':'Trạng thái bài #'.$id.': '.($labels[$status]??'Đã cập nhật').'. ';
+    $body.=$visibility==='hidden'?'Xem trong mục Bài của tôi tại diễn đàn.':'Xem chi tiết trên diễn đàn.';
+    $st=$db->prepare('INSERT INTO kp_user_notifications (user_id,title,body,category,link_path) VALUES (?,?,?,?,?)');
+    $st->execute([$userId,$title,$body,'system','/dien-dan']);
+}
 function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,string $title,string $body,string $nonce): int {
     if($userId<1||!in_array($kind,['bug','suggestion'],true)||!in_array($platform,['Android','iOS','Windows','J2ME','Web','Khác'],true))
         throw new RuntimeException('Thông tin gửi không hợp lệ.');
     $title=kp_forum_valid_text($title,8,140);
     $body=kp_forum_valid_text($body,20,5000);
     if(!preg_match('/^[a-f0-9]{64}$/D',$nonce))throw new RuntimeException('Mã phiên gửi không hợp lệ.');
+    $db->beginTransaction();
+    try {
     $st=$db->prepare(kp_forum_sql('SELECT username FROM team_user WHERE id=? AND ban=0 LIMIT 1'));
     $st->execute([$userId]);$username=$st->fetchColumn();
     if(!is_string($username)||$username==='')throw new RuntimeException('Tài khoản không hợp lệ.');
@@ -48,7 +65,14 @@ function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,strin
     // Do not store raw usernames or addresses in the forum schema.
     $st=$db->prepare(kp_forum_sql('INSERT INTO kp_forum_topics (user_id,public_alias,kind,platform,title,body,visibility,submission_token) VALUES (?,?,?,?,?,?,?,?)'));
     $st->execute([$userId,kp_forum_mask_username($username),$kind,$platform,$title,$body,$visibility,$nonce]);
-    return (int)$db->lastInsertId();
+    $id=(int)$db->lastInsertId();
+    kp_forum_write_admin_notice($db,$id,$kind);
+    $db->commit();
+    return $id;
+    } catch(Throwable $e) {
+        if($db->inTransaction())$db->rollBack();
+        throw $e;
+    }
 }
 function kp_forum_public_topics(PDO $db,string $kind='',string $status='',int $limit=40,int $page=1): array {
     $where="t.visibility='public'";$params=[];
@@ -118,7 +142,7 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
         throw new RuntimeException('Mã phản hồi không hợp lệ.');
     $db->beginTransaction();
     try {
-        $st=$db->prepare(kp_forum_sql('SELECT user_id,status,visibility FROM kp_forum_topics WHERE id=? FOR UPDATE'));
+        $st=$db->prepare(kp_forum_sql('SELECT user_id,kind,status,visibility FROM kp_forum_topics WHERE id=? FOR UPDATE'));
         $st->execute([$topicId]);$old=$st->fetch(PDO::FETCH_ASSOC);
         if(!$old)throw new RuntimeException('Không tìm thấy bài viết.');
         if($status!==(string)$old['status']||$visibility!==(string)$old['visibility']){
@@ -135,7 +159,9 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
             $st=$db->prepare(kp_forum_sql('INSERT INTO kp_forum_replies (topic_id,admin_id,body,reply_token) VALUES (?,?,?,?)'));
             $st->execute([$topicId,$adminId,$reply,$nonce]);
         }
+        $changed=$status!==$old['status']||$visibility!==$old['visibility']||$reply!=='';
+        if($changed)kp_forum_write_user_notice($db,(int)$old['user_id'],$topicId,(string)$old['kind'],$status,$visibility,$reply!=='');
         $db->commit();
-        return ['user_id'=>(int)$old['user_id'],'changed'=>$status!==$old['status']||$visibility!==$old['visibility']||$reply!==''];
+        return ['user_id'=>(int)$old['user_id'],'changed'=>$changed];
     }catch(Throwable $e){if($db->inTransaction())$db->rollBack();throw $e;}
 }
