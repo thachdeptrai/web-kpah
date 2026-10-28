@@ -12,6 +12,12 @@ function kp_forum_mask_username($username): string {
     if (!preg_match('/^[a-z0-9_]/D',substr($name,0,1))) return '*****';
     return substr($name,0,1).'****';
 }
+function kp_forum_redact_username(string $text,string $username): string {
+    if($username===''||strlen($username)<3)return $text;
+    $pattern='/(?<![A-Za-z0-9_])'.preg_quote($username,'/').'(?![A-Za-z0-9_])/iu';
+    $value=preg_replace($pattern,kp_forum_mask_username($username),$text);
+    return is_string($value)?$value:$text;
+}
 function kp_forum_valid_text($value,int $min,int $max): string {
     if(!is_string($value))throw new RuntimeException('Nội dung không hợp lệ.');
     $text=trim(str_replace(["\r\n","\r"],"\n",$value));
@@ -24,7 +30,7 @@ function kp_forum_valid_text($value,int $min,int $max): string {
 function kp_forum_sensitive_content(string $text): bool {
     // Conservative hold: email, contact number, secrets, payment data,
     // host/SQL vulnerabilities. Admin can review before publishing.
-    return (bool)preg_match('/(?:[\w.+-]+@[\w.-]+\.[a-z]{2,}|(?:\+?84|0)\d[\d .-]{8,15}\d|mật\s*khẩu|password|api[_ -]?key|token|otp|sql\s*injection|xss|rce|lỗ\s*hổng|lộ\s*dữ\s*liệu)/iu',$text);
+    return (bool)preg_match('/(?:[\w.+-]+@[\w.-]+\.[a-z]{2,}|(?:\+?84|0)\d[\d .-]{8,15}\d|mật\s*khẩu|password|api[_ -]?key|token|otp|sql\s*injection|xss|rce|lỗ\s*hổng|lộ\s*dữ\s*liệu|tên\s*tài\s*khoản|username|access[_ -]?key)/iu',$text);
 }
 function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,string $title,string $body,string $nonce): int {
     if($userId<1||!in_array($kind,['bug','suggestion'],true)||!in_array($platform,['Android','iOS','Windows','J2ME','Web','Khác'],true))
@@ -35,6 +41,8 @@ function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,strin
     $st=$db->prepare('SELECT username FROM team_user WHERE id=? AND ban=0 LIMIT 1');
     $st->execute([$userId]);$username=$st->fetchColumn();
     if(!is_string($username)||$username==='')throw new RuntimeException('Tài khoản không hợp lệ.');
+    $title=kp_forum_redact_username($title,$username);
+    $body=kp_forum_redact_username($body,$username);
     $visibility=kp_forum_sensitive_content($title."\n".$body)?'hidden':'public';
     // Do not store raw usernames or addresses in the forum schema.
     $st=$db->prepare('INSERT INTO kp_forum_topics (user_id,public_alias,kind,platform,title,body,visibility,submission_token) VALUES (?,?,?,?,?,?,?,?)');
@@ -89,6 +97,11 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
                 ->execute([$topicId,$adminId,$old['status'],$status,$old['visibility'],$visibility]);
         }
         if($reply!==''){
+            $lookup=$db->prepare('SELECT username FROM team_user WHERE id=? LIMIT 1');
+            $lookup->execute([(int)$old['user_id']]);$owner=$lookup->fetchColumn();
+            if(is_string($owner))$reply=kp_forum_redact_username($reply,$owner);
+            if($visibility==='public' && kp_forum_sensitive_content($reply))
+                throw new RuntimeException('Phản hồi nhạy cảm phải giữ bài ở trạng thái ẩn.');
             $st=$db->prepare('INSERT INTO kp_forum_replies (topic_id,admin_id,body,reply_token) VALUES (?,?,?,?)');
             $st->execute([$topicId,$adminId,$reply,$nonce]);
         }
