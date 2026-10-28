@@ -111,7 +111,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
     $unread=0;$latestUnread=null;
     try{
         $st=kp_db()->prepare('SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=? AND is_read=0');$st->execute([(int)$user['id']]);$unread=(int)$st->fetchColumn();
-        if($unread>0){$st=kp_db()->prepare('SELECT title,body FROM kp_user_notifications WHERE user_id=? AND is_read=0 ORDER BY id DESC LIMIT 1');$st->execute([(int)$user['id']]);$latestUnread=$st->fetch(PDO::FETCH_ASSOC)?:null;}
+        if($unread>0){$st=kp_db()->prepare('SELECT id,title,body FROM kp_user_notifications WHERE user_id=? AND is_read=0 ORDER BY id DESC LIMIT 1');$st->execute([(int)$user['id']]);$latestUnread=$st->fetch(PDO::FETCH_ASSOC)?:null;}
     }catch(Throwable $e){kp_log('player unread notification count unavailable',$e);}
     $initial=function_exists('mb_substr')
         ? mb_strtoupper(mb_substr($username,0,1,'UTF-8'),'UTF-8')
@@ -186,7 +186,7 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
         <div class="home-breadcrumb"><span class="breadcrumb-kicker">KPAH</span><span class="breadcrumb-separator">/</span><span><?= kp_e($title) ?></span></div>
         <div class="top-user"><span class="top-status"><i></i> ĐANG ĐĂNG NHẬP</span><a class="portal-notification-shortcut<?= $unread>0?' has-unread':''?>" href="/thong-bao" aria-label="Thông báo<?= $unread>0?' · '.$unread.' chưa đọc':''?>"><?=kp_player_icon_art('bell')?><?php if($unread>0):?><b><?=$unread>99?'99+':$unread?></b><?php endif;?></a><span class="top-user-name"><?= kp_e($username) ?></span><span class="mini-avatar" aria-hidden="true"><?= kp_e($initial) ?></span><a class="top-logout" href="/api/logout">Đăng xuất ↗</a></div>
     </header>
-<?php $shown=(int)($_SESSION['kp_user_notice_toast_count']??0);if($unread>0&&$shown!==$unread):$_SESSION['kp_user_notice_toast_count']=$unread;?><div hidden data-ui-toast="warning" data-ui-toast-title="Bạn có <?=number_format($unread,0,',','.')?> thông báo chưa đọc" data-ui-toast-message="<?=kp_e($latestUnread['title']??'Mở Trung tâm thông báo để xem chi tiết.')?>" data-ui-toast-duration="6500"></div><?php elseif($unread===0):$_SESSION['kp_user_notice_toast_count']=0;endif;?>
+<?php $noticeMarker=$unread.'|'.(int)($latestUnread['id']??0);$shown=(string)($_SESSION['kp_user_notice_toast_marker']??'');if($unread>0&&$shown!==$noticeMarker):$_SESSION['kp_user_notice_toast_marker']=$noticeMarker;?><div hidden data-ui-toast="warning" data-ui-toast-title="Bạn có <?=number_format($unread,0,',','.')?> thông báo chưa đọc" data-ui-toast-message="<?=kp_e($latestUnread['title']??'Mở Trung tâm thông báo để xem chi tiết.')?>" data-ui-toast-duration="6500"></div><?php elseif($unread===0):$_SESSION['kp_user_notice_toast_marker']='';endif;?>
 <?php
 }
 
