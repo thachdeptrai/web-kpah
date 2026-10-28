@@ -40,9 +40,29 @@ $topics=[];$replies=[];$own=[];$ownReplies=[];$total=0;$unavailable=false;
 $page=filter_var($_GET['trang']??1,FILTER_VALIDATE_INT);$page=is_int($page)?max(1,min(10000,$page)):1;
 try{$db=kp_db();$topics=kp_forum_public_topics($db,$kind,$status,50,$page);$total=kp_forum_public_count($db,$kind,$status);$replies=kp_forum_public_replies($db,array_column($topics,'id'));if($loggedIn){$myId=kp_player_api_user_id();$own=kp_forum_own_topics($db,$myId,20);$ownReplies=kp_forum_own_replies($db,$myId,array_column($own,'id'));}}
 catch(Throwable $e){kp_log('forum public read unavailable',$e);$unavailable=true;}
+$forumUnread=0;$forumUnreadId=0;
+if($loggedIn){
+ try{
+  $sessionUser=kp_player_api_user_id();
+  if($sessionUser>0){
+   $st=kp_db()->prepare('SELECT COUNT(*) AS unread_count,MAX(id) AS latest_id FROM kp_user_notifications WHERE user_id=? AND is_read=0');
+   $st->execute([$sessionUser]);$counts=$st->fetch(PDO::FETCH_ASSOC)?:[];
+   $forumUnread=(int)($counts['unread_count']??0);$forumUnreadId=(int)($counts['latest_id']??0);
+  }
+ }catch(Throwable $e){kp_log('forum unread notification unavailable',$e);}
+}
 $labels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resolved'=>'Đã giải quyết','declined'=>'Không thực hiện'];
 kp_public_page_start('Diễn đàn báo lỗi & góp ý','forum','Báo lỗi game, gửi góp ý và theo dõi câu trả lời chính thức từ Admin.');
 ?>
+<?php if($loggedIn&&$forumUnread>0):?>
+<div class="lp-container" style="margin-top:20px">
+<a class="ff-notice good" href="/thong-bao" style="display:block;text-decoration:none">
+  Bạn có <?= (int)$forumUnread ?> thông báo chưa đọc, gồm các cập nhật từ Admin. Xem thông báo ↗
+</a></div>
+<?php $noticeKey=$forumUnread.'|'.$forumUnreadId;
+if((string)($_SESSION['kp_user_notice_toast_marker']??'')!==$noticeKey):$_SESSION['kp_user_notice_toast_marker']=$noticeKey;?>
+<div hidden data-ui-toast="warning" data-ui-toast-title="Có <?= (int)$forumUnread ?> thông báo chưa đọc" data-ui-toast-message="Admin có thể đã phản hồi báo lỗi hoặc góp ý của bạn." data-ui-toast-duration="6500"></div>
+<?php endif;endif;?>
 <section class="ff-hero"><div class="lp-container ff-hero-inner"><div><span class="lp-section-kicker">DIỄN ĐÀN CỘNG ĐỒNG</span><h1>Báo lỗi & <em>góp ý</em></h1><p>Chia sẻ vấn đề trong game, đề xuất cải tiến và theo dõi phản hồi công khai từ ban quản trị.</p><a class="ff-hero-link" href="#gui-bai">Gửi bài mới <span aria-hidden="true">↗</span></a></div><img src="/assets/img/rank-sorcerer.webp" alt="" aria-hidden="true" loading="eager"></div></section>
 <div class="lp-container ff-layout">
  <section class="ff-main" aria-labelledby="ff-title">
