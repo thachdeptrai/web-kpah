@@ -43,3 +43,11 @@ GitHub Actions workflow `Forum feedback security and integration` chạy PHP 8.0
 - Diễn đàn lưu nội dung theo thời gian, không tự xóa phản hồi hoặc nhật ký xử lý.
 - Bài liên quan thanh toán/có dữ liệu nhạy cảm: giữ **Ẩn**, Admin liên hệ riêng qua kênh an toàn để xác minh; không yêu cầu người chơi công khai mã đơn, token hay ảnh chứa thông tin đăng nhập.
 - Khi cần xóa dữ liệu cá nhân theo yêu cầu hợp lệ, cần quy trình riêng về lưu trữ/ẩn danh và đối soát; không tùy ý xóa nhật ký quản trị.
+
+## Thông báo tự động hai chiều
+
+- Khi người chơi tạo báo lỗi/góp ý, cùng transaction với `kpah_points.kp_forum_topics` hệ thống ghi một thông báo chưa đọc vào `kpah.kp_admin_notifications`, link `/quan-tri/forum`. Admin thấy chấm đỏ trên menu Forum và chuông thông báo; các bài `new` vẫn hiển thị chờ xử lý dù đánh dấu inbox đã đọc.
+- Khi Admin đăng phản hồi hoặc đổi trạng thái/ẩn hiện bài, cùng transaction với `kpah_points.kp_forum_replies` và `kpah_points.kp_forum_actions` hệ thống ghi vào `kpah.kp_user_notifications` cho **đúng user_id**. Người chơi xem trong `/thong-bao`, nhận toast ở khu tài khoản/diễn đàn và đọc phản hồi tại mục **Bài của tôi** kể cả bài ẩn.
+- Nếu không có thay đổi, không phát sinh thông báo thừa. Gửi lại cùng `submission_token` không thể tạo thông báo Admin trùng.
+- **Yêu cầu SQL:** `database/user_center.sql` phải được cài đặt trong database game/web `kpah` (hai bảng thông báo chung vẫn ở đây). Các bảng Forum riêng vẫn ở `kpah_points`. Hai schema phải cùng một máy chủ MySQL/MariaDB để giao dịch InnoDB qua hai schema có thể commit hoặc rollback cùng nhau.
+- Không công khai tên tài khoản thật trong thông báo Forum; tên thật chỉ ở khu quản trị có kiểm soát.
