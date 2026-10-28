@@ -10,7 +10,7 @@ $db->exec('CREATE DATABASE IF NOT EXISTS `kpah_forum_test_data` CHARACTER SET ut
 $db->exec('CREATE TABLE IF NOT EXISTS team_user (id INT NOT NULL PRIMARY KEY,username VARCHAR(40) NOT NULL,ban TINYINT NOT NULL DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 $db->exec("INSERT INTO team_user (id,username,ban) VALUES (101,'testplayer123',0),(102,'otheruser777',0) ON DUPLICATE KEY UPDATE username=VALUES(username),ban=VALUES(ban)");
 $sql=preg_replace('/^--.*$/m','',(string)file_get_contents(KP_ROOT.'/database/forum_feedback.sql'));
-$sql=str_replace(chr(96).'kpahpoint'.chr(96),chr(96).'kpah_forum_test_data'.chr(96),$sql);
+$sql=str_replace(chr(96).'kpah_points'.chr(96),chr(96).'kpah_forum_test_data'.chr(96),$sql);
 foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement){if(trim($statement)!=='')$db->exec(kp_forum_sql($statement));}
 foreach(['kp_forum_replies','kp_forum_actions','kp_forum_topics'] as $table)$db->exec(kp_forum_sql('DELETE FROM '.$table));
 forum_test(kp_forum_mask_username('testplayer123')==='t****','username fixed alias');
