@@ -31,10 +31,6 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   }
   $result=kp_forum_admin_update(kp_db(),$id,(int)$admin['id'],$status,$visibility,$reply,(string)($_POST['nonce']??''));
   $_SESSION['kp_forum_admin_nonce']=bin2hex(random_bytes(32));
-  if($result['changed']){
-    kp_center_notify((int)$result['user_id'],'Cập nhật báo lỗi / góp ý #'.$id,
-      $reply!==''?'Admin đã phản hồi bài #'.$id.'. Vào diễn đàn để xem khi bài công khai.':'Trạng thái yêu cầu #'.$id.' đã thay đổi.','system','/dien-dan');
-  }
   if(function_exists('kp_admin_log_event'))kp_admin_log_event('forum_ticket_updated',(int)$admin['id']);
   header('Location: /quan-tri/forum?ok=1',true,303);exit;
  }catch(Throwable $e){kp_log('forum admin update failed',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không cập nhật được bài viết.';}
@@ -68,7 +64,7 @@ $statusLabels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resol
    <a class="<?=$filter===$key?'selected':''?>" href="/quan-tri/forum<?=$key!==''?'?status='.kp_e($key):''?>"><?=kp_e($label)?></a>
   <?php endforeach;?>
  </nav>
- <?php if($unavailable):?><p class="ff-notice bad">Chưa có bảng diễn đàn. Import database/forum_feedback.sql vào database game/web.</p>
+ <?php if($unavailable):?><p class="ff-notice bad">Chưa có bảng diễn đàn. Import database/forum_feedback.sql vào database kpah_points.</p>
  <?php elseif(!$rows):?><p class="ff-empty">Không có báo lỗi hoặc góp ý nào trong bộ lọc này.</p>
  <?php else:?>
  <div class="ff-admin-list">
