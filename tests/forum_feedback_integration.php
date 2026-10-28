@@ -86,4 +86,24 @@ forum_test(!$db->inTransaction(),'database transaction always closed');
 
 $columns=$db->query(kp_forum_sql('SHOW COLUMNS FROM kp_forum_topics'))->fetchAll(PDO::FETCH_COLUMN);
 forum_test(!in_array('username',$columns,true)&&!in_array('email',$columns,true),'forum data table does not duplicate personal identifiers');
+// Both tables are InnoDB. A failed notice must roll back its Forum mutation.
+$beforeTopics=kp_forum_admin_count($db);
+$db->exec('DROP TABLE kp_admin_notifications');
+try{
+    kp_forum_create($db,101,'bug','Android','Lỗi thử rollback','Không thể hoàn tất bước ghi thông báo nên toàn bộ bài phải rollback.',str_repeat('6',64));
+    forum_test(false,'forum topic saved without admin notice');
+}catch(PDOException $expected){forum_test(true,'new report rolls back when admin notification insert fails');}
+forum_test(kp_forum_admin_count($db)===$beforeTopics,'failed notification leaves no orphan topic');
+forum_test(!$db->inTransaction(),'failed report transaction closed');
+
+$beforeReplies=count(kp_forum_own_replies($db,101,[$id])[$id]);
+$db->exec('DROP TABLE kp_user_notifications');
+try{
+    kp_forum_admin_update($db,$id,42,'reviewing','hidden','Đang xử lý lỗi và kiểm tra tài khoản.',str_repeat('7',64));
+    forum_test(false,'forum reply saved without player notice');
+}catch(PDOException $expected){forum_test(true,'admin reply rolls back when player notification insert fails');}
+forum_test(count(kp_forum_own_replies($db,101,[$id])[$id])===$beforeReplies,'failed player notification leaves no orphan admin reply');
+$st=$db->prepare(kp_forum_sql('SELECT status FROM kp_forum_topics WHERE id=?'));
+$st->execute([$id]);forum_test($st->fetchColumn()==='resolved','failed notification also rolls back status change');
+forum_test(!$db->inTransaction(),'failed admin transaction closed');
 echo "Forum integration COMPLETE\n";
