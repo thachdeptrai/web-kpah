@@ -49,14 +49,21 @@ function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,strin
     $st->execute([$userId,kp_forum_mask_username($username),$kind,$platform,$title,$body,$visibility,$nonce]);
     return (int)$db->lastInsertId();
 }
-function kp_forum_public_topics(PDO $db,string $kind='',string $status='',int $limit=40): array {
+function kp_forum_public_topics(PDO $db,string $kind='',string $status='',int $limit=40,int $page=1): array {
     $where="t.visibility='public'";$params=[];
     if(in_array($kind,['bug','suggestion'],true)){$where.=' AND t.kind=?';$params[]=$kind;}
     if(in_array($status,['new','reviewing','resolved','declined'],true)){$where.=' AND t.status=?';$params[]=$status;}
-    $limit=max(1,min(60,$limit));
+    $limit=max(1,min(60,$limit));$offset=(max(1,min(10000,$page))-1)*$limit;
     $sql="SELECT t.id,t.public_alias,t.kind,t.platform,t.title,t.body,t.status,t.created_at,t.updated_at
-           FROM kp_forum_topics t WHERE ".$where." ORDER BY t.id DESC LIMIT ".$limit;
+           FROM kp_forum_topics t WHERE ".$where." ORDER BY t.id DESC LIMIT ".$limit." OFFSET ".$offset;
     $st=$db->prepare($sql);$st->execute($params);return $st->fetchAll(PDO::FETCH_ASSOC);
+}
+function kp_forum_public_count(PDO $db,string $kind='',string $status=''): int {
+    $where="visibility='public'";$values=[];
+    if(in_array($kind,['bug','suggestion'],true)){$where.=' AND kind=?';$values[]=$kind;}
+    if(in_array($status,['new','reviewing','resolved','declined'],true)){$where.=' AND status=?';$values[]=$status;}
+    $st=$db->prepare('SELECT COUNT(*) FROM kp_forum_topics WHERE '.$where);
+    $st->execute($values);return (int)$st->fetchColumn();
 }
 function kp_forum_public_replies(PDO $db,array $ids): array {
     $ids=array_values(array_unique(array_filter(array_map('intval',$ids),static function($n){return $n>0;})));

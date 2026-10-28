@@ -37,8 +37,9 @@ $kind=isset($_GET['loai'])&&is_string($_GET['loai'])?(string)$_GET['loai']:'';
 $status=isset($_GET['trang-thai'])&&is_string($_GET['trang-thai'])?(string)$_GET['trang-thai']:'';
 if(!in_array($kind,['bug','suggestion'],true))$kind='';
 if(!in_array($status,['new','reviewing','resolved','declined'],true))$status='';
-$topics=[];$replies=[];$unavailable=false;
-try{$topics=kp_forum_public_topics(kp_db(),$kind,$status,50);$replies=kp_forum_public_replies(kp_db(),array_column($topics,'id'));}
+$topics=[];$replies=[];$total=0;$unavailable=false;
+$page=filter_var($_GET['trang']??1,FILTER_VALIDATE_INT);$page=is_int($page)?max(1,min(10000,$page)):1;
+try{$db=kp_db();$topics=kp_forum_public_topics($db,$kind,$status,50,$page);$total=kp_forum_public_count($db,$kind,$status);$replies=kp_forum_public_replies($db,array_column($topics,'id'));}
 catch(Throwable $e){kp_log('forum public read unavailable',$e);$unavailable=true;}
 $labels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resolved'=>'Đã giải quyết','declined'=>'Không thực hiện'];
 kp_public_page_start('Diễn đàn báo lỗi & góp ý','forum','Báo lỗi game, gửi góp ý và theo dõi câu trả lời chính thức từ Admin.');
@@ -66,7 +67,12 @@ kp_public_page_start('Diễn đàn báo lỗi & góp ý','forum','Báo lỗi gam
      <div class="ff-admin-reply"><div class="ff-reply-heading"><span>✓ Phản hồi chính thức từ Admin</span><time><?=kp_e(date('d/m/Y H:i',strtotime((string)$reply['created_at'])))?></time></div><p><?=kp_e($reply['body'])?></p></div>
     <?php endforeach;?>
    </article>
-  <?php endforeach;?></div><?php endif;?>
+  <?php endforeach;?></div>
+  <nav class="ff-filters" aria-label="Phân trang">
+   <?php if($page>1):?><a href="/dien-dan?trang=<?=($page-1)?><?= $kind!==''?'&amp;loai='.kp_e($kind):'' ?><?= $status!==''?'&amp;trang-thai='.kp_e($status):'' ?>">← Trang trước</a><?php endif;?>
+   <?php if($total>$page*50):?><a href="/dien-dan?trang=<?=($page+1)?><?= $kind!==''?'&amp;loai='.kp_e($kind):'' ?><?= $status!==''?'&amp;trang-thai='.kp_e($status):'' ?>">Trang tiếp →</a><?php endif;?>
+  </nav>
+  <?php endif;?>
  </section>
  <aside class="ff-sidebar" id="gui-bai">
   <div class="ff-compose"><span class="ff-kicker">GỬI BÀI LÊN DIỄN ĐÀN</span><h2>Bạn gặp vấn đề gì?</h2><p>Thông tin bài viết sẽ được lưu và thông báo đến Admin. Tránh đăng số điện thoại, email, mật khẩu, mã thanh toán và lỗ hổng có thể bị khai thác.</p>
