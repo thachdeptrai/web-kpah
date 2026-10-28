@@ -3,17 +3,21 @@ on:
   push:
     paths:
       - 'app/includes/forum_feedback.php'
+      - 'app/includes/forum_storage.php'
       - 'app/pages/forum.php'
       - 'app/admin/forum.php'
       - 'database/forum_feedback.sql'
+      - 'database/forum_move_existing_to_kpahpoint.sql'
       - 'tests/forum_feedback_integration.php'
       - '.github/workflows/forum-feedback.yml'
   pull_request:
     paths:
       - 'app/includes/forum_feedback.php'
+      - 'app/includes/forum_storage.php'
       - 'app/pages/forum.php'
       - 'app/admin/forum.php'
       - 'database/forum_feedback.sql'
+      - 'database/forum_move_existing_to_kpahpoint.sql'
       - 'tests/forum_feedback_integration.php'
       - '.github/workflows/forum-feedback.yml'
 permissions:
@@ -39,6 +43,7 @@ jobs:
       KPAH_DB_HOST: 127.0.0.1
       KPAH_DB_PORT: '3306'
       KPAH_DB_NAME: kpah_forum_test
+      KPAH_FORUM_DB_NAME: kpah_forum_test_data
       KPAH_DB_USER: root
       KPAH_DB_PASS: fixture-only-password
     steps:
@@ -50,6 +55,7 @@ jobs:
           coverage: none
       - name: PHP syntax
         run: |
+          php -l app/includes/forum_storage.php
           php -l app/includes/forum_feedback.php
           php -l app/pages/forum.php
           php -l app/admin/forum.php

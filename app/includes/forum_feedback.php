@@ -39,7 +39,7 @@ function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,strin
     $title=kp_forum_valid_text($title,8,140);
     $body=kp_forum_valid_text($body,20,5000);
     if(!preg_match('/^[a-f0-9]{64}$/D',$nonce))throw new RuntimeException('Mã phiên gửi không hợp lệ.');
-    $st=$db->prepare('SELECT username FROM team_user WHERE id=? AND ban=0 LIMIT 1');
+    $st=$db->prepare(kp_forum_sql('SELECT username FROM team_user WHERE id=? AND ban=0 LIMIT 1'));
     $st->execute([$userId]);$username=$st->fetchColumn();
     if(!is_string($username)||$username==='')throw new RuntimeException('Tài khoản không hợp lệ.');
     $title=kp_forum_redact_username($title,$username);
@@ -57,7 +57,7 @@ function kp_forum_public_topics(PDO $db,string $kind='',string $status='',int $l
     $limit=max(1,min(60,$limit));$offset=(max(1,min(10000,$page))-1)*$limit;
     $sql="SELECT t.id,t.public_alias,t.kind,t.platform,t.title,t.body,t.status,t.created_at,t.updated_at
            FROM kp_forum_topics t WHERE ".$where." ORDER BY t.id DESC LIMIT ".$limit." OFFSET ".$offset;
-    $st=$db->prepare($sql);$st->execute($params);return $st->fetchAll(PDO::FETCH_ASSOC);
+    $st=$db->prepare(kp_forum_sql($sql));$st->execute($params);return $st->fetchAll(PDO::FETCH_ASSOC);
 }
 function kp_forum_public_count(PDO $db,string $kind='',string $status=''): int {
     $where="visibility='public'";$values=[];
@@ -72,7 +72,7 @@ function kp_forum_public_replies(PDO $db,array $ids): array {
     $sql='SELECT r.topic_id,r.body,r.created_at FROM kp_forum_replies r
           INNER JOIN kp_forum_topics t ON t.id=r.topic_id AND t.visibility=\'public\'
           WHERE r.topic_id IN ('.implode(',',array_fill(0,count($ids),'?')).') ORDER BY r.id ASC';
-    $st=$db->prepare($sql);$st->execute($ids);
+    $st=$db->prepare(kp_forum_sql($sql));$st->execute($ids);
     $result=[];foreach($st->fetchAll(PDO::FETCH_ASSOC) as $row)$result[(int)$row['topic_id']][]=$row;
     return $result;
 }
@@ -88,7 +88,7 @@ function kp_forum_own_replies(PDO $db,int $userId,array $topicIds): array {
     $sql='SELECT r.topic_id,r.body,r.created_at FROM kp_forum_replies r
           INNER JOIN kp_forum_topics t ON t.id=r.topic_id
           WHERE t.user_id=? AND r.topic_id IN ('.implode(',',array_fill(0,count($ids),'?')).') ORDER BY r.id ASC';
-    $st=$db->prepare($sql);$st->execute(array_merge([$userId],$ids));
+    $st=$db->prepare(kp_forum_sql($sql));$st->execute(array_merge([$userId],$ids));
     $rows=[];foreach($st->fetchAll(PDO::FETCH_ASSOC) as $r)$rows[(int)$r['topic_id']][]=$r;
     return $rows;
 }
@@ -127,7 +127,7 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
                 ->execute([$topicId,$adminId,$old['status'],$status,$old['visibility'],$visibility]);
         }
         if($reply!==''){
-            $lookup=$db->prepare('SELECT username FROM team_user WHERE id=? LIMIT 1');
+            $lookup=$db->prepare(kp_forum_sql('SELECT username FROM team_user WHERE id=? LIMIT 1'));
             $lookup->execute([(int)$old['user_id']]);$owner=$lookup->fetchColumn();
             if(is_string($owner))$reply=kp_forum_redact_username($reply,$owner);
             if($visibility==='public' && kp_forum_sensitive_content($reply))
