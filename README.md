@@ -305,4 +305,4 @@ Có thể dùng schema MySQL/MariaDB thứ hai `kpah_points` cho `kp_points_*` t
 
 ## Diễn đàn Báo lỗi & Góp ý
 
-Có trang công khai `/dien-dan` và trang Admin `/quan-tri/forum`. **Chạy** `database/forum_feedback.sql` trên database game/web trước khi sử dụng; tên tài khoản trên forum được che, Admin có quyền phản hồi và đổi trạng thái. Hướng dẫn tại [docs/FORUM_FEEDBACK.md](docs/FORUM_FEEDBACK.md).
+Có trang công khai `/dien-dan` và trang Admin `/quan-tri/forum`. **Import** `database/forum_feedback.sql` vào **database `kpah_points`** trước khi sử dụng; tên tài khoản trên forum được che, Admin có quyền phản hồi và đổi trạng thái. Hướng dẫn tại [docs/FORUM_FEEDBACK.md](docs/FORUM_FEEDBACK.md).
