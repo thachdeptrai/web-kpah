@@ -3,7 +3,7 @@
 -- New installation: create empty tables. For existing live reports use
 -- database/forum_move_existing_to_kpah_points.sql AFTER creating these tables.
 -- Non-destructive schema creation. Import into kpah_points, not kpah.
-CREATE DATABASE IF NOT EXISTS `kpah_points` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Database `kpah_points` must already exist; no CREATE DATABASE privilege required.
 CREATE TABLE IF NOT EXISTS `kpah_points`.`kp_forum_topics` (
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
  user_id INT NOT NULL,
