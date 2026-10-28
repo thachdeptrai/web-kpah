@@ -37,9 +37,9 @@ $kind=isset($_GET['loai'])&&is_string($_GET['loai'])?(string)$_GET['loai']:'';
 $status=isset($_GET['trang-thai'])&&is_string($_GET['trang-thai'])?(string)$_GET['trang-thai']:'';
 if(!in_array($kind,['bug','suggestion'],true))$kind='';
 if(!in_array($status,['new','reviewing','resolved','declined'],true))$status='';
-$topics=[];$replies=[];$total=0;$unavailable=false;
+$topics=[];$replies=[];$own=[];$ownReplies=[];$total=0;$unavailable=false;
 $page=filter_var($_GET['trang']??1,FILTER_VALIDATE_INT);$page=is_int($page)?max(1,min(10000,$page)):1;
-try{$db=kp_db();$topics=kp_forum_public_topics($db,$kind,$status,50,$page);$total=kp_forum_public_count($db,$kind,$status);$replies=kp_forum_public_replies($db,array_column($topics,'id'));}
+try{$db=kp_db();$topics=kp_forum_public_topics($db,$kind,$status,50,$page);$total=kp_forum_public_count($db,$kind,$status);$replies=kp_forum_public_replies($db,array_column($topics,'id'));if($loggedIn){$myId=kp_player_api_user_id();$own=kp_forum_own_topics($db,$myId,20);$ownReplies=kp_forum_own_replies($db,$myId,array_column($own,'id'));}}
 catch(Throwable $e){kp_log('forum public read unavailable',$e);$unavailable=true;}
 $labels=['new'=>'Mới tiếp nhận','reviewing'=>'Đang xử lý','resolved'=>'Đã giải quyết','declined'=>'Không thực hiện'];
 kp_public_page_start('Diễn đàn báo lỗi & góp ý','forum','Báo lỗi game, gửi góp ý và theo dõi câu trả lời chính thức từ Admin.');
@@ -92,6 +92,15 @@ kp_public_page_start('Diễn đàn báo lỗi & góp ý','forum','Báo lỗi gam
     </form>
    <?php endif;?>
   </div>
+  <?php if($own):?><section class="ff-mine" aria-labelledby="ff-mine-heading">
+    <span class="ff-kicker">LỊCH SỬ CỦA BẠN</span><h2 id="ff-mine-heading">Bài của tôi</h2>
+    <p>Chỉ bạn và Admin xem được những bài đang ẩn hoặc cần kiểm duyệt.</p>
+    <?php foreach($own as $mine):?><details class="ff-mine-item"><summary><strong>#<?=(int)$mine['id']?> · <?=kp_e($mine['title'])?></strong><span><?=kp_e($labels[$mine['status']]??$mine['status'])?> · <?= $mine['visibility']==='hidden'?'Riêng tư':'Công khai'?></span></summary>
+      <?php if(empty($ownReplies[(int)$mine['id']])):?><p>Chưa có phản hồi mới.</p><?php else:?>
+        <?php foreach($ownReplies[(int)$mine['id']] as $r):?><p class="ff-mine-answer"><b>Admin phản hồi:</b> <?=kp_e($r['body'])?></p><?php endforeach;?>
+      <?php endif;?>
+    </details><?php endforeach;?>
+  </section><?php endif;?>
  </aside>
 </div>
 <?php kp_public_page_end(); ?>

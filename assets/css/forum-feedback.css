@@ -65,3 +65,13 @@
 @media(max-width:900px){.ff-layout{grid-template-columns:minmax(0,1fr)}.ff-compose{position:static}.ff-hero-inner>img{width:165px;height:205px}}
 @media(max-width:620px){.ff-hero-inner{min-height:245px}.ff-hero-inner>div{padding:30px 0}.ff-hero-inner>img{width:96px;height:156px;opacity:.53;position:absolute;right:0;bottom:0}.ff-hero h1{font-size:36px}.ff-layout{margin-top:25px}.ff-topic{padding:18px}.ff-compose{padding:18px}.ff-admin-ticket{padding:18px}.ff-admin-form{grid-template-columns:minmax(0,1fr)}.ff-admin-heading h1{font-size:25px}}
 @media(prefers-reduced-motion:reduce){.ff-submit,.ff-hero-link{transition:none}}
+
+.ff-mine{margin-top:20px;padding:22px;border:1px solid #dbe4f4;border-radius:20px;background:#fff;box-shadow:0 12px 35px #5369a710}
+.ff-mine h2{margin:7px 0;font:800 22px/1.25 "Baloo 2","Be Vietnam Pro",sans-serif;color:#293d61}
+.ff-mine>p{color:#7182a0;font-size:11px;line-height:1.7}
+.ff-mine-item{padding:12px 0;border-top:1px solid #e9edf6}
+.ff-mine-item summary{cursor:pointer;list-style:none;display:grid;gap:5px;font-size:12px;color:#3b4d73;overflow-wrap:anywhere}
+.ff-mine-item summary::-webkit-details-marker{display:none}
+.ff-mine-item summary>span{font-size:11px;font-weight:500;color:#7585a3}
+.ff-mine-item p{font-size:11px;line-height:1.85;color:#53637f}
+.ff-mine-answer{padding:11px;border-radius:12px;background:#f3f1ff;white-space:pre-wrap;overflow-wrap:anywhere}

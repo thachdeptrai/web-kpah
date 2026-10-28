@@ -75,6 +75,22 @@ function kp_forum_public_replies(PDO $db,array $ids): array {
     $result=[];foreach($st->fetchAll(PDO::FETCH_ASSOC) as $row)$result[(int)$row['topic_id']][]=$row;
     return $result;
 }
+function kp_forum_own_topics(PDO $db,int $userId,int $limit=20): array {
+    if($userId<1)return [];
+    $st=$db->prepare('SELECT id,kind,title,status,visibility,created_at FROM kp_forum_topics WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(50,$limit)));
+    $st->execute([$userId]);return $st->fetchAll(PDO::FETCH_ASSOC);
+}
+function kp_forum_own_replies(PDO $db,int $userId,array $topicIds): array {
+    if($userId<1)return [];
+    $ids=array_values(array_unique(array_filter(array_map('intval',$topicIds),static function($x){return $x>0;})));
+    if(!$ids)return [];
+    $sql='SELECT r.topic_id,r.body,r.created_at FROM kp_forum_replies r
+          INNER JOIN kp_forum_topics t ON t.id=r.topic_id
+          WHERE t.user_id=? AND r.topic_id IN ('.implode(',',array_fill(0,count($ids),'?')).') ORDER BY r.id ASC';
+    $st=$db->prepare($sql);$st->execute(array_merge([$userId],$ids));
+    $rows=[];foreach($st->fetchAll(PDO::FETCH_ASSOC) as $r)$rows[(int)$r['topic_id']][]=$r;
+    return $rows;
+}
 function kp_forum_admin_list(PDO $db,string $status='',int $limit=100): array {
     // Admin endpoint only. Real usernames never enter public queries.
     $where=in_array($status,['new','reviewing','resolved','declined'],true)?'WHERE t.status=?':'';
