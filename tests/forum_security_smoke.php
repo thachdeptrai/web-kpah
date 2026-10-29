@@ -24,12 +24,15 @@ forum_sec_check(kp_forum_mask_username('trang')===kp_forum_mask_username('testpl
     'username length not exposed');
 forum_sec_check(kp_forum_redact_username('Chào testplayer123!', 'testplayer123')==='Chào t****!',
     'real username redacted from body');
+$pointSchema=kp_points_schema_name();
+forum_sec_check($pointSchema!=='' && preg_match('/^[A-Za-z0-9_]+$/D',$pointSchema)===1,
+    'notification schema explicitly configured and valid');
 forum_sec_check(kp_center_sql('SELECT id FROM kp_user_notifications WHERE user_id=?')===
-    'SELECT id FROM `kpah_points`.`kp_user_notifications` WHERE user_id=?',
+    'SELECT id FROM `'.$pointSchema.'`.`kp_user_notifications` WHERE user_id=?',
     'notification query never falls back to game schema');
 forum_sec_check(kp_forum_sql('SELECT id FROM kp_forum_topics WHERE id=?')===
-    'SELECT id FROM `kpah_points`.`kp_forum_topics` WHERE id=?',
-    'forum query points to isolated schema');
+    'SELECT id FROM `'.$pointSchema.'`.`kp_forum_topics` WHERE id=?',
+    'forum query points to same isolated schema');
 forum_sec_check(kp_forum_sql('SELECT username FROM team_user WHERE id=?')===
     'SELECT username FROM team_user WHERE id=?',
     'account lookup remains in game schema');
