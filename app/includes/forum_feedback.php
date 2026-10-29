@@ -6,6 +6,7 @@
  */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/forum_storage.php';
+require_once __DIR__.'/user_center.php';
 
 function kp_forum_mask_username($username): string {
     $name=strtolower(trim((string)$username));
@@ -36,7 +37,7 @@ function kp_forum_sensitive_content(string $text): bool {
 /** Notifications are stored in the same InnoDB transaction as Forum writes. */
 function kp_forum_write_admin_notice(PDO $db,int $id,string $kind): void {
     $type=$kind==='suggestion'?'Góp ý':'Báo lỗi';
-    $st=$db->prepare('INSERT INTO kp_admin_notifications (title,body,category,link_path) VALUES (?,?,?,?)');
+    $st=$db->prepare(kp_center_sql('INSERT INTO kp_admin_notifications (title,body,category,link_path) VALUES (?,?,?,?)'));
     $st->execute([$type.' mới #'.$id,'Có '.$type.' mới cần kiểm tra và xử lý.','system','/quan-tri/forum']);
 }
 function kp_forum_write_user_notice(PDO $db,int $userId,int $id,string $kind,string $status,string $visibility,bool $replied): void {
@@ -45,7 +46,7 @@ function kp_forum_write_user_notice(PDO $db,int $userId,int $id,string $kind,str
     $title=$replied?'Admin đã phản hồi '.$type.' #'.$id:$type.' #'.$id.' đã được cập nhật';
     $body=$replied?'Admin vừa phản hồi bài #'.$id.'. ':'Trạng thái bài #'.$id.': '.($labels[$status]??'Đã cập nhật').'. ';
     $body.=$visibility==='hidden'?'Xem trong mục Bài của tôi tại diễn đàn.':'Xem chi tiết trên diễn đàn.';
-    $st=$db->prepare('INSERT INTO kp_user_notifications (user_id,title,body,category,link_path) VALUES (?,?,?,?,?)');
+    $st=$db->prepare(kp_center_sql('INSERT INTO kp_user_notifications (user_id,title,body,category,link_path) VALUES (?,?,?,?,?)'));
     $st->execute([$userId,$title,$body,'system','/dien-dan']);
 }
 function kp_forum_create(PDO $db,int $userId,string $kind,string $platform,string $title,string $body,string $nonce): int {
