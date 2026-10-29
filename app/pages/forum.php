@@ -30,7 +30,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
      ?'Đã đăng bài #'.$id.' lên diễn đàn. Ban quản trị sẽ theo dõi và phản hồi.'
      :'Đã tiếp nhận bài #'.$id.'. Nội dung có thể chứa thông tin nhạy cảm nên sẽ chờ Admin kiểm duyệt trước khi công khai.';
   header('Location: /dien-dan',true,303);exit;
- }catch(Throwable $e){kp_log('forum submission rejected',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không lưu được bài viết, vui lòng thử lại.';}
+ }catch(Throwable $e){kp_log('forum submission rejected',$e);$error=kp_forum_safe_error($e,'Không lưu được bài viết, vui lòng thử lại.');}
 }
 $kind=isset($_GET['loai'])&&is_string($_GET['loai'])?(string)$_GET['loai']:'';
 $status=isset($_GET['trang-thai'])&&is_string($_GET['trang-thai'])?(string)$_GET['trang-thai']:'';
