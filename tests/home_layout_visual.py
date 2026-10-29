@@ -68,8 +68,8 @@ JS = r"""JSON.stringify((() => {
     add(overlap(navParts[i].bbox,navParts[j].bbox),
        navParts[i].selector+' overlaps '+navParts[j].selector);
   const navLinks=[...document.querySelectorAll('#lp-menu>a')];
-  add(navLinks.length!==5,'expected five menu links and one download CTA');
-  const paths=['/','/gioi-thieu','/giftcode','/tin-tuc','/cong-dong'];
+  add(navLinks.length!==6,'expected six menu links (including Forum) and one download CTA');
+  const paths=['/','/gioi-thieu','/giftcode','/tin-tuc','/cong-dong','/dien-dan'];
   navLinks.forEach((a,i)=>{
     add(new URL(a.href).pathname!==paths[i],'public navigation route changed at '+i);
     const icon=a.querySelector('.lp-nav-icon');
