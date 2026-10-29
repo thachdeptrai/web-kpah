@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'app/includes/forum_feedback.php'
+      - 'app/includes/user_center.php'
+      - 'app/pages/notifications.php'
       - 'app/includes/forum_storage.php'
       - 'app/pages/forum.php'
       - 'app/admin/forum.php'
@@ -11,7 +13,6 @@ on:
       - 'app/admin/notifications.php'
       - 'app/includes/player_portal.php'
       - 'database/user_center.sql'
-      - 'database/forum_notifications_kpah.sql'
       - 'database/forum_feedback.sql'
       - 'database/forum_move_existing_to_kpah_points.sql'
       - 'tests/forum_feedback_integration.php'
@@ -19,6 +20,8 @@ on:
   pull_request:
     paths:
       - 'app/includes/forum_feedback.php'
+      - 'app/includes/user_center.php'
+      - 'app/pages/notifications.php'
       - 'app/includes/forum_storage.php'
       - 'app/pages/forum.php'
       - 'app/admin/forum.php'
@@ -27,7 +30,6 @@ on:
       - 'app/admin/notifications.php'
       - 'app/includes/player_portal.php'
       - 'database/user_center.sql'
-      - 'database/forum_notifications_kpah.sql'
       - 'database/forum_feedback.sql'
       - 'database/forum_move_existing_to_kpah_points.sql'
       - 'tests/forum_feedback_integration.php'
@@ -68,6 +70,7 @@ jobs:
       - name: PHP syntax
         run: |
           php -l app/includes/forum_storage.php
+          php -l app/includes/user_center.php
           php -l app/includes/forum_feedback.php
           php -l app/pages/forum.php
           php -l app/admin/forum.php
