@@ -14,6 +14,10 @@ if(getenv('KPAH_POINTS_DB_NAME')==='kpah_route_points_test'){
 
 foreach([KP_ROOT.'/database/loyalty_points.sql',KP_ROOT.'/database/user_center.sql',KP_ROOT.'/database/points_stage1_reward_display.sql',KP_ROOT.'/database/points_stage2_redemption_events.sql',KP_ROOT.'/database/points_stage3_redemption_targets.sql',KP_ROOT.'/database/points_stage4_audit.sql',KP_ROOT.'/database/points_stage6_tiers.sql',KP_ROOT.'/database/points_stage7_redemption_control.sql'] as $file){
     $sql=preg_replace('/^--.*$/m','',file_get_contents($file));
+    if(basename($file)==='user_center.sql'){
+       // In CI Point uses an isolated schema, never the fixture game schema.
+       $sql=str_replace(chr(96).'kpah_points'.chr(96),chr(96).kp_points_schema_name().chr(96),$sql);
+    }
     foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement)if(trim($statement)!=='')$db->exec(kp_points_sql($statement));
 }
 function point_ok($condition,$message){if(!$condition)throw new RuntimeException('FAIL: '.$message);echo "PASS: $message\n";}
@@ -22,10 +26,17 @@ if(getenv('KPAH_POINTS_DB_NAME')==='kpah_route_points_test'){
  point_ok((int)$st->fetchColumn()===1,'wallet table created in isolated Point schema');
  $st=$db->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='kpah_route_test' AND TABLE_NAME='kp_points_wallet'");
  point_ok((int)$st->fetchColumn()===0,'Point wallet is NOT created in the game schema');
+ foreach(['kp_admin_notifications','kp_user_notifications','kp_user_security_events'] as $table){
+    $st=$db->prepare('SELECT TABLE_SCHEMA FROM information_schema.TABLES WHERE TABLE_SCHEMA IN (?,?) AND TABLE_NAME=?');
+    $st->execute(['kpah_route_test','kpah_route_points_test',$table]);
+    $locs=$st->fetchAll(PDO::FETCH_COLUMN);
+    point_ok($locs===['kpah_route_points_test'],'shared notice/history table only in Point database: '.$table);
+ }
+
 }
 
 
-$db->exec('DELETE FROM kp_admin_notifications');$db->exec('DELETE FROM kp_user_notifications');$db->exec(kp_points_sql('DELETE FROM kp_points_ledger'));
+$db->exec(kp_center_sql('DELETE FROM kp_admin_notifications'));$db->exec(kp_center_sql('DELETE FROM kp_user_notifications'));$db->exec(kp_points_sql('DELETE FROM kp_points_ledger'));
 $db->exec(kp_points_sql('DELETE FROM kp_points_redemption_events'));$db->exec(kp_points_sql('DELETE FROM kp_points_redemption_targets'));$db->exec(kp_points_sql('DELETE FROM kp_points_audit'));$db->exec(kp_points_sql('DELETE FROM kp_points_reward_tiers'));$db->exec(kp_points_sql('DELETE FROM kp_points_redemptions'));$db->exec(kp_points_sql('DELETE FROM kp_points_rewards'));$db->exec(kp_points_sql('DELETE FROM kp_points_wallet'));
 point_ok(kp_points_redemption_control_ready($db),'stage 7 global switch table is installed');
 point_ok(kp_points_redemption_enabled($db),'stage 7 defaults to enabled');
@@ -75,8 +86,8 @@ point_ok($auditRecord && (int)$auditRecord['user_id']===101 && (int)$auditRecord
   && (int)$auditRecord['balance_before']===1000 && (int)$auditRecord['balance_after']===800,
   'stage 4 stores auditable Point transfer within transaction');
 point_ok((int)$db->query(kp_points_sql('SELECT balance FROM kp_points_wallet WHERE user_id=101'))->fetchColumn()===800,'pending redemption reserves Point once');
-point_ok((int)$db->query("SELECT COUNT(*) FROM kp_admin_notifications WHERE is_read=0")->fetchColumn()===1,'admin receives pending order notification');
-point_ok((int)$db->query("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND category='gift'")->fetchColumn()===1,'user receives pending order notification');
+point_ok((int)$db->query(kp_center_sql("SELECT COUNT(*) FROM kp_admin_notifications WHERE is_read=0"))->fetchColumn()===1,'admin receives pending order notification');
+point_ok((int)$db->query(kp_center_sql("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND category='gift'"))->fetchColumn()===1,'user receives pending order notification');
 point_ok(kp_points_redemption_set_enabled($db,false,1),'temporary disable during existing redemption');
 point_ok(kp_points_redeem(101,$reward,$token,101)===$redemption,
  'already-created request stays idempotent during maintenance');
@@ -114,7 +125,7 @@ point_ok($noRefund,'stage 2 prohibits automatic refund once delivery has started
 kp_points_review_redemption($redemption2,1,'fulfilled','Đã cộng quà trong game');
 point_ok((int)$db->query(kp_points_sql('SELECT COUNT(*) FROM kp_points_redemption_events WHERE redemption_id='.$redemption2))->fetchColumn()===3,'stage 2 logs each transition within Point transaction');
 point_ok($db->query(kp_points_sql('SELECT status FROM kp_points_redemptions WHERE id='.$redemption2))->fetchColumn()==='fulfilled','approval finalizes pending reward');
-point_ok((int)$db->query("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND title='Quà đã được xác nhận giao'")->fetchColumn()===1,'actual delivery notifies the correct user');
+point_ok((int)$db->query(kp_center_sql("SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=101 AND title='Quà đã được xác nhận giao'"))->fetchColumn()===1,'actual delivery notifies the correct user');
 point_ok((int)$db->query(kp_points_sql("SELECT COUNT(*) FROM kp_points_audit WHERE operation IN ('approved','delivering','fulfilled')"))->fetchColumn()===3,
  'stage 4 includes all admin delivery decisions');
 $_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4';
