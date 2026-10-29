@@ -183,7 +183,7 @@ Cấu hình riêng đặt ngoài Git:
 
 Đã có 4 đường dẫn (tất cả yêu cầu đăng nhập): `/giftcode-cua-toi`, `/thong-bao`, `/theo-doi-don-nap`, `/lich-su-bao-mat`.
 
-**Quan trọng:** Sau khi pull mã mới, sao lưu DB và chạy `database/user_center.sql` trên database đang được web sử dụng. Script chỉ tạo 2 bảng InnoDB mới; không sửa cấu trúc game. Lịch sử bảo mật bắt đầu ghi từ thời điểm tính năng được kích hoạt; thông báo hiện ghi nhận đổi mật khẩu thành công, không giả lập thông báo thanh toán cho đơn cũ.
+**Quan trọng:** Sau khi pull mã mới, sao lưu DB và chạy `database/user_center.sql` để tạo/kiểm tra ba bảng thông báo và lịch sử bảo mật trong **`kpah_points`**. Script giữ nguyên dữ liệu đang có; không sửa cấu trúc game. Lịch sử bảo mật bắt đầu ghi từ thời điểm tính năng được kích hoạt; thông báo hiện ghi nhận đổi mật khẩu thành công, không giả lập thông báo thanh toán cho đơn cũ.
 
 Các thao tác đã tích hợp hiển thị Toast góc phải gồm tiêu đề thành công/thất bại và lý do. Chi tiết cách mở rộng: [docs/USER_CENTER.md](docs/USER_CENTER.md).
 
