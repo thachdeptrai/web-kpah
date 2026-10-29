@@ -8,8 +8,9 @@ function kp_center_sql(string $sql,?string $schemaOverride=null): string {
     $schema=$schemaOverride===null?kp_points_schema_name():$schemaOverride;
     if(!preg_match('/^[A-Za-z0-9_]{1,64}$/D',$schema))
         throw new RuntimeException('Cấu hình database thông báo không hợp lệ.');
-    $pattern='/\b(FROM|JOIN|UPDATE|INTO|TABLE)\s+(IF\s+NOT\s+EXISTS\s+)?(kp_(?:admin_notifications|user_notifications|user_security_events))\b/i';
+    $pattern="/'(?:''|[^'])*'|\"(?:\"\"|[^\"])*\"|\b(FROM|JOIN|UPDATE|INTO|TABLE)\s+(IF\s+NOT\s+EXISTS\s+)?(kp_(?:admin_notifications|user_notifications|user_security_events))\b/i";
     return preg_replace_callback($pattern,static function(array $m)use($schema): string {
+        if(!isset($m[3]))return $m[0]; // Never rewrite content inside SQL string literals.
         return $m[1].' '.($m[2]??'').chr(96).$schema.chr(96).'.'.chr(96).$m[3].chr(96);
     },$sql);
 }
