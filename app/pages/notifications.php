@@ -8,7 +8,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
  else {
   try{
    if(($_POST['action']??'')!=='read_all')throw new RuntimeException('invalid action');
-   $st=kp_db()->prepare('UPDATE kp_user_notifications SET is_read=1 WHERE user_id=? AND is_read=0');
+   $st=kp_db()->prepare(kp_center_sql('UPDATE kp_user_notifications SET is_read=1 WHERE user_id=? AND is_read=0'));
    $st->execute([(int)$user['id']]);$_SESSION['kp_toast']=['type'=>'success','title'=>'Đã đọc thông báo','message'=>'Đã đánh dấu các thông báo của bạn là đã đọc.'];
    header('Location: /thong-bao',true,303);exit;
   }catch(Throwable $e){kp_log('notification mark read failed',$e);$result='error';}
