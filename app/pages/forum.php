@@ -45,7 +45,7 @@ if($loggedIn){
  try{
   $sessionUser=kp_player_api_user_id();
   if($sessionUser>0){
-   $st=kp_db()->prepare('SELECT COUNT(*) AS unread_count,MAX(id) AS latest_id FROM kp_user_notifications WHERE user_id=? AND is_read=0');
+   $st=kp_db()->prepare(kp_center_sql('SELECT COUNT(*) AS unread_count,MAX(id) AS latest_id FROM kp_user_notifications WHERE user_id=? AND is_read=0'));
    $st->execute([$sessionUser]);$counts=$st->fetch(PDO::FETCH_ASSOC)?:[];
    $forumUnread=(int)($counts['unread_count']??0);$forumUnreadId=(int)($counts['latest_id']??0);
   }
