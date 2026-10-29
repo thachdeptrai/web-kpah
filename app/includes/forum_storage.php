@@ -16,8 +16,9 @@ function kp_forum_sql(string $sql,?string $schemaOverride=null): string {
     $schema=$schemaOverride===null?kp_forum_schema_name():$schemaOverride;
     if(!preg_match('/^[A-Za-z0-9_]{1,64}$/D',$schema))
         throw new InvalidArgumentException('Tên database Forum không hợp lệ.');
-    $pattern='/\b(FROM|JOIN|UPDATE|INTO|TABLE|REFERENCES)\s+(IF\s+NOT\s+EXISTS\s+)?(kp_forum_(?:topics|replies|actions))\b/i';
+    $pattern="/'(?:''|[^'])*'|\"(?:\"\"|[^\"])*\"|\b(FROM|JOIN|UPDATE|INTO|TABLE|REFERENCES)\s+(IF\s+NOT\s+EXISTS\s+)?(kp_forum_(?:topics|replies|actions))\b/i";
     return preg_replace_callback($pattern,static function(array $m)use($schema): string {
+        if(!isset($m[3]))return $m[0]; // Never rewrite content inside SQL string literals.
         return $m[1].' '.($m[2]??'').chr(96).$schema.chr(96).'.'.chr(96).$m[3].chr(96);
     },$sql);
 }
