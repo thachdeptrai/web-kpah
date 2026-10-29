@@ -39,7 +39,8 @@ JS=r"""JSON.stringify((()=>{
  }
  fail(header&&hero&&header.bottom>hero.top+2,"header overlaps hero");
  const nav=q(".portal-nav-list"),links=nav?[...nav.querySelectorAll("a")]:[];
- fail(links.length!==9,"missing account navigation links");
+ fail(links.length!==10,"missing account navigation links");
+ fail(!links.some(a=>new URL(a.href).pathname==='/dien-dan'),"player Forum link missing");
  fail(!q('.portal-rail .rail-icon[aria-current="page"]'),"active navigation missing");
  if(nav&&w<=900){
   const toggle=q('.portal-nav-toggle');
