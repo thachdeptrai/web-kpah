@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * KPAH – Cấu hình trang đăng ký tài khoản (giá trị mặc định, KHÔNG chứa mật khẩu).
  *
