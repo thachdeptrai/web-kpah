@@ -1,5 +1,11 @@
 <?php
 $root=dirname(__DIR__);
+// UTF-8 BOM before <?php emits bytes and breaks Set-Cookie/session headers.
+$firstBytes=(string)file_get_contents($root.'/config/register.php',false,null,0,3);
+if($firstBytes===chr(239).chr(187).chr(191)){
+    fwrite(STDERR,"FAIL: PHP config emits UTF-8 BOM before session headers".PHP_EOL);
+    exit(1);
+}
 $config=require $root.'/config/routes.php';
 function route_assert($ok,$message) {
     if (!$ok) { fwrite(STDERR,'FAIL: '.$message.PHP_EOL); exit(1); }
