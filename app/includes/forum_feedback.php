@@ -157,9 +157,14 @@ function kp_forum_admin_update(PDO $db,int $topicId,int $adminId,string $status,
         throw new RuntimeException('Mã phản hồi không hợp lệ.');
     $db->beginTransaction();
     try {
-        $st=$db->prepare(kp_forum_sql('SELECT user_id,kind,status,visibility FROM kp_forum_topics WHERE id=? FOR UPDATE'));
+        $st=$db->prepare(kp_forum_sql('SELECT user_id,kind,status,visibility,title,body FROM kp_forum_topics WHERE id=? FOR UPDATE'));
         $st->execute([$topicId]);$old=$st->fetch(PDO::FETCH_ASSOC);
         if(!$old)throw new RuntimeException('Không tìm thấy bài viết.');
+        // Enforce privacy at the data/service layer too; route-level checks
+        // alone are susceptible to future direct callers and stale pre-checks.
+        if($visibility==='public' && kp_forum_sensitive_content((string)$old['title']."\n".(string)$old['body']))
+            throw new RuntimeException('Bài có thông tin nhạy cảm, không được công khai.');
+
         if($status!==(string)$old['status']||$visibility!==(string)$old['visibility']){
             $db->prepare(kp_forum_sql('UPDATE kp_forum_topics SET status=?,visibility=? WHERE id=?'))->execute([$status,$visibility,$topicId]);
             $db->prepare(kp_forum_sql('INSERT INTO kp_forum_actions (topic_id,admin_id,previous_status,new_status,previous_visibility,new_visibility) VALUES (?,?,?,?,?,?)'))
