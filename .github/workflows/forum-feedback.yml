@@ -16,6 +16,7 @@ on:
       - 'database/forum_feedback.sql'
       - 'database/forum_move_existing_to_kpah_points.sql'
       - 'tests/forum_feedback_integration.php'
+      - 'tests/forum_security_smoke.php'
       - '.github/workflows/forum-feedback.yml'
   pull_request:
     paths:
@@ -33,6 +34,7 @@ on:
       - 'database/forum_feedback.sql'
       - 'database/forum_move_existing_to_kpah_points.sql'
       - 'tests/forum_feedback_integration.php'
+      - 'tests/forum_security_smoke.php'
       - '.github/workflows/forum-feedback.yml'
 permissions:
   contents: read
@@ -75,5 +77,8 @@ jobs:
           php -l app/pages/forum.php
           php -l app/admin/forum.php
           php -l tests/forum_feedback_integration.php
+          php -l tests/forum_security_smoke.php
+      - name: Forum offline privacy and security regression
+        run: php tests/forum_security_smoke.php
       - name: Forum MySQL integration and identity protections
         run: php tests/forum_feedback_integration.php
