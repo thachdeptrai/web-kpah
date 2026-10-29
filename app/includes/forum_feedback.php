@@ -8,6 +8,20 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 require_once __DIR__.'/forum_storage.php';
 require_once __DIR__.'/user_center.php';
 
+/**
+ * PDOException extends RuntimeException in PHP: never render SQLSTATE,
+ * query text, schema names, SQL parameters or internal paths to players.
+ * Only the exact, deliberately authored RuntimeException type carries
+ * messages intended for the UI.
+ */
+function kp_forum_safe_error(Throwable $error,string $fallback): string {
+    if(get_class($error)!==RuntimeException::class)return $fallback;
+    $message=$error->getMessage();
+    if($message===''||strlen($message)>280||
+       preg_match('/SQLSTATE|(?:^|\\s)(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER)\\s|(?:[a-z]:\\\\|\\/var\\/|\\/home\\/)/i',$message))
+        return $fallback;
+    return $message;
+}
 function kp_forum_mask_username($username): string {
     $name=strtolower(trim((string)$username));
     // Fixed masking length prevents leaking exact account-name length.
