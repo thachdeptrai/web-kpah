@@ -9,6 +9,20 @@ if(kp_forum_schema_name()!=='kpah_forum_test_data')throw new RuntimeException('U
 $db->exec('CREATE DATABASE IF NOT EXISTS `kpah_forum_test_data` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
 $db->exec('CREATE TABLE IF NOT EXISTS team_user (id INT NOT NULL PRIMARY KEY,username VARCHAR(40) NOT NULL,ban TINYINT NOT NULL DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 $db->exec("INSERT INTO team_user (id,username,ban) VALUES (101,'testplayer123',0),(102,'otheruser777',0) ON DUPLICATE KEY UPDATE username=VALUES(username),ban=VALUES(ban)");
+// Verify the exact production recovery migration against the disposable game schema.
+$noticeSql=preg_replace('/^--.*$/m','',(string)file_get_contents(KP_ROOT.'/database/forum_notifications_kpah.sql'));
+$noticeSql=str_replace(chr(96).'kpah'.chr(96),chr(96).'kpah_forum_test'.chr(96),$noticeSql);
+for($attempt=0;$attempt<2;$attempt++){
+    foreach(preg_split('/;\\s*(?:\\r?\\n|$)/',$noticeSql) as $statement){
+        $statement=trim($statement);
+        if($statement!==''&&stripos($statement,'SELECT ')!==0)$db->exec($statement);
+    }
+}
+foreach(['kp_admin_notifications','kp_user_notifications'] as $table){
+    $st=$db->prepare('SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME=?');
+    $st->execute(['kpah_forum_test',$table]);
+    forum_test($st->fetchColumn()==='InnoDB','notification recovery creates InnoDB '.$table);
+}
 $centerSql=preg_replace('/^--.*$/m','',(string)file_get_contents(KP_ROOT.'/database/user_center.sql'));
 foreach(preg_split('/;\\s*(?:\\r?\\n|$)/',$centerSql) as $st){if(trim($st)!=='')$db->exec($st);}
 $db->exec('DELETE FROM kp_admin_notifications');
