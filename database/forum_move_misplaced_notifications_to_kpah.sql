@@ -14,8 +14,9 @@
 -- RENAME TABLE transfers the ENTIRE table across schemas on the same server,
 -- retaining all rows, IDs, AUTO_INCREMENT, is_read states, timestamps & indexes.
 -- No rows are erased and there is no DROP TABLE in this migration.
--- The combined RENAME TABLE is atomic with supported MySQL/MariaDB versions;
--- it FAILS instead of overwriting when a destination already exists.
+-- RENAME TABLE refuses an already-existing destination, without overwriting it.
+-- On older MariaDB releases (such as 10.4), DDL rename may not be crash-atomic:
+-- keep backups and perform this during maintenance; verify both tables afterward.
 
 SELECT TABLE_SCHEMA,TABLE_NAME,ENGINE,TABLE_ROWS
 FROM information_schema.TABLES
