@@ -16,7 +16,7 @@ class CenterPdo {
  public function prepare($sql){$this->sql=$sql;return $this->stmt;}
 }
 $db=new CenterPdo();
-check(kp_center_sql('SELECT id FROM kp_user_notifications WHERE user_id=?')==='SELECT id FROM `kpah_points`.`kp_user_notifications` WHERE user_id=?','notifications never query game schema');
+check(kp_center_sql('SELECT id FROM kp_user_notifications WHERE user_id=?')==='SELECT id FROM `'.kp_points_schema_name().'`.`kp_user_notifications` WHERE user_id=?' && kp_points_schema_name()!=='','notifications never query game schema');
 kp_center_gift_history($db,48,25);
 check(strpos($db->sql,'w.userid=?')!==false,'giftcode ownership filter');
 check(strpos($db->sql,'w.charname=g.player')!==false,'only player character logs');
