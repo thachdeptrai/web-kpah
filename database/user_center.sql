@@ -1,6 +1,7 @@
--- User center, append-only security history and personal notifications.
--- Run once in your configured KPAH database. Does not change game tables.
-CREATE TABLE IF NOT EXISTS kp_user_notifications (
+-- Admin/User notifications and security history stored in kpah_points, not kpah.
+-- Run on same MySQL instance as game database; schema kpah_points must exist.
+-- CREATE TABLE IF NOT EXISTS preserves existing data, IDs, read flags and indices.
+CREATE TABLE IF NOT EXISTS `kpah_points`.`kp_user_notifications` (
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
  user_id INT NOT NULL,
  title VARCHAR(120) NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE IF NOT EXISTS kp_user_notifications (
  KEY idx_user_newest (user_id,id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS kp_user_security_events (
+CREATE TABLE IF NOT EXISTS `kpah_points`.`kp_user_security_events` (
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
  user_id INT NOT NULL,
  event_type VARCHAR(32) NOT NULL,
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS kp_user_security_events (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Shared operations inbox for administrators. No player data is copied here.
-CREATE TABLE IF NOT EXISTS kp_admin_notifications (
+CREATE TABLE IF NOT EXISTS `kpah_points`.`kp_admin_notifications` (
  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
  title VARCHAR(120) NOT NULL,
  body VARCHAR(500) NOT NULL,
