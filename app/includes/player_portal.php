@@ -110,8 +110,8 @@ function kp_player_head($title,$active,array $user,$withCharacters=false)
     $username=(string)$user['username'];
     $unread=0;$latestUnread=null;
     try{
-        $st=kp_db()->prepare('SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=? AND is_read=0');$st->execute([(int)$user['id']]);$unread=(int)$st->fetchColumn();
-        if($unread>0){$st=kp_db()->prepare('SELECT id,title,body FROM kp_user_notifications WHERE user_id=? AND is_read=0 ORDER BY id DESC LIMIT 1');$st->execute([(int)$user['id']]);$latestUnread=$st->fetch(PDO::FETCH_ASSOC)?:null;}
+        $st=kp_db()->prepare(kp_center_sql('SELECT COUNT(*) FROM kp_user_notifications WHERE user_id=? AND is_read=0'));$st->execute([(int)$user['id']]);$unread=(int)$st->fetchColumn();
+        if($unread>0){$st=kp_db()->prepare(kp_center_sql('SELECT id,title,body FROM kp_user_notifications WHERE user_id=? AND is_read=0 ORDER BY id DESC LIMIT 1'));$st->execute([(int)$user['id']]);$latestUnread=$st->fetch(PDO::FETCH_ASSOC)?:null;}
     }catch(Throwable $e){kp_log('player unread notification count unavailable',$e);}
     $initial=function_exists('mb_substr')
         ? mb_strtoupper(mb_substr($username,0,1,'UTF-8'),'UTF-8')
