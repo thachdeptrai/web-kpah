@@ -88,6 +88,16 @@ catch(RuntimeException $expected){forum_test(true,'invalid admin status rejected
 $secretId=kp_forum_create($db,102,'suggestion','Web','Đề nghị hỗ trợ tài khoản','Liên hệ qua email myplayer@example.com để trao đổi thêm.',str_repeat('e',64));
 forum_test(kp_forum_public_count($db)===0,'PII automatically held, no accidental public leak');
 forum_test(count(kp_forum_admin_list($db))===2,'admin can see hidden report');
+try {
+    kp_forum_admin_update($db,$secretId,42,'reviewing','public','',str_repeat('8',64));
+    forum_test(false,'sensitive report unexpectedly published');
+} catch(RuntimeException $expected){
+    forum_test(true,'sensitive report cannot be published through service-level caller');
+}
+$check=$db->prepare(kp_forum_sql('SELECT visibility FROM kp_forum_topics WHERE id=?'));
+$check->execute([$secretId]);
+forum_test($check->fetchColumn()==='hidden','sensitive report stays hidden after rejected update');
+
 forum_test((int)$db->query(kp_center_sql('SELECT COUNT(*) FROM kp_admin_notifications'))->fetchColumn()===2,'two distinct reports create two admin notifications');
 
 try{kp_forum_create($db,101,'bug','Android','Lỗi lặp nội dung','Gửi lại với mã đơn trùng cần bị chặn an toàn.',str_repeat('a',64));forum_test(false,'duplicate nonce accepted');}
