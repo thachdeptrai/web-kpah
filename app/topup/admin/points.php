@@ -99,7 +99,7 @@ if(($_SERVER['REQUEST_METHOD']??'')==='POST'){
    kp_points_review_redemption($id,(int)$admin['id'],$action,(string)($_POST['note']??''));
    $notice=['approved'=>'Đã duyệt, chờ phát quà.','delivering'=>'Đang phát quà cho người chơi.','fulfilled'=>'Đã xác nhận quà giao thành công.','rejected'=>'Đã từ chối và hoàn Point.'][$action];
   }elseif($action==='read_admin_notifications'){
-   $db->exec('UPDATE kp_admin_notifications SET is_read=1 WHERE is_read=0');$notice='Đã đánh dấu thông báo quản trị là đã đọc.';
+   $db->exec(kp_center_sql('UPDATE kp_admin_notifications SET is_read=1 WHERE is_read=0'));$notice='Đã đánh dấu thông báo quản trị là đã đọc.';
   }else throw new RuntimeException('Thao tác không hợp lệ.');
   $_SESSION['kp_toast']=['type'=>'success','title'=>'Đã lưu thay đổi','message'=>$notice];header('Location: /quan-tri/diem-tich-luy',true,303);exit;
  }catch(Throwable $e){kp_log('admin points request failed',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không hoàn thành thao tác.';}
