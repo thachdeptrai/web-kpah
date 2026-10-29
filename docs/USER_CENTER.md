@@ -1,7 +1,7 @@
 # Player Center (Giftcode, Thông báo, Đơn nạp, Bảo mật)
 
 ## Triển khai
-Sau khi cập nhật mã nguồn trên Windows/XAMPP, **sao lưu database trước**, sau đó chạy `database/user_center.sql` đúng một lần qua Navicat hoặc mysql. Script là các lệnh CREATE TABLE IF NOT EXISTS, không sửa bảng game MyISAM. Nếu chưa chạy migration, trang thông báo và lịch sử bảo mật sẽ hiển thị trạng thái chưa sẵn sàng.
+Sau khi cập nhật mã nguồn trên Windows/XAMPP, **sao lưu database trước**, sau đó chạy `database/user_center.sql` qua Navicat hoặc mysql. Script tạo ba bảng thông báo/bảo mật **trực tiếp trong `kpah_points`**, không phải `kpah`; nếu bảng đã tồn tại sẽ giữ dữ liệu. Script là các lệnh CREATE TABLE IF NOT EXISTS có chỉ rõ `kpah_points`, không sửa bảng game MyISAM. Nếu chưa chạy migration, trang thông báo và lịch sử bảo mật sẽ hiển thị trạng thái chưa sẵn sàng.
 
 ## Trang người chơi
 - `/giftcode-cua-toi`: lịch sử thực từ `giftcode_log`, lọc theo bảng `tob_web_info_char` với `userid` của phiên đang đăng nhập. Game hiện không lưu timestamp trong log.
