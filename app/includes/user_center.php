@@ -1,6 +1,7 @@
 <?php
 /** Player-facing notification and security history, optional until migration installed. */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+require_once __DIR__.'/points_storage.php';
 
 /** Store all Admin/User notifications and site security events in the Point schema. */
 function kp_center_sql(string $sql,?string $schemaOverride=null): string {
