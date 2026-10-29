@@ -1,8 +1,8 @@
 # Tách dữ liệu Point sang database riêng (MySQL/MariaDB)
 
 ## Kiến trúc
-- Database game/web hiện tại (ví dụ `kpah`): `team_user`, `tob_char`, `kp_bank_orders`, notifications, catalog vật phẩm, payOS.
-- Database Point mới (ví dụ `kpah_points`): tất cả **11 bảng `kp_points_*`** gồm program, wallet, ledger, rewards, redemptions, metadata, audit, tiers và redemption_control.
+- Database game/web hiện tại (ví dụ `kpah`): `team_user`, `tob_char`, `kp_bank_orders`, catalog vật phẩm, payOS.
+- Database Point mới (ví dụ `kpah_points`): tất cả **11 bảng `kp_points_*`** gồm program, wallet, ledger, rewards, redemptions, metadata, audit, tiers và redemption_control; cùng bảng thông báo `kp_admin_notifications`, `kp_user_notifications`, `kp_user_security_events`.
 - Cả hai schema **bắt buộc cùng một server MySQL/MariaDB và cùng tài khoản PDO có quyền trên cả hai**. Web dùng một PDO, query `kp_points_*` theo schema đủ tên; các giao dịch InnoDB vẫn nằm trong một transaction. Không hỗ trợ hai host MySQL độc lập hoặc tách server từ xa.
 - Trước khi cấu hình database Point, hành vi cũ trên database `kpah` được giữ nguyên.
 
