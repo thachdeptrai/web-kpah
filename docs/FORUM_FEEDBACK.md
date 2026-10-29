@@ -4,7 +4,7 @@
 
 1. Sao lưu cả database website/game `kpah` và database Point `kpah_points` trước.
 2. Import [`database/forum_feedback.sql`](../database/forum_feedback.sql) vào database Point **`kpah_points`** bằng Navicat. Chỉ tạo ba bảng `kp_forum_*`, không đụng tới bảng game hay dữ liệu Point có sẵn.
-3. Trước khi thử gửi bài/phản hồi, phải có hai bảng thông báo trong `kpah`: chạy [`database/forum_notifications_kpah.sql`](../database/forum_notifications_kpah.sql). Kiểm tra cả `kp_admin_notifications` và `kp_user_notifications` đều dùng InnoDB, rồi mới bật ghi Forum.
+3. Thông báo Admin, User và lịch sử bảo mật nằm trong **`kpah_points`** cùng các bảng Forum. Nếu đã tạo ba bảng đó ở `kpah_points`, **giữ nguyên dữ liệu**, không cần chuyển bảng. Nếu thiếu, chạy [`database/user_center.sql`](../database/user_center.sql), các lệnh `CREATE TABLE IF NOT EXISTS` đã định danh rõ `kpah_points`.
 4. Website tái sử dụng cấu hình `points_db.name` hoặc `KPAH_POINTS_DB_NAME` (mặc định `kpah_points`). PHP truy cập hai schema trên cùng MySQL server: `kpah.team_user` để tra tên thật khi cần, `kpah_points.kp_forum_*` để đọc/ghi bài viết. Không tạo cấu hình `forum_db` riêng.
 5. Git pull trên `main`, kiểm tra:
    - `/dien-dan`: người chơi xem bài công khai; đăng nhập mới gửi được.
@@ -47,8 +47,8 @@ GitHub Actions workflow `Forum feedback security and integration` chạy PHP 8.0
 
 ## Thông báo tự động hai chiều
 
-- Khi người chơi tạo báo lỗi/góp ý, cùng transaction với `kpah_points.kp_forum_topics` hệ thống ghi một thông báo chưa đọc vào `kpah.kp_admin_notifications`, link `/quan-tri/forum`. Admin thấy chấm đỏ trên menu Forum và chuông thông báo; các bài `new` vẫn hiển thị chờ xử lý dù đánh dấu inbox đã đọc.
-- Khi Admin đăng phản hồi hoặc đổi trạng thái/ẩn hiện bài, cùng transaction với `kpah_points.kp_forum_replies` và `kpah_points.kp_forum_actions` hệ thống ghi vào `kpah.kp_user_notifications` cho **đúng user_id**. Người chơi xem trong `/thong-bao`, nhận toast ở khu tài khoản/diễn đàn và đọc phản hồi tại mục **Bài của tôi** kể cả bài ẩn.
+- Khi người chơi tạo báo lỗi/góp ý, cùng transaction với `kpah_points.kp_forum_topics` hệ thống ghi một thông báo chưa đọc vào `kpah_points.kp_admin_notifications`, link `/quan-tri/forum`. Admin thấy chấm đỏ trên menu Forum và chuông thông báo; các bài `new` vẫn hiển thị chờ xử lý dù đánh dấu inbox đã đọc.
+- Khi Admin đăng phản hồi hoặc đổi trạng thái/ẩn hiện bài, cùng transaction với `kpah_points.kp_forum_replies` và `kpah_points.kp_forum_actions` hệ thống ghi vào `kpah_points.kp_user_notifications` cho **đúng user_id**. Người chơi xem trong `/thong-bao`, nhận toast ở khu tài khoản/diễn đàn và đọc phản hồi tại mục **Bài của tôi** kể cả bài ẩn.
 - Nếu không có thay đổi, không phát sinh thông báo thừa. Gửi lại cùng `submission_token` không thể tạo thông báo Admin trùng.
-- **Yêu cầu SQL:** Import [`database/forum_notifications_kpah.sql`](../database/forum_notifications_kpah.sql) **vào MySQL server có database `kpah`** để tạo hai bảng thông báo chung `kpah.kp_admin_notifications` và `kpah.kp_user_notifications`, đặc biệt khi gặp `SQLSTATE[42S02] ... kpah.kp_admin_notifications doesn't exist`. Lệnh được gắn rõ schema `kpah`, chạy lại không xóa dữ liệu. Hoặc import đầy đủ [`database/user_center.sql`](../database/user_center.sql) khi đã chọn đúng database `kpah` (bao gồm cả bảng lịch sử bảo mật). Các bảng Forum vẫn ở **`kpah_points`**. Hai schema phải cùng một máy chủ MySQL/MariaDB; cả bảng thông báo và bảng Forum dùng InnoDB để commit/rollback chung.
+- **Yêu cầu SQL:** Dùng [`database/user_center.sql`](../database/user_center.sql) để xác nhận các bảng `kp_admin_notifications`, `kp_user_notifications` và `kp_user_security_events` nằm trong **`kpah_points`**. Không import SQL tạo bảng vào `kpah`; giữ nguyên các bảng/record đã tạo tại `kpah_points`. Giao dịch Forum và thông báo dùng cùng kết nối PDO và bảng InnoDB trên một máy chủ MySQL. Nếu trước đó có thông báo thật trong `kpah`, phải đối soát dữ liệu trước khi cân nhắc di chuyển, không xóa bảng hay ghi đè.
 - Không công khai tên tài khoản thật trong thông báo Forum; tên thật chỉ ở khu quản trị có kiểm soát.
