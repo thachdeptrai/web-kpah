@@ -28,6 +28,16 @@ $sql=preg_replace('/^--.*$/m','',(string)file_get_contents(KP_ROOT.'/database/fo
 $sql=str_replace(chr(96).'kpah_points'.chr(96),chr(96).'kpah_forum_test_data'.chr(96),$sql);
 foreach(preg_split('/;\s*(?:\r?\n|$)/',$sql) as $statement){if(trim($statement)!=='')$db->exec(kp_forum_sql($statement));}
 foreach(['kp_forum_replies','kp_forum_actions','kp_forum_topics'] as $table)$db->exec(kp_forum_sql('DELETE FROM '.$table));
+forum_test(strpos(kp_forum_sql("SELECT 'FROM kp_forum_topics' AS label FROM kp_forum_topics"),
+    "'FROM kp_forum_topics'")!==false,'forum router keeps SQL literal untouched');
+forum_test(strpos(kp_forum_sql("SELECT 'FROM kp_forum_topics' AS label FROM kp_forum_topics"),
+    chr(96).'kpah_forum_test_data'.chr(96).'.'.chr(96).'kp_forum_topics'.chr(96))!==false,
+    'forum router qualifies real table');
+forum_test(strpos(kp_center_sql("SELECT 'FROM kp_user_notifications' AS label FROM kp_user_notifications"),
+    "'FROM kp_user_notifications'")!==false,'notification router keeps SQL literal untouched');
+forum_test(strpos(kp_center_sql("SELECT 'FROM kp_user_notifications' AS label FROM kp_user_notifications"),
+    chr(96).'kpah_forum_test_data'.chr(96).'.'.chr(96).'kp_user_notifications'.chr(96))!==false,
+    'notification router qualifies real table');
 forum_test(kp_forum_mask_username('testplayer123')==='t****','username fixed alias');
 forum_test(kp_forum_mask_username('t')===kp_forum_mask_username('testplayer123'),'mask length hides real length');
 forum_test(kp_forum_mask_username('otheruser777')==='o****','other username');
