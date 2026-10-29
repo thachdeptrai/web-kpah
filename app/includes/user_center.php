@@ -1,6 +1,18 @@
 <?php
 /** Player-facing notification and security history, optional until migration installed. */
 if (!defined('KP_ROOT')) { http_response_code(403); exit; }
+
+/** Store all Admin/User notifications and site security events in the Point schema. */
+function kp_center_sql(string $sql,?string $schemaOverride=null): string {
+    $schema=$schemaOverride===null?kp_points_schema_name():$schemaOverride;
+    if(!preg_match('/^[A-Za-z0-9_]{1,64}$/D',$schema))
+        throw new RuntimeException('Cấu hình database thông báo không hợp lệ.');
+    $pattern='/\b(FROM|JOIN|UPDATE|INTO|TABLE)\s+(IF\s+NOT\s+EXISTS\s+)?(kp_(?:admin_notifications|user_notifications|user_security_events))\b/i';
+    return preg_replace_callback($pattern,static function(array $m)use($schema): string {
+        return $m[1].' '.($m[2]??'').chr(96).$schema.chr(96).'.'.chr(96).$m[3].chr(96);
+    },$sql);
+}
+
 function kp_center_event($userId, $type) {
     if ((int)$userId < 1 || !in_array($type, ['login','password_change'], true)) return;
     try {
@@ -17,7 +29,7 @@ function kp_center_event($userId, $type) {
         // Store only a coarse, masked network hint, never a raw address.
         $ip = (string)kp_client_ip();
         $hint = filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_IPV4) ? preg_replace('/\.\d+$/','.xxx',$ip) : 'IPv6 / không xác định';
-        kp_db()->prepare('INSERT INTO kp_user_security_events (user_id,event_type,device_label,ip_hint) VALUES (?,?,?,?)')
+        kp_db()->prepare(kp_center_sql('INSERT INTO kp_user_security_events (user_id,event_type,device_label,ip_hint) VALUES (?,?,?,?)'))
             ->execute([(int)$userId,$type,$ua,$hint]);
     } catch (Throwable $e) { kp_log('security event recording unavailable', $e); }
 }
@@ -40,13 +52,13 @@ function kp_admin_notify($title,$body,$category='system',$path='') {
         || !in_array($category,['system','payment','reward'],true)
         || !kp_admin_center_safe_path($path)) return false;
     try {
-        $st=kp_db()->prepare('INSERT INTO kp_admin_notifications (title,body,category,link_path) VALUES (?,?,?,?)');
+        $st=kp_db()->prepare(kp_center_sql('INSERT INTO kp_admin_notifications (title,body,category,link_path) VALUES (?,?,?,?)'));
         return $st->execute([$title,$body,$category,$path]);
     } catch (Throwable $e) { kp_log('admin notification recording unavailable',$e); return false; }
 }
 function kp_admin_notifications($pdo,$max=30) {
-    $st=$pdo->query('SELECT id,title,body,category,link_path,is_read,created_at
-        FROM kp_admin_notifications ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max)));
+    $st=$pdo->query(kp_center_sql('SELECT id,title,body,category,link_path,is_read,created_at
+        FROM kp_admin_notifications ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max))));
     return $st->fetchAll(PDO::FETCH_ASSOC);
 }
 function kp_center_notify($userId,$title,$body,$category='system',$path='') {
@@ -54,18 +66,18 @@ function kp_center_notify($userId,$title,$body,$category='system',$path='') {
         || !in_array($category,['system','security','payment','gift'],true)
         || !kp_center_safe_path($path)) return false;
     try {
-        $st=kp_db()->prepare('INSERT INTO kp_user_notifications (user_id,title,body,category,link_path) VALUES (?,?,?,?,?)');
+        $st=kp_db()->prepare(kp_center_sql('INSERT INTO kp_user_notifications (user_id,title,body,category,link_path) VALUES (?,?,?,?,?)'));
         return $st->execute([(int)$userId,$title,$body,$category,$path]);
     } catch (Throwable $e) { kp_log('notification recording unavailable',$e); return false; }
 }
 function kp_center_notifications($pdo,$userId,$max=60) {
-    $st=$pdo->prepare('SELECT id,title,body,category,link_path,is_read,created_at
-        FROM kp_user_notifications WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max)));
+    $st=$pdo->prepare(kp_center_sql('SELECT id,title,body,category,link_path,is_read,created_at
+        FROM kp_user_notifications WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max))));
     $st->execute([(int)$userId]); return $st->fetchAll(PDO::FETCH_ASSOC);
 }
 function kp_center_security($pdo,$userId,$max=50) {
-    $st=$pdo->prepare('SELECT event_type,device_label,ip_hint,created_at
-        FROM kp_user_security_events WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max)));
+    $st=$pdo->prepare(kp_center_sql('SELECT event_type,device_label,ip_hint,created_at
+        FROM kp_user_security_events WHERE user_id=? ORDER BY id DESC LIMIT '.max(1,min(100,(int)$max))));
     $st->execute([(int)$userId]); return $st->fetchAll(PDO::FETCH_ASSOC);
 }
 function kp_center_gift_history($pdo,$userId,$max=80) {
