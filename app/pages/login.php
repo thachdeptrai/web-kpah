@@ -47,7 +47,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                         'Tài khoản của bạn vừa đăng nhập thành công. Nếu không phải bạn, hãy đổi mật khẩu ngay.',
                         'security','/lich-su-bao-mat');
                     // The portal shell shows the unread-notification toast after redirect.
-                    unset($_SESSION['kp_user_notice_toast_count']);
+                    unset($_SESSION['kp_user_notice_toast_count'], $_SESSION['kp_user_notice_toast_marker']);
                     header('Location: /tai-khoan');
                     exit;
                 }
