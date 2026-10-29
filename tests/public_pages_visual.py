@@ -34,7 +34,7 @@ JS=r"""JSON.stringify((()=>{
  add(title&&art&&Math.min(title.right,art.right)-Math.max(title.x,art.x)>2
    &&Math.min(title.bottom,art.bottom)-Math.max(title.y,art.y)>2,'title overlaps hero illustration');
  const menuLinks=[...document.querySelectorAll('#lp-menu>a')];
- add(menuLinks.length!==5,'expected five menu links; download is a CTA');
+ add(menuLinks.length!==6,'expected six menu links including Forum; download remains a CTA');
  menuLinks.forEach((a,i)=>{
    const icon=a.querySelector('.lp-nav-icon');
    const content=icon?.querySelector('svg,img');
