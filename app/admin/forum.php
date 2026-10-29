@@ -33,7 +33,7 @@ if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   $_SESSION['kp_forum_admin_nonce']=bin2hex(random_bytes(32));
   if(function_exists('kp_admin_log_event'))kp_admin_log_event('forum_ticket_updated',(int)$admin['id']);
   header('Location: /quan-tri/forum?ok=1',true,303);exit;
- }catch(Throwable $e){kp_log('forum admin update failed',$e);$error=$e instanceof RuntimeException?$e->getMessage():'Không cập nhật được bài viết.';}
+ }catch(Throwable $e){kp_log('forum admin update failed',$e);$error=kp_forum_safe_error($e,'Không cập nhật được bài viết.');}
 }
 $filter=isset($_GET['status'])&&is_string($_GET['status'])?(string)$_GET['status']:'';
 if(!in_array($filter,['new','reviewing','resolved','declined'],true))$filter='';
