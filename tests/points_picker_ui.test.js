@@ -115,6 +115,8 @@ assert.match(fields.option_lines.value,/<svg\/onload=alert\(1\)>/,'hostile game 
 assert.equal(program.includes('innerHTML'),false,'no HTML execution sink');
 assert.equal(program.includes('eval('),false);
 assert.ok(program.includes("aria-selected"),'tab ARIA state must be synchronized');
+assert.equal(chips.children.some(n=>n.tagName==='span'&&n._text.includes('svg')),true,
+ 'hostile string shown through textContent only');
 let prevented=false;
 tabs[2].listeners.keydown({key:'ArrowLeft',preventDefault(){prevented=true;}});
 assert.equal(prevented,true,'tab arrow key prevents page scroll');
@@ -131,8 +133,7 @@ tabs[0].listeners.keydown({key:'ArrowRight',preventDefault(){}});
 assert.equal(tabs[1].getAttribute('aria-selected'),'true','right arrow opens Shop');
 tabs[1].listeners.keydown({key:'ArrowRight',preventDefault(){}});
 assert.equal(tabs[2].getAttribute('aria-selected'),'true','right arrow opens Options');
-assert.equal(chips.children.some(n=>n.tagName==='span'&&n._text.includes('svg')),true,
- 'hostile string shown through textContent only');
+
 }
 // CSS used to override [hidden] with display:grid, exposing both panels.
 const css=fs.readFileSync('assets/css/point-reward-picker.css','utf8');
