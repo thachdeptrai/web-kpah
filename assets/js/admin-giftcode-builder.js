@@ -6,11 +6,16 @@
   var catalog;
   try { catalog = JSON.parse(catalogNode.textContent || '{}'); } catch (error) { return; }
   var items = Array.isArray(catalog.items) ? catalog.items : [];
+  var shopItems = Array.isArray(catalog.shop_items) ? catalog.shop_items : [];
+  var shopEnabled = catalog.shop_enabled === true;
+  var activeSource = 'data_item';
   var options = Array.isArray(catalog.options) ? catalog.options : [];
   var dboEnabled = catalog.dbo_enabled === true;
   var itemById = Object.create(null);
   var optionById = Object.create(null);
-  items.forEach(function (item) { itemById[String(item.id)] = item; });
+  items.forEach(function (item) { itemById['data_item:'+item.id] = item; });
+  shopItems.forEach(function (item) { itemById['data_shop:'+item.id] = item; });
+  function rewardKey(reward){return (reward.source==='data_shop'?'data_shop':'data_item')+':'+reward.item_id;}
   options.forEach(function (option) { optionById[String(option.id)] = option; });
 
   var builders = [];
@@ -56,6 +61,7 @@
   }
 
   function serializeReward(reward) {
+    if (reward.source === 'data_shop') return ['SHOP',reward.item_id,reward.quantity].join(':');
     var custom = Array.isArray(reward.options) ? reward.options.slice().sort(function (a, b) { return a.id - b.id; }) : [];
     if (!custom.length && number(reward.lock, 0) === 0 && number(reward.magic, 0) === 0) {
       return ['DB', reward.item_id, reward.quantity, reward.minutes].join(':');
@@ -66,6 +72,7 @@
 
   function cloneReward(reward) {
     return {
+      source:reward.source === 'data_shop' ? 'data_shop' : 'data_item',
       item_id: number(reward.item_id, 0),
       quantity: Math.max(1, number(reward.quantity, 1)),
       minutes: Math.max(0, number(reward.minutes, 0)),
@@ -119,13 +126,13 @@
   function renderBuilder(builder) {
     builder.list.textContent = '';
     builder.rewards.forEach(function (reward, index) {
-      var item = itemById[String(reward.item_id)];
+      var item = itemById[rewardKey(reward)];
       if (!item) return;
       var card = element('article', 'gc-reward-card');
       var top = element('div', 'gc-reward-card-top');
       top.appendChild(createImage(item));
       var identity = element('div', 'gc-reward-identity');
-      identity.appendChild(element('span', '', item.type_name + ' · Lv.' + item.level));
+      identity.appendChild(element('span', '', reward.source==='data_shop' ? 'Data Shop · tab '+item.tab : item.type_name + ' · Lv.' + item.level));
       identity.appendChild(element('h4', '', item.name));
       identity.appendChild(element('code', '', '#' + item.id + ' · icon ' + item.icon_id));
       top.appendChild(identity);
@@ -156,23 +163,24 @@
       var minutes = document.createElement('input');
       minutes.type = 'number'; minutes.min = '0'; minutes.max = '2147483647'; minutes.required = true; minutes.value = String(reward.minutes);
       minutes.addEventListener('input', function () { reward.minutes = Math.max(0, number(minutes.value, 0)); sync(builder); });
+      minutes.disabled=reward.source==='data_shop';
       controls.appendChild(field('Thời hạn (phút, 0 = vĩnh viễn)', minutes));
       var magic = document.createElement('select');
       [['0','Ma pháp / mặc định'],['1','Vật lý']].forEach(function (entry) {
         var choice = document.createElement('option'); choice.value = entry[0]; choice.textContent = entry[1]; magic.appendChild(choice);
       });
-      magic.value = String(reward.magic); magic.disabled = !dboEnabled;
+      magic.value = String(reward.magic); magic.disabled = !dboEnabled || reward.source==='data_shop';
       magic.addEventListener('change', function () { reward.magic = number(magic.value, 0); sync(builder); });
       controls.appendChild(field('Hệ item', magic));
       var lockLabel = element('label', 'gc-reward-toggle');
-      var lock = document.createElement('input'); lock.type = 'checkbox'; lock.checked = reward.lock === 1; lock.disabled = !dboEnabled;
+      var lock = document.createElement('input'); lock.type = 'checkbox'; lock.checked = reward.lock === 1; lock.disabled = !dboEnabled || reward.source==='data_shop';
       lock.addEventListener('change', function () { reward.lock = lock.checked ? 1 : 0; sync(builder); });
       lockLabel.appendChild(lock); lockLabel.appendChild(element('span', '', 'Khóa giao dịch'));
       controls.appendChild(lockLabel);
       card.appendChild(controls);
 
       var defaults = element('div', 'gc-default-options');
-      defaults.appendChild(element('b', '', 'Chỉ số mặc định từ data_item'));
+      defaults.appendChild(element('b', '', reward.source==='data_shop'?'ShopTemplate · số lượng, không có option data_item':'Chỉ số mặc định từ data_item'));
       var defaultList = element('div', 'gc-option-chips');
       (item.default_options || []).forEach(function (option) {
         defaultList.appendChild(element('span', '', '#' + option.id + ' ' + option.name + ' ' + Number(option.param).toLocaleString('vi-VN')));
@@ -185,7 +193,7 @@
       var customHead = element('div', 'gc-custom-head');
       customHead.appendChild(element('b', '', 'Option Admin tùy chỉnh'));
       var addOption = element('button', 'gc-add-option', '＋ Thêm option');
-      addOption.type = 'button'; addOption.disabled = !dboEnabled;
+      addOption.type = 'button'; addOption.disabled = !dboEnabled || reward.source==='data_shop';
       addOption.addEventListener('click', function (event) {
         activeBuilder = builder; activeOptionIndex = index; lastTrigger = event.currentTarget;
         optionSearch.value = ''; optionGroup.value = ''; renderOptionPicker(); openPicker(optionPicker, optionSearch);
@@ -211,7 +219,7 @@
         removeOption.addEventListener('click', function () { reward.options.splice(optionIndex, 1); renderBuilder(builder); });
         row.appendChild(removeOption); optionRows.appendChild(row);
       });
-      if (!reward.options.length) optionRows.appendChild(element('p', 'gc-no-options', dboEnabled ? 'Chưa thêm option; item sẽ dùng bộ chỉ số mặc định.' : 'Bật DBO trên game server để thêm option.'));
+      if (!reward.options.length) optionRows.appendChild(element('p', 'gc-no-options', reward.source==='data_shop' ? 'Data Shop không dùng option trang bị.' : (dboEnabled ? 'Chưa thêm option; item sẽ dùng bộ chỉ số mặc định.' : 'Bật DBO trên game server để thêm option.')));
       custom.appendChild(optionRows); card.appendChild(custom);
       builder.list.appendChild(card);
     });
@@ -236,7 +244,7 @@
       var type = itemType.value;
       var numeric = query.match(/^#?([0-9]+)$/);
       var exactId = numeric ? Number(numeric[1]) : null;
-      itemMatches = items.filter(function (item) {
+      itemMatches = (activeSource==='data_shop'?shopItems:items).filter(function (item) {
         if (type !== '' && String(item.type) !== type) return false;
         if (query === '') return true;
         return normalize(item.name).indexOf(query) !== -1
@@ -252,19 +260,20 @@
     }
     var page = itemMatches.slice(itemVisible, itemVisible + itemPageSize);
     page.forEach(function (item) {
-      var selected = activeBuilder && activeBuilder.rewards.some(function (reward) { return reward.item_id === item.id; });
+      var selected = activeBuilder && activeBuilder.rewards.some(function (reward) { return reward.item_id === item.id && (reward.source||'data_item')===activeSource; });
       var button = element('button', 'gc-item-choice' + (selected ? ' is-selected' : ''));
-      button.type = 'button'; button.disabled = selected;
+      button.type = 'button'; button.disabled = selected || (activeSource==='data_shop'&&!shopEnabled);
       button.appendChild(createImage(item));
       var copy = element('span', 'gc-item-choice-copy');
-      copy.appendChild(element('small', '', item.type_name + ' · Lv.' + item.level));
+      copy.appendChild(element('small', '', activeSource==='data_shop' ? 'Data Shop · tab '+item.tab+' · loại '+item.type : item.type_name+' · Lv.'+item.level));
       copy.appendChild(element('strong', '', item.name));
       copy.appendChild(element('code', '', '#' + item.id + ' · icon ' + item.icon_id));
       button.appendChild(copy);
-      button.appendChild(element('b', '', selected ? 'Đã chọn' : 'Thêm ＋'));
+      button.appendChild(element('b', '', selected ? 'Đã chọn' : (activeSource==='data_shop'&&!shopEnabled?'Cần patch SHOP':'Thêm ＋')));
       button.addEventListener('click', function () {
         if (!activeBuilder || activeBuilder.rewards.length >= 30) return;
-        activeBuilder.rewards.push({ item_id:item.id, quantity:1, minutes:0, lock:0, magic:0, options:[] });
+        if(activeSource==='data_shop'&&!shopEnabled)return;
+        activeBuilder.rewards.push({ source:activeSource,item_id:item.id, quantity:1, minutes:0, lock:0, magic:0, options:[] });
         renderBuilder(activeBuilder); closePicker(itemPicker);
       });
       itemGrid.appendChild(button);
@@ -310,7 +319,7 @@
     try { rewards = JSON.parse(initial.textContent || '[]'); } catch (error) { rewards = []; }
     var builder = {
       root:root, input:input, list:root.querySelector('.gc-selected-items'),
-      rewards:Array.isArray(rewards) ? rewards.map(cloneReward).filter(function (reward) { return itemById[String(reward.item_id)]; }) : [],
+      rewards:Array.isArray(rewards) ? rewards.map(cloneReward).filter(function (reward) { return itemById[rewardKey(reward)]; }) : [],
       capacity:Math.max(1, number(root.getAttribute('data-capacity'), 255))
     };
     builders.push(builder);
@@ -332,10 +341,29 @@
   });
 
   var types = Object.create(null);
-  items.forEach(function (item) { types[String(item.type)] = item.type_name; });
-  Object.keys(types).sort(function (a, b) { return Number(a) - Number(b); }).forEach(function (type) {
-    var option = document.createElement('option'); option.value = type; option.textContent = types[type] + ' (' + type + ')'; itemType.appendChild(option);
+  function fillTypes(){
+    itemType.textContent='';
+    var all=document.createElement('option');all.value='';all.textContent='Tất cả loại';itemType.appendChild(all);
+    (activeSource==='data_shop'?shopItems:items).forEach(function(item){
+       types[String(item.type)]=item.type_name;
+    });
+    Object.keys(types).sort(function(a,b){return Number(a)-Number(b);}).forEach(function(t){
+       var el=document.createElement('option');el.value=t;el.textContent=types[t]+' ('+t+')';itemType.appendChild(el);
+    });
+    Object.keys(types).forEach(function(key){delete types[key];});
+  }
+  Array.prototype.slice.call(document.querySelectorAll('[data-gc-source]')).forEach(function(btn){
+    btn.addEventListener('click',function(){
+      activeSource=btn.getAttribute('data-gc-source')==='data_shop'?'data_shop':'data_item';
+      Array.prototype.slice.call(document.querySelectorAll('[data-gc-source]')).forEach(function(b){
+        var chosen=b.getAttribute('data-gc-source')===activeSource;
+        b.setAttribute('aria-pressed',String(chosen));b.classList.toggle('is-active',chosen);
+      });
+      var help=document.getElementById('gc-shop-help');if(help)help.hidden=activeSource!=='data_shop';
+      itemSearch.value='';itemType.value='';fillTypes();renderItemPicker();
+    });
   });
+  fillTypes();
   if (itemMore) itemMore.addEventListener('click', function () { renderItemPicker(true); });
   if (itemSearch) itemSearch.addEventListener('input', renderItemPicker);
   if (itemType) itemType.addEventListener('change', renderItemPicker);
