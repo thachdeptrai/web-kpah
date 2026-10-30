@@ -34,10 +34,11 @@ const items=Array.from({length:501},(_,i)=>({
 }));
 const options=[{id:33,name:'Tăng sức mạnh <svg/onload=alert(1)>',description:'Tăng chỉ số',
  min:1,max:127,percent:true,display_multiplier:1000}];
-nodes['point-reward-catalog'].textContent=JSON.stringify({items,options});
+const shopItems=[{id:491,name:'Đạo cụ Shop thử',type:2,type_name:'Shop · Loại 2',tab:3,icon_id:999,image:'/res/icon/999.png'}];
+nodes['point-reward-catalog'].textContent=JSON.stringify({items,shop_items:shopItems,options});
 const editor=new FakeNode('form');
 const fields={};
-for(const name of ['item_id','icon_id','option_lines']){fields[name]=new FakeNode('input');}
+for(const name of ['item_id','icon_id','item_source','option_lines']){fields[name]=new FakeNode('input');}
 const optionHidden=new FakeNode('input');
 const chips=new FakeNode('div');
 const launch=new FakeNode('button');
@@ -49,7 +50,7 @@ editor.querySelector=function(selector){
  if(match)return fields[match[1]];
  throw Error('unexpected editor selector '+selector);
 };
-const tabs=['items','options'].map(name=>{
+const tabs=['items','shop','options'].map(name=>{
  const el=new FakeNode('button');el.attrs['data-point-tab']=name;return el;
 });
 const close=new FakeNode('button');
@@ -86,12 +87,12 @@ launch.fire('click');
 // A previous item search must not hide options when the tab changes.
 nodes['point-picker-search'].value='Kiếm';
 nodes['point-picker-search'].fire('input');
-tabs[1].fire('click');
+tabs[2].fire('click');
 assert.equal(nodes['point-picker-search'].value,'','search resets on category change');
 assert.equal(nodes['point-picker-search'].placeholder,'Tìm chỉ số / option hoặc #ID');
 assert.equal(nodes['point-picker-items'].hidden,true,'items panel must be hidden on Options');
 assert.equal(nodes['point-picker-options'].hidden,false,'options panel must be visible');
-assert.equal(tabs[1].getAttribute('aria-selected'),'true','Options tab selected');
+assert.equal(tabs[2].getAttribute('aria-selected'),'true','Options tab selected');
 assert.equal(tabs[0].getAttribute('aria-selected'),'false','Items tab deselected');
 assert.equal(nodes['point-picker-options'].children.length,1,'options catalog is rendered, not items');
 const optionButton=nodes['point-picker-options'].children[0];
@@ -103,7 +104,7 @@ tabs[0].fire('click');
 assert.equal(nodes['point-picker-options'].hidden,true,'Options panel hides on Items');
 assert.equal(nodes['point-picker-items'].hidden,false,'Items panel reappears');
 assert.equal(nodes['point-picker-selected-option'].hidden,true,'old option editor resets');
-tabs[1].fire('click');
+tabs[2].fire('click');
 assert.equal(nodes['point-picker-options'].children.length,1);
 nodes['point-picker-options'].children[0].fire('click');
 nodes['point-picker-param-value'].value='3';
@@ -115,13 +116,21 @@ assert.equal(program.includes('innerHTML'),false,'no HTML execution sink');
 assert.equal(program.includes('eval('),false);
 assert.ok(program.includes("aria-selected"),'tab ARIA state must be synchronized');
 let prevented=false;
-tabs[1].listeners.keydown({key:'ArrowLeft',preventDefault(){prevented=true;}});
+tabs[2].listeners.keydown({key:'ArrowLeft',preventDefault(){prevented=true;}});
 assert.equal(prevented,true,'tab arrow key prevents page scroll');
-assert.equal(tabs[0].getAttribute('aria-selected'),'true','left arrow opens Items');
-assert.equal(nodes['point-picker-options'].hidden,true,'keyboard tab change hides Options');
+assert.equal(tabs[1].getAttribute('aria-selected'),'true','left arrow opens Data Shop');
+assert.equal(nodes['point-picker-items'].children.length,1,'Data Shop has distinct catalogue');
+nodes['point-picker-items'].children[0].children[2].children[1].fire('click');
+assert.equal(fields.item_source.value,'data_shop','shop source persisted with overlapping ID');
+assert.equal(fields.item_id.value,491);
+assert.equal(fields.icon_id.value,999,'Shop idImg is selected');
+assert.equal(optionHidden.value,'[]','Shop selection clears item options');
+tabs[1].listeners.keydown({key:'ArrowLeft',preventDefault(){}});
+assert.equal(tabs[0].getAttribute('aria-selected'),'true','left arrow returns to Items');
 tabs[0].listeners.keydown({key:'ArrowRight',preventDefault(){}});
-assert.equal(tabs[1].getAttribute('aria-selected'),'true','right arrow opens Options');
-assert.equal(nodes['point-picker-items'].hidden,true,'keyboard tab change hides Items');
+assert.equal(tabs[1].getAttribute('aria-selected'),'true','right arrow opens Shop');
+tabs[1].listeners.keydown({key:'ArrowRight',preventDefault(){}});
+assert.equal(tabs[2].getAttribute('aria-selected'),'true','right arrow opens Options');
 assert.equal(chips.children.some(n=>n.tagName==='span'&&n._text.includes('svg')),true,
  'hostile string shown through textContent only');
 }
