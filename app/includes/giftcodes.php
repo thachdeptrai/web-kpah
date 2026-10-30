@@ -145,6 +145,32 @@ function kp_giftcode_option_storage($id)
     return ['group'=>'otherAtt', 'index'=>$id-61, 'max'=>32767];
 }
 
+
+/** ShopTemplate is a separate game inventory type, NOT a data_item template. */
+function kp_giftcode_shop_enabled(): bool {
+    return function_exists('kp_config') && (bool)kp_config('giftcode.shop_enabled',false);
+}
+function kp_giftcode_shop_catalog(PDO $pdo): array {
+    $rows=$pdo->query('SELECT id, idImg, name, decript, value, price, type, tab, sell, priceSale FROM data_shop ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
+    $items=[];$map=[];
+    foreach($rows as $row){
+        $id=(int)$row['id'];$iconId=(int)$row['idImg'];
+        // Game's ShopTemplate uses a signed short ID. Avoid invalid giftcode grants.
+        if($id<0||$id>32767)continue;
+        $relative='res/icon/'.$iconId.'.png';
+        $item=[
+            'id'=>$id, 'name'=>(string)$row['name'], 'source'=>'data_shop',
+            'type'=>(int)$row['type'], 'type_name'=>'Shop · Loại '.(int)$row['type'],
+            'tab'=>(int)$row['tab'], 'value'=>(int)$row['value'],
+            'description'=>(string)$row['decript'], 'level'=>0,
+            'icon_id'=>$iconId, 'image'=>$iconId>=0&&is_file(KP_ROOT.'/'.$relative)?'/'.$relative:null,
+            'default_options'=>[],
+        ];
+        $items[]=$item;$map[$id]=$item;
+    }
+    return ['items'=>$items,'map'=>$map];
+}
+
 /** Catalog is read from the same DB tables used by the Java server. */
 function kp_giftcode_reward_catalog($pdo)
 {
@@ -191,6 +217,7 @@ function kp_giftcode_reward_catalog($pdo)
         $item = [
             'id'=>$id,
             'name'=>(string)$row['name'],
+            'source'=>'data_item',
             'type'=>(int)$row['type'],
             'type_name'=>kp_giftcode_item_type_name($row['type']),
             'level'=>(int)$row['level'],
@@ -205,7 +232,10 @@ function kp_giftcode_reward_catalog($pdo)
         $itemMap[$id] = $item;
     }
     if (!$items) throw new RuntimeException('Bảng data_item đang trống.');
-    return ['items'=>$items, 'options'=>$options, 'item_map'=>$itemMap, 'option_map'=>$optionMap];
+    $shop=kp_giftcode_shop_catalog($pdo);
+    return ['items'=>$items,'shop_items'=>$shop['items'],
+            'shop_map'=>$shop['map'],'options'=>$options,
+            'item_map'=>$itemMap,'option_map'=>$optionMap];
 }
 
 function kp_giftcode_parse_rewards($value, array $itemMap = null)
@@ -216,12 +246,22 @@ function kp_giftcode_parse_rewards($value, array $itemMap = null)
     foreach (explode(',', $value) as $rawToken) {
         $token = trim($rawToken);
         if ($token === '') continue;
+        $shopParts=explode(':',$token);
+        if(count($shopParts)===3 && $shopParts[0]==='SHOP'
+           && ctype_digit($shopParts[1]) && ctype_digit($shopParts[2])){
+            $result['rewards'][]=[
+                'source'=>'data_shop','item_id'=>(int)$shopParts[1],
+                'quantity'=>(int)$shopParts[2],'minutes'=>0,
+                'lock'=>0,'magic'=>0,'options'=>[],
+            ];
+            continue;
+        }
         $parts = explode(':', $token);
         if (count($parts) === 4 && $parts[0] === 'DB'
             && ctype_digit($parts[1]) && ctype_digit($parts[2]) && ctype_digit($parts[3])
             && ($itemMap === null || isset($itemMap[(int)$parts[1]]))) {
             $result['rewards'][] = [
-                'item_id'=>(int)$parts[1], 'quantity'=>(int)$parts[2],
+                'source'=>'data_item', 'item_id'=>(int)$parts[1], 'quantity'=>(int)$parts[2],
                 'minutes'=>(int)$parts[3], 'lock'=>0, 'magic'=>0, 'options'=>[],
             ];
             continue;
@@ -243,7 +283,7 @@ function kp_giftcode_parse_rewards($value, array $itemMap = null)
             }
             if ($valid) {
                 $result['rewards'][] = [
-                    'item_id'=>(int)$dbo[1], 'quantity'=>(int)$dbo[2],
+                    'source'=>'data_item', 'item_id'=>(int)$dbo[1], 'quantity'=>(int)$dbo[2],
                     'minutes'=>(int)$dbo[3], 'lock'=>(int)$dbo[4],
                     'magic'=>(int)$dbo[5], 'options'=>$parsedOptions,
                 ];
@@ -265,7 +305,7 @@ function kp_giftcode_payload_int($value, $min, $max, $label)
 }
 
 /** Validate browser JSON against live item/option maps, then return canonical rewards. */
-function kp_giftcode_validate_reward_payload($json, array $itemMap, array $optionMap, $dboEnabled)
+function kp_giftcode_validate_reward_payload($json, array $itemMap, array $optionMap, $dboEnabled, array $shopMap=[])
 {
     if (!is_string($json) || strlen($json) > 65535) throw new RuntimeException('Dữ liệu vật phẩm quá lớn.');
     $payload = json_decode($json === '' ? '[]' : $json, true);
@@ -274,8 +314,19 @@ function kp_giftcode_validate_reward_payload($json, array $itemMap, array $optio
     $rewards = [];
     foreach ($payload as $index=>$raw) {
         if (!is_array($raw)) throw new RuntimeException('Vật phẩm thứ '.($index+1).' không hợp lệ.');
-        $itemId = kp_giftcode_payload_int(isset($raw['item_id']) ? $raw['item_id'] : null, 1, 2147483647, 'ID vật phẩm');
-        if (!isset($itemMap[$itemId])) throw new RuntimeException('Vật phẩm ID '.$itemId.' không tồn tại trong data_item.');
+        $source=$raw['source']??'data_item';
+        if(!in_array($source,['data_item','data_shop'],true))
+            throw new RuntimeException('Nguồn vật phẩm không hợp lệ.');
+        $itemId=kp_giftcode_payload_int($raw['item_id']??null,
+            $source==='data_shop'?0:1,$source==='data_shop'?32767:2147483647,'ID vật phẩm');
+        if($source==='data_shop'){
+            if(!isset($shopMap[$itemId]))
+                throw new RuntimeException('ShopTemplate ID '.$itemId.' không tồn tại trong data_shop.');
+            if(!kp_giftcode_shop_enabled())
+                throw new RuntimeException('Giftcode Data Shop chưa bật: phải cập nhật parser Java SHOP rồi bật giftcode.shop_enabled.');
+        } elseif(!isset($itemMap[$itemId])) {
+            throw new RuntimeException('Vật phẩm ID '.$itemId.' không tồn tại trong data_item.');
+        }
         $quantity = kp_giftcode_payload_int(isset($raw['quantity']) ? $raw['quantity'] : null, 1, 1000, 'Số lượng vật phẩm');
         $minutes = kp_giftcode_payload_int(isset($raw['minutes']) ? $raw['minutes'] : 0, 0, 2147483647, 'Thời hạn vật phẩm');
         $lock = kp_giftcode_payload_int(isset($raw['lock']) ? $raw['lock'] : 0, 0, 1, 'Trạng thái khóa');
@@ -285,6 +336,8 @@ function kp_giftcode_validate_reward_payload($json, array $itemMap, array $optio
         if (!is_array($rawOptions) || array_values($rawOptions) !== $rawOptions || count($rawOptions) > 141) {
             throw new RuntimeException('Danh sách option của item ID '.$itemId.' không hợp lệ.');
         }
+        if($source==='data_shop' && ($minutes!==0||$lock!==0||$magic!==0||$rawOptions))
+            throw new RuntimeException('ShopTemplate chỉ nhận số lượng; không có thời hạn hoặc option data_item.');
         $options = [];
         $seen = [];
         foreach ($rawOptions as $rawOption) {
@@ -301,7 +354,7 @@ function kp_giftcode_validate_reward_payload($json, array $itemMap, array $optio
             throw new RuntimeException('Tùy chỉnh option đang khóa. Hãy patch game server rồi bật KPAH_GIFTCODE_DBO_ENABLED=1.');
         }
         $rewards[] = [
-            'item_id'=>$itemId, 'quantity'=>$quantity, 'minutes'=>$minutes,
+            'source'=>$source,'item_id'=>$itemId, 'quantity'=>$quantity, 'minutes'=>$minutes,
             'lock'=>$lock, 'magic'=>$magic, 'options'=>$options,
         ];
     }
@@ -312,6 +365,10 @@ function kp_giftcode_serialize_rewards(array $rewards)
 {
     $tokens = [];
     foreach ($rewards as $reward) {
+        if(($reward['source']??'data_item')==='data_shop'){
+            $tokens[]='SHOP:'.(int)$reward['item_id'].':'.(int)$reward['quantity'];
+            continue;
+        }
         if (!$reward['options'] && (int)$reward['lock'] === 0 && (int)$reward['magic'] === 0) {
             $tokens[] = 'DB:'.(int)$reward['item_id'].':'.(int)$reward['quantity'].':'.(int)$reward['minutes'];
             continue;
