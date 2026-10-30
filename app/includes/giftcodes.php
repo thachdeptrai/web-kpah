@@ -255,6 +255,7 @@ function kp_giftcode_parse_rewards($value, array $itemMap = null, array $shopMap
         $shopParts=explode(':',$token);
         if(count($shopParts)===3 && $shopParts[0]==='SHOP'
            && ctype_digit($shopParts[1]) && ctype_digit($shopParts[2])
+           && kp_giftcode_shop_enabled()
            && ($shopMap===null||isset($shopMap[(int)$shopParts[1]]))){
             $result['rewards'][]=[
                 'source'=>'data_shop','item_id'=>(int)$shopParts[1],
