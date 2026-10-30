@@ -155,3 +155,11 @@ body.gc-admin .gc-table-wrap table td.gc-history-items-cell{
   .gc-item-more{width:100%}
   .gc-bulk-result{padding:12px}
 }
+
+/* Independent game source tabs: data_item vs data_shop. */
+.gc-source-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:12px 24px 4px;background:#fbfcff}
+.gc-source-tabs button{border:1px solid #cbd8eb;border-radius:10px;background:#fff;color:#455b78;font-weight:800;padding:10px 13px;cursor:pointer}
+.gc-source-tabs button[aria-pressed="true"]{background:#e8f0ff;border-color:#718fd0;color:#234b90}
+.gc-shop-help{margin:0;padding:9px 24px;background:#fff5e5;color:#85611e;font-size:12px}
+.gc-item-choice:disabled:not(.is-selected){cursor:not-allowed;opacity:.58}
+@media(max-width:480px){.gc-source-tabs{padding:10px 14px}.gc-source-tabs button{flex:1;min-width:130px}}
