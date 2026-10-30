@@ -22,6 +22,7 @@ class FakeNode {
   appendChild(child) { this.children.push(child); return child; }
   addEventListener(event, cb) { this.listeners[event] = cb; }
   setAttribute(k,v) { this.attributes[k] = String(v); }
+  getAttribute(k){return this.attributes[k]||null;}
   fire(event) { assert.equal(typeof this.listeners[event], 'function'); this.listeners[event]({currentTarget:this}); }
 }
 const names = ['gc-reward-catalog','gc-item-picker','gc-option-picker','gc-item-search',
@@ -32,12 +33,19 @@ const items = Array.from({length:501}, (_,i) => ({
   id:i+1, name:i===492?'Đồ Quý':'Vật phẩm #'+(i+1),
   type:1,type_name:'Quần',level:1,icon_id:0,image:null,default_options:[]
 }));
-nodes['gc-reward-catalog'].textContent=JSON.stringify({items,options:[],dbo_enabled:false});
+const shopItems=[
+  {id:480,name:'Đồ Shop 480',source:'data_shop',type:2,type_name:'Shop',tab:3,level:0,icon_id:400,image:null,default_options:[]},
+  {id:17,name:'Đồ Shop Đặc Biệt',source:'data_shop',type:2,type_name:'Shop',tab:1,level:0,icon_id:401,image:null,default_options:[]}
+];
+nodes['gc-reward-catalog'].textContent=JSON.stringify({items,shop_items:shopItems,options:[],dbo_enabled:false,shop_enabled:false});
+const sourceButtons=['data_item','data_shop'].map(source=>{
+ const btn=new FakeNode('button');btn.setAttribute('data-gc-source',source);return btn;
+});
 const document = {
   body:new FakeNode('body'),
   getElementById:(id)=>nodes[id] || null,
   createElement:(tag)=>new FakeNode(tag),
-  querySelectorAll:()=>[],
+  querySelectorAll:(sel)=>sel==='[data-gc-source]'?sourceButtons:[],
   querySelector:()=>null,
   addEventListener:()=>{}
 };
@@ -71,4 +79,15 @@ search.value='khong-co';
 search.fire('input');
 assert.equal(grid.children.length,0);
 assert.equal(more.hidden,true);
+sourceButtons[1].fire('click');
+search.value='';search.fire('input');
+assert.equal(grid.children.length,2,'Data Shop tab lists only data_shop items');
+search.value='#480';search.fire('input');
+assert.equal(grid.children.length,1,'Shop ID remains independently searchable even if data_item ID collides');
+assert.equal(grid.children[0].children[1].children[1].textContent,'Đồ Shop 480');
+assert.match(grid.children[0].children[2].textContent,/Cần patch SHOP/);
+sourceButtons[0].fire('click');
+search.value='#480';search.fire('input');
+assert.equal(grid.children.length,1,'data_item source still independently searchable');
+assert.notEqual(grid.children[0].children[1].children[1].textContent,'Đồ Shop 480');
 console.log('Giftcode picker full-catalog paging and name/ID search PASS');
