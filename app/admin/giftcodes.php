@@ -17,7 +17,7 @@ if (!preg_match('/\A[a-f0-9]{32}\z/D', $bulkNonce)) {
     $_SESSION['kp_giftcode_bulk_nonce'] = $bulkNonce;
 }
 $pdo = kp_db();
-$rewardCatalog = ['items'=>[], 'options'=>[], 'item_map'=>[], 'option_map'=>[]];
+$rewardCatalog = ['items'=>[], 'shop_items'=>[], 'shop_map'=>[], 'options'=>[], 'item_map'=>[], 'option_map'=>[]];
 $rewardCatalogError = '';
 $dboEnabled = kp_giftcode_dbo_enabled();
 $itemColumnCapacity = 255;
@@ -26,7 +26,7 @@ try {
     $itemColumnCapacity = kp_giftcode_item_column_capacity($pdo);
 } catch (Throwable $e) {
     kp_log('giftcode reward catalog unavailable', $e);
-    $rewardCatalogError = 'Không tải được data_item/data_attribute hoặc schema Giftcode.';
+    $rewardCatalogError = 'Không tải được data_item/data_shop/data_attribute hoặc schema Giftcode.';
 }
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (!kp_admin_csrf_valid($_POST['csrf'] ?? '')) {
@@ -60,7 +60,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     (string)($_POST['reward_items'] ?? '[]'),
                     $rewardCatalog['item_map'],
                     $rewardCatalog['option_map'],
-                    $dboEnabled
+                    $dboEnabled,
+                    $rewardCatalog['shop_map']
                 );
                 $item = kp_giftcode_serialize_rewards($rewards);
                 $type = !empty($_POST['disabled']) ? 1 : 0;
@@ -202,7 +203,7 @@ function kp_admin_giftcode_reward_builder($builderId, array $parsed, $catalogRea
     ?>
     <section class="gc-reward-builder gc-full" data-gc-builder="<?= kp_e($builderId) ?>" data-capacity="<?= (int)$capacity ?>">
         <div class="gc-reward-head">
-            <div><span>VẬT PHẨM TRAO TRONG GAME</span><h3>Chọn item & cấu hình chỉ số</h3><p>Dữ liệu lấy trực tiếp từ <code>data_item</code> và <code>data_attribute</code>.</p></div>
+            <div><span>VẬT PHẨM TRAO TRONG GAME</span><h3>Chọn item & cấu hình chỉ số</h3><p>Dữ liệu từ <code>data_item</code>, <code>data_shop</code> và <code>data_attribute</code>. ShopTemplate chỉ được phát khi server Java hỗ trợ token SHOP.</p></div>
             <button type="button" class="gc-add-item"<?= $catalogReady ? '' : ' disabled' ?>>＋ Chọn vật phẩm</button>
         </div>
         <?php if (!$dboEnabled): ?>
@@ -318,7 +319,7 @@ function kp_admin_giftcode_reward_builder($builderId, array $parsed, $catalogRea
 </main>
 <?php
 $catalogJson = json_encode(
-    ['items'=>$rewardCatalog['items'], 'options'=>$rewardCatalog['options'], 'dbo_enabled'=>$dboEnabled],
+    ['items'=>$rewardCatalog['items'], 'options'=>$rewardCatalog['options'], 'shop_items'=>$rewardCatalog['shop_items'], 'shop_enabled'=>kp_giftcode_shop_enabled(), 'dbo_enabled'=>$dboEnabled],
     JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP
 );
 if (!is_string($catalogJson)) $catalogJson = '{"items":[],"options":[],"dbo_enabled":false}';
@@ -327,7 +328,9 @@ if (!is_string($catalogJson)) $catalogJson = '{"items":[],"options":[],"dbo_enab
 <div class="gc-picker" id="gc-item-picker" role="dialog" aria-modal="true" aria-labelledby="gc-item-picker-title" hidden>
     <div class="gc-picker-backdrop" data-gc-close></div>
     <section class="gc-picker-panel">
-        <header><div><span>DATA_ITEM · NGUỒN THẬT</span><h2 id="gc-item-picker-title">Chọn vật phẩm</h2><p>Tìm theo tên hoặc ID, lọc theo loại rồi thêm vào Giftcode.</p></div><button type="button" class="gc-picker-close" data-gc-close aria-label="Đóng">×</button></header>
+        <header><div><span>DATA_ITEM + DATA_SHOP · NGUỒN GAME</span><h2 id="gc-item-picker-title">Chọn vật phẩm</h2><p>Tìm theo tên hoặc ID, lọc theo loại rồi thêm vào Giftcode.</p></div><button type="button" class="gc-picker-close" data-gc-close aria-label="Đóng">×</button></header>
+        <div class="gc-source-tabs" role="group" aria-label="Nguồn vật phẩm"><button type="button" class="is-active" data-gc-source="data_item" aria-pressed="true">Trang bị · data_item</button><button type="button" data-gc-source="data_shop" aria-pressed="false">Vật phẩm Shop · data_shop (<?=count($rewardCatalog['shop_items'])?>)</button></div>
+        <p class="gc-shop-help" id="gc-shop-help" hidden>ShopTemplate được đọc từ data_shop, khác ID data_item. Cần patch game server để dùng Giftcode SHOP; nếu chưa bật chỉ được xem.</p>
         <div class="gc-picker-tools"><label><span>Tìm nhanh</span><input type="search" id="gc-item-search" placeholder="Ví dụ: áo, kiếm, #120"></label><label><span>Loại vật phẩm</span><select id="gc-item-type"><option value="">Tất cả loại</option></select></label></div>
         <div class="gc-item-grid" id="gc-item-grid"></div>
         <div class="gc-picker-footer"><p class="gc-picker-result" id="gc-item-result"></p><button type="button" class="gc-item-more" id="gc-item-more" hidden>Hiển thị thêm vật phẩm</button></div>
