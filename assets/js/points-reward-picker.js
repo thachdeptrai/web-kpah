@@ -6,6 +6,7 @@
   var catalog;
   try{catalog=JSON.parse(source.textContent||'{}');}catch(e){return;}
   var items=Array.isArray(catalog.items)?catalog.items:[];
+  var shopItems=Array.isArray(catalog.shop_items)?catalog.shop_items:[];
   var options=Array.isArray(catalog.options)?catalog.options:[];
   var editors=Array.prototype.slice.call(document.querySelectorAll('[data-point-editor]'));
   var search=document.getElementById('point-picker-search');
@@ -48,7 +49,8 @@
     container.textContent='';
     var itemId=field(editor,'item_id').value;
     var iconId=field(editor,'icon_id').value;
-    var item=items.find(function(entry){return String(entry.id)===String(itemId);});
+    var itemSource=field(editor,'item_source')?field(editor,'item_source').value:'data_item';
+    var item=(itemSource==='data_shop'?shopItems:items).find(function(entry){return String(entry.id)===String(itemId);});
     var first=elem('div','point-picker-meta');
     var image=elem('span','point-picker-small-icon');
     if(iconId!==''&&/^\d{1,6}$/.test(iconId)){
@@ -61,7 +63,7 @@
       image.appendChild(img);
     }else{image.textContent='✦';}
     first.appendChild(image);
-    first.appendChild(elem('span','',item?item.name+' (#'+item.id+')':'Item #'+(itemId||'—')+' · Icon #'+(iconId||'—')));
+    first.appendChild(elem('span','',item?(itemSource==='data_shop'?'Data Shop · ':'data_item · ')+item.name+' (#'+item.id+')':'Item #'+(itemId||'—')+' · Icon #'+(iconId||'—')));
     container.appendChild(first);
     var lines=selections(editor);
     lines.forEach(function(entry){
@@ -100,16 +102,16 @@
     active=null;
   }
   function chooseTab(name){
-    if(name!=='items'&&name!=='options')return;
+    if(name!=='items'&&name!=='shop'&&name!=='options')return;
     if(tab!==name)search.value=''; // Do not reuse the item's filter on Options.
     tab=name;shown=0;option=null;paramBox.hidden=true;
     if(selectedOptionButton){
       selectedOptionButton.setAttribute('aria-pressed','false');
       selectedOptionButton=null;
     }
-    itemContainer.hidden=name!=='items';
+    itemContainer.hidden=name==='options';
     optionContainer.hidden=name!=='options';
-    search.placeholder=name==='items'?'Tìm vật phẩm hoặc #ID':'Tìm chỉ số / option hoặc #ID';
+    search.placeholder=name==='items'?'Tìm data_item hoặc #ID':(name==='shop'?'Tìm Data Shop hoặc #ID':'Tìm chỉ số / option hoặc #ID');
     dialog.querySelectorAll('[data-point-tab]').forEach(function(button){
       var selected=button.getAttribute('data-point-tab')===tab;
       button.setAttribute('aria-pressed',String(selected));
@@ -128,7 +130,7 @@
     root.appendChild(visual);
     var heading=elem('div','point-picker-item-heading');
     heading.appendChild(elem('strong','',item.name));
-    heading.appendChild(elem('small','','#'+item.id+' · '+item.type_name+' · Icon #'+item.icon_id));
+    heading.appendChild(elem('small','', (tab==='shop'?'data_shop · tab '+item.tab:'data_item')+' · #'+item.id+' · '+item.type_name+' · Icon #'+item.icon_id));
     root.appendChild(heading);
     var actions=elem('div','point-picker-item-actions');
     var icon=elem('button','','Chọn icon');
@@ -142,6 +144,9 @@
     use.addEventListener('click',function(){
       field(active,'item_id').value=item.id;
       field(active,'icon_id').value=item.icon_id;
+      if(field(active,'item_source'))field(active,'item_source').value=tab==='shop'?'data_shop':'data_item';
+      active.querySelector('[data-point-options]').value='[]';
+      var lines=field(active,'option_lines');if(lines)lines.value='';
       updateSelected(active);closePicker();
     });
     actions.appendChild(icon);actions.appendChild(use);root.appendChild(actions);
@@ -177,7 +182,7 @@
       option=null;paramBox.hidden=true;
       var q=norm(search.value);
       var id=q.match(/^#?(\d+)$/);
-      var set=tab==='items'?items:options;
+      var set=tab==='items'?items:(tab==='shop'?shopItems:options);
       matches=set.filter(function(x){
         return !q||norm(x.name).indexOf(q)>=0||String(x.id).indexOf(q.replace(/^#/,''))>=0;
       });
@@ -186,14 +191,14 @@
         matches.sort(function(a,b){return Number(b.id===number)-Number(a.id===number);});
       }
       shown=0;
-      (tab==='items'?itemContainer:optionContainer).textContent='';
+      (tab==='options'?optionContainer:itemContainer).textContent='';
     }
-    var view=tab==='items'?itemContainer:optionContainer;
+    var view=tab==='options'?optionContainer:itemContainer;
     matches.slice(shown,shown+pageSize).forEach(function(entry){
-      view.appendChild(tab==='items'?itemRow(entry):optionRow(entry));
+      view.appendChild(tab==='options'?optionRow(entry):itemRow(entry));
     });
     shown=Math.min(matches.length,shown+pageSize);
-    counter.textContent='Hiển thị '+shown+' / '+matches.length+' '+(tab==='items'?'vật phẩm':'option');
+    counter.textContent='Hiển thị '+shown+' / '+matches.length+' '+(tab==='options'?'option':(tab==='shop'?'ShopTemplate':'vật phẩm'));
     more.hidden=shown>=matches.length;
   }
   editors.forEach(function(editor){
@@ -210,7 +215,7 @@
     b.addEventListener('keydown',function(e){
       if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
       e.preventDefault();
-      var next=b.getAttribute('data-point-tab')==='items'?'options':'items';
+      var order=['items','shop','options'];var next=order[(order.indexOf(b.getAttribute('data-point-tab'))+(e.key==='ArrowRight'?1:2))%3];
       chooseTab(next);
       dialog.querySelectorAll('[data-point-tab]').forEach(function(t){
         if(t.getAttribute('data-point-tab')===next)t.focus();
@@ -225,6 +230,9 @@
     if(!Number.isSafeInteger(param)||param<Number(option.min)||param>Number(option.max)){
       paramInput.setCustomValidity('Giá trị phải từ '+option.min+' đến '+option.max);
       paramInput.reportValidity();paramInput.setCustomValidity('');return;
+    }
+    if(field(active,'item_source')&&field(active,'item_source').value==='data_shop'){
+      optionTitle.textContent='ShopTemplate không hỗ trợ option data_item.';return;
     }
     if(!field(active,'item_id').value){
       optionTitle.textContent='Cần chọn vật phẩm trước khi thêm option.';
