@@ -90,6 +90,8 @@ return [
     'giftcode' => [
         // Chỉ bật sau khi game server đã áp game-server-patch/giftcode-item-options.patch.
         'dbo_enabled' => true,
+        // Enable only after patching Java Database.newDoGetGiftCode SHOP branch.
+        'shop_enabled' => false,
     ],
 
     // SMTP: cấu hình qua config/register.local.php hoặc biến môi trường; không commit mật khẩu.
