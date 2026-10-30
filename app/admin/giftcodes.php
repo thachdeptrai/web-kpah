@@ -119,7 +119,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     if (!$old) throw new RuntimeException('Không tìm thấy giftcode.');
                     if ((string)$old['giftcode'] !== $code) throw new RuntimeException('Không được đổi chuỗi code vì cần giữ lịch sử người chơi đã nhập.');
                     // Special legacy tokens (PT/GEM/PET/...) are not editable here, but must survive updates.
-                    $legacy = kp_giftcode_parse_rewards((string)$old['item'], $rewardCatalog['item_map'])['legacy'];
+                    $legacy = kp_giftcode_parse_rewards((string)$old['item'], $rewardCatalog['item_map'], $rewardCatalog['shop_map'])['legacy'];
                     if ($legacy) $item = implode(',', array_filter([$item, implode(',', $legacy)], 'strlen'));
                     if (!kp_giftcode_valid_item($item)) throw new RuntimeException('Chuỗi phần thưởng sau khi ghép token cũ không hợp lệ.');
                     if (strlen($item) > $itemColumnCapacity) {
@@ -288,7 +288,7 @@ function kp_admin_giftcode_reward_builder($builderId, array $parsed, $catalogRea
 <section class="gc-panel"><h2>Danh sách giftcode <small>(300 mã mới nhất)</small></h2>
 <p>Để sửa, thay số liệu rồi lưu. <strong>Đổi mã code đã tạo không được hỗ trợ</strong> nhằm giữ lịch sử nhập; xóa mã đã dùng sẽ tự động chuyển thành khóa.</p>
 <div class="gc-code-list">
-<?php foreach ($codes as $code): $id=(int)$code['id']; $meta=$catalog[(string)$id] ?? []; $parsedRewards=kp_giftcode_parse_rewards((string)$code['item'], $rewardCatalog['item_map']); ?>
+<?php foreach ($codes as $code): $id=(int)$code['id']; $meta=$catalog[(string)$id] ?? []; $parsedRewards=kp_giftcode_parse_rewards((string)$code['item'], $rewardCatalog['item_map'], $rewardCatalog['shop_map']); ?>
 <details class="gc-code"><summary><strong><?= kp_e($code['giftcode']) ?></strong><span><?= (int)$code['type']===0 ? 'Đang bật' : 'Đã khóa' ?> · <?= number_format((int)$code['limit_use']) ?> lượt · <?= !empty($meta['public']) ? 'Công khai' : 'Ẩn' ?></span><b>Chỉnh sửa ↓</b></summary>
 <form method="post" class="gc-form">
 <input type="hidden" name="csrf" value="<?= kp_e(kp_csrf_token()) ?>"><input type="hidden" name="action" value="update"><input type="hidden" name="id" value="<?= $id ?>">
