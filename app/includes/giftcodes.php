@@ -151,7 +151,13 @@ function kp_giftcode_shop_enabled(): bool {
     return function_exists('kp_config') && (bool)kp_config('giftcode.shop_enabled',false);
 }
 function kp_giftcode_shop_catalog(PDO $pdo): array {
-    $rows=$pdo->query('SELECT id, idImg, name, decript, value, price, type, tab, sell, priceSale FROM data_shop ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $rows=$pdo->query('SELECT id, idImg, name, decript, value, price, type, tab, sell, priceSale FROM data_shop ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
+    }catch(PDOException $e){
+        // Older test/hosting schemas without data_shop must keep data_item available.
+        if($e->getCode()==='42S02')return ['items'=>[],'map'=>[]];
+        throw $e;
+    }
     $items=[];$map=[];
     foreach($rows as $row){
         $id=(int)$row['id'];$iconId=(int)$row['idImg'];
@@ -238,7 +244,7 @@ function kp_giftcode_reward_catalog($pdo)
             'item_map'=>$itemMap,'option_map'=>$optionMap];
 }
 
-function kp_giftcode_parse_rewards($value, array $itemMap = null)
+function kp_giftcode_parse_rewards($value, array $itemMap = null, array $shopMap = null)
 {
     $result = ['rewards'=>[], 'legacy'=>[]];
     $value = trim((string)$value);
@@ -248,7 +254,8 @@ function kp_giftcode_parse_rewards($value, array $itemMap = null)
         if ($token === '') continue;
         $shopParts=explode(':',$token);
         if(count($shopParts)===3 && $shopParts[0]==='SHOP'
-           && ctype_digit($shopParts[1]) && ctype_digit($shopParts[2])){
+           && ctype_digit($shopParts[1]) && ctype_digit($shopParts[2])
+           && ($shopMap===null||isset($shopMap[(int)$shopParts[1]]))){
             $result['rewards'][]=[
                 'source'=>'data_shop','item_id'=>(int)$shopParts[1],
                 'quantity'=>(int)$shopParts[2],'minutes'=>0,
