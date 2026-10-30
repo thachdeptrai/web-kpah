@@ -3,6 +3,10 @@ on:
   push:
     paths:
       - 'app/includes/forum_feedback.php'
+      - 'app/includes/giftcodes.php'
+      - 'app/includes/points_reward_picker.php'
+      - 'tests/data_shop_catalog_integration.php'
+      - 'tests/data_shop_picker_smoke.php'
       - 'app/includes/user_center.php'
       - 'app/pages/notifications.php'
       - 'app/includes/forum_storage.php'
@@ -21,6 +25,10 @@ on:
   pull_request:
     paths:
       - 'app/includes/forum_feedback.php'
+      - 'app/includes/giftcodes.php'
+      - 'app/includes/points_reward_picker.php'
+      - 'tests/data_shop_catalog_integration.php'
+      - 'tests/data_shop_picker_smoke.php'
       - 'app/includes/user_center.php'
       - 'app/pages/notifications.php'
       - 'app/includes/forum_storage.php'
@@ -82,3 +90,5 @@ jobs:
         run: php tests/forum_security_smoke.php
       - name: Forum MySQL integration and identity protections
         run: php tests/forum_feedback_integration.php
+      - name: Data Shop item catalog SQL integration
+        run: php tests/data_shop_catalog_integration.php
