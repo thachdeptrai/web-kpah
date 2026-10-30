@@ -262,7 +262,7 @@
     page.forEach(function (item) {
       var selected = activeBuilder && activeBuilder.rewards.some(function (reward) { return reward.item_id === item.id && (reward.source||'data_item')===activeSource; });
       var button = element('button', 'gc-item-choice' + (selected ? ' is-selected' : ''));
-      button.type = 'button'; button.disabled = selected || (activeSource==='data_shop'&&!shopEnabled);
+      button.type = 'button'; button.disabled = selected;
       button.appendChild(createImage(item));
       var copy = element('span', 'gc-item-choice-copy');
       copy.appendChild(element('small', '', activeSource==='data_shop' ? 'Data Shop · tab '+item.tab+' · loại '+item.type : item.type_name+' · Lv.'+item.level));
@@ -272,7 +272,6 @@
       button.appendChild(element('b', '', selected ? 'Đã chọn' : (activeSource==='data_shop'&&!shopEnabled?'Cần patch SHOP':'Thêm ＋')));
       button.addEventListener('click', function () {
         if (!activeBuilder || activeBuilder.rewards.length >= 30) return;
-        if(activeSource==='data_shop'&&!shopEnabled)return;
         activeBuilder.rewards.push({ source:activeSource,item_id:item.id, quantity:1, minutes:0, lock:0, magic:0, options:[] });
         renderBuilder(activeBuilder); closePicker(itemPicker);
       });
@@ -332,6 +331,11 @@
     if (form) form.addEventListener('submit', function (event) {
       sync(builder);
       var bytes = new Blob([builder.rewards.map(serializeReward).join(',')]).size;
+      if(!shopEnabled && builder.rewards.some(function(reward){return reward.source==='data_shop';})){
+        event.preventDefault();
+        window.alert('Data Shop chỉ đang chọn thử: game server chưa có parser SHOP. Chưa thể lưu Giftcode chứa ShopTemplate.');
+        return;
+      }
       if (bytes > builder.capacity) {
         event.preventDefault();
         window.alert('Chuỗi phần thưởng vượt giới hạn cột SQL. Hãy chạy migration giftcode_item_options.sql hoặc giảm item/option.');
