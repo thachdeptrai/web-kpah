@@ -164,3 +164,6 @@
  .point-picker-option:hover{transform:none}
 }
 
+
+/* Data Shop is an independent source; active tab must stay visible on mobile. */
+.point-picker-tabs button[data-point-tab="shop"][aria-pressed="true"]{background:#e6f8f2;border-color:#70b9a3;color:#156d58}
