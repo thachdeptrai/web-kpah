@@ -17,6 +17,27 @@ $payload=[
 ];
 $p=kp_points_picker_display_input($payload,$catalog);
 pp_assert($p['icon_id']===42 && $p['item_id']===11,'real selection preserves game IDs');
+$sourceCatalog=$catalog;
+$sourceCatalog['shop_items']=[['id'=>11,'source'=>'data_shop','name'=>'Đạo cụ Shop','icon_id'=>88,'tab'=>2]];
+$shopPick=kp_points_picker_display_input([
+ 'icon_id'=>'88','item_id'=>'11','item_source'=>'data_shop',
+ 'point_picker_options'=>'[]','option_lines'=>'untrusted previous options'
+],$sourceCatalog);
+pp_assert($shopPick['item_id']===11&&$shopPick['item_source']==='data_shop','Point item source preserves overlapping Shop ID');
+pp_assert($shopPick['option_lines']==='','choosing Shop clears incompatible item options');
+$rejected=false;
+try{kp_points_picker_display_input([
+ 'icon_id'=>'88','item_id'=>'11','item_source'=>'data_shop',
+ 'point_picker_options'=>'[{"id":0,"param":50}]'
+],$sourceCatalog);}catch(RuntimeException $expected){$rejected=true;}
+pp_assert($rejected,'ShopTemplate refuses data_item option payloads');
+$rejected=false;
+try{kp_points_picker_display_input([
+ 'icon_id'=>'88','item_id'=>'99','item_source'=>'data_shop',
+ 'point_picker_options'=>'[]'
+],$sourceCatalog);}catch(RuntimeException $expected){$rejected=true;}
+pp_assert($rejected,'Unknown ShopTemplate ID rejected');
+
 pp_assert(strpos($p['option_lines'],'#0 Tấn công +20')!==false,'normal option stored canonically');
 pp_assert(strpos($p['option_lines'],'#33 Tỷ lệ +3.000%')!==false,'percent display multiplier is applied');
 pp_assert(strpos($p['option_lines'],'tampered')===false,'server ignores arbitrary textarea when chosen option payload exists');
