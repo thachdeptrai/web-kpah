@@ -19,6 +19,14 @@ function kp_points_picker_catalog(PDO $db): array {
                 'image'=>(string)($item['image']??''),
             ];
         },$raw['items']),
+        'shop_items'=>array_map(static function(array $item): array{
+            return [
+               'id'=>(int)$item['id'],'source'=>'data_shop','name'=>(string)$item['name'],
+               'icon_id'=>(int)$item['icon_id'],'type'=>(int)$item['type'],
+               'type_name'=>(string)$item['type_name'],'tab'=>(int)$item['tab'],
+               'description'=>(string)$item['description'],'image'=>(string)($item['image']??''),
+            ];
+        },$raw['shop_items']??[]),
         'options'=>array_map(static function(array $option): array {
             return [
                 'id'=>(int)$option['id'],'name'=>(string)$option['name'],
@@ -39,6 +47,13 @@ function kp_points_picker_catalog(PDO $db): array {
  */
 function kp_points_picker_display_input(array $post, ?array $catalog): array {
     $display=kp_point_reward_display_input($post);
+    $source=$display['item_source']??'data_item';
+    if($source==='data_shop'){
+        if($catalog===null)throw new RuntimeException('Chưa tải được data_shop.');
+        $found=false;
+        foreach($catalog['shop_items']??[] as $entry){if((int)$entry['id']===(int)$display['item_id']){$found=true;break;}}
+        if(!$found)throw new RuntimeException('ShopTemplate không tồn tại trong data_shop.');
+    }
     $json=trim((string)($post['point_picker_options']??''));
     if ($json==='') return $display; // Backwards-compatible text-only gift.
     if (strlen($json)>4096) throw new RuntimeException('Danh sách option quá lớn.');
@@ -50,6 +65,7 @@ function kp_points_picker_display_input(array $post, ?array $catalog): array {
         $display['option_lines']='';
         return $display;
     }
+    if ($source==='data_shop') throw new RuntimeException('ShopTemplate không có option data_item.');
     if ($display['item_id']===null) throw new RuntimeException('Chọn vật phẩm trước khi đặt option.');
     $items=[];
     foreach($catalog['items']??[] as $i)$items[(int)$i['id']]=$i;
