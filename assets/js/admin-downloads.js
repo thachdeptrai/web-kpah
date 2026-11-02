@@ -55,7 +55,7 @@
     var appMax = limit('app-max-bytes') || 536870912;
     var totalBytes = 65536; // Multipart overhead and non-file fields.
     var allowed = {
-      windows: ['zip', 'exe', 'msi'],
+      windows: null, // Windows temporarily accepts arbitrary safe extension; PHP validates
       java: ['jar'],
       android: ['apk'],
       ios: ['ipa']
@@ -64,10 +64,18 @@
       var input = uploads[i];
       if (!input.files || !input.files.length) continue;
       var keyMatch = /^upload\[([a-z]+)\]$/.exec(input.name);
-      if (!keyMatch || !allowed[keyMatch[1]]) return 'Nền tảng upload không hợp lệ.';
+      if (!keyMatch || !Object.prototype.hasOwnProperty.call(allowed, keyMatch[1])) return 'Nền tảng upload không hợp lệ.';
       var file = input.files[0];
       var extension = file.name.split('.').pop().toLowerCase();
-      if (allowed[keyMatch[1]].indexOf(extension) === -1) {
+      if (keyMatch[1] === 'windows') {
+        if (!/^[a-z0-9]{1,10}$/.test(extension) || [
+          'php','php3','php4','php5','php7','php8','phtml','phar','cgi','pl',
+          'py','sh','asp','aspx','jsp','jspx','html','htm','js','mjs','svg',
+          'shtml','htaccess','htpasswd','ini'
+        ].indexOf(extension) !== -1) {
+          return 'File Windows có đuôi không an toàn hoặc không hợp lệ.';
+        }
+      } else if (allowed[keyMatch[1]].indexOf(extension) === -1) {
         return 'File ' + keyMatch[1] + ' sai định dạng. Chỉ chấp nhận: ' + allowed[keyMatch[1]].join(', ').toUpperCase() + '.';
       }
       if (file.size < 16) return 'File ' + file.name + ' rỗng hoặc quá nhỏ (dưới 16 byte).';
