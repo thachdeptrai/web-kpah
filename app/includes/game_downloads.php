@@ -9,7 +9,7 @@ if (!defined('KP_ROOT')) { http_response_code(403); exit; }
 function kp_game_platforms()
 {
     return [
-        'windows' => ['name' => 'Windows / PC', 'ext' => ['zip', 'exe', 'msi'], 'hint' => 'ZIP, EXE hoặc MSI'],
+        'windows' => ['name' => 'Windows / PC', 'ext' => ['zip', 'exe', 'msi'], 'hint' => 'tạm hỗ trợ các định dạng file'],
         'java' => ['name' => 'Java / JAR', 'ext' => ['jar'], 'hint' => 'JAR'], 
         'android' => ['name' => 'Android', 'ext' => ['apk'], 'hint' => 'APK'],
         'ios' => ['name' => 'iPhone / iPad', 'ext' => ['ipa'], 'hint' => 'IPA'],
@@ -51,11 +51,24 @@ function kp_game_download_url($value)
         && !empty($parts['host']) ? $url : '';
 }
 
+/** Temporary Windows upload flexibility. Never allow web-executable content extensions. */
+function kp_game_download_extension_allowed($platform, $ext)
+{
+    if (!isset(kp_game_platforms()[$platform]) || !is_string($ext)) return false;
+    if ($platform !== 'windows') return in_array($ext, kp_game_platforms()[$platform]['ext'], true);
+    if (!preg_match('/^[a-z0-9]{1,10}$/D', $ext)) return false;
+    return !in_array($ext, [
+        'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phar', 'cgi', 'pl',
+        'py', 'sh', 'asp', 'aspx', 'jsp', 'jspx', 'html', 'htm', 'js', 'mjs', 'svg',
+        'shtml', 'htaccess', 'htpasswd', 'ini'
+    ], true);
+}
+
 function kp_game_download_filename_valid($name, $platform)
 {
     if (!isset(kp_game_platforms()[$platform]) || !is_string($name)) return false;
-    if (!preg_match('/^[a-f0-9]{32}\.([a-z0-9]{2,4})$/D', $name, $match)) return false;
-    return in_array($match[1], kp_game_platforms()[$platform]['ext'], true);
+    if (!preg_match('/^[a-f0-9]{32}\.([a-z0-9]{1,10})$/D', $name, $match)) return false;
+    return kp_game_download_extension_allowed($platform, $match[1]);
 }
 
 function kp_game_download_defaults()
@@ -131,7 +144,7 @@ function kp_game_download_upload($platform, $upload)
     }
     $name = basename(str_replace('\\', '/', $upload['name']));
     $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-    if (!in_array($ext, kp_game_platforms()[$platform]['ext'], true)) {
+    if (!kp_game_download_extension_allowed($platform, $ext)) {
         throw new RuntimeException('Sai định dạng file cho ' . kp_game_platforms()[$platform]['name'] . '.');
     }
     $tmp = $upload['tmp_name'];
@@ -146,9 +159,9 @@ function kp_game_download_upload($platform, $upload)
     fclose($fh);
     $zip = substr($magic, 0, 4) === "PK\x03\x04";
     $ole = $magic === "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1";
-    if ((in_array($ext, ['apk', 'ipa', 'zip', 'jar'], true) && !$zip)
+    if ($platform !== 'windows' && ((in_array($ext, ['apk', 'ipa', 'zip', 'jar'], true) && !$zip)
         || ($ext === 'exe' && substr($magic, 0, 2) !== 'MZ')
-        || ($ext === 'msi' && !$ole)) {
+        || ($ext === 'msi' && !$ole))) {
         throw new RuntimeException('Nội dung file không khớp với định dạng ' . strtoupper($ext) . '.');
     }
     if (class_exists('ZipArchive') && in_array($ext, ['apk', 'ipa', 'jar'], true)) {
@@ -273,7 +286,7 @@ function kp_game_download_save($post, $files)
         foreach ($old as $row) {
             $oldFile = $row['file'];
             if ($oldFile !== '' && !in_array($oldFile, $referenced, true)
-                && preg_match('/^[a-f0-9]{32}\.(?:apk|ipa|zip|exe|msi|jar)$/D', $oldFile)) {
+                && preg_match('/^[a-f0-9]{32}\.[a-z0-9]{1,10}$/D', $oldFile)) {
                 @unlink($dir . '/' . $oldFile);
             }
         }
