@@ -111,4 +111,4 @@ $platforms = kp_game_platforms();
 <?php if (($uploadMaxBytes > 0 && $uploadMaxBytes < $appMaxBytes) || ($postMaxBytes > 0 && $postMaxBytes < $appMaxBytes)): ?><p class="dl-upload-warning" role="note">Lưu ý: PHP trên máy chủ đang giới hạn dung lượng thấp hơn 512 MB. File lớn hơn giới hạn này sẽ bị từ chối dù website hỗ trợ tối đa 512 MB. Với bản game lớn, ưu tiên GitHub Releases/CDN và chọn nguồn tải <strong>Link tải bên ngoài</strong>.</p><?php endif; ?>
 <p>File được lưu trong <code>storage/game-downloads</code> và chỉ phát qua route tải riêng, không thực thi file trên máy chủ. Nếu nhiều người tải hoặc file lớn, dùng GitHub Releases/CDN sẽ tiết kiệm băng thông và tài nguyên VPS hơn. IPA trên iPhone còn cần phương thức cài đặt/ký ứng dụng phù hợp; tải IPA không đồng nghĩa cài trực tiếp được.</p>
 </section>
-</main><script src="/assets/js/admin-downloads.js?v=<?= (int)@filemtime(KP_ROOT.'/assets/js/admin-downloads.js') ?>" defer></script></body></html>
+</main><script src="/assets/js/admin-downloads.js?v=windows-flex-2-<?= substr((string)@hash_file('sha256', KP_ROOT.'/assets/js/admin-downloads.js'), 0, 12) ?>" defer></script></body></html>
